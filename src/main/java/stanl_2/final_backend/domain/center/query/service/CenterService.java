@@ -1,7 +1,7 @@
 package stanl_2.final_backend.domain.center.query.service;
 
-import stanl_2.final_backend.domain.center.query.dto.response.CenterSelectResponseDTO;
+import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 
 public interface CenterService {
-    CenterSelectResponseDTO selectAll();
+    CenterSelectIdDTO selectByCenterId(Long centerId);
 }

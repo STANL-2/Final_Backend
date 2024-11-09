@@ -9,11 +9,12 @@ import stanl_2.final_backend.domain.center.command.domain.aggregate.entity.Cente
 import stanl_2.final_backend.domain.center.command.domain.repository.CenterRepository;
 
 @Slf4j
-@Service("centerServiceImpl")
+@Service("commandCenterServiceImpl")
 public class CenterCommandServiceImpl implements CenterCommandService {
 
     private final CenterRepository centerRepository;
     private final ModelMapper modelMapper;
+
 
     public CenterCommandServiceImpl(CenterRepository centerRepository, ModelMapper modelMapper) {
         this.centerRepository = centerRepository;
@@ -36,10 +37,6 @@ public class CenterCommandServiceImpl implements CenterCommandService {
         centerRepository.save(center);
 
         CenterRegistResponseDTO centerRegistResponseDTO = modelMapper.map(center, CenterRegistResponseDTO.class);
-
-        log.info(centerRegistResponseDTO.toString());
-
-
 
         return centerRegistResponseDTO;
     }

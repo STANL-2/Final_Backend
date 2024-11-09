@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.center.command.application.dto.response;
+package stanl_2.final_backend.domain.center.query.dto;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class CenterRegistResponseDTO {
+public class CenterSelectIdDTO {
 
     private Long id;
     private String name;

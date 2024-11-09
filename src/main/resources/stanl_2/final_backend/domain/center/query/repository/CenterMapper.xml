@@ -3,7 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stanl_2.final_backend.domain.center.query.repository.CenterMapper">
-    <resultMap id="centerInformation" type="stanl_2.final_backend.domain.center.query.dto.response.CenterSelectResponseDTO">
+    <!-- type는 수정 필요 (각자 domain에 맞춰서 수정 -->
+    <resultMap id="centerInformation" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO">
         <id property="id" column="CENT_ID"/>
         <result property="name" column="CENT_NAME"/>
         <result property="address" column="CENT_ADR"/>
@@ -15,7 +16,7 @@
         <result property="deletedAt" column="DELETED_AT"/>
         <result property="active" column="ACTIVE"/>
     </resultMap>
-    <select id="findAllCenters" resultMap="centerInformation">
+    <select id="findCenterById" resultMap="centerInformation" parameterType="Long">
         SELECT
                A.CENT_ID,
                A.CENT_NAME,
@@ -28,6 +29,7 @@
                A.DELETED_AT,
                ACTIVE
           FROM CENTER A
+         WHERE CENt_ID = #{ id }
     </select>
 
 </mapper>

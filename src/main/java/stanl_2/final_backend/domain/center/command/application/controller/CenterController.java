@@ -8,7 +8,7 @@ import stanl_2.final_backend.domain.center.command.application.dto.response.Cent
 import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
 import stanl_2.final_backend.domain.center.common.response.ResponseMessage;
 
-@RestController(value="commandCenterController")
+@RestController("commandCenterController")
 @RequestMapping("/api/v1/center")
 public class CenterController {
 
@@ -19,6 +19,7 @@ public class CenterController {
         this.centerCommandService = centerCommandService;
     }
 
+    // 나중에 적용 예정 - swagger 설정
     //    @Operation(summary = "Get center Test")
     //    @ApiResponses(value = {
     //            @ApiResponse(responseCode = "200", description = "성공",

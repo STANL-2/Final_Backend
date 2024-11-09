@@ -3,7 +3,10 @@ package stanl_2.final_backend.domain.center.command.domain.aggregate.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /* 설명. 테스트를 위한 어노테이션(나중에 삭제 예정)*/
 @ToString
@@ -38,29 +41,36 @@ public class Center {
     private String operatingAt;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
     @Column(name = "DELETED_AT")
-    private LocalDateTime deletedAt;
+    private Timestamp deletedAt;
 
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
 
+
+    /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        Timestamp currentTimestamp = getCurrentTimestamp();
+        this.createdAt = currentTimestamp;
         this.updatedAt = this.createdAt;
     }
 
     // Update 되기 전에 실행
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = getCurrentTimestamp();
     }
 
+    private Timestamp getCurrentTimestamp() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return Timestamp.from(nowKst.toInstant());
+    }
 
 }
