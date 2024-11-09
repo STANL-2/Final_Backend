@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.center.common.response;
+package stanl_2.final_backend.domain.schedule.common.response;
 
 import lombok.*;
 

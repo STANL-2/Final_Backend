@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.center.common.exception;
+package stanl_2.final_backend.domain.schedule.common.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
