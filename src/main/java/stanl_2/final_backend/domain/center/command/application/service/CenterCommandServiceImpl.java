@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.center.command.application.service;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
 import stanl_2.final_backend.domain.center.command.application.dto.response.CenterRegistResponseDTO;
 import stanl_2.final_backend.domain.center.command.domain.aggregate.entity.Center;
@@ -22,15 +23,18 @@ public class CenterCommandServiceImpl implements CenterCommandService {
     }
 
     @Override
+    @Transactional
     public CenterRegistResponseDTO registCenter(CenterRegistRequestDTO centerRegistRequestDTO) {
 
-        Center center = new Center();
+//        Center center = new Center();
+//        center.setName(centerRegistRequestDTO.getName());
+//        center.setAddress(centerRegistRequestDTO.getAddress());
+//        center.setPhone(centerRegistRequestDTO.getPhone());
+//        center.setMemberCount(centerRegistRequestDTO.getMemberCount());
+//        center.setOperatingAt(centerRegistRequestDTO.getOperatingAt());
 
-        center.setName(centerRegistRequestDTO.getName());
-        center.setAddress(centerRegistRequestDTO.getAddress());
-        center.setPhone(centerRegistRequestDTO.getPhone());
-        center.setMemberCount(centerRegistRequestDTO.getMemberCount());
-        center.setOperatingAt(centerRegistRequestDTO.getOperatingAt());
+
+        Center center = modelMapper.map(centerRegistRequestDTO, Center.class);
         center.setCreatedAt(center.getCreatedAt());
         center.setUpdatedAt(center.getUpdatedAt());
 
