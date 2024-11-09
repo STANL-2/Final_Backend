@@ -10,12 +10,12 @@ import stanl_2.final_backend.domain.center.command.domain.repository.CenterRepos
 
 @Slf4j
 @Service("centerServiceImpl")
-public class CenterServiceImpl implements CenterService{
+public class CenterCommandServiceImpl implements CenterCommandService {
 
     private final CenterRepository centerRepository;
     private final ModelMapper modelMapper;
 
-    public CenterServiceImpl(CenterRepository centerRepository, ModelMapper modelMapper) {
+    public CenterCommandServiceImpl(CenterRepository centerRepository, ModelMapper modelMapper) {
         this.centerRepository = centerRepository;
         this.modelMapper = modelMapper;
     }

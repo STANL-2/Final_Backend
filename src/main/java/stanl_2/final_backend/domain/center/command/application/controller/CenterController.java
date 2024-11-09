@@ -1,23 +1,22 @@
 package stanl_2.final_backend.domain.center.command.application.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
 import stanl_2.final_backend.domain.center.command.application.dto.response.CenterRegistResponseDTO;
-import stanl_2.final_backend.domain.center.command.application.service.CenterService;
+import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
 import stanl_2.final_backend.domain.center.common.response.ResponseMessage;
 
-@RestController
+@RestController(value="commandCenterController")
 @RequestMapping("/api/v1/center")
 public class CenterController {
 
-    private final CenterService centerService;
+    private final CenterCommandService centerCommandService;
 
     @Autowired
-    public CenterController(CenterService centerService) {
-        this.centerService = centerService;
+    public CenterController(CenterCommandService centerCommandService) {
+        this.centerCommandService = centerCommandService;
     }
 
     //    @Operation(summary = "Get center Test")
@@ -29,7 +28,7 @@ public class CenterController {
     @PostMapping("")
     public ResponseEntity<?> postTest(@RequestBody CenterRegistRequestDTO centerRegistRequestDTO){
 
-        CenterRegistResponseDTO centerRegistResponseDTO = centerService.registCenter(centerRegistRequestDTO);
+        CenterRegistResponseDTO centerRegistResponseDTO = centerCommandService.registCenter(centerRegistRequestDTO);
 
         return ResponseEntity.ok(new ResponseMessage(200, "post 성공", centerRegistResponseDTO));
     }
