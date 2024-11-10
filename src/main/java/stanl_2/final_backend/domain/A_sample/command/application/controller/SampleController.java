@@ -16,7 +16,14 @@ public class SampleController {
 
     private final SampleService sampleService;
 
-
+    /**
+     * [POST] http://localhost:7777/api/v1/sample
+     * Request
+     *  {
+     *     "name": "tes1",
+     *     "num": 123
+     *  }
+     * */
     @PostMapping("")
     public ResponseEntity<ResponseMessage> postTest(@RequestBody PostRequestDTO postRequestDTO) {
 
@@ -29,15 +36,39 @@ public class SampleController {
                                                 .build());
     }
 
+    /**
+     * [PUT] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
+     * Request
+     *  {
+     *     "name": "abcc"
+     *  }
+     * */
     @PutMapping("")
     public ResponseEntity<ResponseMessage> putTest(@RequestParam("mem_id") String id
             , @RequestBody PutRequestDTO putRequestDTO) {
 
         PutResponseDTO putResponseDTO = sampleService.modify(id, putRequestDTO);
 
-        return ResponseEntity.ok(new ResponseMessage(200, "성공", putResponseDTO));
+        return ResponseEntity.ok(ResponseMessage.builder()
+                                                .httpStatus(200)
+                                                .msg("성공")
+                                                .result(putResponseDTO)
+                                                .build());
+    }
 
+    /**
+     * [DELETE] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
+     * */
+    @DeleteMapping("")
+    public ResponseEntity<ResponseMessage> deleteTest(@RequestParam("mem_id") String id) {
 
+        sampleService.remove(id);
+
+        return ResponseEntity.ok(ResponseMessage.builder()
+                                                .httpStatus(200)
+                                                .msg("성공")
+                                                .result(null)
+                                                .build());
     }
 
 

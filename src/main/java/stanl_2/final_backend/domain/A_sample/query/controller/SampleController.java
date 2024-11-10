@@ -16,6 +16,9 @@ public class SampleController {
 
     private final SampleService sampleService;
 
+    /**
+     * [GET] http://localhost:7777/api/v1/sample?id=SAM_000001
+     * */
     @GetMapping("")
     public ResponseEntity<ResponseMessage> getTest(@RequestParam("id") String id) {
         String name = sampleService.findName(id);

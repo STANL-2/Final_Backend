@@ -8,4 +8,6 @@ public interface SampleService {
     void register(PostRequestDTO postRequestDTO);
 
     PutResponseDTO modify(String id, PutRequestDTO putRequestDTO);
+
+    void remove(String id);
 }

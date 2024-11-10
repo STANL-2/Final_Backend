@@ -14,6 +14,10 @@ import stanl_2.final_backend.domain.A_sample.command.application.service.SampleS
 import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sample;
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
 
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 @Service("commandSampleService")
 @RequiredArgsConstructor
 public class SampleServiceImpl implements SampleService {
@@ -47,6 +51,11 @@ public class SampleServiceImpl implements SampleService {
         }
     }
 
+    private Timestamp getCurrentTimestamp() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return Timestamp.from(nowKst.toInstant());
+    }
+
     @Override
     @Transactional
     public void register(PostRequestDTO postRequestDTO) {
@@ -70,6 +79,18 @@ public class SampleServiceImpl implements SampleService {
         Sample responseSample = sampleRepository.save(updateSample);
 
         return modelMapper.map(responseSample, PutResponseDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public void remove(String id) {
+
+        stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO sampleDTO = sampleService.findById(id);
+
+        Sample deleteSample = modelMapper.map(sampleDTO, Sample.class);
+        deleteSample.setDeletedAt(getCurrentTimestamp());
+
+        sampleRepository.save(deleteSample);
     }
 
 }
