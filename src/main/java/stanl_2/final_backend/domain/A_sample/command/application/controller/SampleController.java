@@ -1,5 +1,10 @@
 package stanl_2.final_backend.domain.A_sample.command.application.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +29,11 @@ public class SampleController {
      *     "num": 123
      *  }
      * */
+    @Operation(summary = "샘플 요청 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                        content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+    })
     @PostMapping("")
     public ResponseEntity<ResponseMessage> postTest(@RequestBody PostRequestDTO postRequestDTO) {
 
@@ -43,6 +53,11 @@ public class SampleController {
      *     "name": "abcc"
      *  }
      * */
+    @Operation(summary = "샘플 수정 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+    })
     @PutMapping("")
     public ResponseEntity<ResponseMessage> putTest(@RequestParam("mem_id") String id
             , @RequestBody PutRequestDTO putRequestDTO) {
@@ -59,6 +74,11 @@ public class SampleController {
     /**
      * [DELETE] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
      * */
+    @Operation(summary = "샘플 삭제 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+    })
     @DeleteMapping("")
     public ResponseEntity<ResponseMessage> deleteTest(@RequestParam("mem_id") String id) {
 
