@@ -8,9 +8,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PostRequestDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PutRequestDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.response.PutResponseDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleService;
-import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.Sample;
+import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sample;
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
+import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
+import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
 
 @Service("commandSampleService")
 @RequiredArgsConstructor
@@ -54,4 +58,13 @@ public class SampleServiceImpl implements SampleService {
 
         sampleRepository.save(newSample);
     }
+
+    @Override
+    public PutResponseDTO modify(String id, PutRequestDTO putRequestDTO) {
+
+
+
+        return null;
+    }
+
 }

@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.A_sample.command.domain.aggregate;
+package stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class Sample {
     @Column(name = "UPDATED_AT", nullable = false)
     private Timestamp updatedAt;
 
-    @Column(name = "DELETE_AT")
+    @Column(name = "DELETED_AT")
     private Timestamp deletedAt;
 
 
