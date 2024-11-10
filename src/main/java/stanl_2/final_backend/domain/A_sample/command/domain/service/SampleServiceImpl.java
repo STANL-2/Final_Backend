@@ -13,13 +13,12 @@ import stanl_2.final_backend.domain.A_sample.command.application.dto.response.Pu
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleService;
 import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sample;
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
-import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
-import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
 
 @Service("commandSampleService")
 @RequiredArgsConstructor
 public class SampleServiceImpl implements SampleService {
 
+    private final stanl_2.final_backend.domain.A_sample.query.service.SampleService sampleService;
     private final SampleRepository sampleRepository;
     private final ModelMapper modelMapper;
 
@@ -60,11 +59,17 @@ public class SampleServiceImpl implements SampleService {
     }
 
     @Override
+    @Transactional
     public PutResponseDTO modify(String id, PutRequestDTO putRequestDTO) {
 
+        stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO sampleDTO = sampleService.findById(id);
 
+        Sample updateSample = modelMapper.map(sampleDTO, Sample.class);
+        updateSample.setName(putRequestDTO.getName());
 
-        return null;
+        Sample responseSample = sampleRepository.save(updateSample);
+
+        return modelMapper.map(responseSample, PutResponseDTO.class);
     }
 
 }

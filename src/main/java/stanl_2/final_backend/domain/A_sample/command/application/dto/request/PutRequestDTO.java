@@ -9,5 +9,4 @@ import lombok.*;
 @ToString
 public class PutRequestDTO {
     private String name;
-    private Integer num;
 }

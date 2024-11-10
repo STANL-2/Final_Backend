@@ -21,7 +21,7 @@
          WHERE A.SAM_ID = #{ id }
     </select>
 
-    <select id="selectById" resultType="SampleResultMap" parameterType="String">
+    <select id="selectById" resultMap="SampleResultMap" parameterType="String">
         SELECT
                A.SAM_ID,
                A.SAM_NAME,
