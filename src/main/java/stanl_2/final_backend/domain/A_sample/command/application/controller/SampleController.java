@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PostRequestDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PutRequestDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.response.DeleteResponseDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.response.PostResponseDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.response.PutResponseDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleService;
 import stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage;
@@ -37,7 +39,11 @@ public class SampleController {
     @PostMapping("")
     public ResponseEntity<ResponseMessage> postTest(@RequestBody PostRequestDTO postRequestDTO) {
 
-        sampleService.register(postRequestDTO);
+        PostResponseDTO postResponseDTO = sampleService.register(postRequestDTO);
+
+        if(postResponseDTO == null) {
+            ResponseEntity.badRequest();
+        }
 
         return ResponseEntity.ok(ResponseMessage.builder()
                                                 .httpStatus(200)
@@ -82,7 +88,12 @@ public class SampleController {
     @DeleteMapping("")
     public ResponseEntity<ResponseMessage> deleteTest(@RequestParam("mem_id") String id) {
 
-        sampleService.remove(id);
+        DeleteResponseDTO deleteResponseDTO = sampleService.remove(id);
+
+        // 원래 잘 active 값이 변경되었는지 확인
+        if(deleteResponseDTO == null) {
+            ResponseEntity.badRequest();
+        }
 
         return ResponseEntity.ok(ResponseMessage.builder()
                                                 .httpStatus(200)

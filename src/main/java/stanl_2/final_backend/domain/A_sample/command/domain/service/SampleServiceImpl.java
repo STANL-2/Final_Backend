@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PostRequestDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PutRequestDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.response.DeleteResponseDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.response.PostResponseDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.response.PutResponseDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleService;
 import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sample;
@@ -58,13 +60,15 @@ public class SampleServiceImpl implements SampleService {
 
     @Override
     @Transactional
-    public void register(PostRequestDTO postRequestDTO) {
+    public PostResponseDTO register(PostRequestDTO postRequestDTO) {
 
         String newId = generateNextId();
         Sample newSample = modelMapper.map(postRequestDTO, Sample.class);
         newSample.setId(newId);
 
-        sampleRepository.save(newSample);
+        Sample sample = sampleRepository.save(newSample);
+
+        return modelMapper.map(sample, PostResponseDTO.class);
     }
 
     @Override
@@ -83,14 +87,16 @@ public class SampleServiceImpl implements SampleService {
 
     @Override
     @Transactional
-    public void remove(String id) {
+    public DeleteResponseDTO remove(String id) {
 
         stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO sampleDTO = sampleService.findById(id);
 
         Sample deleteSample = modelMapper.map(sampleDTO, Sample.class);
         deleteSample.setDeletedAt(getCurrentTimestamp());
 
-        sampleRepository.save(deleteSample);
+        Sample deletedSample = sampleRepository.save(deleteSample);
+
+        return modelMapper.map(deletedSample, DeleteResponseDTO.class);
     }
 
 }
