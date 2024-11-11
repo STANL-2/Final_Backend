@@ -7,9 +7,12 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${DATABASE_URL}:${MARIA_DATABASE_PORT}/${MARIA_DATABASE_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+#    url: jdbc:mariadb://${DATABASE_URL}:${MARIA_DATABASE_PORT}/${MARIA_DATABASE_NAME}
+    url: jdbc:mariadb://motive.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
+    username: admin
+    password: motivepassword
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
