@@ -7,24 +7,24 @@ import stanl_2.final_backend.domain.schedule.command.application.dto.request.Sch
 import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleRegistRequestDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleModifyResponseDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleRegistResponseDTO;
-import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleService;
+import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
 import stanl_2.final_backend.domain.schedule.common.response.ResponseMessage;
 
 @RestController("commandScheduleController")
 @RequestMapping("/api/v1/schedule")
 public class ScheduleController {
 
-    private final ScheduleService scheduleService;
+    private final ScheduleCommandService scheduleCommandService;
 
     @Autowired
-    public ScheduleController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
+    public ScheduleController(ScheduleCommandService scheduleCommandService) {
+        this.scheduleCommandService = scheduleCommandService;
     }
 
     @PostMapping("")
     public ResponseEntity<ResponseMessage> registSchedule(@RequestBody ScheduleRegistRequestDTO scheduleRegistRequestDTO){
 
-        ScheduleRegistResponseDTO scheduleRegistResponseDTO = scheduleService.registSchedule(scheduleRegistRequestDTO);
+        ScheduleRegistResponseDTO scheduleRegistResponseDTO = scheduleCommandService.registSchedule(scheduleRegistRequestDTO);
 
         return ResponseEntity.ok(new ResponseMessage(200,"성공",scheduleRegistResponseDTO));
     }
@@ -32,7 +32,7 @@ public class ScheduleController {
     @PutMapping("")
     public ResponseEntity<ResponseMessage> modifySchedule(@RequestBody ScheduleModifyRequestDTO scheduleModifyRequestDTO){
 
-        ScheduleModifyResponseDTO scheduleModifyResponseDTO = scheduleService.modifySchedule(scheduleModifyRequestDTO);
+        ScheduleModifyResponseDTO scheduleModifyResponseDTO = scheduleCommandService.modifySchedule(scheduleModifyRequestDTO);
 
         return ResponseEntity.ok(new ResponseMessage(200,"성공",scheduleModifyResponseDTO));
     }
@@ -40,7 +40,7 @@ public class ScheduleController {
     @DeleteMapping("{id}")
     public ResponseEntity<ResponseMessage> deleteSchedule(@PathVariable String id){
 
-        Boolean active = scheduleService.deleteSchedule(id);
+        Boolean active = scheduleCommandService.deleteSchedule(id);
 
         return ResponseEntity.ok(new ResponseMessage(200,"성공",active));
     }

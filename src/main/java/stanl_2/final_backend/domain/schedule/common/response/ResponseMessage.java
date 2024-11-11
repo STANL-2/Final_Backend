@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 public class ResponseMessage {
-    private int httpStatus;
+    private Integer httpStatus;
     private String msg;
     private Object result;
 }

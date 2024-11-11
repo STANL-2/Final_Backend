@@ -5,7 +5,7 @@ import stanl_2.final_backend.domain.schedule.command.application.dto.request.Sch
 import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleModifyResponseDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleRegistResponseDTO;
 
-public interface ScheduleService {
+public interface ScheduleCommandService {
 
     ScheduleRegistResponseDTO registSchedule(ScheduleRegistRequestDTO scheduleRegistRequestDTO);
 

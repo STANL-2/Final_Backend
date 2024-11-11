@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.schedule.command.application.service;
+package stanl_2.final_backend.domain.schedule.command.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -9,6 +9,7 @@ import stanl_2.final_backend.domain.schedule.command.application.dto.request.Sch
 import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleRegistRequestDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleModifyResponseDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleRegistResponseDTO;
+import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
 import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
 import stanl_2.final_backend.domain.schedule.command.domain.repository.ScheduleRepository;
 import stanl_2.final_backend.domain.schedule.common.exception.CommonException;
@@ -20,13 +21,13 @@ import java.time.ZonedDateTime;
 
 @Slf4j
 @Service("commandScheduleServiceImpl")
-public class ScheduleServiceImpl implements ScheduleService{
+public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     private final ScheduleRepository scheduleRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, ModelMapper modelMapper) {
+    public ScheduleCommandServiceImpl(ScheduleRepository scheduleRepository, ModelMapper modelMapper) {
         this.scheduleRepository = scheduleRepository;
         this.modelMapper = modelMapper;
     }
