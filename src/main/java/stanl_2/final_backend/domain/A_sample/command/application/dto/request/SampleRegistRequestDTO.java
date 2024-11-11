@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @ToString
 public class SampleRegistRequestDTO {
+    private String id;
     private String name;
     private Integer num;
 }

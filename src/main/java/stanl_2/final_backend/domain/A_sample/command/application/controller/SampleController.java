@@ -39,8 +39,9 @@ public class SampleController {
                         content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ResponseMessage> postTest(@RequestBody SampleRegistRequestDTO sampleRegistRequestDTO) {
-
+    public ResponseEntity<ResponseMessage> postTest(@PathVariable String id,
+                                                    @RequestBody SampleRegistRequestDTO sampleRegistRequestDTO) {
+        sampleRegistRequestDTO.setId(id);
         sampleCommandService.registerSample(sampleRegistRequestDTO);
 
         return ResponseEntity.ok(ResponseMessage.builder()
@@ -63,8 +64,8 @@ public class SampleController {
                     content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
     @PutMapping("{id}")
-    public ResponseEntity<ResponseMessage> putTest(@PathVariable String id
-            , @RequestBody SampleModifyRequestDTO sampleModifyRequestDTO) {
+    public ResponseEntity<ResponseMessage> putTest(@PathVariable String id,
+                                                   @RequestBody SampleModifyRequestDTO sampleModifyRequestDTO) {
 
         sampleModifyRequestDTO.setId(id);
         SampleModifyResponseDTO sampleModifyResponseDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
