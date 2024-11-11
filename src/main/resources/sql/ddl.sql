@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 -- 자식 테이블부터 삭제
 DROP TABLE IF EXISTS tb_product_option;
 DROP TABLE IF EXISTS tb_update_history;
