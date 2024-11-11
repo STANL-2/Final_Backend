@@ -3,20 +3,18 @@ FROM openjdk:17-jdk-slim AS build
 WORKDIR /app
 
 # 필요한 파일 복사
-
-COPY ../Final_Backend/gradlew ./
+COPY ./gradlew ./gradlew
+COPY ./build.gradle ./settings.gradle ./
+COPY ./gradle ./gradle
 
 # gradlew 실행 권한 추가
 RUN chmod +x gradlew
 
-COPY ../Final_Backend/build.gradle settings.gradle ./
-COPY ../Final_Backend/gradle ./gradle
-
 # 소스 코드 복사
-COPY ../Final_Backend .
+COPY . .
 
 # Gradle 빌드 실행
-RUN chmod +x gradlew && ./gradlew clean build -x test --no-daemon
+RUN ./gradlew clean build -x test --no-daemon
 
 # 실행 단계
 FROM openjdk:17-jdk-slim
