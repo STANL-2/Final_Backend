@@ -24,7 +24,7 @@ WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 
 # 포트 노출
-EXPOSE 8080
+EXPOSE 8081
 
 # JAR 파일 실행
-ENTRYPOINT ["java", "-jar", "app.jar",  "--server.port=8080"]
+ENTRYPOINT ["java", "-jar", "app.jar",  "--server.port=8081"]
