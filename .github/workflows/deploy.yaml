@@ -1,0 +1,70 @@
+name: Deploy to Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+      - feat/operation
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-northeast-2
+      APPLICATION_NAME: "motive-bakcend"
+      ENVIRONMENT_NAME: "Motive-backend-env"
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set executable permission for gradlew
+      run: chmod +x backend/gradlew
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+
+    - name: Install Elastic Beanstalk CLI
+      run: |
+        echo "Installing Elastic Beanstalk CLI..."
+        sudo apt update
+        sudo apt install -y python3-pip
+        pip install --upgrade pip
+        pip install --upgrade awsebcli
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Set Environment Variables
+      run: |
+        export SPRING_APP_NAME=${{ secrets.SPRING_APP_NAME }}
+        export DATABASE_URL=${{ secrets.DATABASE_URL }}
+        export MARIA_DATABASE_PORT=${{ secrets.MARIA_DATABASE_PORT }}
+        export MARIA_DATABASE_NAME=${{ secrets.MARIA_DATABASE_NAME }}
+        export DB_USERNAME=${{ secrets.DB_USERNAME }}
+        export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+        export REDIS_HOST=${{ secrets.REDIS_HOST }}
+        export REDIS_PORT=${{ secrets.REDIS_PORT }}
+        export SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}
+        export SECRET_KEY=${{ secrets.SECRET_KEY }}
+        export JWT_SECRET_DEFAULT_VALUE=${{ secrets.JWT_SECRET_DEFAULT_VALUE }}
+        export JWT_HEADER=${{ secrets.JWT_HEADER }}
+
+    - name: Build and package the application
+      run: |
+        cd backend
+        ./gradlew clean build -x test
+
+    - name: Deploy to Elastic Beanstalk
+      run: |
+        echo "Deploying to Elastic Beanstalk..."
+        eb init ${{ env.APPLICATION_NAME }} --region ${{ env.AWS_REGION }} --platform "Docker"
+        eb use ${{ env.ENVIRONMENT_NAME }}
+        eb deploy
