@@ -1,16 +1,18 @@
 server:
   forward-headers-strategy: native
-  port: 7777
 
 spring:
   application:
-    name: ${SPRING_APP_NAME}
+    name: finalbackend
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${DATABASE_HOST}:${MARIA_DATABASE_PORT}/${MARIA_DATABASE_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+#    url: jdbc:mariadb://${DATABASE_URL}:${MARIA_DATABASE_PORT}/${MARIA_DATABASE_NAME}
+    url: jdbc:mariadb://motive.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
+    username: admin
+    password: motivepassword
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
@@ -27,11 +29,10 @@ spring:
       ddl-auto: create
     properties:
       hibernate.format_sql: true
-
 jwt:
   secret-key: ${SECRET_KEY}
-  secret-default-value: ${JWT_SECRET_DEFAULT_VALUE}
-  header: ${JWT_HEADER}
+  secret-default-value: c29tZSBzZWN1cmUgMTI4LWJpdCBzZWNyZXQga2V5IGZvciBKU1VfUElQ
+  header: Authorization
 
 logging:
   pattern:
@@ -40,7 +41,3 @@ logging:
     org:
       springframework:
         security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
-#server:
-#  servlet:
-#    session:
-#      timeout: ${SESSION_TIMEOUT:20m}
