@@ -29,7 +29,6 @@ spring:
       ddl-auto: update
     properties:
       hibernate.format_sql: true
-
 jwt:
   secret-key: ${SECRET_KEY}
   secret-default-value: c29tZSBzZWN1cmUgMTI4LWJpdCBzZWNyZXQga2V5IGZvciBKU1VfUElQ
