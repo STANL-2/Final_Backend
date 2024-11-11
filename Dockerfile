@@ -1,5 +1,5 @@
 # Backend Dockerfile (Spring Boot)
-FROM openjdk:17-jdk-slim AS build
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # 필요한 파일 복사
