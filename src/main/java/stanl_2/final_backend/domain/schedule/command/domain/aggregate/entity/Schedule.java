@@ -57,8 +57,7 @@ public class Schedule {
     // Insert 되기 전에 실행
     @PrePersist
     public void prePersist() {
-        Timestamp currentTimestamp = getCurrentTimestamp();
-        this.createdAt = currentTimestamp;
+        this.createdAt = getCurrentTimestamp();
         this.updatedAt = this.createdAt;
     }
 

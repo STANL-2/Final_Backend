@@ -7,7 +7,8 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class PostRequestDTO {
+public class SampleRegistRequestDTO {
+    private String id;
     private String name;
     private Integer num;
 }

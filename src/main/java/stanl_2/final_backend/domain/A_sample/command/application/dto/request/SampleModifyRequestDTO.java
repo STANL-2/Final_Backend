@@ -7,6 +7,8 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class PutRequestDTO {
+public class SampleModifyRequestDTO {
+    private String id;
     private String name;
+    private Integer num;
 }

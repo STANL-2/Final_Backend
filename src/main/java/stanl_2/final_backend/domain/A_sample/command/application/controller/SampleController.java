@@ -5,21 +5,25 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PostRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.PutRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.response.PutResponseDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.service.SampleService;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleRegistRequestDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleModifyRequestDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.response.SampleModifyResponseDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
 import stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage;
 
 @RestController("commandSampleController")
 @RequestMapping("/api/v1/sample")
-@RequiredArgsConstructor
 public class SampleController {
 
-    private final SampleService sampleService;
+    private final SampleCommandService sampleCommandService;
+
+    @Autowired
+    public SampleController(SampleCommandService sampleCommandService) {
+        this.sampleCommandService = sampleCommandService;
+    }
 
     /**
      * [POST] http://localhost:7777/api/v1/sample
@@ -35,9 +39,10 @@ public class SampleController {
                         content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ResponseMessage> postTest(@RequestBody PostRequestDTO postRequestDTO) {
-
-        sampleService.register(postRequestDTO);
+    public ResponseEntity<ResponseMessage> postTest(@PathVariable String id,
+                                                    @RequestBody SampleRegistRequestDTO sampleRegistRequestDTO) {
+        sampleRegistRequestDTO.setId(id);
+        sampleCommandService.registerSample(sampleRegistRequestDTO);
 
         return ResponseEntity.ok(ResponseMessage.builder()
                                                 .httpStatus(200)
@@ -58,16 +63,17 @@ public class SampleController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
-    @PutMapping("")
-    public ResponseEntity<ResponseMessage> putTest(@RequestParam("mem_id") String id
-            , @RequestBody PutRequestDTO putRequestDTO) {
+    @PutMapping("{id}")
+    public ResponseEntity<ResponseMessage> putTest(@PathVariable String id,
+                                                   @RequestBody SampleModifyRequestDTO sampleModifyRequestDTO) {
 
-        PutResponseDTO putResponseDTO = sampleService.modify(id, putRequestDTO);
+        sampleModifyRequestDTO.setId(id);
+        SampleModifyResponseDTO sampleModifyResponseDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
 
         return ResponseEntity.ok(ResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
-                                                .result(putResponseDTO)
+                                                .result(sampleModifyResponseDTO)
                                                 .build());
     }
 
@@ -79,10 +85,10 @@ public class SampleController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
-    @DeleteMapping("")
-    public ResponseEntity<ResponseMessage> deleteTest(@RequestParam("mem_id") String id) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<ResponseMessage> deleteTest(@PathVariable String id) {
 
-        sampleService.remove(id);
+        sampleCommandService.deleteSample(id);
 
         return ResponseEntity.ok(ResponseMessage.builder()
                                                 .httpStatus(200)
