@@ -4,9 +4,8 @@ services:
   backend:
     build:
       dockerfile: Dockerfile
-      args:
-        - DOCKER_BUILDKIT=1
-    container_name: backend 
+      context: .
+    container_name: backend
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     ports:
@@ -16,8 +15,8 @@ services:
 
   nginx:
     build:
-      context: ./nginx
       dockerfile: Dockerfile
+      context: ./nginx
     container_name: nginx
     depends_on:
       - backend
