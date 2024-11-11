@@ -1,5 +1,4 @@
 server:
-  forward-headers-strategy: native
   port: 5000
 
 spring:
