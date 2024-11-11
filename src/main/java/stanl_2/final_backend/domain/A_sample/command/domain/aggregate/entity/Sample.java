@@ -26,6 +26,7 @@ public class Sample {
             type = PrefixGeneratorConfig.class,
             parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "SAM")
     )
+    @Column(name = "SAM_ID")
     private String id;
 
     @Column(name = "SAM_NAME")

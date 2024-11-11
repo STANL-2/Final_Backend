@@ -39,9 +39,8 @@ public class SampleController {
                         content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ResponseMessage> postTest(@PathVariable String id,
-                                                    @RequestBody SampleRegistRequestDTO sampleRegistRequestDTO) {
-        sampleRegistRequestDTO.setId(id);
+    public ResponseEntity<ResponseMessage> postTest(@RequestBody SampleRegistRequestDTO sampleRegistRequestDTO) {
+
         sampleCommandService.registerSample(sampleRegistRequestDTO);
 
         return ResponseEntity.ok(ResponseMessage.builder()
