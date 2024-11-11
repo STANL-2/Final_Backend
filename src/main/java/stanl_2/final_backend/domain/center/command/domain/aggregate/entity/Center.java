@@ -2,6 +2,8 @@ package stanl_2.final_backend.domain.center.command.domain.aggregate.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -18,11 +20,13 @@ import java.time.ZonedDateTime;
 @Getter
 public class Center {
 
-    /* 설명. 테스트를 위한 Long 선언 => mem_0000001 구현을 위해서는 고도화 진행 필요*/
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CENT_ID", nullable = false)
-    private Long id;
+    @GeneratedValue(generator = "PrefixGeneratorConfig")
+    @GenericGenerator(name = "PrefixGeneratorConfig",
+            type = PrefixGeneratorConfig.class,
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CEN")
+    )
+    private String id;
 
     @Column(name = "CENT_NAME", nullable = false)
     private String name;
@@ -55,11 +59,11 @@ public class Center {
     /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행
     @PrePersist
-    public void prePersist() {
-        Timestamp currentTimestamp = getCurrentTimestamp();
-        this.createdAt = currentTimestamp;
+    private void prePersist() {
+        this.createdAt = getCurrentTimestamp();
         this.updatedAt = this.createdAt;
     }
+
 
     // Update 되기 전에 실행
     @PreUpdate

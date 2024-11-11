@@ -1,16 +1,8 @@
 package stanl_2.final_backend.domain.center.command.application.dto.response;
 
-import lombok.*;
-
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-public class CenterRegistResponseDTO {
+public class CenterModifyResponseDTO {
 
     private String name;
     private String address;
