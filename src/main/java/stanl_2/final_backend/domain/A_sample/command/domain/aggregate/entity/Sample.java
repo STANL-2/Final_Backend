@@ -53,17 +53,17 @@ public class Sample {
     // Insert 되기 전에 실행
     @PrePersist
     private void prePersist() {
-        this.createdAt = getCurrentTimestamp();
+        this.createdAt = getCurrentTime();
         this.updatedAt = this.createdAt;
     }
 
     // Update 되기 전에 실행
     @PreUpdate
     private void preUpdate() {
-        this.updatedAt = getCurrentTimestamp();
+        this.updatedAt = getCurrentTime();
     }
 
-    private String  getCurrentTimestamp() {
+    private String  getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
