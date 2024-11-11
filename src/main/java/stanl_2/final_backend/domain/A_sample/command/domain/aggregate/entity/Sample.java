@@ -11,6 +11,7 @@ import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,13 +37,13 @@ public class Sample {
     private Integer num;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
-    private Timestamp createdAt;
+    private String  createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updatedAt;
+    private String  updatedAt;
 
     @Column(name = "DELETED_AT")
-    private Timestamp deletedAt;
+    private String  deletedAt;
 
     @Column(name = "ACTIVE")
     private Boolean active = true;
@@ -62,9 +63,9 @@ public class Sample {
         this.updatedAt = getCurrentTimestamp();
     }
 
-    private Timestamp getCurrentTimestamp() {
+    private String  getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
 }
