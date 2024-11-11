@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ScheduleRegistResponseDTO {
+public class ScheduleModifyResponseDTO {
 
     private String id;
     private String name;

@@ -2,12 +2,10 @@ package stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
+import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -19,12 +17,13 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Schedule {
 
     @Id
-    @GeneratedValue(generator = "hbkbs-generator")
-    @GenericGenerator(name = "hkbks-generator",
-                      type = stanl_2.final_backend.global.config.PrefixGeneratorConfig.class,
+    @GeneratedValue(generator = "PrefixGeneratorConfig")
+    @GenericGenerator(name = "PrefixGeneratorConfig",
+                      type = PrefixGeneratorConfig.class,
                       parameters = @Parameter(name = "prefix", value = "SCH")
     )
     @Column(name = "SCH_ID", nullable = false)

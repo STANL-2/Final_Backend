@@ -2,7 +2,6 @@ package stanl_2.final_backend.global.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
-import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
@@ -33,7 +32,6 @@ public class PrefixGeneratorConfig implements IdentifierGenerator {
 
             // ID 조회 쿼리 생성 - 식별자 필드만 조회
             String query = String.format("SELECT e.%s FROM %s e", idProperty, entityName);
-            log.info("Generated query: {}", query);
 
             // Hibernate 6.x에 맞는 쿼리 실행 방식
             Stream<String> ids = session.createSelectionQuery(query, String.class).getResultStream();
@@ -46,7 +44,7 @@ public class PrefixGeneratorConfig implements IdentifierGenerator {
                     .orElse(0L);
 
             // 새로운 ID 생성
-            return prefix + "_" + (max + 1);
+            return prefix + "_" + String.format("%09d", max + 1);
         } catch (Exception e) {
             log.error("Error generating ID", e);
             throw new HibernateException("Failed to generate ID", e);

@@ -3,7 +3,9 @@ package stanl_2.final_backend.domain.schedule.command.application.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleModifyRequestDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleRegistRequestDTO;
+import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleModifyResponseDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleRegistResponseDTO;
 import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleService;
 import stanl_2.final_backend.domain.schedule.common.response.ResponseMessage;
@@ -20,7 +22,7 @@ public class ScheduleController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> registSchedule(@RequestBody ScheduleRegistRequestDTO scheduleRegistRequestDTO){
+    public ResponseEntity<ResponseMessage> registSchedule(@RequestBody ScheduleRegistRequestDTO scheduleRegistRequestDTO){
 
         ScheduleRegistResponseDTO scheduleRegistResponseDTO = scheduleService.registSchedule(scheduleRegistRequestDTO);
 
@@ -28,14 +30,18 @@ public class ScheduleController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> modifySchedule(){
+    public ResponseEntity<ResponseMessage> modifySchedule(@RequestBody ScheduleModifyRequestDTO scheduleModifyRequestDTO){
 
-        return ResponseEntity.ok(new ResponseMessage(200,"성공",""));
+        ScheduleModifyResponseDTO scheduleModifyResponseDTO = scheduleService.modifySchedule(scheduleModifyRequestDTO);
+
+        return ResponseEntity.ok(new ResponseMessage(200,"성공",scheduleModifyResponseDTO));
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<?> deleteSchedule(){
+    @DeleteMapping("{id}")
+    public ResponseEntity<ResponseMessage> deleteSchedule(@PathVariable String id){
 
-        return ResponseEntity.ok(new ResponseMessage(200,"성공",""));
+        Boolean active = scheduleService.deleteSchedule(id);
+
+        return ResponseEntity.ok(new ResponseMessage(200,"성공",active));
     }
 }

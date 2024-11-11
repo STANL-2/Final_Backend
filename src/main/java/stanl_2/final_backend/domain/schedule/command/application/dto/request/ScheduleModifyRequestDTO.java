@@ -9,8 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ScheduleRegistRequestDTO {
+public class ScheduleModifyRequestDTO {
 
+    private String id;
     private String name;
     private String content;
     private String reservationTime;
