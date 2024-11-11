@@ -18,4 +18,5 @@ public class SampleDTO {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
+    private Boolean active;
 }
