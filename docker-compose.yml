@@ -12,6 +12,7 @@ services:
       - "5000:5000"  
     networks:
       - app-network
+    restart: always
 
   nginx:
     build:
@@ -24,6 +25,7 @@ services:
       - "80:80"
     networks:
       - app-network
+    restart: always
 
 networks:
   app-network:
