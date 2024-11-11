@@ -46,7 +46,7 @@ public class SampleController {
     }
 
     /**
-     * [GET] http://localhost:7777/api/v1/sample/detail/1
+     * [GET] http://localhost:7777/api/v1/sample/detail/SAM_000000001
      * */
     @Operation(summary = "샘플 상세 조회 테스트")
     @ApiResponses(value = {
