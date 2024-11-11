@@ -43,6 +43,7 @@ public class ProdSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 토큰 요청 속성을 사용하여 토큰 값을 헤더나 매개변수 값으로 해결하는 로직을 포함
         CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        http.csrf(csrfConfig -> csrfConfig.disable());
         http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfig -> corsConfig.configurationSource(new CorsConfigurationSource() {
                     @Override
@@ -57,17 +58,17 @@ public class ProdSecurityConfig {
                         return config;
                     }
                 }))
-                .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-                        // 아래 API들에 대해서는 CSRF 보호를 무시하도록 지시(공개)
-                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin")
-                        // 로그인 작업 후 처음으로 CSRF 토큰을 생성하는데만 도움을 준다.
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+//                .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+//                        // 아래 API들에 대해서는 CSRF 보호를 무시하도록 지시(공개)
+//                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin")
+//                        // 로그인 작업 후 처음으로 CSRF 토큰을 생성하는데만 도움을 준다.
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 // 로그인 시 사용(jwt 생성)2
-                .addFilterAfter(new JWTTokenGeneratorFilter(applicationConstants), BasicAuthenticationFilter.class)
+//                .addFilterAfter(new JWTTokenGeneratorFilter(applicationConstants), BasicAuthenticationFilter.class)
                 // 다른 api 접근시 사용(인증)1
-                .addFilterBefore(new JWTTokenValidatorFilter(applicationConstants), BasicAuthenticationFilter.class)
+//                .addFilterBefore(new JWTTokenValidatorFilter(applicationConstants), BasicAuthenticationFilter.class)
                 // csrf 보호 필터3
-                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+//                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 // 데이터 파싱 필터(파싱해서 request로 )4
 //                .addFilterAfter(new TokenFilter(applicationConstants), JWTTokenGeneratorFilter.class)
 
@@ -76,7 +77,8 @@ public class ProdSecurityConfig {
                 .authorizeHttpRequests((requests -> requests
                         // 모두 접근 가능
                         .requestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin").permitAll()
-                        .anyRequest().authenticated()));
+                        .anyRequest().permitAll()));
+//                        .anyRequest().authenticated()));
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         return http.build();
