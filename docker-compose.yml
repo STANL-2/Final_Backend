@@ -3,21 +3,21 @@ version: '3.8'
 services:
   backend:
     build:
-      dockerfile: Dockerfile
       context: .
+      dockerfile: Dockerfile
     container_name: backend
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     ports:
-      - "5000:5000"  
+      - "5000:5000"
+    restart: always
     networks:
       - app-network
-    restart: always
 
   nginx:
     build:
-      dockerfile: Dockerfile
       context: ./nginx
+      dockerfile: Dockerfile
     container_name: nginx
     depends_on:
       - backend
