@@ -3,25 +3,25 @@ version: '3.8'
 services:
   backend:
     build:
-      dockerfile: Dockerfile
       context: .
+      dockerfile: Dockerfile
     container_name: backend
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     networks:
       - app-network
 
   nginx:
     build:
-      dockerfile: Dockerfile
       context: ./nginx
+      dockerfile: Dockerfile
     container_name: nginx
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "80:8080"  # Nginx가 8080 포트로 내부 백엔드에 접근
     networks:
       - app-network
 

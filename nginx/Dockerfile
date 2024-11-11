@@ -1,4 +1,3 @@
-#nginx/Dockerfile
 FROM nginx:alpine
 
 # Nginx 설정 파일 복사
