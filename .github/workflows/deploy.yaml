@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Set executable permission for gradlew
-      run: chmod +x backend/gradlew
+      run: chmod +x gradlew
 
     - name: Set up JDK 17
       uses: actions/setup-java@v3
@@ -59,12 +59,10 @@ jobs:
 
     - name: Build and package the application
       run: |
-        cd backend
         ./gradlew clean build -x test
 
     - name: Deploy to Elastic Beanstalk
       run: |
-        echo "Deploying to Elastic Beanstalk..."
         eb init ${{ env.APPLICATION_NAME }} --region ${{ env.AWS_REGION }} --platform "Docker"
         eb use ${{ env.ENVIRONMENT_NAME }}
         eb deploy
