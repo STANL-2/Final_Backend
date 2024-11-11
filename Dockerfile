@@ -18,8 +18,6 @@ RUN ./gradlew clean build -x test --no-daemon
 # 단계 2: 실행 단계 (빌드된 JAR 파일 실행)
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-
-# 빌드된 JAR 파일 복사
 COPY --from=build /app/build/libs/*.jar app.jar
 
 # 포트 노출
