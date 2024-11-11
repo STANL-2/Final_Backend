@@ -1,3 +1,4 @@
+#.github/workflows/deploy.yaml
 name: Deploy to Elastic Beanstalk
 
 on:
@@ -30,7 +31,6 @@ jobs:
 
     - name: Install Elastic Beanstalk CLI
       run: |
-        echo "Installing Elastic Beanstalk CLI..."
         sudo apt update
         sudo apt install -y python3-pip
         pip install --upgrade pip
@@ -64,6 +64,6 @@ jobs:
 
     - name: Deploy to Elastic Beanstalk
       run: |
-        eb init ${{ env.APPLICATION_NAME }} --region ${{ env.AWS_REGION }} --platform "Docker"
+        eb init -p docker ${{ env.APPLICATION_NAME }} --region ${{ env.AWS_REGION }}
         eb use ${{ env.ENVIRONMENT_NAME }}
-        eb deploy
+        eb deploy ${{ env.ENVIRONMENT_NAME }}

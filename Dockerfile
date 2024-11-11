@@ -3,16 +3,17 @@ FROM openjdk:17-jdk-slim AS build
 WORKDIR /app
 
 # 필요한 파일 복사
-COPY gradlew ./gradlew
+COPY gradlew ./
+COPY gradle/ ./gradle/
 COPY build.gradle settings.gradle ./
-COPY gradle ./gradle
+
 
 # gradlew 실행 권한 추가
 RUN chmod +x gradlew
+RUN ./gradlew dependencies --no-daemon
 
 # 소스 코드 복사
 COPY . .
-
 # Gradle 빌드 실행
 RUN ./gradlew clean build -x test --no-daemon
 
