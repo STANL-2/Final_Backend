@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.A_sample.query.repository.SampleMapper">
+
+    <resultMap id="SampleResultMap" type="stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO">
+        <id property="id" column="SAM_ID"/>
+        <result property="name" column="SAM_NAME"/>
+        <result property="num" column="SAM_NUM"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+    </resultMap>
+
+
+    <select id="selectNameById" resultType="String" parameterType="String">
+        SELECT
+               A.SAM_NAME
+          FROM SAMPLE A
+         WHERE A.SAM_ID = #{ id }
+    </select>
+
+    <select id="selectById" resultMap="SampleResultMap" parameterType="String">
+        SELECT
+               A.SAM_ID,
+               A.SAM_NAME,
+               A.SAM_NUM,
+               A.CREATED_AT,
+               A.UPDATED_AT,
+               A.DELETED_AT
+          FROM SAMPLE A
+         WHERE A.SAM_ID = #{ id }
+    </select>
+
+</mapper>
