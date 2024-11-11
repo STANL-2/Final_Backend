@@ -7,7 +7,8 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${DATABASE_URL}:${MARIA_DATABASE_PORT:3306}/${MARIA_DATABASE_NAME}
+#    url: jdbc:mariadb://${DATABASE_URL}:${MARIA_DATABASE_PORT}/${MARIA_DATABASE_NAME}
+    url: jdbc:mariadb://motive.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
