@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feat/operation
+      - feat/backend-operation
 
 jobs:
   deploy:
