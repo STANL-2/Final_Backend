@@ -20,6 +20,7 @@ DROP TABLE IF EXISTS tb_center;
 DROP TABLE IF EXISTS tb_organization_chart;
 DROP TABLE IF EXISTS tb_sales_history;
 
+
 -- 조직 관련 테이블 생성
 CREATE TABLE tb_organization_chart
 (
