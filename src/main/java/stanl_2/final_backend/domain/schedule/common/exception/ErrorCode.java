@@ -12,6 +12,8 @@ public enum ErrorCode {
      * 400(Bad Request)
      * 이 응답은 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음을 의미합니다.
      */
+    DATA_INTEGRITY_VIOLATION(40001, HttpStatus.BAD_REQUEST, "데이터 무결 위반하였습니다."),
+    CONSTRAINT_VIOLATION(40002, HttpStatus.BAD_REQUEST, "제약 조건 위반하였습니다."),
 
 
 
@@ -45,7 +47,8 @@ public enum ErrorCode {
      * 500(Internal Server Error)
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
-    INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
+    INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
+    MAPPING_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "ModleMapper 매핑 오류입니다.");
 
 
     private final Integer code;

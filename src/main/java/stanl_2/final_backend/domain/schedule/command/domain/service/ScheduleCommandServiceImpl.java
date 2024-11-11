@@ -3,12 +3,12 @@ package stanl_2.final_backend.domain.schedule.command.domain.service;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mapping.MappingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleModifyRequestDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleRegistRequestDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleModifyResponseDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleRegistResponseDTO;
 import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
 import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
 import stanl_2.final_backend.domain.schedule.command.domain.repository.ScheduleRepository;
@@ -39,33 +39,44 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     @Transactional
-    public ScheduleRegistResponseDTO registSchedule(ScheduleRegistRequestDTO scheduleRegistRequestDTO) {
+    public Boolean registSchedule(ScheduleRegistRequestDTO scheduleRegistRequestDTO) {
 
-        Schedule schedule = modelMapper.map(scheduleRegistRequestDTO,Schedule.class);
+        try {
+            Schedule schedule = modelMapper.map(scheduleRegistRequestDTO, Schedule.class);
 
-        scheduleRepository.save(schedule);
+            scheduleRepository.save(schedule);
 
-        ScheduleRegistResponseDTO scheduleRegistResponseDTO = modelMapper.map(schedule, ScheduleRegistResponseDTO.class);
-
-        return scheduleRegistResponseDTO;
+            return true;
+        } catch (DataIntegrityViolationException e){
+            // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
+            throw new CommonException(ErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (MappingException e){
+            // ModelMapper 매핑 오류
+            throw new CommonException(ErrorCode.MAPPING_ERROR);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new CommonException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     @Transactional
-    public ScheduleModifyResponseDTO modifySchedule(ScheduleModifyRequestDTO scheduleModifyRequestDTO) {
+    public Boolean modifySchedule(ScheduleModifyRequestDTO scheduleModifyRequestDTO) {
 
         Schedule schedule = scheduleRepository.findById(scheduleModifyRequestDTO.getId())
                 .orElseThrow(() -> new CommonException(ErrorCode.SCHEDULE_NOT_FOUND));
 
-        Schedule updateSchedule = modelMapper.map(scheduleModifyRequestDTO, Schedule.class);
-        updateSchedule.setCreatedAt(schedule.getCreatedAt());
-        updateSchedule.setActive(schedule.getActive());
+        try {
+            Schedule updateSchedule = modelMapper.map(scheduleModifyRequestDTO, Schedule.class);
+            updateSchedule.setCreatedAt(schedule.getCreatedAt());
+            updateSchedule.setActive(schedule.getActive());
 
-        scheduleRepository.save(updateSchedule);
+            scheduleRepository.save(updateSchedule);
 
-        ScheduleModifyResponseDTO scheduleModifyResponseDTO = modelMapper.map(updateSchedule,ScheduleModifyResponseDTO.class);
-
-        return scheduleModifyResponseDTO;
+            return true;
+        } catch (MappingException e){
+            throw new CommonException(ErrorCode.MAPPING_ERROR);
+        }
     }
 
     @Override
