@@ -9,6 +9,9 @@ import org.hibernate.annotations.GenericGenerator;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
 import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name="NOTICE")
@@ -52,4 +55,21 @@ public class Notice {
 
     @Column(name = "MEM_ID", nullable = false)
     private Boolean memberId;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = getCurrentTime();
+        this.updatedAt = this.createdAt;
+    }
+
+    // Update 되기 전에 실행
+    @PreUpdate
+    private void preUpdate() {
+        this.updatedAt = getCurrentTime();
+    }
+
+    private String getCurrentTime() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
 }
