@@ -12,7 +12,6 @@ import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sam
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
 import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
 import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
@@ -31,7 +30,7 @@ public class SampleCommandServiceImpl implements SampleCommandService {
         this.modelMapper = modelMapper;
     }
 
-    private String  getCurrentTime() {
+    private String getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
@@ -72,7 +71,7 @@ public class SampleCommandServiceImpl implements SampleCommandService {
                 .orElseThrow(() -> new CommonException(ErrorCode.SAMPLE_NOT_FOUND));
 
         sample.setActive(false);
-        sample.setDeletedAt(getCurrentTime());
+        sample.setDeletedAt(getCurrentTimestamp());
 
         sampleRepository.save(sample);
     }
