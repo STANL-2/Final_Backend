@@ -15,6 +15,8 @@ import stanl_2.final_backend.domain.schedule.common.response.ResponseMessage;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
 import stanl_2.final_backend.domain.schedule.query.service.ScheduleService;
 
+import java.util.List;
+
 @RestController("queryScheduleController")
 @RequestMapping("/api/v1/schedule")
 public class ScheduleController {
@@ -31,15 +33,15 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
-    @GetMapping("")
+    @GetMapping("{id}")
     public ResponseEntity<ResponseMessage> selectAllSchedule(@PathVariable String id){
 
-        ScheduleDTO scheduleDTO = scheduleService.selectAllSchedule(id);
+        List<ScheduleDTO> schedules = scheduleService.selectAllSchedule(id);
 
         return ResponseEntity.ok(ResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(scheduleDTO)
+                .result(schedules)
                 .build());
     }
 }

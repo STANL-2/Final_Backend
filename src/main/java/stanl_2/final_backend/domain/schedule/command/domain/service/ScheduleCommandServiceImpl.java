@@ -18,6 +18,7 @@ import stanl_2.final_backend.domain.schedule.common.exception.ErrorCode;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service("commandScheduleServiceImpl")
@@ -32,11 +33,10 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         this.modelMapper = modelMapper;
     }
 
-    private Timestamp getCurrentTimestamp() {
+    private String  getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
-
     @Override
     @Transactional
     public Boolean registSchedule(ScheduleRegistRequestDTO scheduleRegistRequestDTO) {
@@ -86,7 +86,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new CommonException(ErrorCode.SCHEDULE_NOT_FOUND));
 
         schedule.setActive(false);
-        schedule.setDeletedAt(getCurrentTimestamp());
+        schedule.setDeletedAt(getCurrentTime());
 
         scheduleRepository.save(schedule);
 

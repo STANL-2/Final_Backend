@@ -10,6 +10,7 @@ import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name="SCHEDULE")
@@ -39,13 +40,13 @@ public class Schedule {
     private String reservationTime;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Timestamp createdAt;
+    private String createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updatedAt;
+    private String updatedAt;
 
     @Column(name = "DELETED_AT")
-    private Timestamp deletedAt;
+    private String deletedAt;
 
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
@@ -57,18 +58,18 @@ public class Schedule {
     // Insert 되기 전에 실행
     @PrePersist
     public void prePersist() {
-        this.createdAt = getCurrentTimestamp();
+        this.createdAt = getCurrentTime();
         this.updatedAt = this.createdAt;
     }
 
     // Update 되기 전에 실행
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = getCurrentTimestamp();
+        this.updatedAt = getCurrentTime();
     }
 
-    private Timestamp getCurrentTimestamp() {
+    private String  getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }
