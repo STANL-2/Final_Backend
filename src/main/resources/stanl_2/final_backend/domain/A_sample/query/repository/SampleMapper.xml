@@ -11,8 +11,8 @@
         <result property="createdAt" column="CREATED_AT"/>
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
+        <result property="active" column="ACTIVE"/>
     </resultMap>
-
 
     <select id="selectNameById" resultType="String" parameterType="String">
         SELECT
@@ -28,7 +28,8 @@
                A.SAM_NUM,
                A.CREATED_AT,
                A.UPDATED_AT,
-               A.DELETED_AT
+               A.DELETED_AT,
+               A.ACTIVE
           FROM SAMPLE A
          WHERE A.SAM_ID = #{ id }
     </select>

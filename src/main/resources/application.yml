@@ -1,6 +1,5 @@
 server:
   forward-headers-strategy: native
-  port: 7777
 
 spring:
   application:
