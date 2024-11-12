@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import stanl_2.final_backend.domain.member.aggregate.entity.Member;
 
 import java.util.Collection;
 import java.util.Collections;

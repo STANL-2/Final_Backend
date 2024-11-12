@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +14,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stanl_2.final_backend.global.exception.CommonException;
-import stanl_2.final_backend.global.exception.ErrorCode;
-import stanl_2.final_backend.global.security.constants.ApplicationConstants;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,72 +29,44 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        String jwt = request.getHeader(applicationConstants.getJWT_HEADER());
+        if (null != jwt) {
+            try {
+                // 비밀키 가져오기
+                String secret = applicationConstants.getJWT_SECRET_DEFAULT_VALUE();
+                SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+                String jwtToken = jwt.substring(7);
+                // JWT 토큰 검증
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(secretKey)
+                        .build()
+                        .parseClaimsJws(jwtToken)
+                        .getBody();
 
+                String username = String.valueOf(claims.get("username"));
+                String authorities = String.valueOf(claims.get("authorities"));
+                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null,
+                        AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
 
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("SESSIONID".equals(cookie.getName())) {
-                    String jwt = cookie.getValue();
+                // SecurityContextHolder에 저장
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    try {
-                        // 비밀 키를 Base64로 디코딩하여 생성
-                        byte[] decodedKey = Base64.getDecoder().decode(applicationConstants.getJWT_SECRET_KEY());
-                        SecretKey secretKey = Keys.hmacShaKeyFor(decodedKey);
-
-                        Claims claims = Jwts.parserBuilder()
-                                .setSigningKey(secretKey)
-                                .build()
-                                .parseClaimsJws(jwt)
-                                .getBody();
-
-                        String authorities = (String) claims.get("authorities");
-                        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                                claims.getSubject(), null,
-                                AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
-
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    } catch (Exception e) {
-                        throw new CommonException(ErrorCode.INVALID_TOKEN_ERROR);
-                    }
-                }
+            } catch (Exception exception) {
+                throw new CommonException(ErrorCode.INVALID_TOKEN_ERROR);
             }
         }
         filterChain.doFilter(request, response);
     }
 
-//        String jwt = request.getHeader(applicationConstants.getJWT_HEADER());
-//        if (null != jwt) {
-//            try {
-//                // 비밀키 가져오기
-//                SecretKey secretKey = Keys.hmacShaKeyFor(applicationConstants.getJWT_SECRET_KEY());
-//                String jwtToken = jwt.substring(7);
-//                // JWT 토큰 검증
-//                Claims claims = Jwts.parserBuilder()
-//                        .setSigningKey(secretKey)
-//                        .build()
-//                        .parseClaimsJws(jwtToken)
-//                        .getBody();
-//
-//                String username = String.valueOf(claims.get("username"));
-//                String authorities = String.valueOf(claims.get("authorities"));
-//                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null,
-//                        AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
-//
-//                // SecurityContextHolder에 저장
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//            } catch (Exception exception) {
-//                throw new CommonException(ErrorCode.INVALID_TOKEN_ERROR);
-//            }
-//        }
-//        filterChain.doFilter(request, response);
-//    }
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        return path.equals("/api/v1/auth/signin") ||
-                path.equals("/api/v1/auth/signup");
+        return path.equals("/api/v1/member/login") ||
+                path.equals("/api/v1/member/register") ||
+                path.equals("/api/v1/member") ||
+                path.startsWith("/api/v1/member/sms") ||  // 와일드카드 경로 포함
+                path.startsWith("/api/v1/member/mail") ||
+                path.equals("/api/v1/member/otherprofile") ||
+                path.equals("/api/v1/member/password");
     }
 }

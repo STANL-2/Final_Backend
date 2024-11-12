@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import stanl_2.final_backend.domain.member.aggregate.entity.Member;
-import stanl_2.final_backend.domain.member.repository.MemberRepository;
 
 // 사용자 정보 호출
 @Slf4j

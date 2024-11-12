@@ -1,23 +1,18 @@
 package stanl_2.final_backend.global.security.constants;
 
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Base64;
 
 @Component
 @Getter
+@RequiredArgsConstructor
 public class ApplicationConstants {
 
-    private final byte[] JWT_SECRET_KEY;
-    private final String JWT_HEADER;
+    // 비밀키는 자동으로 생성하여 상수로 설정
+    public final String JWT_SECRET_KEY = "JWT_SECRET";
 
-    public ApplicationConstants(
-            @Value("${jwt.secret-default-value}") String jwtSecretDefaultValue,
-            @Value("${jwt.header}") String jwtHeader
-    ) {
-        this.JWT_SECRET_KEY = Base64.getDecoder().decode(jwtSecretDefaultValue);
-        this.JWT_HEADER = jwtHeader;
-    }
+    private final String JWT_SECRET_DEFAULT_VALUE="jxgEQeXHuPq8VdbyYFNkANdudQ53YUn4";
+
+    public final String JWT_HEADER = "Authorization";
 }

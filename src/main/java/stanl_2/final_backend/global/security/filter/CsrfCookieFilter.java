@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stanl_2.final_backend.global.exception.CommonException;
-import stanl_2.final_backend.global.exception.ErrorCode;
 
 import java.io.IOException;
 import java.util.Arrays;
