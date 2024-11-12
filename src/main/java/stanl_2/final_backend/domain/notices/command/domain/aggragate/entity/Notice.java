@@ -39,5 +39,17 @@ public class Notice {
     private String content;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
-    private Timestamp createdAt;
+    private String createdAt;
+
+    @Column(name = "UPDATED_AT", nullable = false)
+    private String updatedAt;
+
+    @Column(name = "DELETED_AT")
+    private String deletedAt;
+
+    @Column(name = "ACTIVE", nullable = false)
+    private Boolean active = true;
+
+    @Column(name = "MEM_ID", nullable = false)
+    private Boolean memberId;
 }

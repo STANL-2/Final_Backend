@@ -12,11 +12,11 @@ import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sam
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
 import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
 import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service("commandSampleService")
 public class SampleCommandServiceImpl implements SampleCommandService {
@@ -30,9 +30,9 @@ public class SampleCommandServiceImpl implements SampleCommandService {
         this.modelMapper = modelMapper;
     }
 
-    private Timestamp getCurrentTimestamp() {
+    private String getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     @Override
