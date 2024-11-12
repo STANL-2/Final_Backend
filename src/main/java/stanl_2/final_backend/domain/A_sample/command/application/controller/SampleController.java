@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
-import stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage;
+import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 
 @RestController("commandSampleController")
 @RequestMapping("/api/v1/sample")
@@ -35,14 +35,14 @@ public class SampleController {
     @Operation(summary = "샘플 요청 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                        content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                        content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO) {
+    public ResponseEntity<SampleResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO) {
 
         sampleCommandService.registerSample(sampleRegistRequestDTO);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(null)
@@ -59,16 +59,16 @@ public class SampleController {
     @Operation(summary = "샘플 수정 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PutMapping("{id}")
-    public ResponseEntity<ResponseMessage> putTest(@PathVariable String id,
-                                                   @RequestBody SampleModifyDTO sampleModifyRequestDTO) {
+    public ResponseEntity<SampleResponseMessage> putTest(@PathVariable String id,
+                                                         @RequestBody SampleModifyDTO sampleModifyRequestDTO) {
 
         sampleModifyRequestDTO.setId(id);
         SampleModifyDTO sampleModifyDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(sampleModifyDTO)
@@ -81,14 +81,14 @@ public class SampleController {
     @Operation(summary = "샘플 삭제 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<ResponseMessage> deleteTest(@PathVariable String id) {
+    public ResponseEntity<SampleResponseMessage> deleteTest(@PathVariable String id) {
 
         sampleCommandService.deleteSample(id);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(null)

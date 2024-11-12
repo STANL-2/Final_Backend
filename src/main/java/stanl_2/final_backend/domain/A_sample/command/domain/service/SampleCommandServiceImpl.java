@@ -9,8 +9,8 @@ import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModif
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
 import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sample;
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
-import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
-import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
+import stanl_2.final_backend.domain.A_sample.common.exception.SampleCommonException;
+import stanl_2.final_backend.domain.A_sample.common.exception.SampleErrorCode;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -47,7 +47,7 @@ public class SampleCommandServiceImpl implements SampleCommandService {
     public SampleModifyDTO modifySample(String id, SampleModifyDTO sampleModifyRequestDTO) {
 
         Sample sample = sampleRepository.findById(id)
-                .orElseThrow(() -> new CommonException(ErrorCode.SAMPLE_NOT_FOUND));
+                .orElseThrow(() -> new SampleCommonException(SampleErrorCode.SAMPLE_NOT_FOUND));
 
         sampleModifyRequestDTO.setId(id);
         Sample updateSample = modelMapper.map(sampleModifyRequestDTO, Sample.class);
@@ -66,7 +66,7 @@ public class SampleCommandServiceImpl implements SampleCommandService {
     public void deleteSample(String id) {
 
         Sample sample = sampleRepository.findById(id)
-                .orElseThrow(() -> new CommonException(ErrorCode.SAMPLE_NOT_FOUND));
+                .orElseThrow(() -> new SampleCommonException(SampleErrorCode.SAMPLE_NOT_FOUND));
 
         sample.setActive(false);
         sample.setDeletedAt(getCurrentTimestamp());
