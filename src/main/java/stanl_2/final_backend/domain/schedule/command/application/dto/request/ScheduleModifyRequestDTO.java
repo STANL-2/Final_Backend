@@ -14,6 +14,7 @@ public class ScheduleModifyRequestDTO {
     private String id;
     private String name;
     private String content;
-    private String reservationTime;
+    private String startAt;
+    private String endAt;
     private String memberId;
 }
