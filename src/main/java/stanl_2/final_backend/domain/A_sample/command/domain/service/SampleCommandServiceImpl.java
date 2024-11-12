@@ -71,7 +71,7 @@ public class SampleCommandServiceImpl implements SampleCommandService {
                 .orElseThrow(() -> new CommonException(ErrorCode.SAMPLE_NOT_FOUND));
 
         sample.setActive(false);
-        sample.setDeletedAt(getCurrentTimestamp());
+//        sample.setDeletedAt(getCurrentTimestamp());
 
         sampleRepository.save(sample);
     }

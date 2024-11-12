@@ -8,9 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.response.SampleModifyResponseDTO;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyRequestDTO;
 import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
-import stanl_2.final_backend.domain.center.command.application.dto.response.CenterRegistResponseDTO;
 import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
 import stanl_2.final_backend.domain.center.common.response.ResponseMessage;
 
@@ -34,14 +33,12 @@ public class CenterController {
     public ResponseEntity<?> postTest(@RequestBody CenterRegistRequestDTO centerRegistRequestDTO){
         /* 설명. memberId 토큰으로 받는 것 고려 */
 
-        CenterRegistResponseDTO centerRegistResponseDTO = centerCommandService.registCenter(centerRegistRequestDTO);
+        centerCommandService.registCenter(centerRegistRequestDTO);
 
-        centerRegistRequestDTO.setId(id);
-        centerCommandService.registerCenter(centerRegistRequestDTO);
 
-        return ResponseEntity.ok(stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage.builder()
+        return ResponseEntity.ok(ResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("등록 성공")
                 .result(null)
                 .build());
     }
@@ -52,16 +49,17 @@ public class CenterController {
                     content = {@Content(schema = @Schema(implementation = stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage.class))})
     })
     @PutMapping("{id}")
-    public ResponseEntity<?> putTest(){
+    public ResponseEntity<?> putTest(@PathVariable("id") String id,
+                                     @RequestBody CenterModifyRequestDTO centerModifyRequestDTO){
 
-        sampleModifyRequestDTO.setId(id);
-        SampleModifyResponseDTO sampleModifyResponseDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
+        centerCommandService.modifyCenter(id, centerModifyRequestDTO);
 
-        return ResponseEntity.ok(stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage.builder()
+        return ResponseEntity.ok(ResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
-                .result(sampleModifyResponseDTO)
-                .build());    }
+                .msg("수정 성공")
+                .result(null)
+                .build());
+    }
 
     @Operation(summary = "샘플 삭제 테스트")
     @ApiResponses(value = {
@@ -69,10 +67,15 @@ public class CenterController {
                     content = {@Content(schema = @Schema(implementation = stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage.class))})
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteTest(){
+    public ResponseEntity<?> deleteTest(@PathVariable("id") String id){
 
+        centerCommandService.deleteCenter(id);
 
-        return ResponseEntity.ok(new ResponseMessage(200, "delete 성공", " "));
+        return ResponseEntity.ok(ResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(null)
+                .build());
     }
 
 }

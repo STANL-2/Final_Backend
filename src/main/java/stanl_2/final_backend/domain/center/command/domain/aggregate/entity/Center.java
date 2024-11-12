@@ -8,12 +8,13 @@ import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /* 설명. 테스트를 위한 어노테이션(나중에 삭제 예정)*/
 @ToString
 
 @Entity
-@Table(name="CENTER")
+@Table(name="TB_CENTER")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -24,8 +25,9 @@ public class Center {
     @GeneratedValue(generator = "PrefixGeneratorConfig")
     @GenericGenerator(name = "PrefixGeneratorConfig",
             type = PrefixGeneratorConfig.class,
-            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CEN")
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CENT")
     )
+    @Column(name ="CENT_ID")
     private String id;
 
     @Column(name = "CENT_NAME", nullable = false)
@@ -44,13 +46,13 @@ public class Center {
     private String operatingAt;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private Timestamp createdAt;
+    private String createdAt;
 
     @Column(name = "UPDATED_AT", nullable = false)
-    private Timestamp updatedAt;
+    private String updatedAt;
 
     @Column(name = "DELETED_AT")
-    private Timestamp deletedAt;
+    private String deletedAt;
 
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
@@ -60,20 +62,20 @@ public class Center {
     // Insert 되기 전에 실행
     @PrePersist
     private void prePersist() {
-        this.createdAt = getCurrentTimestamp();
+        this.createdAt = getCurrentTime();
         this.updatedAt = this.createdAt;
     }
 
-
     // Update 되기 전에 실행
     @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = getCurrentTimestamp();
+    private void preUpdate() {
+        this.updatedAt = getCurrentTime();
     }
 
-    private Timestamp getCurrentTimestamp() {
+    private String  getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+
 
 }

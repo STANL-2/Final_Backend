@@ -9,7 +9,6 @@ import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
 import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
 import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyRequestDTO;
 import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
-import stanl_2.final_backend.domain.center.command.application.dto.response.CenterModifyResponseDTO;
 import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
 import stanl_2.final_backend.domain.center.command.domain.aggregate.entity.Center;
 import stanl_2.final_backend.domain.center.command.domain.repository.CenterRepository;
@@ -32,10 +31,6 @@ public class CenterCommandServiceImpl implements CenterCommandService {
         this.modelMapper = modelMapper;
     }
 
-    private Timestamp getCurrentTimestamp() {
-        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
-    }
 
     @Override
     @Transactional
@@ -52,15 +47,14 @@ public class CenterCommandServiceImpl implements CenterCommandService {
         Center center = centerRepository.findById(id)
                 .orElseThrow(() -> new CommonException(ErrorCode.CENTER_NOT_FOUND));
 
-//        centerModifyRequestDTO.setId(id);
         Center updateCenter = modelMapper.map(centerModifyRequestDTO, Center.class);
+
+        updateCenter.setId(center.getId());
         updateCenter.setCreatedAt(center.getCreatedAt());
+        updateCenter.setUpdatedAt(getCurrentTime());
         updateCenter.setActive(center.getActive());
 
         centerRepository.save(updateCenter);
-
-        CenterModifyResponseDTO centerModifyResponseDTO= modelMapper.map(updateCenter, CenterModifyResponseDTO.class);
-
     }
 
     @Override
@@ -71,8 +65,14 @@ public class CenterCommandServiceImpl implements CenterCommandService {
                 .orElseThrow(() -> new CommonException(ErrorCode.CENTER_NOT_FOUND));
 
         center.setActive(false);
-        center.setDeletedAt(getCurrentTimestamp());
+        center.setDeletedAt(getCurrentTime());
 
         centerRepository.save(center);
     }
+
+    private String  getCurrentTime() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
 }
