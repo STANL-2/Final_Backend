@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.center.common.util.RequestList;
+import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 import stanl_2.final_backend.domain.center.query.repository.CenterMapper;
@@ -50,6 +51,18 @@ public class CenterServiceImpl implements CenterService{
         return new PageImpl<>(centerList, pageable, total);
     }
 
+    @Override
+    @Transactional
+    public Page<Map<String, Object>> selectBySearch(Map<String, Object> params){
+
+        Pageable pageable = (Pageable) params.get("pageable");
+
+        List<Map<String, Object>> centerList = centerMapper.findCenterBySearch(params);
+
+        int total = centerMapper.findCenterBySearchCount(params);
+
+        return new PageImpl<>(centerList, pageable, total);
+    }
 
 
 }

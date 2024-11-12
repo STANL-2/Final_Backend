@@ -2,6 +2,7 @@ package stanl_2.final_backend.domain.center.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import stanl_2.final_backend.domain.center.common.util.RequestList;
+import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 
@@ -15,4 +16,9 @@ public interface CenterMapper {
     List<Map<String, Object>> findCenterAll(RequestList<?> requestList);
 
     int findCenterCount();
+
+    int findCenterBySearchCount(Map<String, Object> params);
+
+    List<Map<String, Object>> findCenterBySearch(Map<String, Object> params);
+
 }

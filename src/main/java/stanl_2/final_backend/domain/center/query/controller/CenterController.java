@@ -5,16 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.center.common.response.ResponseMessage;
-import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
+import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 import stanl_2.final_backend.domain.center.query.service.CenterService;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController("queryCenterController")
@@ -28,10 +25,8 @@ public class CenterController {
         this.centerService = centerService;
     }
 
-    /* 설명. 조회, 상세조회, 검색 */
     @GetMapping("")
     public ResponseEntity<?> getCenterAll(@PageableDefault(size = 20) Pageable pageable){
-//        List<CenterSelectAllDTO> centerSelectAllDTOList = centerService.selectAll();
 
         Page<Map<String, Object>> responseCenters = centerService.selectAll(pageable);
 
@@ -52,6 +47,28 @@ public class CenterController {
                 .httpStatus(200)
                 .msg("상세 조회 성공")
                 .result(centerSelectIdDTO)
+                .build());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> getCenterBySearch(@RequestParam Map<String, String> params
+                                               ,@PageableDefault(size = 20) Pageable pageable){
+
+        CenterSearchRequestDTO centerSearchRequestDTO = new CenterSearchRequestDTO();
+        centerSearchRequestDTO.setId(params.get("id"));
+        centerSearchRequestDTO.setName(params.get("name"));
+        centerSearchRequestDTO.setAddress(params.get("address"));
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("centerSearchRequestDTO", centerSearchRequestDTO);
+        paramMap.put("pageable", pageable);
+
+        Page<Map<String, Object>> responseCenters = centerService.selectBySearch(paramMap);
+
+        return ResponseEntity.ok(ResponseMessage.builder()
+                .httpStatus(200)
+                .msg("검색 조회 성공")
+                .result(responseCenters)
                 .build());
     }
 
