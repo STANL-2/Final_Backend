@@ -12,6 +12,7 @@ import stanl_2.final_backend.domain.contract.command.domain.repository.ContractR
 import stanl_2.final_backend.global.exception.CommonException;
 import stanl_2.final_backend.global.exception.ErrorCode;
 
+import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +26,11 @@ public class ContractServiceImpl implements ContractService {
     public ContractServiceImpl(ContractRepository contractRepository, ModelMapper modelMapper) {
         this.contractRepository = contractRepository;
         this.modelMapper = modelMapper;
+    }
+
+    private String  getCurrentTime() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     @Override
@@ -74,5 +80,20 @@ public class ContractServiceImpl implements ContractService {
         ContractModifyResponseDTO contractModifyResponseDTO = modelMapper.map(updateContract, ContractModifyResponseDTO.class);
 
         return contractModifyResponseDTO;
+    }
+
+    @Override
+    @Transactional
+    public void deleteContract(String id) {
+
+        // 회원 확인
+
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new CommonException(ErrorCode.CONTRACT_NOT_FOUND));
+
+        contract.setActive(false);
+        contract.setDeletedAt(getCurrentTime());
+
+        contractRepository.save(contract);
     }
 }

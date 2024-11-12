@@ -51,11 +51,30 @@ public class ContractController {
     }
 
     /**
-     * [PUT] http://localhost:7777/api/v1/sample/MEM_000000001
+     * [PUT] http://localhost:8080/api/v1/contract/CON_000000011
      * Request
      *  {
-     *     "name": "abcc"
-     *  }
+     *   "name": "계약서 수정",
+     *   "custName": "John Doe",
+     *   "custIdenNo": "123456-7890123",
+     *   "custAddrress": "123 Main Street, City, Country",
+     *   "custEmail": "johndoe@example.com",
+     *   "custPhone": "+1-234-567-8901",
+     *   "compName": "Doe Industries",
+     *   "custCla": "Premium",
+     *   "custPurCond": "Full Payment",
+     *   "seriNum": "A1B2C3D4",
+     *   "seleOpti": "Extended Warranty",
+     *   "downPay": 10000,
+     *   "intePay": 500,
+     *   "remPay": 15000,
+     *   "consPay": 5000,
+     *   "delvDate": "2024-12-15",
+     *   "delvLoc": "Warehouse No. 3, Industrial Park",
+     *   "state": "WAIT",
+     *   "noOfVeh": "2",
+     *   "memId": "MEM_000000001"
+     * }
      * */
     @Operation(summary = "계약서 수정 테스트")
     @ApiResponses(value = {
@@ -70,9 +89,30 @@ public class ContractController {
         ContractModifyResponseDTO contractModifyResponseDTO = contractService.modifyContract(contractModifyRequestDTO);
 
         return ResponseEntity.ok(ResponseMessage.builder()
-                .httpStatus(200)
-                .msg("계약서가 수정되었습니다.")
-                .result(contractModifyResponseDTO)
-                .build());
+                                                .httpStatus(200)
+                                                .msg("계약서가 수정되었습니다.")
+                                                .result(contractModifyResponseDTO)
+                                                .build());
+    }
+
+    /**
+     * [DELETE] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
+     * */
+    @Operation(summary = "샘플 삭제 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+    })
+    @DeleteMapping("{id}")
+    public ResponseEntity<ResponseMessage> deleteContract(@PathVariable String id) {
+
+        // 회원 아이디 받아와야 함
+        contractService.deleteContract(id);
+
+        return ResponseEntity.ok(ResponseMessage.builder()
+                                                .httpStatus(200)
+                                                .msg("성공")
+                                                .result(null)
+                                                .build());
     }
 }

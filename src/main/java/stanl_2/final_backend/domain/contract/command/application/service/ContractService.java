@@ -8,4 +8,6 @@ public interface ContractService {
     void registerContract(ContractRegistRequestDTO contractRegistRequestDTO);
 
     ContractModifyResponseDTO modifyContract(ContractModifyRequestDTO contractModifyRequestDTO);
+
+    void deleteContract(String id);
 }
