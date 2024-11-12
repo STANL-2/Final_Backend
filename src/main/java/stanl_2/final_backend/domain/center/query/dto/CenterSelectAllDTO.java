@@ -7,8 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class CenterSelectIdDTO {
-
+public class CenterSelectAllDTO {
     private String id;
     private String name;
     private String address;

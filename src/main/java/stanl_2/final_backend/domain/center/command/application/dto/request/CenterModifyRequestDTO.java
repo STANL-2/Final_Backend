@@ -1,22 +1,17 @@
-package stanl_2.final_backend.domain.center.query.dto;
+package stanl_2.final_backend.domain.center.command.application.dto.request;
 
 import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
+@Getter
 @ToString
-public class CenterSelectIdDTO {
-
+public class CenterModifyRequestDTO {
     private String id;
     private String name;
     private String address;
     private String phone;
     private Integer memberCount;
     private String operatingAt;
-    private String createdAt;
-    private String updatedAt;
-    private String deletedAt;
-    private Boolean active;
 }
