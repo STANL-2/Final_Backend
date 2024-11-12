@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.A_sample.command.application.dto.request;
+package stanl_2.final_backend.domain.A_sample.command.application.dto;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class SampleRegistRequestDTO {
+public class SampleModifyDTO {
     private String id;
     private String name;
     private Integer num;

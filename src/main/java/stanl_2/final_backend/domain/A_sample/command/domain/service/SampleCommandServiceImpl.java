@@ -4,19 +4,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleRegistRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleModifyRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.response.SampleModifyResponseDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
 import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sample;
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
 import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
 import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
 
-import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service("commandSampleService")
 public class SampleCommandServiceImpl implements SampleCommandService {
@@ -30,14 +28,14 @@ public class SampleCommandServiceImpl implements SampleCommandService {
         this.modelMapper = modelMapper;
     }
 
-    private Timestamp getCurrentTimestamp() {
+    private String getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     @Override
     @Transactional
-    public void registerSample(SampleRegistRequestDTO sampleRegistRequestDTO) {
+    public void registerSample(SampleRegistDTO sampleRegistRequestDTO) {
 
         Sample newSample = modelMapper.map(sampleRegistRequestDTO, Sample.class);
 
@@ -46,7 +44,7 @@ public class SampleCommandServiceImpl implements SampleCommandService {
 
     @Override
     @Transactional
-    public SampleModifyResponseDTO modifySample(String id, SampleModifyRequestDTO sampleModifyRequestDTO) {
+    public SampleModifyDTO modifySample(String id, SampleModifyDTO sampleModifyRequestDTO) {
 
         Sample sample = sampleRepository.findById(id)
                 .orElseThrow(() -> new CommonException(ErrorCode.SAMPLE_NOT_FOUND));
@@ -58,7 +56,7 @@ public class SampleCommandServiceImpl implements SampleCommandService {
 
         sampleRepository.save(updateSample);
 
-        SampleModifyResponseDTO sampleModifyResponseDTO= modelMapper.map(updateSample, SampleModifyResponseDTO.class);
+        SampleModifyDTO sampleModifyResponseDTO= modelMapper.map(updateSample, SampleModifyDTO.class);
 
         return sampleModifyResponseDTO;
     }
