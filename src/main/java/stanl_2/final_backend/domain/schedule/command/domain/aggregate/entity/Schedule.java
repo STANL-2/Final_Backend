@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
-@Table(name="SCHEDULE")
+@Table(name="TB_SCHEDULE")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -36,8 +36,11 @@ public class Schedule {
     @Column(name = "SCH_CONT", nullable = false)
     private String content;
 
-    @Column(name = "SCH_RES", nullable = false)
-    private String reservationTime;
+    @Column(name = "SCH_SRT_AT", nullable = false)
+    private String startAt;
+
+    @Column(name = "SCH_END_AT", nullable = false)
+    private String endAt;
 
     @Column(name = "CREATED_AT", nullable = false)
     private String createdAt;

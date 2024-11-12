@@ -15,19 +15,58 @@
         <result property="active" column="ACTIVE"/>
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
-    <select id="findSchedulesByIdand" resultMap="scheduleInformation" parameterType="java.lang.String">
+    <select id="findSchedulesByMemberIdAndSrtAt" resultMap="scheduleInformation" parameterType="hashmap">
         SELECT
                A.SCH_ID,
                A.SCH_NAME,
                A.SCH_CONT,
-               A.START_AT,
-               A.END_AT,
+               A.SCH_SRT_AT,
+               A.SCH_END_AT,
                A.CREATED_AT,
                A.UPDATED_AT,
                A.DELETED_AT,
                A.ACTIVE,
                A.MEM_ID
-          FROM SCHEDULE A
-         WHERE SCH_ID = #{ id }
+          FROM TB_SCHEDULE A
+         WHERE MEM_ID = #{ memberId }
+           AND SCH_SRT_AT LIKE CONCAT(#{ month },'%')
+           AND ACTIVE = TRUE;
+    </select>
+
+    <select id="findSchedulesByMemberIdAndYearMonth" resultMap="scheduleInformation" parameterType="hashmap">
+        SELECT
+               A.SCH_ID,
+               A.SCH_NAME,
+               A.SCH_CONT,
+               A.SCH_SRT_AT,
+               A.SCH_END_AT,
+               A.CREATED_AT,
+               A.UPDATED_AT,
+               A.DELETED_AT,
+               A.ACTIVE,
+               A.MEM_ID
+         FROM TB_SCHEDULE A
+        WHERE MEM_ID = #{ memberId }
+          AND SCH_SRT_AT LIKE CONCAT(#{ yearMonth },'%')
+          AND ACTIVE = TRUE;
+    </select>
+
+    <select id="findScheduleByMemberIdAndScheduleId" resultMap="scheduleInformation"
+            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
+        SELECT
+            A.SCH_ID,
+            A.SCH_NAME,
+            A.SCH_CONT,
+            A.SCH_SRT_AT,
+            A.SCH_END_AT,
+            A.CREATED_AT,
+            A.UPDATED_AT,
+            A.DELETED_AT,
+            A.ACTIVE,
+            A.MEM_ID
+        FROM TB_SCHEDULE A
+        WHERE MEM_ID = #{ memberId }
+          AND SCH_ID = #{ id }
+          AND ACTIVE = TRUE
     </select>
 </mapper>

@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.schedule.command.application.dto.response;
+package stanl_2.final_backend.domain.schedule.query.dto;
 
 import lombok.*;
 
@@ -7,10 +7,9 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ScheduleModifyResponseDTO {
+public class ScheduleYearMonthDTO {
 
     private String id;
-    private String name;
     private String content;
     private String startAt;
     private String endAt;
@@ -19,4 +18,7 @@ public class ScheduleModifyResponseDTO {
     private String deletedAt;
     private Boolean active;
     private String memberId;
+
+    private String year;
+    private String month;
 }
