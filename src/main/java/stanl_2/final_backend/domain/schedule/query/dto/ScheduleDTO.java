@@ -14,10 +14,11 @@ public class ScheduleDTO {
     private String id;
     private String name;
     private String content;
-    private String reservationTime;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private Timestamp deletedAt;
+    private String startAt;
+    private String endAt;
+    private String createdAt;
+    private String updatedAt;
+    private String deletedAt;
     private Boolean active;
     private String memberId;
 }
