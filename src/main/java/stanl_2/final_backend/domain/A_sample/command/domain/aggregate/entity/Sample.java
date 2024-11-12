@@ -63,9 +63,8 @@ public class Sample {
         this.updatedAt = getCurrentTime();
     }
 
-    private String  getCurrentTime() {
+    private String getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
-
 }
