@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.contract.command.application.dto.request;
+package stanl_2.final_backend.domain.contract.command.application.dto.response;
 
 import lombok.*;
 
@@ -7,8 +7,8 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class ContractRegistRequestDTO {
-
+public class ContractModifyResponseDTO {
+    private String id;
     private String name;
     private String custName;
     private String custIdenNo;
@@ -28,6 +28,4 @@ public class ContractRegistRequestDTO {
     private String delvLoc;
     private String state;
     private String noOfVeh;
-    private String createdUrl;
-    private String memId;
 }

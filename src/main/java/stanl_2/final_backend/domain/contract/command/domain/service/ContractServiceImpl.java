@@ -3,10 +3,18 @@ package stanl_2.final_backend.domain.contract.command.domain.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.contract.command.application.dto.request.ContractModifyRequestDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.request.ContractRegistRequestDTO;
+import stanl_2.final_backend.domain.contract.command.application.dto.response.ContractModifyResponseDTO;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractService;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
 import stanl_2.final_backend.domain.contract.command.domain.repository.ContractRepository;
+import stanl_2.final_backend.global.exception.CommonException;
+import stanl_2.final_backend.global.exception.ErrorCode;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service("contractServiceImpl")
 public class ContractServiceImpl implements ContractService {
@@ -34,5 +42,37 @@ public class ContractServiceImpl implements ContractService {
         contract.setProdId("PRO_000000001");    // 제품 번호 넣기
 
         contractRepository.save(contract);
+    }
+
+    @Override
+    @Transactional
+    public ContractModifyResponseDTO modifyContract(ContractModifyRequestDTO contractModifyRequestDTO) {
+
+        // 회원인지 확인여부 및 값 가져오기
+
+        // 일련번호로 제품테이블의 총식별번호 찾아서 제품 가져오기
+
+        // 가져온 제품 정보에 수정된 값 넣기
+
+        // 고객전화번호로 고객테이블 찾아서 가져오기
+
+        // 가져온 고객 정보에 수정된 값 넣기
+
+        Contract contract = contractRepository.findById(contractModifyRequestDTO.getId())
+                .orElseThrow(() -> new CommonException(ErrorCode.CONTRACT_NOT_FOUND));
+
+        Contract updateContract = modelMapper.map(contractModifyRequestDTO, Contract.class);
+        updateContract.setCreatedAt(contract.getCreatedAt());
+        updateContract.setUpdatedAt(contract.getUpdatedAt());
+        updateContract.setActive(contract.isActive());
+        updateContract.setCentId(contract.getCentId());
+        updateContract.setProdId(contract.getProdId());
+        updateContract.setCreatedUrl(contract.getCreatedUrl());
+
+        contractRepository.save(updateContract);
+
+        ContractModifyResponseDTO contractModifyResponseDTO = modelMapper.map(updateContract, ContractModifyResponseDTO.class);
+
+        return contractModifyResponseDTO;
     }
 }

@@ -49,7 +49,7 @@ public enum ErrorCode {
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
     USERDETAILS_NOT_FOUND(40400, HttpStatus.NOT_FOUND, "User Details를 찾을 수 없습니다."),
-
+    CONTRACT_NOT_FOUND(40403, HttpStatus.NOT_FOUND, "계약서를 찾을 수 없습니다."),
 
     /**
      * 500(Internal Server Error)
