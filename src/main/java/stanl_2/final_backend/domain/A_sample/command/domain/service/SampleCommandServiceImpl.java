@@ -13,7 +13,6 @@ import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRep
 import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
 import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
 
-import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
