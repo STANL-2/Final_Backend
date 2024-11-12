@@ -8,11 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage;
 import stanl_2.final_backend.domain.contract.command.application.dto.request.ContractModifyRequestDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.request.ContractRegistRequestDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.response.ContractModifyResponseDTO;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractService;
+import stanl_2.final_backend.domain.contract.common.response.ResponseMessage;
 
 @RestController("contractController")
 @RequestMapping("/api/v1/contract")

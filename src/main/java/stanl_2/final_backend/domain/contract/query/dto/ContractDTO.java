@@ -1,13 +1,13 @@
-package stanl_2.final_backend.domain.contract.command.application.dto.request;
+package stanl_2.final_backend.domain.contract.query.dto;
 
 import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @ToString
-public class ContractModifyRequestDTO {
+public class ContractDTO {
 
     private String id;
     private String name;
@@ -30,9 +30,11 @@ public class ContractModifyRequestDTO {
     private String state;
     private String noOfVeh;
     private String createdUrl;
-    private Boolean active;
+    private String updatedUrl;
+    private boolean active;
     private String createdAt;
     private String updatedAt;
+    private String deletedAt;
     private String memId;
     private String centId;
     private String custId;

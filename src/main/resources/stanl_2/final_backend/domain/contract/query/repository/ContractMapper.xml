@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.contract.query.repository.ContractMapper">
+
+    <resultMap id="contractResultMap" type="stanl_2.final_backend.domain.contract.query.dto.ContractDTO">
+        <id property="id" column="CONR_ID"/>
+        <result property="name" column="CONR_NAME"/>
+        <result property="custName" column="CONR_CUST_NAME"/>
+        <result property="custIdenNo" column="CONR_CUST_IDEN_NO"/>
+        <result property="custAddrress" column="CONR_CUST_ADR"/>
+        <result property="custEmail" column="CONR_CUST_EMA"/>
+        <result property="custPhone" column="CONR_CUST_PHO"/>
+        <result property="compName" column="CONR_COMP_NAME"/>
+        <result property="custCla" column="CONR_CUST_CLA"/>
+        <result property="custPurCond" column="CONR_CUST_PUR_COND"/>
+        <result property="seriNum" column="CONR_SERI_NUM"/>
+        <result property="seleOpti" column="CONR_SELE_OPTI"/>
+        <result property="downPay" column="CONR_DOWN_PAY"/>
+        <result property="intePay" column="CONR_INTE_PAY"/>
+        <result property="remPay" column="CONR_REM_PAY"/>
+        <result property="consPay" column="CONR_CONS_PAY"/>
+        <result property="delvDate" column="CONR_DELV_DATE"/>
+        <result property="delvLoc" column="CONR_DELV_LOC"/>
+        <result property="state" column="CONR_STAT"/>
+        <result property="noOfVeh" column="CONR_NO_OF_VEH"/>
+        <result property="createdUrl" column="CREATED_URL"/>
+        <result property="deletedUrl" column="DELETED_URL"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="memId" column="MEM_ID"/>
+        <result property="centId" column="CENT_ID"/>
+        <result property="custId" column="CUST_ID"/>
+        <result property="prodId" column="PROD_ID"/>
+    </resultMap>
+
+    <select id="findContractByIdAndMemId" resultMap="contractResultMap" parameterType="hashmap">
+        SELECT
+               A.CONR_ID,
+               A.CONR_NAME,
+               A.CONR_CUST_NAME,
+               A.CONR_CUST_IDEN_NO,
+               A.CONR_CUST_ADR,
+               A.CONR_CUST_EMA,
+               A.CONR_CUST_PHO,
+               A.CONR_COMP_NAME,
+               A.CONR_CUST_CLA,
+               A.CONR_CUST_PUR_COND,
+               A.CONR_SERI_NUM,
+               A.CONR_SELE_OPTI,
+               A.CONR_DOWN_PAY,
+               A.CONR_INTE_PAY,
+               A.CONR_REM_PAY,
+               A.CONR_CONS_PAY,
+               A.CONR_DELV_DATE,
+               A.CONR_DELV_LOC,
+               A.CONR_STAT,
+               A.CONR_NO_OF_VEH,
+               A.CREATED_URL,
+               A.CREATED_AT,
+               A.UPDATED_AT,
+               A.ACTIVE,
+               A.CENT_ID,
+               A.CUST_ID,
+               A.PROD_ID,
+               A.MEM_ID
+          FROM TB_CONTRACT A
+         WHERE A.CONR_ID = #{ id }
+           AND A.MEM_ID = #{ memId }
+           AND A.ACTIVE = TRUE;
+    </select>
+
+</mapper>

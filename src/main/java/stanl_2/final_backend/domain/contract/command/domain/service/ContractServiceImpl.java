@@ -9,8 +9,8 @@ import stanl_2.final_backend.domain.contract.command.application.dto.response.Co
 import stanl_2.final_backend.domain.contract.command.application.service.ContractService;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
 import stanl_2.final_backend.domain.contract.command.domain.repository.ContractRepository;
-import stanl_2.final_backend.global.exception.CommonException;
-import stanl_2.final_backend.global.exception.ErrorCode;
+import stanl_2.final_backend.domain.contract.common.exception.CommonException;
+import stanl_2.final_backend.domain.contract.common.exception.ErrorCode;
 
 import java.sql.Timestamp;
 import java.time.ZoneId;
