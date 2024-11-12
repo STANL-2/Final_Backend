@@ -73,4 +73,17 @@
            AND A.ACTIVE = TRUE;
     </select>
 
+    <select id="findContractAllByMemId" resultMap="contractResultMap" parameterType="hashmap">
+        SELECT
+               A.CONR_ID,
+               A.CONR_CUST_NAME,
+               A.CONR_COMP_NAME,
+               A.CONR_STAT,
+               A.CREATED_URL,
+               A.ACTIVE
+          FROM TB_CONTRACT A
+         WHERE A.MEM_ID = #{ memId }
+           AND A.ACTIVE = TRUE;
+    </select>
+
 </mapper>
