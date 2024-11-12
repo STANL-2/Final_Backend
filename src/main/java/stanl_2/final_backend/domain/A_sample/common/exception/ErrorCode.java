@@ -39,7 +39,7 @@ public enum ErrorCode {
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
     SAMPLE_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "sample 데이터를 찾지 못했습니다"),
-
+    CENTER_NOT_FOUND(404002, HttpStatus.NOT_FOUND, "center 데이터를 찾지 못했습니다."),
 
     /**
      * 500(Internal Server Error)
