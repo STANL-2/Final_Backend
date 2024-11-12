@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyRequestDTO;
 import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
 import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
@@ -27,7 +28,7 @@ public class CenterController {
     @Operation(summary = "매장 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("")
     public ResponseEntity<?> postTest(@RequestBody CenterRegistRequestDTO centerRegistRequestDTO){
@@ -46,7 +47,7 @@ public class CenterController {
     @Operation(summary = "매장 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PutMapping("{id}")
     public ResponseEntity<?> putTest(@PathVariable("id") String id,
@@ -64,7 +65,7 @@ public class CenterController {
     @Operation(summary = "샘플 삭제 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteTest(@PathVariable("id") String id){

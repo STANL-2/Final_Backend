@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.A_sample.common.exception.CommonException;
-import stanl_2.final_backend.domain.A_sample.common.exception.ErrorCode;
+import stanl_2.final_backend.domain.A_sample.common.exception.SampleCommonException;
+import stanl_2.final_backend.domain.A_sample.common.exception.SampleErrorCode;
 import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
 import stanl_2.final_backend.domain.A_sample.query.repository.SampleMapper;
 
@@ -27,7 +27,7 @@ public class SampleServiceImpl implements SampleService{
         String name = sampleMapper.selectNameById(id);;
 
         if(name == null){
-            throw new CommonException(ErrorCode.SAMPLE_NOT_FOUND);
+            throw new SampleCommonException(SampleErrorCode.SAMPLE_NOT_FOUND);
         }
 
         return name;
@@ -40,7 +40,7 @@ public class SampleServiceImpl implements SampleService{
         SampleDTO sampleDTO = sampleMapper.selectById(id);
 
         if(sampleDTO == null){
-            throw new CommonException(ErrorCode.SAMPLE_NOT_FOUND);
+            throw new SampleCommonException(SampleErrorCode.SAMPLE_NOT_FOUND);
         }
 
         return sampleDTO;

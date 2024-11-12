@@ -6,7 +6,7 @@ import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegist
 public interface NoticeCommandService {
     void registerNotice(NoticeRegistDTO noticeRegistDTO);
 
-    NoticeModifyDTO modifyNotice(String title, String tag, String classification, String content, String updatedAt);
+    NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO);
 
     void deleteNotice(String id);
 }
