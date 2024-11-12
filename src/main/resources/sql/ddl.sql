@@ -127,17 +127,28 @@ CREATE TABLE tb_contract
     CONR_CUST_CLA      VARCHAR(255) NOT NULL DEFAULT 'PERSONAL',
     CONR_CUST_PUR_COND VARCHAR(255) NOT NULL DEFAULT 'CASH',
     CONR_SERI_NUM      VARCHAR(255) NOT NULL,
+    CONR_SELE_OPTI     VARCHAR(255) NOT NULL,
+    CONR_DOWN_PAY      INT          NOT NULL,
+    CONR_INTE_PAY      INT          NOT NULL,
+    CONR_REM_PAY       INT          NOT NULL,
+    CONR_CONS_PAY      INT          NOT NULL,
+    CONR_DELV_DATE     VARCHAR(255) NULL,
+    CONR_DELV_LOC      VARCHAR(255) NULL,
+    CONR_STAT          VARCHAR(255) NULL     DEFAULT 'WAIT',
     CONR_NO_OF_VEH     INT          NOT NULL DEFAULT 1,
+    CREATED_URL        VARCHAR(255) NOT NULL,
+    DELETED_URL        VARCHAR(255) NULL,
     ACTIVE             BOOLEAN      NOT NULL DEFAULT TRUE,
     CREATED_AT         CHAR(19)     NOT NULL,
     UPDATED_AT         CHAR(19)     NOT NULL,
+    DELETED_AT         CHAR(19)     NULL,
     MEM_ID             VARCHAR(255) NOT NULL,
     CENT_ID            VARCHAR(255) NOT NULL,
-    CUST_ID2           VARCHAR(255) NOT NULL,
+    CUST_ID            VARCHAR(255) NULL,
     PROD_ID            VARCHAR(255) NOT NULL,
     PRIMARY KEY (CONR_ID),
     FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID) ON DELETE CASCADE,
-    FOREIGN KEY (CUST_ID2) REFERENCES tb_customer_info (CUST_ID) ON DELETE CASCADE,
+    FOREIGN KEY (CUST_ID) REFERENCES tb_customer_info (CUST_ID) ON DELETE CASCADE,
     FOREIGN KEY (PROD_ID) REFERENCES tb_product (PROD_ID) ON DELETE CASCADE,
     FOREIGN KEY (CENT_ID) REFERENCES tb_center (CENT_ID) ON DELETE CASCADE
 );
@@ -222,9 +233,11 @@ CREATE TABLE tb_EVALUATION
     ACTIVE     BOOLEAN      NOT NULL DEFAULT TRUE,
     CENT_ID    VARCHAR(255) NOT NULL,
     MEM_ID     VARCHAR(255) NOT NULL,
+    WRI_ID     VARCHAR(255) NOT NULL,
     PRIMARY KEY (EVAL_ID),
     FOREIGN KEY (CENT_ID) REFERENCES tb_center (CENT_ID),
-    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID),
+    FOREIGN KEY (WRI_ID) REFERENCES tb_member (MEM_ID)
 );
 
 CREATE TABLE tb_promotion
@@ -250,14 +263,28 @@ CREATE TABLE tb_file
     ACTIVE     BOOLEAN      NOT NULL DEFAULT TRUE,
     CREATED_AT CHAR(19)     NOT NULL,
     DELETED_AT CHAR(19)     NULL,
-    MEM_ID     VARCHAR(255) NOT NULL,
+    MEM_ID     VARCHAR(255) NULL,
+    NOT_ID     VARCHAR(255) NULL,
+    CONR_ID    VARCHAR(255) NULL,
+    PROB_ID    VARCHAR(255) NULL,
+    CENT_ID    VARCHAR(255) NULL,
+    PROM_ID    VARCHAR(255) NULL,
+    EVAL_ID    VARCHAR(255) NULL,
+    CONR_ID2   VARCHAR(255) NULL,
     PRIMARY KEY (FILE_ID),
-    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID),
+    FOREIGN KEY (NOT_ID) REFERENCES tb_notice (NOT_ID),
+    FOREIGN KEY (CONR_ID) REFERENCES tb_contract (CONR_ID),
+    FOREIGN KEY (PROB_ID) REFERENCES tb_problem (PROB_ID),
+    FOREIGN KEY (CENT_ID) REFERENCES tb_center (CENT_ID),
+    FOREIGN KEY (PROM_ID) REFERENCES tb_promotion (PROM_ID),
+    FOREIGN KEY (EVAL_ID) REFERENCES tb_evaluation (EVAL_ID),
+    FOREIGN KEY (CONR_ID2) REFERENCES tb_contract (CONR_ID)
 );
 
 CREATE TABLE tb_schedule
 (
-    SCH_ID     VARCHAR(255) NOT NULL,
+    SCH_ID     VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고',
     SCH_NAME   VARCHAR(255) NOT NULL,
     SCH_CONT   VARCHAR(255) NOT NULL,
     SCH_SRT_AT CHAR(19)     NOT NULL,
@@ -265,8 +292,8 @@ CREATE TABLE tb_schedule
     CREATED_AT CHAR(19)     NOT NULL,
     UPDATED_AT CHAR(19)     NOT NULL,
     DELETED_AT CHAR(19)     NULL,
-    ACTIVE     BOOLEAN      NOT NULL DEFAULT TRUE,
-    MEM_ID     VARCHAR(255) NOT NULL,
+    ACTIVE     BOOLEAN      NOT NULL COMMENT 'TRUE/FALSE',
+    MEM_ID     VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고',
     PRIMARY KEY (SCH_ID),
     FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
 );
@@ -285,22 +312,44 @@ CREATE TABLE tb_alarm
 
 CREATE TABLE tb_member_detail
 (
-    MEM_DET_ID   VARCHAR(255) NOT NULL,
-    MEM_DET_REL  VARCHAR(255) NOT NULL,
-    MEM_DET_NAME VARCHAR(255) NOT NULL,
-    MEM_ID       VARCHAR(255) NOT NULL,
+    MEM_DET_ID       VARCHAR(255) NOT NULL,
+    MEM_DET_REL      VARCHAR(255) NOT NULL,
+    MEM_DET_NAME     VARCHAR(255) NOT NULL,
+    MEM_DET_BIR      VARCHAR(255) NOT NULL,
+    MEM_DET_IDEN_NO  VARCHAR(255) NOT NULL,
+    MEM_DET_PHO      VARCHAR(255) NOT NULL,
+    MEM_DET_SEX      VARCHAR(255) NOT NULL DEFAULT 'FEMALE' COMMENT 'FEMALE/MALE',
+    MEM_DET_DIS      BOOLEAN      NOT NULL,
+    MEM_DET_DIE      BOOLEAN      NOT NULL,
+    MEM_DET_NOTE     VARCHAR(255) NULL,
+    MEM_DET_ENTD     VARCHAR(255) NOT NULL,
+    MEM_DET_GRAD     VARCHAR(255) NOT NULL,
+    MEM_DET_FNL_EDC  VARCHAR(255) NOT NULL,
+    MEM_DET_EDU      VARCHAR(255) NOT NULL,
+    MEM_DET_MJR      VARCHAR(255) NOT NULL,
+    MEM_DET_EMP_DATE VARCHAR(255) NOT NULL,
+    MEM_DET_RTR_DATE VARCHAR(255) NOT NULL,
+    CAR_INFO         VARCHAR(255) NOT NULL,
+    CERT_DATE        VARCHAR(255) NOT NULL,
+    CERT_INST        VARCHAR(255) NOT NULL,
+    CERT_NAME        VARCHAR(255) NULL,
+    CERT_SCO         VARCHAR(255) NOT NULL,
+    MEM_ID           VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고',
     PRIMARY KEY (MEM_DET_ID),
     FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
 );
 
 CREATE TABLE tb_UPDATE_HISTORY
 (
-    UPD_ID     VARCHAR(255) NOT NULL,
-    UPD_IP     VARCHAR(255) NOT NULL,
-    UPDATED_AT CHAR(19)     NOT NULL,
-    MEM_ID     VARCHAR(255) NOT NULL,
+    UPD_ID      VARCHAR(255) NOT NULL,
+    UPD_IP      VARCHAR(255) NOT NULL,
+    UPDATED_AT  CHAR(19)     NOT NULL,
+    UPDATED_URL VARCHAR(255) NOT NULL,
+    MEM_ID      VARCHAR(255) NOT NULL,
+    CONR_ID     VARCHAR(255) NOT NULL,
     PRIMARY KEY (UPD_ID),
-    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID),
+    FOREIGN KEY (CONR_ID) REFERENCES tb_contract (CONR_ID)
 );
 
 CREATE TABLE tb_PRODUCT_OPTION
@@ -342,4 +391,495 @@ CREATE TABLE tb_sales_history
     SAL_HIST_ID VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고',
     CONR_ID     VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고'
 );
+
+INSERT INTO tb_organization_chart (ORG_CHA_ID, ORG_CHA_NAME, ORG_CHA_DEPTH)
+VALUES ('ORG_000000001', '본사', 1),
+       ('ORG_000000002', '서울지사', 2),
+       ('ORG_000000003', '부산지사', 2),
+       ('ORG_000000004', '인천지사', 2),
+       ('ORG_000000005', '대전지사', 2),
+       ('ORG_000000006', '영업부', 3),
+       ('ORG_000000007', '기술부', 3),
+       ('ORG_000000008', '고객지원부', 3),
+       ('ORG_000000009', '마케팅부', 3),
+       ('ORG_000000010', '재무부', 3);
+
+INSERT INTO tb_center (CENT_ID, CENT_NAME, CENT_ADR, CENT_PHO, CENT_MEM_CNT, CREATED_AT, UPDATED_AT, ACTIVE,
+                       CENT_OPR_AT)
+VALUES ('CEN_000000001', '서울센터', '서울특별시 중구', '010-1234-5678', 50, '2024-01-01 12:00:00', '2024-01-01 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000002', '부산센터', '부산광역시 해운대구', '010-2345-6789', 40, '2024-01-02 12:00:00', '2024-01-02 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000003', '대구센터', '대구광역시', '010-3456-7890', 30, '2024-01-03 12:00:00', '2024-01-03 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000004', '인천센터', '인천광역시', '010-4567-8901', 20, '2024-01-04 12:00:00', '2024-01-04 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000005', '울산센터', '울산광역시', '010-5678-9012', 25, '2024-01-05 12:00:00', '2024-01-05 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000006', '대전센터', '대전광역시', '010-6789-0123', 35, '2024-01-06 12:00:00', '2024-01-06 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000007', '광주센터', '광주광역시', '010-7890-1234', 45, '2024-01-07 12:00:00', '2024-01-07 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000008', '경기센터', '경기도 수원시', '010-8901-2345', 20, '2024-01-08 12:00:00', '2024-01-08 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000009', '청주센터', '충청북도 청주시', '010-9012-3456', 10, '2024-01-09 12:00:00', '2024-01-09 12:00:00', TRUE,
+        '09:00-18:00'),
+       ('CEN_000000010', '전주센터', '전라북도 전주시', '010-0123-4567', 15, '2024-01-10 12:00:00', '2024-01-10 12:00:00', TRUE,
+        '09:00-18:00');
+
+INSERT INTO tb_member (MEM_ID, MEM_LOGN_ID, MEM_PWD, MEM_NAME, MEM_EMA, MEM_AGE, MEM_SEX, MEM_IDEN_NO, MEM_PHO, MEM_ADR,
+                       MEM_POS, MEM_GRD, MEM_JOB_TYPE, CENTER_ID, ORG_CHA_ID, CREATED_AT, UPDATED_AT, ACTIVE)
+VALUES ('MEM_000000001', 101, 'pwd1234', '김철수', 'chulsoo@example.com', 35, 'MALE', '123456-7890123', '010-9876-5432',
+        '서울특별시', 'Manager', 'Bachelor', 'Full-time', 'CEN_000000001', 'ORG_000000006', '2024-01-01 12:00:00',
+        '2024-01-01 12:00:00', TRUE),
+       ('MEM_000000002', 102, 'pwd2345', '이영희', 'younghee@example.com', 28, 'FEMALE', '234567-8901234', '010-8765-4321',
+        '부산광역시', 'Staff', 'Master', 'Full-time', 'CEN_000000002', 'ORG_000000006', '2024-01-02 12:00:00',
+        '2024-01-02 12:00:00', TRUE),
+       ('MEM_000000003', 103, 'pwd3456', '박지훈', 'jihun@example.com', 42, 'MALE', '345678-9012345', '010-7654-3210',
+        '대구광역시', 'Engineer', 'Doctorate', 'Contract', 'CEN_000000003', 'ORG_000000007', '2024-01-03 12:00:00',
+        '2024-01-03 12:00:00', TRUE),
+       ('MEM_000000004', 104, 'pwd4567', '최민수', 'minsoo@example.com', 38, 'MALE', '456789-0123456', '010-6543-2109',
+        '인천광역시', 'Manager', 'Bachelor', 'Part-time', 'CEN_000000004', 'ORG_000000007', '2024-01-04 12:00:00',
+        '2024-01-04 12:00:00', TRUE),
+       ('MEM_000000005', 105, 'pwd5678', '박미영', 'miyoung@example.com', 29, 'FEMALE', '567890-1234567', '010-5432-1098',
+        '울산광역시', 'Intern', 'High School', 'Full-time', 'CEN_000000005', 'ORG_000000008', '2024-01-05 12:00:00',
+        '2024-01-05 12:00:00', TRUE),
+       ('MEM_000000006', 106, 'pwd6789', '정수현', 'soohyun@example.com', 31, 'FEMALE', '678901-2345678', '010-4321-0987',
+        '대전광역시', 'Senior Engineer', 'Master', 'Full-time', 'CEN_000000006', 'ORG_000000007', '2024-01-06 12:00:00',
+        '2024-01-06 12:00:00', TRUE),
+       ('MEM_000000007', 107, 'pwd7890', '한지민', 'jimin@example.com', 45, 'FEMALE', '789012-3456789', '010-3210-9876',
+        '광주광역시', 'Sales Rep', 'Bachelor', 'Part-time', 'CEN_000000007', 'ORG_000000006', '2024-01-07 12:00:00',
+        '2024-01-07 12:00:00', TRUE),
+       ('MEM_000000008', 108, 'pwd8901', '이준호', 'junho@example.com', 36, 'MALE', '890123-4567890', '010-2109-8765',
+        '경기도 수원시', 'Technician', 'Bachelor', 'Full-time', 'CEN_000000008', 'ORG_000000008', '2024-01-08 12:00:00',
+        '2024-01-08 12:00:00', TRUE),
+       ('MEM_000000009', 109, 'pwd9012', '윤아름', 'areum@example.com', 27, 'FEMALE', '901234-5678901', '010-1098-7654',
+        '충청북도 청주시', 'Assistant', 'High School', 'Intern', 'CEN_000000009', 'ORG_000000006', '2024-01-09 12:00:00',
+        '2024-01-09 12:00:00', TRUE),
+       ('MEM_000000010', 110, 'pwd0123', '김정훈', 'junghoon@example.com', 33, 'MALE', '012345-6789012', '010-0987-6543',
+        '전라북도 전주시', 'Consultant', 'Master', 'Contract', 'CEN_000000010', 'ORG_000000009', '2024-01-10 12:00:00',
+        '2024-01-10 12:00:00', TRUE);
+
+INSERT INTO tb_member_role (MEM_ROL_ID, MEM_ROL_NAME, MEM_ID)
+VALUES ('ROL_000000001', '팀장', 'MEM_000000001'),
+       ('ROL_000000002', '영업사원', 'MEM_000000002'),
+       ('ROL_000000003', '기술지원', 'MEM_000000003'),
+       ('ROL_000000004', '관리자', 'MEM_000000004'),
+       ('ROL_000000005', '고객관리', 'MEM_000000005'),
+       ('ROL_000000006', '인턴', 'MEM_000000009'),
+       ('ROL_000000007', '파트타임', 'MEM_000000007'),
+       ('ROL_000000008', '정규직', 'MEM_000000008'),
+       ('ROL_000000009', '계약직', 'MEM_000000010'),
+       ('ROL_000000010', '프로젝트 매니저', 'MEM_000000006');
+
+INSERT INTO tb_customer_info (CUST_ID, CUST_NAME, CUST_AGE, CUST_SEX, CUST_PHO, CUST_EMER_PHO, CUST_EMA, ACTIVE, MEM_ID)
+VALUES ('CUS_000000001', '홍길동', 45, 'MALE', '010-1111-2222', '010-2222-3333', 'gildong@example.com', TRUE,
+        'MEM_000000001'),
+       ('CUS_000000002', '김민수', 38, 'MALE', '010-3333-4444', '010-4444-5555', 'minsoo@example.com', TRUE,
+        'MEM_000000002'),
+       ('CUS_000000003', '이영희', 32, 'FEMALE', '010-5555-6666', '010-6666-7777', 'younghee@example.com', TRUE,
+        'MEM_000000003'),
+       ('CUS_000000004', '박지훈', 27, 'MALE', '010-7777-8888', '010-8888-9999', 'jihun@example.com', TRUE,
+        'MEM_000000004'),
+       ('CUS_000000005', '최정민', 22, 'FEMALE', '010-9999-0000', '010-0000-1111', 'jungmin@example.com', TRUE,
+        'MEM_000000005'),
+       ('CUS_000000006', '정수민', 31, 'MALE', '010-1212-3434', '010-2323-4545', 'suming@example.com', TRUE,
+        'MEM_000000006'),
+       ('CUS_000000007', '한민정', 29, 'FEMALE', '010-4545-5656', '010-5656-6767', 'hanmj@example.com', TRUE,
+        'MEM_000000007'),
+       ('CUS_000000008', '이동수', 41, 'MALE', '010-6767-7878', '010-7878-8989', 'dongsu@example.com', TRUE,
+        'MEM_000000008'),
+       ('CUS_000000009', '윤소라', 33, 'FEMALE', '010-8989-9090', '010-9090-1010', 'sora@example.com', TRUE,
+        'MEM_000000009'),
+       ('CUS_000000010', '박성훈', 36, 'MALE', '010-1010-1112', '010-1212-1313', 'seonghun@example.com', TRUE,
+        'MEM_000000010');
+
+INSERT INTO tb_product (PROD_ID, PROD_SER_NO, PROD_COST, PROD_NAME, PROD_STCK, CREATED_AT, UPDATED_AT, ACTIVE)
+VALUES ('PRO_000000001', 'KNAHAA4AALU1A00001', 25000000, '쏘렌토', 10, '2024-01-10 10:00:00', '2024-01-10 11:00:00', TRUE),
+       ('PRO_000000002', 'KNAHBA4BALR2Z00002', 22000000, '스포티지', 15, '2024-01-11 11:00:00', '2024-01-11 12:00:00',
+        TRUE),
+       ('PRO_000000003', 'KMBHC64CAMJ5A00003', 28000000, 'K7', 8, '2024-01-12 12:00:00', '2024-01-12 13:00:00', TRUE),
+       ('PRO_000000004', 'KNJFA42DALU3C00004', 19000000, '셀토스', 12, '2024-01-13 13:00:00', '2024-01-13 14:00:00', TRUE),
+       ('PRO_000000005', 'KFBGBM5EARP1M00005', 18000000, 'K3', 20, '2024-01-14 14:00:00', '2024-01-14 15:00:00', TRUE),
+       ('PRO_000000006', 'KNHGA6BALUP7A00006', 34000000, '모하비', 7, '2024-01-15 15:00:00', '2024-01-15 16:00:00', TRUE),
+       ('PRO_000000007', 'KNJFA34AALU4Z00007', 32000000, 'K8', 5, '2024-01-16 16:00:00', '2024-01-16 17:00:00', TRUE),
+       ('PRO_000000008', 'KMAHDA2AAMJ3T00008', 27000000, '스팅어', 9, '2024-01-17 17:00:00', '2024-01-17 18:00:00', TRUE),
+       ('PRO_000000009', 'KNAHCA5BALU5C00009', 23000000, '니로', 14, '2024-01-18 18:00:00', '2024-01-18 19:00:00', TRUE),
+       ('PRO_000000010', 'KNFHC54CAMR1A00010', 28000000, 'K5', 6, '2024-01-19 19:00:00', '2024-01-19 20:00:00', TRUE);
+
+
+INSERT INTO tb_contract (CONR_ID, CONR_NAME, CONR_CUST_NAME, CONR_CUST_IDEN_NO, CONR_CUST_ADR,
+                         CONR_CUST_EMA, CONR_CUST_PHO, CONR_COMP_NAME, CONR_CUST_CLA, CONR_CUST_PUR_COND,
+                         CONR_SERI_NUM, CONR_SELE_OPTI, CONR_DOWN_PAY, CONR_INTE_PAY, CONR_REM_PAY,
+                         CONR_CONS_PAY, CONR_DELV_DATE, CONR_DELV_LOC, CONR_STAT, CONR_NO_OF_VEH,
+                         CREATED_URL, DELETED_URL, ACTIVE, CREATED_AT, UPDATED_AT, DELETED_AT,
+                         MEM_ID, CENT_ID, CUST_ID, PROD_ID)
+VALUES
+-- 계약 1
+('CON_000000001', '쏘렌토 계약', '박지훈', '880512-1234567', '서울특별시 강남구',
+ 'jihun@example.com', '010-1234-5678', '기아자동차', 'PERSONAL', 'CASH',
+ 'SER_001', '풀옵션', 5000000, 300000, 25000000, 30000000,
+ '2024-02-20', '서울특별시 강남구 배송센터', 'WAIT', 1,
+ '/contracts/1', NULL, TRUE, '2024-01-10 12:00:00', '2024-01-11 13:00:00', NULL,
+ 'MEM_000000001', 'CEN_000000001', 'CUS_000000001', 'PRO_000000001'),
+
+-- 계약 2
+('CON_000000002', '스포티지 계약', '김영희', '900123-2345678', '부산광역시 해운대구',
+ 'younghee@example.com', '010-2345-6789', '기아자동차', 'PERSONAL', 'CREDIT',
+ 'SER_002', '기본옵션', 3000000, 200000, 17000000, 25000000,
+ '2024-03-05', '부산광역시 해운대구 배송센터', 'CONFIRMED', 1,
+ '/contracts/2', NULL, TRUE, '2024-01-12 14:00:00', '2024-01-13 15:00:00', NULL,
+ 'MEM_000000002', 'CEN_000000002', 'CUS_000000002', 'PRO_000000002'),
+
+-- 계약 3
+('CON_000000003', 'K7 계약', '이철수', '950405-3456789', '대구광역시 수성구',
+ 'chulsoo@example.com', '010-3456-7890', '기아자동차', 'BUSINESS', 'LEASE',
+ 'SER_003', '풀옵션', 8000000, 400000, 28000000, 35000000,
+ '2024-03-10', '대구광역시 배송센터', 'WAIT', 2,
+ '/contracts/3', NULL, TRUE, '2024-01-14 09:00:00', '2024-01-15 10:00:00', NULL,
+ 'MEM_000000003', 'CEN_000000003', 'CUS_000000003', 'PRO_000000003'),
+
+-- 계약 4
+('CON_000000004', '셀토스 계약', '박민준', '970512-4567890', '인천광역시 미추홀구',
+ 'minjoon@example.com', '010-4567-8901', '기아자동차', 'PERSONAL', 'CASH',
+ 'SER_004', '기본옵션', 4000000, 250000, 12000000, 20000000,
+ '2024-04-01', '인천광역시 배송센터', 'DELIVERED', 1,
+ '/contracts/4', NULL, TRUE, '2024-01-16 11:00:00', '2024-01-17 12:00:00', NULL,
+ 'MEM_000000004', 'CEN_000000004', 'CUS_000000004', 'PRO_000000004'),
+
+-- 계약 5
+('CON_000000005', 'K3 계약', '최민수', '980618-5678901', '울산광역시 중구',
+ 'minsoo@example.com', '010-5678-9012', '기아자동차', 'BUSINESS', 'INSTALLMENT',
+ 'SER_005', '기본옵션', 2000000, 100000, 13000000, 18000000,
+ '2024-04-15', '울산광역시 배송센터', 'CANCELLED', 1,
+ '/contracts/5', NULL, TRUE, '2024-01-18 13:00:00', '2024-01-19 14:00:00', NULL,
+ 'MEM_000000005', 'CEN_000000005', 'CUS_000000005', 'PRO_000000005'),
+
+-- 계약 6
+('CON_000000006', '모하비 계약', '김민주', '850824-6789012', '대전광역시 서구',
+ 'minju@example.com', '010-6789-0123', '기아자동차', 'PERSONAL', 'CASH',
+ 'SER_006', '풀옵션', 6000000, 500000, 34000000, 40000000,
+ '2024-05-01', '대전광역시 배송센터', 'CONFIRMED', 1,
+ '/contracts/6', NULL, TRUE, '2024-01-20 15:00:00', '2024-01-21 16:00:00', NULL,
+ 'MEM_000000006', 'CEN_000000006', 'CUS_000000006', 'PRO_000000006'),
+
+-- 계약 7
+('CON_000000007', 'K8 계약', '정수영', '940705-7890123', '광주광역시 북구',
+ 'suyoung@example.com', '010-7890-1234', '기아자동차', 'LEASE', 'LEASE',
+ 'SER_007', '럭셔리 패키지', 7000000, 350000, 25000000, 32000000,
+ '2024-05-20', '광주광역시 배송센터', 'WAIT', 1,
+ '/contracts/7', NULL, TRUE, '2024-01-22 17:00:00', '2024-01-23 18:00:00', NULL,
+ 'MEM_000000007', 'CEN_000000007', 'CUS_000000007', 'PRO_000000007'),
+
+-- 계약 8
+('CON_000000008', '스팅어 계약', '이준호', '930910-8901234', '경기도 수원시',
+ 'junho@example.com', '010-8901-2345', '기아자동차', 'PERSONAL', 'CREDIT',
+ 'SER_008', '풀옵션', 5000000, 300000, 22000000, 27000000,
+ '2024-06-01', '수원시 배송센터', 'DELIVERED', 1,
+ '/contracts/8', NULL, TRUE, '2024-01-24 19:00:00', '2024-01-25 20:00:00', NULL,
+ 'MEM_000000008', 'CEN_000000008', 'CUS_000000008', 'PRO_000000008'),
+
+-- 계약 9
+('CON_000000009', '니로 계약', '박소영', '890321-9012345', '충청북도 청주시',
+ 'soyoung@example.com', '010-9012-3456', '기아자동차', 'PERSONAL', 'CASH',
+ 'SER_009', '기본옵션', 3500000, 150000, 17000000, 23000000,
+ '2024-06-15', '청주시 배송센터', 'CONFIRMED', 1,
+ '/contracts/9', NULL, TRUE, '2024-01-26 21:00:00', '2024-01-27 22:00:00', NULL,
+ 'MEM_000000009', 'CEN_000000009', 'CUS_000000009', 'PRO_000000009'),
+
+-- 계약 10
+('CON_000000010', 'K5 계약', '김정훈', '900815-0123456', '전라북도 전주시',
+ 'junghoon@example.com', '010-0123-4567', '기아자동차', 'BUSINESS', 'LEASE',
+ 'SER_010', '풀옵션', 6000000, 250000, 20000000, 28000000,
+ '2024-07-01', '전주시 배송센터', 'WAIT', 1,
+ '/contracts/10', NULL, TRUE, '2024-01-28 23:00:00', '2024-01-29 23:59:00', NULL,
+ 'MEM_000000010', 'CEN_000000010', 'CUS_000000010', 'PRO_000000010');
+
+INSERT INTO tb_order (ORD_ID, ORD_TTL, ACTIVE, CREATED_AT, UPDATED_AT, ORD_STAT, CONR_ID, MEM_ID, MEM_ID2)
+VALUES ('ORD_000000001', '쏘렌토 주문', TRUE, '2024-01-12 09:00:00', '2024-01-12 10:00:00', 'WAIT', 'CON_000000001',
+        'MEM_000000001', 'MEM_000000002'),
+       ('ORD_000000002', '스포티지 주문', TRUE, '2024-01-13 10:00:00', '2024-01-13 11:00:00', 'CONFIRMED', 'CON_000000002',
+        'MEM_000000002', 'MEM_000000003'),
+       ('ORD_000000003', 'K7 주문', TRUE, '2024-01-14 11:00:00', '2024-01-14 12:00:00', 'DELIVERED', 'CON_000000003',
+        'MEM_000000003', 'MEM_000000004'),
+       ('ORD_000000004', '셀토스 주문', TRUE, '2024-01-15 12:00:00', '2024-01-15 13:00:00', 'CANCELLED', 'CON_000000004',
+        'MEM_000000004', 'MEM_000000005'),
+       ('ORD_000000005', 'K3 주문', TRUE, '2024-01-16 14:00:00', '2024-01-16 15:00:00', 'WAIT', 'CON_000000005',
+        'MEM_000000005', 'MEM_000000006'),
+       ('ORD_000000006', '모하비 주문', TRUE, '2024-01-17 09:00:00', '2024-01-17 10:00:00', 'DELIVERED', 'CON_000000006',
+        'MEM_000000006', 'MEM_000000007'),
+       ('ORD_000000007', 'K8 주문', TRUE, '2024-01-18 10:00:00', '2024-01-18 11:00:00', 'WAIT', 'CON_000000007',
+        'MEM_000000007', 'MEM_000000008'),
+       ('ORD_000000008', '스팅어 주문', TRUE, '2024-01-19 12:00:00', '2024-01-19 13:00:00', 'CONFIRMED', 'CON_000000008',
+        'MEM_000000008', 'MEM_000000009'),
+       ('ORD_000000009', '니로 주문', TRUE, '2024-01-20 14:00:00', '2024-01-20 15:00:00', 'CANCELLED', 'CON_000000009',
+        'MEM_000000009', 'MEM_000000010'),
+       ('ORD_000000010', 'K5 주문', TRUE, '2024-01-21 15:00:00', '2024-01-21 16:00:00', 'WAIT', 'CON_000000010',
+        'MEM_000000010', 'MEM_000000001');
+
+INSERT INTO tb_problem (PROB_ID, PROB_TTL, PROB_CONT, CREATED_AT, UPDATED_AT, ACTIVE, CUST_ID, MEM_ID, PROD_ID)
+VALUES ('PROB_000000001', '쏘렌토 엔진 문제', '엔진에서 소음 발생', '2024-01-12 14:00:00', '2024-01-12 15:00:00', TRUE,
+        'CUS_000000001', 'MEM_000000001', 'PRO_000000001'),
+       ('PROB_000000002', '스포티지 브레이크 문제', '브레이크 페달 작동 불량', '2024-01-13 10:00:00', '2024-01-13 11:00:00', TRUE,
+        'CUS_000000002', 'MEM_000000002', 'PRO_000000002'),
+       ('PROB_000000003', 'K7 전자 장비 문제', '내비게이션 오류', '2024-01-14 09:00:00', '2024-01-14 10:00:00', TRUE,
+        'CUS_000000003', 'MEM_000000003', 'PRO_000000003'),
+       ('PROB_000000004', '셀토스 에어컨 문제', '에어컨 작동 안됨', '2024-01-15 11:00:00', '2024-01-15 12:00:00', TRUE,
+        'CUS_000000004', 'MEM_000000004', 'PRO_000000004'),
+       ('PROB_000000005', 'K3 연비 문제', '연비가 예상보다 낮음', '2024-01-16 12:00:00', '2024-01-16 13:00:00', TRUE,
+        'CUS_000000005', 'MEM_000000005', 'PRO_000000005'),
+       ('PROB_000000006', '모하비 변속기 문제', '변속기 오류 발생', '2024-01-17 13:00:00', '2024-01-17 14:00:00', TRUE,
+        'CUS_000000006', 'MEM_000000006', 'PRO_000000006'),
+       ('PROB_000000007', 'K8 배터리 문제', '배터리 수명 짧음', '2024-01-18 14:00:00', '2024-01-18 15:00:00', TRUE, 'CUS_000000007',
+        'MEM_000000007', 'PRO_000000007'),
+       ('PROB_000000008', '스팅어 오디오 문제', '오디오 스피커 잡음', '2024-01-19 15:00:00', '2024-01-19 16:00:00', TRUE,
+        'CUS_000000008', 'MEM_000000008', 'PRO_000000008'),
+       ('PROB_000000009', '니로 전기 문제', '충전 불량', '2024-01-20 16:00:00', '2024-01-20 17:00:00', TRUE, 'CUS_000000009',
+        'MEM_000000009', 'PRO_000000009'),
+       ('PROB_000000010', 'K5 시동 문제', '시동이 걸리지 않음', '2024-01-21 17:00:00', '2024-01-21 18:00:00', TRUE, 'CUS_000000010',
+        'MEM_000000010', 'PRO_000000010');
+
+INSERT INTO tb_purchase_order (PUR_ORD_ID, PUR_ORD_TTL, PUR_CONT, CREATED_AT, UPDATED_AT, ACTIVE, PUR_ORD_STAT, ORD_ID,
+                               MEM_ID)
+VALUES ('PUR_000000001', '쏘렌토 부품 주문', '엔진 부품 요청', '2024-01-12 10:00:00', '2024-01-12 11:00:00', TRUE, 'WAIT',
+        'ORD_000000001', 'MEM_000000001'),
+       ('PUR_000000002', '스포티지 타이어 주문', '타이어 4개 요청', '2024-01-13 12:00:00', '2024-01-13 13:00:00', TRUE, 'CONFIRMED',
+        'ORD_000000002', 'MEM_000000002'),
+       ('PUR_000000003', 'K7 배터리 주문', '배터리 교체 요청', '2024-01-14 13:00:00', '2024-01-14 14:00:00', TRUE, 'DELIVERED',
+        'ORD_000000003', 'MEM_000000003'),
+       ('PUR_000000004', '셀토스 브레이크 주문', '브레이크 패드 요청', '2024-01-15 14:00:00', '2024-01-15 15:00:00', TRUE, 'WAIT',
+        'ORD_000000004', 'MEM_000000004'),
+       ('PUR_000000005', 'K3 내비게이션 주문', '내비게이션 교체', '2024-01-16 15:00:00', '2024-01-16 16:00:00', TRUE, 'CANCELLED',
+        'ORD_000000005', 'MEM_000000005'),
+       ('PUR_000000006', '모하비 오일 필터 주문', '오일 필터 10개 요청', '2024-01-17 09:00:00', '2024-01-17 10:00:00', TRUE,
+        'CONFIRMED', 'ORD_000000006', 'MEM_000000006'),
+       ('PUR_000000007', 'K8 헤드라이트 주문', 'LED 헤드라이트 2개 요청', '2024-01-18 10:00:00', '2024-01-18 11:00:00', TRUE, 'WAIT',
+        'ORD_000000007', 'MEM_000000007'),
+       ('PUR_000000008', '스팅어 도어 핸들 주문', '도어 핸들 4개 요청', '2024-01-19 12:00:00', '2024-01-19 13:00:00', TRUE, 'CONFIRMED',
+        'ORD_000000008', 'MEM_000000008'),
+       ('PUR_000000009', '니로 충전 케이블 주문', '전기차 충전 케이블 요청', '2024-01-20 14:00:00', '2024-01-20 15:00:00', TRUE,
+        'DELIVERED', 'ORD_000000009', 'MEM_000000009'),
+       ('PUR_000000010', 'K5 엔진오일 주문', '엔진오일 20L 요청', '2024-01-21 15:00:00', '2024-01-21 16:00:00', TRUE, 'WAIT',
+        'ORD_000000010', 'MEM_000000010');
+
+INSERT INTO tb_notice (NOT_ID, NOT_TTL, NOT_TAG, NOT_CLA, NOT_CONT, CREATED_AT, UPDATED_AT, ACTIVE, MEM_ID)
+VALUES ('NOT_000000001', '신차 출시 공지', 'ALL', 'IMPORTANT', '신형 쏘렌토가 출시되었습니다.', '2024-01-10 09:00:00',
+        '2024-01-10 09:30:00', TRUE, 'MEM_000000001'),
+       ('NOT_000000002', '정기 점검 공지', 'SERVICE', 'NORMAL', '1월 정기 점검 안내입니다.', '2024-01-11 10:00:00',
+        '2024-01-11 10:30:00', TRUE, 'MEM_000000002'),
+       ('NOT_000000003', '할인 프로모션', 'SALES', 'IMPORTANT', 'K5 한정 할인 프로모션 안내', '2024-01-12 11:00:00',
+        '2024-01-12 11:30:00', TRUE, 'MEM_000000003'),
+       ('NOT_000000004', '서비스 센터 이전 안내', 'SERVICE', 'NORMAL', '서울센터가 이전되었습니다.', '2024-01-13 12:00:00',
+        '2024-01-13 12:30:00', TRUE, 'MEM_000000004'),
+       ('NOT_000000005', '부품 재고 부족', 'ALL', 'WARNING', '모하비 부품 재고가 부족합니다.', '2024-01-14 13:00:00',
+        '2024-01-14 13:30:00', TRUE, 'MEM_000000005'),
+       ('NOT_000000006', '설 연휴 휴무 안내', 'ALL', 'NORMAL', '설 연휴 기간 동안 휴무합니다.', '2024-01-15 14:00:00',
+        '2024-01-15 14:30:00', TRUE, 'MEM_000000006'),
+       ('NOT_000000007', 'K8 시승 이벤트', 'EVENT', 'NORMAL', 'K8 시승 이벤트에 참여하세요.', '2024-01-16 15:00:00',
+        '2024-01-16 15:30:00', TRUE, 'MEM_000000007'),
+       ('NOT_000000008', '스포티지 리콜 안내', 'SERVICE', 'CRITICAL', '스포티지 일부 모델 리콜 안내', '2024-01-17 16:00:00',
+        '2024-01-17 16:30:00', TRUE, 'MEM_000000008'),
+       ('NOT_000000009', '신입사원 모집', 'HR', 'NORMAL', '기아자동차 신입사원 모집 공고', '2024-01-18 17:00:00', '2024-01-18 17:30:00',
+        TRUE, 'MEM_000000009'),
+       ('NOT_000000010', '고객 감사 이벤트', 'EVENT', 'NORMAL', '고객 감사 사은품 증정 이벤트', '2024-01-19 18:00:00',
+        '2024-01-19 18:30:00', TRUE, 'MEM_000000010');
+
+INSERT INTO tb_file (FILE_ID, FILE_NAME, FILE_URL, FILE_TYPE, ACTIVE, CREATED_AT, MEM_ID, NOT_ID)
+VALUES ('FIL_000000001', '쏘렌토_계약서.pdf', '/files/contract1.pdf', 'pdf', TRUE, '2024-01-10 10:00:00', 'MEM_000000001',
+        'NOT_000000001'),
+       ('FIL_000000002', '스포티지_메뉴얼.pdf', '/files/manual2.pdf', 'pdf', TRUE, '2024-01-11 10:30:00', 'MEM_000000002',
+        'NOT_000000002'),
+       ('FIL_000000003', 'K7_견적서.pdf', '/files/estimate3.pdf', 'pdf', TRUE, '2024-01-12 11:00:00', 'MEM_000000003',
+        'NOT_000000003'),
+       ('FIL_000000004', '셀토스_리콜_공지.pdf', '/files/recall4.pdf', 'pdf', TRUE, '2024-01-13 12:00:00', 'MEM_000000004',
+        'NOT_000000004'),
+       ('FIL_000000005', 'K3_정비보고서.pdf', '/files/report5.pdf', 'pdf', TRUE, '2024-01-14 13:00:00', 'MEM_000000005',
+        'NOT_000000005'),
+       ('FIL_000000006', '모하비_오일교환.pdf', '/files/oil6.pdf', 'pdf', TRUE, '2024-01-15 14:00:00', 'MEM_000000006',
+        'NOT_000000006'),
+       ('FIL_000000007', 'K8_이벤트_포스터.png', '/files/event7.png', 'image', TRUE, '2024-01-16 15:00:00', 'MEM_000000007',
+        'NOT_000000007'),
+       ('FIL_000000008', '스팅어_사용설명서.pdf', '/files/manual8.pdf', 'pdf', TRUE, '2024-01-17 16:00:00', 'MEM_000000008',
+        'NOT_000000008'),
+       ('FIL_000000009', '니로_충전가이드.pdf', '/files/guide9.pdf', 'pdf', TRUE, '2024-01-18 17:00:00', 'MEM_000000009',
+        'NOT_000000009'),
+       ('FIL_000000010', 'K5_고객이벤트_배너.jpg', '/files/banner10.jpg', 'image', TRUE, '2024-01-19 18:00:00',
+        'MEM_000000010', 'NOT_000000010');
+
+INSERT INTO tb_schedule (SCH_ID, SCH_NAME, SCH_CONT, SCH_SRT_AT, SCH_END_AT, CREATED_AT, UPDATED_AT, DELETED_AT, ACTIVE,
+                         MEM_ID)
+VALUES ('SCH_000000001', '쏘렌토 신차 발표회', '신차 발표회 준비 및 진행', '2024-02-01 09:00:00', '2024-02-01 12:00:00',
+        '2024-01-20 10:00:00', '2024-01-20 10:30:00', NULL, TRUE, 'MEM_000000001'),
+       ('SCH_000000002', '스포티지 고객 상담', '신차 구매 고객 상담 일정', '2024-02-05 10:00:00', '2024-02-05 11:30:00',
+        '2024-01-21 11:00:00', '2024-01-21 11:30:00', NULL, TRUE, 'MEM_000000002'),
+       ('SCH_000000003', 'K7 프로모션 회의', '프로모션 기획 및 준비 회의', '2024-02-10 13:00:00', '2024-02-10 15:00:00',
+        '2024-01-22 12:00:00', '2024-01-22 12:30:00', NULL, TRUE, 'MEM_000000003'),
+       ('SCH_000000004', '셀토스 시승 이벤트', '고객 대상 시승 이벤트', '2024-02-12 14:00:00', '2024-02-12 17:00:00',
+        '2024-01-23 13:00:00', '2024-01-23 13:30:00', NULL, TRUE, 'MEM_000000004'),
+       ('SCH_000000005', 'K3 서비스 교육', '서비스 센터 직원 교육', '2024-02-15 09:00:00', '2024-02-15 12:00:00',
+        '2024-01-24 14:00:00', '2024-01-24 14:30:00', NULL, TRUE, 'MEM_000000005'),
+       ('SCH_000000006', '모하비 유지보수 회의', '유지보수 전략 논의', '2024-02-17 10:00:00', '2024-02-17 11:00:00',
+        '2024-01-25 15:00:00', '2024-01-25 15:30:00', NULL, TRUE, 'MEM_000000006'),
+       ('SCH_000000007', 'K8 내부 검토', '신차 내부 디자인 검토', '2024-02-20 11:00:00', '2024-02-20 13:00:00',
+        '2024-01-26 16:00:00', '2024-01-26 16:30:00', NULL, TRUE, 'MEM_000000007'),
+       ('SCH_000000008', '스팅어 기술 세미나', '스팅어 기술 세미나 및 발표', '2024-02-22 14:00:00', '2024-02-22 16:00:00',
+        '2024-01-27 17:00:00', '2024-01-27 17:30:00', NULL, TRUE, 'MEM_000000008'),
+       ('SCH_000000009', '니로 전기차 테스트', '니로 전기차 충전 테스트', '2024-02-25 09:00:00', '2024-02-25 11:00:00',
+        '2024-01-28 18:00:00', '2024-01-28 18:30:00', NULL, TRUE, 'MEM_000000009'),
+       ('SCH_000000010', 'K5 재고 점검', 'K5 재고 관리 및 점검', '2024-02-28 15:00:00', '2024-02-28 17:00:00',
+        '2024-01-29 19:00:00', '2024-01-29 19:30:00', NULL, TRUE, 'MEM_000000010');
+
+INSERT INTO tb_alarm (ALR_ID, ALR_MSG, ALR_URL, ALR_READ_STAT, CREATED_AT, MEM_ID)
+VALUES ('ALR_000000001', '신차 출시 공지 알림', '/notices/1', FALSE, '2024-01-20 12:00:00', 'MEM_000000001'),
+       ('ALR_000000002', '스포티지 리콜 안내', '/notices/2', FALSE, '2024-01-21 14:00:00', 'MEM_000000002'),
+       ('ALR_000000003', 'K7 고객 이벤트 초대', '/events/3', TRUE, '2024-01-22 09:00:00', 'MEM_000000003'),
+       ('ALR_000000004', '셀토스 정비 완료', '/service/4', FALSE, '2024-01-23 10:00:00', 'MEM_000000004'),
+       ('ALR_000000005', 'K3 테스트 드라이브 일정 변경', '/schedules/5', TRUE, '2024-01-24 11:00:00', 'MEM_000000005'),
+       ('ALR_000000006', '모하비 부품 입고 알림', '/inventory/6', FALSE, '2024-01-25 12:00:00', 'MEM_000000006'),
+       ('ALR_000000007', 'K8 디자인 변경 확정', '/design/7', TRUE, '2024-01-26 13:00:00', 'MEM_000000007'),
+       ('ALR_000000008', '스팅어 성능 테스트 보고서', '/reports/8', FALSE, '2024-01-27 14:00:00', 'MEM_000000008'),
+       ('ALR_000000009', '니로 전기차 충전소 위치', '/maps/9', TRUE, '2024-01-28 15:00:00', 'MEM_000000009'),
+       ('ALR_000000010', 'K5 재고 부족 경고', '/inventory/10', FALSE, '2024-01-29 16:00:00', 'MEM_000000010');
+
+INSERT INTO tb_member_detail (MEM_DET_ID, MEM_DET_REL, MEM_DET_NAME, MEM_DET_BIR, MEM_DET_IDEN_NO, MEM_DET_PHO,
+                              MEM_DET_SEX, MEM_DET_DIS, MEM_DET_DIE, MEM_DET_NOTE, MEM_DET_ENTD, MEM_DET_GRAD,
+                              MEM_DET_FNL_EDC, MEM_DET_EDU, MEM_DET_MJR, MEM_DET_EMP_DATE, MEM_DET_RTR_DATE, CAR_INFO,
+                              CERT_DATE, CERT_INST, CERT_NAME, CERT_SCO, MEM_ID)
+VALUES ('DET_000000001', '배우자', '박미숙', '1988-05-12', '880512-1234567', '010-1111-2222', 'FEMALE', FALSE, FALSE, NULL,
+        '2010', 'A', '대졸', '경영학', '기아', '2020-01-01', '2025-01-01', 'K5', '2023-06-01', '기아자동차', '세일즈', '95',
+        'MEM_000000001'),
+       ('DET_000000002', '자녀', '김철수', '2012-08-05', '120805-2345678', '010-2222-3333', 'MALE', FALSE, FALSE, NULL,
+        '2022', 'B+', '고졸', '정보통신', '기아', '2022-01-15', '2027-01-15', 'K3', '2023-07-15', '기아자동차', '서비스', '88',
+        'MEM_000000002'),
+       ('DET_000000003', '배우자', '이영희', '1985-03-09', '850309-3456789', '010-3333-4444', 'FEMALE', FALSE, FALSE,
+        '부부 동반 여행', '2009', 'A-', '대졸', '경제학', '기아', '2019-05-12', '2024-05-12', '스포티지', '2023-04-20', '기아자동차', '기술지원',
+        '92', 'MEM_000000003'),
+       ('DET_000000004', '배우자', '정수민', '1990-11-11', '901111-4567890', '010-4444-5555', 'FEMALE', FALSE, FALSE, NULL,
+        '2015', 'A', '대졸', '기계공학', '기아', '2021-09-01', '2026-09-01', 'K7', '2023-02-10', '기아자동차', '품질관리', '87',
+        'MEM_000000004'),
+       ('DET_000000005', '자녀', '한지수', '2016-01-20', '160120-5678901', '010-5555-6666', 'MALE', TRUE, FALSE, '특별 교육 필요',
+        '2021', 'B', '초등학교', '과학', '기아', '2023-03-05', '2028-03-05', '니로', '2023-03-01', '기아자동차', '연구개발', '85',
+        'MEM_000000005'),
+       ('DET_000000006', '자녀', '최지우', '2005-06-15', '050615-6789012', '010-6666-7777', 'FEMALE', FALSE, FALSE, NULL,
+        '2023', 'A+', '대졸', '디자인', '기아', '2020-07-01', '2025-07-01', '스팅어', '2023-08-20', '기아자동차', '디자인', '90',
+        'MEM_000000006'),
+       ('DET_000000007', '배우자', '윤미라', '1987-12-30', '871230-7890123', '010-7777-8888', 'FEMALE', FALSE, FALSE,
+        '해외 출장 동반', '2011', 'B+', '대졸', '마케팅', '기아', '2020-12-01', '2025-12-01', '쏘렌토', '2023-01-25', '기아자동차', '마케팅',
+        '93', 'MEM_000000007'),
+       ('DET_000000008', '자녀', '이동희', '2010-09-10', '100910-8901234', '010-8888-9999', 'MALE', FALSE, FALSE, NULL,
+        '2025', 'B-', '중졸', '정보기술', '기아', '2023-05-05', '2028-05-05', '모하비', '2023-12-30', '기아자동차', '엔지니어링', '89',
+        'MEM_000000008'),
+       ('DET_000000009', '배우자', '정수영', '1991-04-17', '910417-9012345', '010-9999-0000', 'FEMALE', FALSE, FALSE,
+        '가족 동반 캠핑', '2018', 'A-', '대졸', '화학', '기아', '2022-06-15', '2027-06-15', '셀토스', '2023-11-22', '기아자동차', '생산',
+        '91', 'MEM_000000009'),
+       ('DET_000000010', '자녀', '김준호', '2014-07-22', '140722-0123456', '010-0000-1111', 'MALE', FALSE, FALSE, NULL,
+        '2027', 'B+', '고졸', '경영', '기아', '2023-08-12', '2028-08-12', 'K8', '2023-09-10', '기아자동차', '세일즈', '87',
+        'MEM_000000010');
+
+INSERT INTO tb_update_history (UPD_ID, UPD_IP, UPDATED_AT, UPDATED_URL, MEM_ID, CONR_ID)
+VALUES ('UPD_000000001', '192.168.1.10', '2024-01-10 12:00:00', '/contracts/1', 'MEM_000000001', 'CON_000000001'),
+       ('UPD_000000002', '192.168.1.20', '2024-01-11 14:00:00', '/contracts/2', 'MEM_000000002', 'CON_000000002'),
+       ('UPD_000000003', '192.168.1.30', '2024-01-12 16:00:00', '/contracts/3', 'MEM_000000003', 'CON_000000003'),
+       ('UPD_000000004', '192.168.1.40', '2024-01-13 09:00:00', '/contracts/4', 'MEM_000000004', 'CON_000000004'),
+       ('UPD_000000005', '192.168.1.50', '2024-01-14 10:00:00', '/contracts/5', 'MEM_000000005', 'CON_000000005'),
+       ('UPD_000000006', '192.168.1.60', '2024-01-15 11:00:00', '/contracts/6', 'MEM_000000006', 'CON_000000006'),
+       ('UPD_000000007', '192.168.1.70', '2024-01-16 12:00:00', '/contracts/7', 'MEM_000000007', 'CON_000000007'),
+       ('UPD_000000008', '192.168.1.80', '2024-01-17 13:00:00', '/contracts/8', 'MEM_000000008', 'CON_000000008'),
+       ('UPD_000000009', '192.168.1.90', '2024-01-18 14:00:00', '/contracts/9', 'MEM_000000009', 'CON_000000009'),
+       ('UPD_000000010', '192.168.1.100', '2024-01-19 15:00:00', '/contracts/10', 'MEM_000000010', 'CON_000000010');
+
+INSERT INTO tb_evaluation (EVAL_ID, EVAL_TTL, EVAL_CONT, CREATED_AT, UPDATED_AT, ACTIVE, CENT_ID, MEM_ID, WRI_ID)
+VALUES ('EVAL_000000001', '쏘렌토 성능 평가', '쏘렌토의 성능에 대한 평가입니다.', '2024-01-20 10:00:00', '2024-01-21 10:30:00', TRUE,
+        'CEN_000000001', 'MEM_000000001', 'MEM_000000002'),
+       ('EVAL_000000002', '스포티지 안전 평가', '스포티지의 안전성 평가 보고서.', '2024-01-21 11:00:00', '2024-01-22 11:30:00', TRUE,
+        'CEN_000000002', 'MEM_000000002', 'MEM_000000003'),
+       ('EVAL_000000003', 'K7 고객 만족도 평가', '고객 만족도 조사 결과입니다.', '2024-01-23 12:00:00', '2024-01-24 12:30:00', TRUE,
+        'CEN_000000003', 'MEM_000000003', 'MEM_000000004'),
+       ('EVAL_000000004', '셀토스 디자인 평가', '셀토스 디자인 피드백.', '2024-01-25 13:00:00', '2024-01-26 13:30:00', TRUE,
+        'CEN_000000004', 'MEM_000000004', 'MEM_000000005'),
+       ('EVAL_000000005', 'K3 내부 공간 평가', '내부 공간의 효율성 평가.', '2024-01-27 14:00:00', '2024-01-28 14:30:00', TRUE,
+        'CEN_000000005', 'MEM_000000005', 'MEM_000000006'),
+       ('EVAL_000000006', '모하비 유지비 평가', '유지 비용과 효율성 평가.', '2024-01-29 15:00:00', '2024-01-30 15:30:00', TRUE,
+        'CEN_000000006', 'MEM_000000006', 'MEM_000000007'),
+       ('EVAL_000000007', 'K8 디자인 리뉴얼', '새로운 디자인에 대한 평가.', '2024-02-01 16:00:00', '2024-02-02 16:30:00', TRUE,
+        'CEN_000000007', 'MEM_000000007', 'MEM_000000008'),
+       ('EVAL_000000008', '스팅어 출력 평가', '스팅어의 출력 성능 보고서.', '2024-02-03 17:00:00', '2024-02-04 17:30:00', TRUE,
+        'CEN_000000008', 'MEM_000000008', 'MEM_000000009'),
+       ('EVAL_000000009', '니로 전기차 평가', '전기차 효율성 평가 결과.', '2024-02-05 18:00:00', '2024-02-06 18:30:00', TRUE,
+        'CEN_000000009', 'MEM_000000009', 'MEM_000000010'),
+       ('EVAL_000000010', 'K5 연비 평가', 'K5의 연비 효율성 보고서.', '2024-02-07 19:00:00', '2024-02-08 19:30:00', TRUE,
+        'CEN_000000010', 'MEM_000000010', 'MEM_000000001');
+
+INSERT INTO tb_promotion (PROM_ID, PROM_TTL, PROM_CONT, CREATED_AT, UPDATED_AT, ACTIVE, MEM_ID)
+VALUES ('PROM_000000001', '쏘렌토 겨울 특별 할인', '쏘렌토 구매 시 15% 할인 제공', '2024-01-05 09:00:00', '2024-01-06 10:00:00', TRUE,
+        'MEM_000000001'),
+       ('PROM_000000002', '스포티지 리스 프로모션', '리스 계약 시 추가 혜택 제공', '2024-01-10 11:00:00', '2024-01-10 12:00:00', TRUE,
+        'MEM_000000002'),
+       ('PROM_000000003', 'K7 고객 감사 이벤트', 'K7 구매 고객 대상 사은품 증정', '2024-01-15 14:00:00', '2024-01-15 15:00:00', TRUE,
+        'MEM_000000003'),
+       ('PROM_000000004', '셀토스 한정 프로모션', '셀토스 구매 시 무료 보증 연장', '2024-01-20 09:00:00', '2024-01-20 10:00:00', TRUE,
+        'MEM_000000004'),
+       ('PROM_000000005', 'K3 연비 보장 이벤트', 'K3 연비 테스트 이벤트 참여 시 혜택 제공', '2024-01-25 13:00:00', '2024-01-25 14:00:00',
+        TRUE, 'MEM_000000005'),
+       ('PROM_000000006', '모하비 프리미엄 서비스', '모하비 구매 고객 대상 프리미엄 서비스 제공', '2024-01-30 11:00:00', '2024-01-31 12:00:00',
+        TRUE, 'MEM_000000006'),
+       ('PROM_000000007', 'K8 럭셔리 패키지 할인', '럭셔리 패키지 선택 시 10% 할인 제공', '2024-02-01 12:00:00', '2024-02-02 13:00:00', TRUE,
+        'MEM_000000007'),
+       ('PROM_000000008', '스팅어 시승 이벤트', '스팅어 시승 후 계약 시 추가 혜택', '2024-02-05 10:00:00', '2024-02-05 11:00:00', TRUE,
+        'MEM_000000008'),
+       ('PROM_000000009', '니로 전기차 구매 지원', '전기차 구매 시 충전기 설치 지원', '2024-02-10 09:00:00', '2024-02-10 10:00:00', TRUE,
+        'MEM_000000009'),
+       ('PROM_000000010', 'K5 재고 한정 특별 할인', '재고 한정 K5 모델에 대한 추가 할인 제공', '2024-02-15 15:00:00', '2024-02-16 16:00:00',
+        TRUE, 'MEM_000000010');
+
+INSERT INTO tb_product_option (PROD_ID, PROD_SER_NO, OPT_CNTY, OPT_MNFR, OPT_VHC_TYPE, OPT_CHSS, OPT_DTIL_TYPE,
+                               OPT_BODY_TYPE,
+                               OPT_SFTY_DVCE, OPT_ENGN_CPCT, OPT_SCRT_CODE, OPT_PRDC_YEAR, OPT_PRDC_PLNT, OPT_ENGN,
+                               OPT_MSSN,
+                               OPT_TRIM, OPT_XTNL_COLR, OPT_ITNL_COLR, OPT_HUD, OPT_NAVI, OPT_DRVE_WISE, OPT_SMRT_CNCT,
+                               OPT_STYL, OPT_MY_CFRT_PCKG, OPT_OTDR_PCKG, OPT_SUN_ROOF, OPT_SOND, ACTIVE)
+VALUES
+-- 데이터 1
+('PRO_000000001', 'KNAHAA4AALU1A00001', 'K', 'N', 'A', 'A', 'L', '4', '2', 'A', 'P', 'A', 'U', '1', '0', '1', 'B', 'W',
+ '1', '1', '1', '1', '1', '0', '1', '1', '1', TRUE),
+-- 데이터 2
+('PRO_000000002', 'KNAHBA4BALR2Z00002', 'K', 'N', 'H', 'B', 'L', '4', '4', 'B', 'R', 'B', 'Z', '1', '1', '0', 'G', 'B',
+ '0', '1', '0', '1', '0', '1', '0', '0', '1', TRUE),
+-- 데이터 3
+('PRO_000000003', 'KMBHC64CAMJ5A00003', 'K', 'M', 'H', 'C', 'M', '6', '3', 'C', 'P', 'C', 'A', '0', '1', '1', 'R', 'G',
+ '1', '1', '1', '0', '1', '1', '0', '1', '0', TRUE),
+-- 데이터 4
+('PRO_000000004', 'KNJFA42DALU3C00004', 'K', 'N', 'J', 'D', 'L', '2', '4', 'A', 'R', 'D', 'C', '1', '0', '0', 'B', 'R',
+ '0', '0', '0', '1', '0', '0', '1', '0', '1', TRUE),
+-- 데이터 5
+('PRO_000000005', 'KFBGBM5EARP1M00005', 'K', 'B', 'F', 'B', 'M', '5', '1', 'B', 'P', 'E', 'M', '1', '1', '1', 'W', 'B',
+ '1', '1', '0', '0', '1', '1', '0', '1', '1', TRUE),
+-- 데이터 6
+('PRO_000000006', 'KNHGA6BALUP7A00006', 'K', 'N', 'H', 'G', 'L', '6', '3', 'A', 'R', 'F', 'A', '0', '0', '1', 'B', 'G',
+ '1', '1', '1', '1', '0', '1', '1', '0', '0', TRUE),
+-- 데이터 7
+('PRO_000000007', 'KNJFA34AALU4Z00007', 'K', 'N', 'J', 'A', 'M', '4', '4', 'C', 'P', 'G', 'Z', '1', '1', '0', 'R', 'W',
+ '0', '0', '1', '0', '1', '0', '1', '1', '1', TRUE),
+-- 데이터 8
+('PRO_000000008', 'KMAHDA2AAMJ3T00008', 'K', 'M', 'H', 'D', 'L', '2', '2', 'A', 'R', 'H', 'T', '0', '0', '1', 'B', 'G',
+ '1', '1', '0', '1', '0', '1', '1', '0', '0', TRUE),
+-- 데이터 9
+('PRO_000000009', 'KNAHCA5BALU5C00009', 'K', 'N', 'A', 'C', 'M', '5', '1', 'B', 'P', 'J', 'C', '1', '1', '0', 'R', 'R',
+ '0', '1', '1', '1', '1', '0', '1', '1', '0', TRUE),
+-- 데이터 10
+('PRO_000000010', 'KNFHC54CAMR1A00010', 'K', 'N', 'F', 'F', 'N', '4', '3', 'C', 'R', 'K', 'A', '0', '1', '1', 'W', 'B',
+ '1', '1', '0', '0', '0', '1', '0', '1', '1', TRUE);
+
+INSERT INTO tb_sales_history (SAL_HIST_ID, CONR_ID)
+VALUES ('SAL_000000001', 'CON_000000001'),
+       ('SAL_000000002', 'CON_000000002'),
+       ('SAL_000000003', 'CON_000000003'),
+       ('SAL_000000004', 'CON_000000004'),
+       ('SAL_000000005', 'CON_000000005'),
+       ('SAL_000000006', 'CON_000000006'),
+       ('SAL_000000007', 'CON_000000007'),
+       ('SAL_000000008', 'CON_000000008'),
+       ('SAL_000000009', 'CON_000000009'),
+       ('SAL_000000010', 'CON_000000010');
+
 
