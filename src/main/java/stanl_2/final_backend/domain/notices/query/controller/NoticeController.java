@@ -2,6 +2,9 @@ package stanl_2.final_backend.domain.notices.query.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,8 +28,13 @@ public class NoticeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<NoticeDTO>> getNotices() {
-        List<NoticeDTO> notices = noticeService.findAllNotices();
-        return ResponseEntity.ok(notices);
+    public ResponseEntity<Page<NoticeDTO>> getNotices(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "7") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<NoticeDTO> noticeDTOPage = noticeService.findAllNotices(pageable);
+        return ResponseEntity.ok(noticeDTOPage);
     }
+
 }
