@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.member.query.service.AuthService;
 
-@RestController(value = "querySampleController")
+@RestController(value = "queryAuthController")
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 

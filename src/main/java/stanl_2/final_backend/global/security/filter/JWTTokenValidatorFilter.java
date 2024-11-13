@@ -84,7 +84,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // 특정 경로에서는 필터를 적용하지 않음
         String path = request.getServletPath();
-        return path.equals("/api/v1/member/signin") ||
-                path.equals("/api/v1/member/signup");
+        return path.startsWith("/api/v1/auth") ||
+                path.startsWith("/api/v1/sample");
     }
 }
