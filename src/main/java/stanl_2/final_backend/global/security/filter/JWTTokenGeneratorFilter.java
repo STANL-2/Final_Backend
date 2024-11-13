@@ -19,11 +19,13 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.secret-key}")
-    private String jwtSecretKey;
+    private final String jwtSecretKey;
+    private final String jwtHeader;
 
-    @Value("${jwt.header}")
-    private String jwtHeader;
+    public JWTTokenGeneratorFilter(String jwtSecretKey, String jwtHeader) {
+        this.jwtSecretKey = jwtSecretKey;
+        this.jwtHeader = jwtHeader;
+    }
 
 
     @Override

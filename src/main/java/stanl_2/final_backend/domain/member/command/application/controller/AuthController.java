@@ -5,9 +5,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninRequestDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninResponseDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SignupDTO;
@@ -48,15 +53,31 @@ public class AuthController {
                     content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
     @PostMapping("signin")
-    public ResponseEntity<ResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO){
+    public ResponseEntity<ResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO,
+                                                  HttpServletResponse response){
 
         // 로그인 서비스 호출하여 Access Token과 Refresh Token 발급
-        SigninResponseDTO response = authCommandService.signin(signinRequestDTO);
+        SigninResponseDTO signinResponseDTO = authCommandService.signin(signinRequestDTO);
+
+
+        // CSRF 토큰 생성 및 쿠키에 추가
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        CsrfToken csrfToken = (CsrfToken) attr.getRequest().getAttribute(CsrfToken.class.getName());
+
+        if (csrfToken != null) {
+            Cookie csrfCookie = new Cookie("XSRF-TOKEN", csrfToken.getToken());
+            csrfCookie.setPath("/");
+            csrfCookie.setHttpOnly(false);
+            csrfCookie.setSecure(attr.getRequest().isSecure());
+            csrfCookie.setMaxAge(-1); // 세션 종료 시 삭제
+            response.addCookie(csrfCookie);
+        }
+
 
         return ResponseEntity.ok(ResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
-                                                .result(response)
+                                                .result(signinResponseDTO)
                                                 .build());
     }
 

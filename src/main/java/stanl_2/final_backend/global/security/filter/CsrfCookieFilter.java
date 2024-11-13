@@ -17,46 +17,44 @@ import java.io.IOException;
 public class CsrfCookieFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
 
-        CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfCookieFilter.class.getName());
-
-        if(csrfToken != null) {
-            Cookie csrfCookie = null;
-
-            // 요청에서 쿠키 배열 가져오기 (null 체크 추가)
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                // 쿠키 배열에서 "XSRF-TOKEN" 이름을 가진 쿠키를 찾음
-                for (Cookie cookie : cookies) {
-                    if ("XSRF-TOKEN".equals(cookie.getName())) {
-                        csrfCookie = cookie;
-                        break; // 쿠키를 찾으면 반복문 종료
-                    }
-                }
-            }
-
-            // 쿠키가 없거나, 토큰이 변경된 경우 새로운 쿠키 생성
-            if (csrfCookie == null || !csrfCookie.getValue().equals(csrfToken.getToken())) {
-                Cookie newCsrfCookie = new Cookie("XSRF-TOKEN", csrfToken.getToken());
-                newCsrfCookie.setPath("/");
-                newCsrfCookie.setHttpOnly(false); // JavaScript에서 접근 가능하도록 설정
-                newCsrfCookie.setSecure(request.isSecure()); // HTTPS 요청에서만 쿠키 전송
-                newCsrfCookie.setMaxAge(-1); // 세션 종료 시 삭제
-                response.addCookie(newCsrfCookie); // 응답에 쿠키 추가
-            }
-        } else {
+        if (csrfToken == null) {
+            log.error("CSRF 토큰을 찾을 수 없습니다.");
             throw new CommonException(ErrorCode.NOT_FOUND_CSRF_TOKEN);
         }
 
-        // 다음 필터로 요청 전달
+        // 쿠키에서 CSRF 토큰 가져오기
+        String csrfCookieValue = getCsrfTokenFromCookie(request);
+        log.info("쿠키에서 가져온 CSRF 토큰: {}", csrfCookieValue);
+        log.info("현재 요청의 CSRF 토큰: {}", csrfToken.getToken());
+
+        if (csrfCookieValue == null || !csrfCookieValue.equals(csrfToken.getToken())) {
+            log.error("CSRF 토큰 불일치 - 쿠키와 요청의 토큰이 일치하지 않습니다.");
+            throw new CommonException(ErrorCode.NOT_FOUND_CSRF_TOKEN);
+        }
+
         filterChain.doFilter(request, response);
     }
 
+    private String getCsrfTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("XSRF-TOKEN".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.startsWith("/api/v1/auth") ||
-                path.startsWith("/api/v1/sample");
+        return path.startsWith("/api/v1/auth") || path.startsWith("/api/v1/sample");
     }
 }

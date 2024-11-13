@@ -1,5 +1,6 @@
 package stanl_2.final_backend.global.security.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -32,6 +33,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Profile("prod")
 public class ProdSecurityConfig {
 
+    @Value("${jwt.secret-key}")
+    private String jwtSecretKey;
+
+    @Value("${jwt.header}")
+    private String jwtHeader;
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
@@ -40,14 +47,15 @@ public class ProdSecurityConfig {
         http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-                        .ignoringRequestMatchers("/api/v1/auth/**", "/api/v1/sample/**")
+                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/sample/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**", "/api/v1/sample/**").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
+//                        .anyRequest().authenticated())
                 // 필터 순서: JWT 검증 -> CSRF -> JWT 생성
-                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
-                .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
+                .addFilterAfter(new JWTTokenGeneratorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());

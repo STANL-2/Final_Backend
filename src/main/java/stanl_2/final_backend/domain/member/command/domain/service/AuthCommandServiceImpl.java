@@ -2,6 +2,7 @@ package stanl_2.final_backend.domain.member.command.domain.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +12,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninRequestDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninResponseDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SignupDTO;
@@ -21,7 +25,6 @@ import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Membe
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
 import stanl_2.final_backend.global.exception.CommonException;
 import stanl_2.final_backend.global.exception.ErrorCode;
-import stanl_2.final_backend.global.security.service.MemberDetails;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -85,15 +88,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
 
         // 사용자 정보 가져오기
-        MemberDetails memberDetails = (MemberDetails) authenticationResponse.getPrincipal(); // 수정된 부분
-        Member member = memberDetails.getMember();  // MemberDetails에서 Member를 얻어옴
+//        MemberDetails memberDetails = (MemberDetails) authenticationResponse.getPrincipal(); // 수정된 부분
+//        Member member = memberDetails.getMember();  // MemberDetails에서 Member를 얻어옴
         SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
 
         // Access Token (1시간)
         String accessToken = Jwts.builder()
                 .setIssuer("STANL2")
                 .setSubject("Access Token")
-                .claim("id", member.getId()) // `id`만 포함
+//                .claim("id", member.getId()) // `id`만 포함
                 .claim("authorities", authenticationResponse.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
                 .setIssuedAt(new java.util.Date())
@@ -105,7 +108,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         String refreshToken = Jwts.builder()
                 .setIssuer("STANL2")
                 .setSubject("Refresh Token")
-                .claim("id", member.getId())
+//                .claim("id", member.getId())
                 .setIssuedAt(new java.util.Date())
                 .setExpiration(new java.util.Date((new java.util.Date()).getTime() + 604800000)) // 7일 유효
                 .signWith(secretKey)
