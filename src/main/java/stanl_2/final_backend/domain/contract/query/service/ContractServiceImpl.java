@@ -2,8 +2,8 @@ package stanl_2.final_backend.domain.contract.query.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import stanl_2.final_backend.domain.contract.common.exception.CommonException;
-import stanl_2.final_backend.domain.contract.common.exception.ErrorCode;
+import stanl_2.final_backend.domain.contract.common.exception.ContractCommonException;
+import stanl_2.final_backend.domain.contract.common.exception.ContractErrorCode;
 import stanl_2.final_backend.domain.contract.query.dto.ContractDTO;
 import stanl_2.final_backend.domain.contract.query.repository.ContractMapper;
 
@@ -25,7 +25,7 @@ public class ContractServiceImpl implements ContractService {
         ContractDTO responseContract = contractMapper.findContractByIdAndMemId(contractDTO);
 
         if (responseContract == null) {
-            throw new CommonException(ErrorCode.CONTRACT_NOT_FOUND);
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
         return responseContract;

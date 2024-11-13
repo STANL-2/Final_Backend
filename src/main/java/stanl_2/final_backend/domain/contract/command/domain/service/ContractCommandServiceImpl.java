@@ -3,27 +3,26 @@ package stanl_2.final_backend.domain.contract.command.domain.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.contract.command.application.dto.request.ContractModifyRequestDTO;
-import stanl_2.final_backend.domain.contract.command.application.dto.request.ContractRegistRequestDTO;
+import stanl_2.final_backend.domain.contract.command.application.dto.ContractModifyDTO;
+import stanl_2.final_backend.domain.contract.command.application.dto.ContractRegistDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.response.ContractModifyResponseDTO;
-import stanl_2.final_backend.domain.contract.command.application.service.ContractService;
+import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
 import stanl_2.final_backend.domain.contract.command.domain.repository.ContractRepository;
-import stanl_2.final_backend.domain.contract.common.exception.CommonException;
-import stanl_2.final_backend.domain.contract.common.exception.ErrorCode;
+import stanl_2.final_backend.domain.contract.common.exception.ContractCommonException;
+import stanl_2.final_backend.domain.contract.common.exception.ContractErrorCode;
 
-import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service("contractServiceImpl")
-public class ContractServiceImpl implements ContractService {
+public class ContractCommandServiceImpl implements ContractCommandService {
 
     private final ContractRepository contractRepository;
     private final ModelMapper modelMapper;
 
-    public ContractServiceImpl(ContractRepository contractRepository, ModelMapper modelMapper) {
+    public ContractCommandServiceImpl(ContractRepository contractRepository, ModelMapper modelMapper) {
         this.contractRepository = contractRepository;
         this.modelMapper = modelMapper;
     }
@@ -35,7 +34,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public void registerContract(ContractRegistRequestDTO contractRegistRequestDTO) {
+    public void registerContract(ContractRegistDTO contractRegistRequestDTO) {
         // 회원인지 확인여부 및 값 가져오기
         
         // 일련번호로 제품테이블의 총식별번호 찾아서 제품 가져오기
@@ -52,7 +51,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public ContractModifyResponseDTO modifyContract(ContractModifyRequestDTO contractModifyRequestDTO) {
+    public ContractModifyDTO modifyContract(ContractModifyDTO contractModifyRequestDTO) {
 
         // 회원인지 확인여부 및 값 가져오기
 
@@ -65,7 +64,7 @@ public class ContractServiceImpl implements ContractService {
         // 가져온 고객 정보에 수정된 값 넣기
 
         Contract contract = contractRepository.findById(contractModifyRequestDTO.getId())
-                .orElseThrow(() -> new CommonException(ErrorCode.CONTRACT_NOT_FOUND));
+                .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
 
         Contract updateContract = modelMapper.map(contractModifyRequestDTO, Contract.class);
         updateContract.setCreatedAt(contract.getCreatedAt());
@@ -77,9 +76,9 @@ public class ContractServiceImpl implements ContractService {
 
         contractRepository.save(updateContract);
 
-        ContractModifyResponseDTO contractModifyResponseDTO = modelMapper.map(updateContract, ContractModifyResponseDTO.class);
+        ContractModifyDTO contractModifyDTO = modelMapper.map(updateContract, ContractModifyDTO.class);
 
-        return contractModifyResponseDTO;
+        return contractModifyDTO;
     }
 
     @Override
@@ -89,7 +88,7 @@ public class ContractServiceImpl implements ContractService {
         // 회원 확인
 
         Contract contract = contractRepository.findById(id)
-                .orElseThrow(() -> new CommonException(ErrorCode.CONTRACT_NOT_FOUND));
+                .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
 
         contract.setActive(false);
         contract.setDeletedAt(getCurrentTime());
