@@ -33,7 +33,6 @@ public class NoticeController {
     @PostMapping("")
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestBody NoticeRegistDTO noticeRegistDTO){
         noticeCommandService.registerNotice(noticeRegistDTO);
-
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
@@ -41,7 +40,7 @@ public class NoticeController {
                                                 .build());
 
     }
-    @Operation(summary = "공지사항 수정 테스트")
+    @Operation(summary = "공지사항 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
@@ -59,7 +58,7 @@ public class NoticeController {
                         .build());
     }
 
-    @Operation(summary = "공지사항 삭제 테스트")
+    @Operation(summary = "공지사항 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})

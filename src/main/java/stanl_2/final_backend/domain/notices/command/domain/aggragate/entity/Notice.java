@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
-@Table(name="NOTICE")
+@Table(name="TB_NOTICE")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -27,7 +27,7 @@ public class Notice {
             parameters = @org.hibernate.annotations.Parameter(name="prefix", value = "NOT")
     )
     @Column(name = "NOT_ID")
-    private String id;
+    private String noticeId;
 
     @Column(name = "NOT_TTL")
     private String title;
@@ -38,7 +38,7 @@ public class Notice {
     @Column(name = "NOT_CLA")
     private String classification;
 
-    @Column(columnDefinition = "TEXT", name = "content")
+    @Column(columnDefinition = "TEXT", name = "NOT_CONT")
     private String content;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
