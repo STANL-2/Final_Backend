@@ -11,13 +11,12 @@ import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Noti
 import stanl_2.final_backend.domain.notices.command.domain.repository.NoticeRepository;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
-import stanl_2.final_backend.global.exception.CommonException;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Service("commandSampleService")
+@Service("commandNoticeService")
 public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     private final NoticeRepository noticeRepository;
@@ -64,6 +63,12 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Override
     @Transactional
     public void deleteNotice(String id) {
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(()-> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
+        notice.setActive(false);
+        notice.setDeletedAt(getCurrentTimestamp());
+
+        noticeRepository.save(notice);
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import stanl_2.final_backend.global.config.BooleanToStringConverterConfig;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
 import java.time.ZoneId;
@@ -50,6 +51,7 @@ public class Notice {
     private String deletedAt;
 
     @Column(name = "ACTIVE", nullable = false)
+    @Convert(converter = BooleanToStringConverterConfig.class)
     private Boolean active = true;
 
     @Column(name = "MEM_ID", nullable = false)
@@ -71,4 +73,6 @@ public class Notice {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+
+
 }
