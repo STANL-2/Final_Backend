@@ -27,4 +27,8 @@ public class MemberRole {
 
     @Column(name = "MEM_ROL_NAME", nullable = false)
     private String role;
+
+    @ManyToOne
+    @JoinColumn(name = "MEM_ID", nullable = false, insertable = false, updatable = false)
+    private Member member;
 }

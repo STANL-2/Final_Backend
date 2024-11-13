@@ -11,6 +11,8 @@ import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -91,6 +93,10 @@ public class Member {
 
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "MEM_ID")
+    private List<MemberRole> roles = new ArrayList<>();
 
     /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행
