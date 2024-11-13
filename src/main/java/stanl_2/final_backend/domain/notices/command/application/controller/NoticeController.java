@@ -49,7 +49,7 @@ public class NoticeController {
     @PutMapping("{id}")
     public ResponseEntity<NoticeResponseMessage> modifyNotice(@PathVariable String id,
                                                               @RequestBody NoticeModifyDTO noticeModifyRequestDTO){
-        noticeModifyRequestDTO.setId(id);
+
         NoticeModifyDTO noticeModifyDTO = noticeCommandService.modifyNotice(id,noticeModifyRequestDTO);
 
         return ResponseEntity.ok(NoticeResponseMessage.builder()

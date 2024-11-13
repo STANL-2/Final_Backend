@@ -47,9 +47,10 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
-        noticeModifyDTO.setId(id);
 
         Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
+        updateNotice.setId(notice.getId());
+        updateNotice.setMemberId(notice.getMemberId());
         updateNotice.setCreatedAt(notice.getCreatedAt());
         updateNotice.setActive(notice.getActive());
 

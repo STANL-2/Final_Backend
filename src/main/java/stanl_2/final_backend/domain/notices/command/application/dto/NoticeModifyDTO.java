@@ -10,8 +10,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class NoticeModifyDTO {
-    private String id;
-
     private String title;
 
     private String tag;
@@ -19,7 +17,4 @@ public class NoticeModifyDTO {
     private String classification;
 
     private String content;
-
-    private String updatedAt;
-
 }
