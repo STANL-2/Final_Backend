@@ -10,13 +10,13 @@ import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
 import stanl_2.final_backend.domain.A_sample.query.repository.SampleMapper;
 
 @Slf4j
-@Service(value = "querySampleService")
-public class SampleServiceImpl implements SampleService{
+@Service
+public class SampleQueryQueryServiceImpl implements SampleQueryService {
 
     private final SampleMapper sampleMapper;
 
     @Autowired
-    public SampleServiceImpl(SampleMapper sampleMapper) {
+    public SampleQueryQueryServiceImpl(SampleMapper sampleMapper) {
         this.sampleMapper = sampleMapper;
     }
 

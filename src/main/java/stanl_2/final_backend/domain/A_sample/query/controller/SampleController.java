@@ -10,17 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
-import stanl_2.final_backend.domain.A_sample.query.service.SampleService;
+import stanl_2.final_backend.domain.A_sample.query.service.SampleQueryService;
 
 @RestController(value = "querySampleController")
 @RequestMapping("/api/v1/sample")
 public class SampleController {
 
-    private final SampleService sampleService;
+    private final SampleQueryService sampleQueryService;
 
     @Autowired
-    public SampleController(SampleService sampleService) {
-        this.sampleService = sampleService;
+    public SampleController(SampleQueryService sampleQueryService) {
+        this.sampleQueryService = sampleQueryService;
     }
 
     /**
@@ -36,7 +36,7 @@ public class SampleController {
     @GetMapping("{id}")
     public ResponseEntity<SampleResponseMessage> getTest(@PathVariable String id){
 
-        SampleDTO sampleDTO = sampleService.selectSampleInfo(id);
+        SampleDTO sampleDTO = sampleQueryService.selectSampleInfo(id);
 
         return ResponseEntity.ok(SampleResponseMessage.builder()
                 .httpStatus(200)
@@ -58,7 +58,7 @@ public class SampleController {
     @GetMapping("/detail/{id}")
     public ResponseEntity<SampleResponseMessage> getDetailTest(@PathVariable String id) {
 
-        String name = sampleService.selectSampleName(id);
+        String name = sampleQueryService.selectSampleName(id);
 
         return ResponseEntity.ok(SampleResponseMessage.builder()
                 .httpStatus(200)
