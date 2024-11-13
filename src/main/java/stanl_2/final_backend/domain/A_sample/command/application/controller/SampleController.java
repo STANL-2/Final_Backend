@@ -8,9 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleRegistRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleModifyRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.response.SampleModifyResponseDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
 import stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage;
 
@@ -39,7 +38,7 @@ public class SampleController {
                         content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ResponseMessage> postTest(@RequestBody SampleRegistRequestDTO sampleRegistRequestDTO) {
+    public ResponseEntity<ResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO) {
 
         sampleCommandService.registerSample(sampleRegistRequestDTO);
 
@@ -64,15 +63,15 @@ public class SampleController {
     })
     @PutMapping("{id}")
     public ResponseEntity<ResponseMessage> putTest(@PathVariable String id,
-                                                   @RequestBody SampleModifyRequestDTO sampleModifyRequestDTO) {
+                                                   @RequestBody SampleModifyDTO sampleModifyRequestDTO) {
 
         sampleModifyRequestDTO.setId(id);
-        SampleModifyResponseDTO sampleModifyResponseDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
+        SampleModifyDTO sampleModifyDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
 
         return ResponseEntity.ok(ResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
-                                                .result(sampleModifyResponseDTO)
+                                                .result(sampleModifyDTO)
                                                 .build());
     }
 

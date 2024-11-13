@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class CenterRegistRequestDTO {
+public class CenterDeleteRequestDTO {
     private String name;
     private String address;
     private String phone;
