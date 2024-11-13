@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage;
+import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.contract.command.application.dto.request.ContractRegistRequestDTO;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractService;
 
@@ -34,15 +34,15 @@ public class ContractController {
     @Operation(summary = "계약서 등록 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("{id}")
-    public ResponseEntity<ResponseMessage> postTest(@PathVariable String id,
-                                                    @RequestBody ContractRegistRequestDTO contractRegistRequestDTO) {
+    public ResponseEntity<SampleResponseMessage> postTest(@PathVariable String id,
+                                                          @RequestBody ContractRegistRequestDTO contractRegistRequestDTO) {
         contractRegistRequestDTO.setMemId(id);
         contractService.registerContract(contractRegistRequestDTO);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(null)
