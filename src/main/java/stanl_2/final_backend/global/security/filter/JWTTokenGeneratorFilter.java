@@ -9,16 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Member;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
@@ -35,33 +31,35 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication != null && authentication.isAuthenticated()){
-
-            Member member = (Member) authentication.getPrincipal();
-
-            // 비밀키 생성
-            SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
-
-            String jwt = Jwts.builder()
-                    .setIssuer("STANL2")
-                    .setSubject("JWT Token")
-                    .claim("username", authentication.getName())
-                    .claim("id", member.getId())
-                    .claim("authorities", authentication.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date((new Date()).getTime() + 30000000))
-                    .signWith(secretKey)
-                    .compact();
-
-            // JWT 토큰을 응답 헤더에 추가
-            response.setHeader(jwtHeader, jwt);
-            log.info("Generated JWT: {}", jwt);
+        if (jwtHeader == null || jwtHeader.isEmpty()) {
+            log.error("JWT header is not configured properly");
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        String token = request.getHeader(jwtHeader);
+
+        if (token != null && !token.isEmpty()) {
+            SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
+            try {
+                Jwts.parserBuilder()
+                        .setSigningKey(secretKey)
+                        .build()
+                        .parseClaimsJws(token);
+
+                // 토큰이 유효한 경우 SecurityContext 설정
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                if (authentication != null && authentication.isAuthenticated()) {
+                    log.info("Valid JWT Token");
+                }
+            } catch (Exception e) {
+                log.error("Invalid JWT Token", e);
+            }
+        }
+
         filterChain.doFilter(request, response);
     }
+
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
