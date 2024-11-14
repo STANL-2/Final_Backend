@@ -86,7 +86,7 @@ public class Contract {
 
     @Column(name = "CONR_STAT", nullable = false)
     @ColumnDefault("'WAIT'")
-    private String state;
+    private String status;
 
     @Column(name = "CONR_NO_OF_VEH", nullable = false)
     @ColumnDefault("1")

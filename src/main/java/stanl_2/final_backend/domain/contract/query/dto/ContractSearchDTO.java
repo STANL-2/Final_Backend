@@ -1,14 +1,15 @@
-package stanl_2.final_backend.domain.contract.command.application.dto;
+package stanl_2.final_backend.domain.contract.query.dto;
 
 import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @ToString
-public class ContractRegistDTO {
+public class ContractSearchDTO {
 
+    private String id;
     private String name;
     private String custName;
     private String custIdenNo;
@@ -29,5 +30,16 @@ public class ContractRegistDTO {
     private String status;
     private String noOfVeh;
     private String createdUrl;
+    private String updatedUrl;
+    private boolean active;
+    private String createdAt;
+    private String updatedAt;
+    private String deletedAt;
     private String memId;
+    private String centId;
+    private String custId;
+    private String prodId;
+    private String startAt;
+    private String endAt;
+    private String prodName;
 }

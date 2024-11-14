@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractModifyDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractRegistDTO;
-import stanl_2.final_backend.domain.contract.command.application.dto.response.ContractModifyResponseDTO;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
 import stanl_2.final_backend.domain.contract.command.domain.repository.ContractRepository;

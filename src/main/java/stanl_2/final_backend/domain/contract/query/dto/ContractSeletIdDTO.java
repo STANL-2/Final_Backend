@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ContractDTO {
+public class ContractSeletIdDTO {
 
     private String id;
     private String name;
@@ -27,7 +27,7 @@ public class ContractDTO {
     private Integer consPay;
     private String delvDate;
     private String delvLoc;
-    private String state;
+    private String status;
     private String noOfVeh;
     private String createdUrl;
     private String updatedUrl;

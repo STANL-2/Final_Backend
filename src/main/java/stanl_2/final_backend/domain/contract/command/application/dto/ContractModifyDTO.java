@@ -27,7 +27,7 @@ public class ContractModifyDTO {
     private Integer consPay;
     private String delvDate;
     private String delvLoc;
-    private String state;
+    private String status;
     private String noOfVeh;
     private String createdUrl;
     private Boolean active;
