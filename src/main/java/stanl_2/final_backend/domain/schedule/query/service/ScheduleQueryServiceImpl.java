@@ -47,21 +47,11 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         scheduleDTO.setMemberId(memberId);
         scheduleDTO.setMonth(currentMonth);
 
-        try {
-            List<ScheduleDTO> scheduleList = scheduleMapper.findSchedulesByMemberIdAndSrtAt(scheduleDTO);
+        List<ScheduleDTO> scheduleList = scheduleMapper.findSchedulesByMemberIdAndSrtAt(scheduleDTO);
 
-            if(scheduleList == null || scheduleList.isEmpty()){
-                throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
-            }
+        // Mapping 오류 체크 고려하기
 
-            return scheduleList;
-        } catch(DataAccessException e){
-            throw new ScheduleCommonException(ScheduleErrorCode.DATA_ACCESS_ERROR);
-        } catch(NullPointerException e){
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
-        } catch(Exception e){
-            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        return scheduleList;
     }
 
     @Override
@@ -73,29 +63,16 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         }
 
-        if(scheduleYearMonthDTO.getId() == null || scheduleYearMonthDTO.getId().trim().isEmpty()){
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
-        }
-
         scheduleYearMonthDTO.setYearMonth(scheduleYearMonthDTO.getYear() + "-" + scheduleYearMonthDTO.getMonth());
 
+        log.info("값 출력: {}", scheduleYearMonthDTO);
 
-        try {
-            List<ScheduleYearMonthDTO> scheduleList =
-                    scheduleMapper.findSchedulesByMemberIdAndYearMonth(scheduleYearMonthDTO);
+        List<ScheduleYearMonthDTO> scheduleList =
+                scheduleMapper.findSchedulesByMemberIdAndYearMonth(scheduleYearMonthDTO);
 
-            if(scheduleList == null || scheduleList.isEmpty()){
-                throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
-            }
+        // Mapping 오류 체크 고려하기
 
-            return scheduleList;
-        } catch(DataAccessException e){
-            throw new ScheduleCommonException(ScheduleErrorCode.DATA_ACCESS_ERROR);
-        } catch(NullPointerException e){
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
-        } catch(Exception e){
-            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        return scheduleList;
     }
 
     @Override
@@ -111,19 +88,11 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         }
 
-        try {
-            ScheduleDetailDTO responseDetailSchedule
-                    = scheduleMapper.findScheduleByMemberIdAndScheduleId(scheduleDetailDTO);
+        ScheduleDetailDTO responseDetailSchedule
+                = scheduleMapper.findScheduleByMemberIdAndScheduleId(scheduleDetailDTO);
 
-            return responseDetailSchedule;
-        } catch(DataAccessException e){
-            throw new ScheduleCommonException(ScheduleErrorCode.DATA_ACCESS_ERROR);
-        } catch(NullPointerException e){
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
-        } catch(Exception e){
-            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        // Mapping 오류 체크 고려하기
+
+        return responseDetailSchedule;
     }
-
-
 }

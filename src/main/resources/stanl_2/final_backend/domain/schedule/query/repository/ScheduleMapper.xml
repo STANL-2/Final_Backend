@@ -15,8 +15,8 @@
         <result property="active" column="ACTIVE"/>
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
-    <select id="findSchedulesByMemberIdAndSrtAt" resultMap="scheduleInformation"
-            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
+    <select id="findSchedulesByMemberIdAndSrtAt" resultMap="scheduleInformation">
+<!--            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO"> -->
         SELECT
                A.SCH_ID,
                A.SCH_NAME,
@@ -24,9 +24,10 @@
                A.SCH_END_AT,
                A.MEM_ID
           FROM TB_SCHEDULE A
-         WHERE MEM_ID = #{ memberId }
-           AND SCH_SRT_AT LIKE CONCAT(#{ month },'%')
-           AND ACTIVE = TRUE;
+         WHERE A.MEM_ID = #{ memberId }
+           AND A.SCH_SRT_AT LIKE CONCAT(#{ month },'%')
+<!--           AND DATE_FORMAT(A.SCH_SRT_AT, '%Y-%m') = #{ month }-->
+           AND A.ACTIVE = TRUE
     </select>
 
     <select id="findSchedulesByMemberIdAndYearMonth" resultMap="scheduleInformation"
@@ -38,13 +39,13 @@
                A.SCH_END_AT,
                A.MEM_ID
          FROM TB_SCHEDULE A
-        WHERE MEM_ID = #{ memberId }
-          AND SCH_SRT_AT LIKE CONCAT(#{ yearMonth },'%')
-          AND ACTIVE = TRUE;
+        WHERE A.MEM_ID = #{ memberId }
+          AND A.SCH_SRT_AT LIKE CONCAT(#{ yearMonth },'%')
+          AND A.ACTIVE = TRUE
     </select>
 
-    <select id="findScheduleByMemberIdAndScheduleId" resultMap="scheduleInformation"
-            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO">
+    <select id="findScheduleByMemberIdAndScheduleId" resultMap="scheduleInformation">
+<!--            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO">-->
         SELECT
             A.SCH_ID,
             A.SCH_NAME,

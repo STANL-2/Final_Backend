@@ -45,15 +45,17 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         try {
             Schedule schedule = modelMapper.map(scheduleRegistDTO, Schedule.class);
 
+            if(schedule.getMemberId() == null){
+                // 매핑 오류
+                throw new ScheduleCommonException(ScheduleErrorCode.MAPPING_ERROR);
+            }
+
             scheduleRepository.save(schedule);
 
             return true;
         } catch (DataIntegrityViolationException e){
             // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
             throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
-        } catch (MappingException e){
-            // ModelMapper 매핑 오류
-            throw new ScheduleCommonException(ScheduleErrorCode.MAPPING_ERROR);
         } catch (Exception e) {
             // 서버 오류
             throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
@@ -73,21 +75,32 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
 
         if(!scheduleModifyDTO.getMemberId().equals(schedule.getMemberId())){
+            // 권한 오류
             throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
         }
 
         try {
             Schedule updateSchedule = modelMapper.map(scheduleModifyDTO, Schedule.class);
+
+            if(updateSchedule.getMemberId() == null){
+                // 매핑 오류
+                throw new ScheduleCommonException(ScheduleErrorCode.MAPPING_ERROR);
+            }
+
             updateSchedule.setCreatedAt(schedule.getCreatedAt());
             updateSchedule.setActive(schedule.getActive());
 
             scheduleRepository.save(updateSchedule);
 
             return true;
-        } catch (MappingException e){
-            throw new ScheduleCommonException(ScheduleErrorCode.MAPPING_ERROR);
+        } catch (DataIntegrityViolationException e) {
+        // 데이터 무결성 위반 예외 처리
+            throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
         }
-    }
+}
 
     @Override
     @Transactional
@@ -99,8 +112,16 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         schedule.setActive(false);
         schedule.setDeletedAt(getCurrentTime());
 
-        scheduleRepository.save(schedule);
+        try {
+            scheduleRepository.save(schedule);
 
-        return true;
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 위반 예외 처리
+            throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }
