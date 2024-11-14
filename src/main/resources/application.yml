@@ -39,6 +39,7 @@ logging:
     org:
       springframework:
         security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
+
 #server:
 #  servlet:
 #    session:
