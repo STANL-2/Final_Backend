@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.notices.query.repository.NoticeMapper">
+
+    <resultMap id="Notice" type="stanl_2.final_backend.domain.notices.query.dto.NoticeDTO">
+        <id property="noticeId" column="NOT_ID"/>
+        <result property="title" column="NOT_TTL"/>
+        <result property="tag" column="NOT_TAG"/>
+        <result property="classification" column="NOT_CLA"/>
+        <result property="content" column="NOT_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+    <!-- 공지 전체 조회 페이지 네이션 -->
+    <select id="findAllNotices" resultMap="Notice" parameterType="map">
+        SELECT
+            A.NOT_ID,
+            A.NOT_TTL,
+            A.NOT_TAG,
+            A.NOT_CLA,
+            A.NOT_CONT,
+            A.CREATED_AT,
+            A.UPDATED_AT,
+            A.DELETED_AT,
+            A.ACTIVE,
+            A.MEM_ID
+        FROM TB_NOTICE A
+        WHERE A.ACTIVE != 'false'
+        ORDER BY A.CREATED_AT DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findNoticeCount" resultType="int">
+        SELECT
+        COUNT(*) AS CNT
+        FROM TB_NOTICE A
+        WHERE A.ACTIVE != 'false';
+    </select>
+
+
+    <select id="findNotices" resultMap="Notice" parameterType="map">
+        SELECT
+        A.NOT_ID,
+        A.NOT_TTL,
+        A.NOT_TAG,
+        A.NOT_CLA,
+        A.NOT_CONT,
+        A.CREATED_AT,
+        A.UPDATED_AT,
+        A.DELETED_AT,
+        A.ACTIVE,
+        A.MEM_ID
+        FROM TB_NOTICE A
+        <where>
+            A.ACTIVE != 'false'
+            <if test="tag != null">
+                AND A.NOT_TAG = #{tag}
+            </if>
+            <if test="classification != null">
+                AND A.NOT_CLA = #{classification}
+            </if>
+            <if test="memberId != null">
+                AND A.MEM_ID = #{memberId}
+            </if>
+            <if test="title != null">
+                AND A.NOT_TTL = #{title}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+        ORDER BY A.CREATED_AT DESC
+        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+    </select>
+
+
+    <select id="findNoticesCount" resultMap="Notice" parameterType="map">
+        SELECT
+        COUNT(*) AS CNT
+        FROM TB_NOTICE A
+        <where>
+            A.ACTIVE != 'false'
+            <if test="tag != null">
+                AND A.NOT_TAG = #{tag}
+            </if>
+            <if test="classification != null">
+                AND A.NOT_CLA = #{classification}
+            </if>
+            <if test="memberId != null">
+                AND A.MEM_ID = #{memberId}
+            </if>
+            <if test="title != null">
+                AND A.NOT_TTL = #{title}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="findNotice" resultMap="Notice" parameterType="string">
+        SELECT
+        A.NOT_ID,
+        A.NOT_TTL,
+        A.NOT_TAG,
+        A.NOT_CLA,
+        A.NOT_CONT,
+        A.CREATED_AT,
+        A.UPDATED_AT,
+        A.DELETED_AT,
+        A.ACTIVE,
+        A.MEM_ID
+        FROM TB_NOTICE A
+        WHERE NOT_ID = #{noticeId};
+    </select>
+
+</mapper>
