@@ -32,7 +32,15 @@
             A.MEM_ID
         FROM TB_NOTICE A
         WHERE A.ACTIVE != 'false'
-        ORDER BY A.CREATED_AT DESC;
+        ORDER BY A.CREATED_AT DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findNoticeCount" resultType="int">
+        SELECT
+        COUNT(*) AS CNT
+        FROM TB_NOTICE A
+        WHERE A.ACTIVE != 'false';
     </select>
 
 
@@ -69,6 +77,31 @@
         </where>
         ORDER BY A.CREATED_AT DESC
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+    </select>
+
+
+    <select id="findNoticesCount" resultMap="Notice" parameterType="map">
+        SELECT
+        COUNT(*) AS CNT
+        FROM TB_NOTICE A
+        <where>
+            A.ACTIVE != 'false'
+            <if test="tag != null">
+                AND A.NOT_TAG = #{tag}
+            </if>
+            <if test="classification != null">
+                AND A.NOT_CLA = #{classification}
+            </if>
+            <if test="memberId != null">
+                AND A.MEM_ID = #{memberId}
+            </if>
+            <if test="title != null">
+                AND A.NOT_TTL = #{title}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
     </select>
 
     <select id="findNotice" resultMap="Notice" parameterType="string">
