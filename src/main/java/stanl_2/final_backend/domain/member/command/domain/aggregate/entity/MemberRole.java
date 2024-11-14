@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,12 +24,12 @@ public class MemberRole {
             parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "MEM_ROL")
     )
     @Column(name = "MEM_ROL_ID", nullable = false)
-    private String id;
+    private String memberRoleId;
 
     @Column(name = "MEM_ROL_NAME", nullable = false)
     private String role;
 
-    @ManyToOne
-    @JoinColumn(name = "MEM_ID", nullable = false, insertable = false, updatable = false)
-    private Member member;
+    @Column(name = "MEM_ID", nullable = false, updatable = false)
+    private String memberId;
+
 }

@@ -29,7 +29,7 @@ public class Member {
             parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "MEM")
     )
     @Column(name = "MEM_ID", nullable = false)
-    private String id;
+    private String memberId;
 
     @Column(name = "MEM_LOGIN_ID", nullable = false)
     private String loginId;

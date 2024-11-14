@@ -13,11 +13,12 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import stanl_2.final_backend.domain.member.command.application.dto.GrantDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninRequestDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninResponseDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SignupDTO;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
-import stanl_2.final_backend.domain.member.common.response.ResponseMessage;
+import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
 @RestController("commandAuthController")
 @RequestMapping("/api/v1/auth")
@@ -33,28 +34,46 @@ public class AuthController {
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     @PostMapping("signup")
-    public ResponseEntity<ResponseMessage> signup(@RequestBody SignupDTO signupDTO){
+    public ResponseEntity<MemberResponseMessage> signup(@RequestBody SignupDTO signupDTO){
 
         authCommandService.signup(signupDTO);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(MemberResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(null)
                                                 .build());
     }
 
+    @Operation(summary = "권한 부여")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
+    })
+    @PostMapping("")
+    public ResponseEntity<MemberResponseMessage> grantAuthority(@RequestBody GrantDTO grantDTO){
+
+        authCommandService.grantAuthority(grantDTO);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                                                .httpStatus(200)
+                                                .msg("성공")
+                                                .result(null)
+                                                .build());
+    }
+
+
     @Operation(summary = "로그인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     @PostMapping("signin")
-    public ResponseEntity<ResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO,
-                                                  HttpServletResponse response){
+    public ResponseEntity<MemberResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO,
+                                                        HttpServletResponse response){
 
         // 로그인 서비스 호출하여 Access Token과 Refresh Token 발급
         SigninResponseDTO signinResponseDTO = authCommandService.signin(signinRequestDTO);
@@ -74,7 +93,7 @@ public class AuthController {
         }
 
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(MemberResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(signinResponseDTO)

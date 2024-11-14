@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -79,7 +78,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     private void handleAccessToken(Claims claims, HttpServletRequest request) {
         // 클레임에서 사용자 정보 및 권한 추출
-        String id = claims.get("id", String.class);
+//        String id = claims.get("id", String.class);
         String username = claims.get("username", String.class);
         String authorities = claims.get("authorities", String.class);
 
@@ -93,7 +92,8 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
         log.info("Authenticated user: {}", username);
 
         // 추가적으로, 추출된 정보를 request 속성에 설정
-        request.setAttribute("id", id);
+//        request.setAttribute("id", id);
+        request.setAttribute("username", username);
         request.setAttribute("authorities", authorities);
     }
 

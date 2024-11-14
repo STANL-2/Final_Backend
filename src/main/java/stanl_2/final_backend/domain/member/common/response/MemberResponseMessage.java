@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-public class ResponseMessage {
+public class MemberResponseMessage {
     private int httpStatus;
     private String msg;
     private Object result;

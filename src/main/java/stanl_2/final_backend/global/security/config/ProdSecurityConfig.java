@@ -47,7 +47,7 @@ public class ProdSecurityConfig {
         http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/sample/**")
+                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth", "/api/v1/sample/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**", "/api/v1/sample/**").permitAll()

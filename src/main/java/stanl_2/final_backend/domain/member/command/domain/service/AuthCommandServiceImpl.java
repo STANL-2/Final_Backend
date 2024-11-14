@@ -2,7 +2,7 @@ package stanl_2.final_backend.domain.member.command.domain.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,17 +12,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import stanl_2.final_backend.domain.member.command.application.dto.GrantDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninRequestDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SigninResponseDTO;
 import stanl_2.final_backend.domain.member.command.application.dto.SignupDTO;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Member;
+import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.MemberRole;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
+import stanl_2.final_backend.domain.member.command.domain.repository.MemberRoleRepository;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.global.exception.CommonException;
 import stanl_2.final_backend.global.exception.ErrorCode;
 
@@ -33,6 +34,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service("commandAuthService")
 public class AuthCommandServiceImpl implements AuthCommandService {
 
@@ -40,16 +42,25 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private String jwtSecretKey;
 
     private final MemberRepository memberRepository;
+    private final MemberRoleRepository memberRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
+    private final AuthQueryService authQueryService;
 
     @Autowired
-    public AuthCommandServiceImpl(MemberRepository memberRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper, AuthenticationManager authenticationManager) {
+    public AuthCommandServiceImpl(MemberRepository memberRepository,
+                                  MemberRoleRepository memberRoleRepository,
+                                  PasswordEncoder passwordEncoder,
+                                  ModelMapper modelMapper,
+                                  AuthenticationManager authenticationManager,
+                                  AuthQueryService authQueryService) {
         this.memberRepository = memberRepository;
+        this.memberRoleRepository = memberRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
         this.authenticationManager = authenticationManager;
+        this.authQueryService = authQueryService;
     }
 
     private String getCurrentTimestamp() {
@@ -74,17 +85,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public SigninResponseDTO signin(SigninRequestDTO signinRequestDTO) {
 
-        // 사용자 인증
+        // 사용자 인증을 위한 Authentication 객체 생성
         Authentication authentication = UsernamePasswordAuthenticationToken
                 .unauthenticated(signinRequestDTO.getLoginId(), signinRequestDTO.getPassword());
 
+        // AuthenticationManager를 사용해 인증 처리
         Authentication authenticationResponse = authenticationManager.authenticate(authentication);
 
         if (authenticationResponse == null || !authenticationResponse.isAuthenticated()) {
             throw new CommonException(ErrorCode.LOGIN_FAILURE);
         }
 
-        // 인증 객체를 SecurityContext에 설정
+        // 인증된 사용자 정보를 SecurityContext에 설정
         SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
 
         // 사용자 정보 가져오기
@@ -97,6 +109,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .setIssuer("STANL2")
                 .setSubject("Access Token")
 //                .claim("id", member.getId()) // `id`만 포함
+                .claim("username", signinRequestDTO.getLoginId())
                 .claim("authorities", authenticationResponse.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
                 .setIssuedAt(new java.util.Date())
@@ -115,6 +128,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .compact();
 
         return new SigninResponseDTO(accessToken, refreshToken);
+    }
+
+    @Override
+    @Transactional
+    public void grantAuthority(GrantDTO grantDTO) {
+
+        String id = authQueryService.selectMemberLoginId(grantDTO.getLoginId());
+
+        MemberRole newMemberRole = modelMapper.map(grantDTO, MemberRole.class);
+
+        // fk 값 설정
+        newMemberRole.setMemberId(id);
+
+        memberRoleRepository.save(newMemberRole);
     }
 
 
