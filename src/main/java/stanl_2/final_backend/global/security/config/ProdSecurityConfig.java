@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
@@ -51,7 +52,10 @@ public class ProdSecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**", "/api/v1/sample/**").permitAll()
-                        .anyRequest().permitAll())
+
+                        // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
+                        .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
 //                        .anyRequest().authenticated())
                 // 필터 순서: JWT 검증 -> CSRF -> JWT 생성
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
