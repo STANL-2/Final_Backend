@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
+public enum ScheduleErrorCode {
 
     /**
      * 400(Bad Request)
@@ -14,6 +14,7 @@ public enum ErrorCode {
      */
     DATA_INTEGRITY_VIOLATION(40001, HttpStatus.BAD_REQUEST, "데이터 무결 위반하였습니다."),
     CONSTRAINT_VIOLATION(40002, HttpStatus.BAD_REQUEST, "제약 조건 위반하였습니다."),
+    AUTHORIZATION_VIOLATION(40003, HttpStatus.BAD_REQUEST, "본인의 일정에만 접근 가능합니다."),
 
 
 
@@ -48,7 +49,9 @@ public enum ErrorCode {
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
     INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
-    MAPPING_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "ModleMapper 매핑 오류입니다.");
+    MAPPING_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "ModleMapper 매핑 오류입니다."),
+    DATA_ACCESS_ERROR(50002, HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 접근 중 오류가 발생했습니다.");
+
 
 
     private final Integer code;

@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.schedule.command.application.dto.request;
+package stanl_2.final_backend.domain.schedule.command.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ScheduleModifyRequestDTO {
+public class ScheduleRegistDTO {
 
-    private String id;
     private String name;
     private String content;
     private String startAt;

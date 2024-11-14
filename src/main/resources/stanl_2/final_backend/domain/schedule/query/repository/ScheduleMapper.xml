@@ -15,17 +15,13 @@
         <result property="active" column="ACTIVE"/>
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
-    <select id="findSchedulesByMemberIdAndSrtAt" resultMap="scheduleInformation" parameterType="hashmap">
+    <select id="findSchedulesByMemberIdAndSrtAt" resultMap="scheduleInformation"
+            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
         SELECT
                A.SCH_ID,
                A.SCH_NAME,
-               A.SCH_CONT,
                A.SCH_SRT_AT,
                A.SCH_END_AT,
-               A.CREATED_AT,
-               A.UPDATED_AT,
-               A.DELETED_AT,
-               A.ACTIVE,
                A.MEM_ID
           FROM TB_SCHEDULE A
          WHERE MEM_ID = #{ memberId }
@@ -33,17 +29,13 @@
            AND ACTIVE = TRUE;
     </select>
 
-    <select id="findSchedulesByMemberIdAndYearMonth" resultMap="scheduleInformation" parameterType="hashmap">
+    <select id="findSchedulesByMemberIdAndYearMonth" resultMap="scheduleInformation"
+            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO">
         SELECT
                A.SCH_ID,
                A.SCH_NAME,
-               A.SCH_CONT,
                A.SCH_SRT_AT,
                A.SCH_END_AT,
-               A.CREATED_AT,
-               A.UPDATED_AT,
-               A.DELETED_AT,
-               A.ACTIVE,
                A.MEM_ID
          FROM TB_SCHEDULE A
         WHERE MEM_ID = #{ memberId }
@@ -52,17 +44,13 @@
     </select>
 
     <select id="findScheduleByMemberIdAndScheduleId" resultMap="scheduleInformation"
-            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
+            parameterType="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO">
         SELECT
             A.SCH_ID,
             A.SCH_NAME,
             A.SCH_CONT,
             A.SCH_SRT_AT,
             A.SCH_END_AT,
-            A.CREATED_AT,
-            A.UPDATED_AT,
-            A.DELETED_AT,
-            A.ACTIVE,
             A.MEM_ID
         FROM TB_SCHEDULE A
         WHERE MEM_ID = #{ memberId }

@@ -13,12 +13,9 @@ public class ScheduleDTO {
 
     private String id;
     private String name;
-    private String content;
     private String startAt;
     private String endAt;
-    private String createdAt;
-    private String updatedAt;
-    private String deletedAt;
-    private Boolean active;
     private String memberId;
+
+    private String month;
 }
