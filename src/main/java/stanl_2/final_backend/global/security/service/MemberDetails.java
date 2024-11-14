@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Member;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class MemberDetails implements UserDetails {
@@ -61,4 +60,14 @@ public class MemberDetails implements UserDetails {
     public boolean isEnabled() {
         return member.getActive();
     }
+
+    @Override
+    public String toString() {
+        return "MemberDetails{" +
+                "username='" + getUsername() + '\'' +
+                ", password='" + getPassword() + '\'' +
+                ", authorities=" + getAuthorities() +
+                '}';
+    }
+
 }

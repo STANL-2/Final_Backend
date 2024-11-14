@@ -24,8 +24,8 @@ import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Membe
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRoleRepository;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.global.exception.CommonException;
-import stanl_2.final_backend.global.exception.ErrorCode;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -93,7 +93,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         Authentication authenticationResponse = authenticationManager.authenticate(authentication);
 
         if (authenticationResponse == null || !authenticationResponse.isAuthenticated()) {
-            throw new CommonException(ErrorCode.LOGIN_FAILURE);
+            throw new GlobalCommonException(GlobalErrorCode.LOGIN_FAILURE);
         }
 
         // 인증된 사용자 정보를 SecurityContext에 설정

@@ -4,19 +4,19 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class ExceptionResponse {
+public class GlobalExceptionResponse {
     private final Integer code;
     private final String msg;
     private final HttpStatus httpStatus;
 
-    public ExceptionResponse(ErrorCode errorCode) {
+    public GlobalExceptionResponse(GlobalErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.msg = errorCode.getMsg();
         this.httpStatus = errorCode.getHttpStatus();
     }
 
-    public static ExceptionResponse of(ErrorCode errorCode) {
-        return new ExceptionResponse(errorCode);
+    public static GlobalExceptionResponse of(GlobalErrorCode errorCode) {
+        return new GlobalExceptionResponse(errorCode);
     }
 
 }

@@ -13,8 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stanl_2.final_backend.global.exception.CommonException;
-import stanl_2.final_backend.global.exception.ErrorCode;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -63,12 +63,12 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 else if ("Refresh Token".equals(subject)) {
                     log.info("Received Refresh Token");
                 } else {
-                    throw new CommonException(ErrorCode.INVALID_TOKEN_ERROR);
+                    throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
                 }
 
             } catch (Exception exception) {
                 log.error("Invalid JWT Token", exception);
-                throw new CommonException(ErrorCode.INVALID_TOKEN_ERROR);
+                throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
             }
         }
 

@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stanl_2.final_backend.global.exception.CommonException;
-import stanl_2.final_backend.global.exception.ErrorCode;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ public class CsrfCookieFilter extends OncePerRequestFilter {
 
         if (csrfToken == null) {
             log.error("CSRF 토큰을 찾을 수 없습니다.");
-            throw new CommonException(ErrorCode.NOT_FOUND_CSRF_TOKEN);
+            throw new GlobalCommonException(GlobalErrorCode.NOT_FOUND_CSRF_TOKEN);
         }
 
         // 쿠키에서 CSRF 토큰 가져오기
@@ -34,7 +34,7 @@ public class CsrfCookieFilter extends OncePerRequestFilter {
 
         if (csrfCookieValue == null || !csrfCookieValue.equals(csrfToken.getToken())) {
             log.error("CSRF 토큰 불일치 - 쿠키와 요청의 토큰이 일치하지 않습니다.");
-            throw new CommonException(ErrorCode.NOT_FOUND_CSRF_TOKEN);
+            throw new GlobalCommonException(GlobalErrorCode.NOT_FOUND_CSRF_TOKEN);
         }
 
         filterChain.doFilter(request, response);

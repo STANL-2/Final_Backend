@@ -18,36 +18,36 @@ public class GlobalExceptionHandler {
 
     // 지원되지 않는 HTTP 메소드를 사용할 때 발생하는 예외
     @ExceptionHandler(value = {NoHandlerFoundException.class, HttpRequestMethodNotSupportedException.class})
-    public ResponseEntity<ExceptionResponse> handleNoPageFoundException(Exception e) {
+    public ResponseEntity<GlobalExceptionResponse> handleNoPageFoundException(Exception e) {
         log.error("handleNoPageFoundException() in GlobalExceptionHandler throw NoHandlerFoundException : {}"
                 , e.getMessage());
-        ExceptionResponse response = new ExceptionResponse(new CommonException(ErrorCode.WRONG_ENTRY_POINT).getErrorCode());
+        GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.WRONG_ENTRY_POINT).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     // 메소드의 인자 타입이 일치하지 않을 때 발생하는 예외
     @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<ExceptionResponse> handleArgumentNotValidException(MethodArgumentTypeMismatchException e) {
+    public ResponseEntity<GlobalExceptionResponse> handleArgumentNotValidException(MethodArgumentTypeMismatchException e) {
         log.error("handleArgumentNotValidException() in GlobalExceptionHandler throw MethodArgumentTypeMismatchException : {}"
                 , e.getMessage());
-        ExceptionResponse response = new ExceptionResponse(new CommonException(ErrorCode.INVALID_PARAMETER_FORMAT).getErrorCode());
+        GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.INVALID_PARAMETER_FORMAT).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     // 필수 파라미터가 누락되었을 때 발생하는 예외
     @ExceptionHandler(value = {MissingServletRequestParameterException.class})
-    public ResponseEntity<ExceptionResponse> handleArgumentNotValidException(MissingServletRequestParameterException e) {
+    public ResponseEntity<GlobalExceptionResponse> handleArgumentNotValidException(MissingServletRequestParameterException e) {
         log.error("handleArgumentNotValidException() in GlobalExceptionHandler throw MethodArgumentNotValidException : {}"
                 , e.getMessage());
-        ExceptionResponse response = new ExceptionResponse(new CommonException(ErrorCode.MISSING_REQUEST_PARAMETER).getErrorCode());
+        GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.MISSING_REQUEST_PARAMETER).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     // 사용자 정의 예외 처리
-    @ExceptionHandler(value = {CommonException.class})
-    public ResponseEntity<?> handleCustomException(CommonException e) {
+    @ExceptionHandler(value = {GlobalCommonException.class})
+    public ResponseEntity<?> handleCustomException(GlobalCommonException e) {
         log.error("handleCustomException() in GlobalExceptionHandler: {}", e.getMessage());
-        ExceptionResponse response = new ExceptionResponse(e.getErrorCode());
+        GlobalExceptionResponse response = new GlobalExceptionResponse(e.getErrorCode());
 
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleServerException(Exception e) {
         log.info("occurred exception in handleServerError = {}", e.getMessage());
         e.printStackTrace();
-        ExceptionResponse response = new ExceptionResponse(new CommonException(ErrorCode.INTERNAL_SERVER_ERROR).getErrorCode());
+        GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.INTERNAL_SERVER_ERROR).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
@@ -65,14 +65,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {DataIntegrityViolationException.class})
     public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.error("handleDataIntegrityViolationException() in GlobalExceptionHandler : {}", e.getMessage());
-        ExceptionResponse response = new ExceptionResponse(new CommonException(ErrorCode.DATA_INTEGRITY_VIOLATION).getErrorCode());
+        GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.DATA_INTEGRITY_VIOLATION).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("유효성 검사 실패: {}", e.getMessage());
-        ExceptionResponse response = new ExceptionResponse(new CommonException(ErrorCode.VALIDATION_FAIL).getErrorCode());
+        GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.VALIDATION_FAIL).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }
