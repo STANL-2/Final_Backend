@@ -7,9 +7,9 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class OrderRegistDTO {
+public class OrderModifyDTO {
+    private String id;
     private String title;
     private String content;
-    private String conrId;
     private String memId;
 }
