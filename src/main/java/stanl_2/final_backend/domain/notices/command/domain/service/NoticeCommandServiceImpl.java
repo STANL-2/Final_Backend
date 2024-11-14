@@ -49,7 +49,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
 
         Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
-        updateNotice.setId(notice.getId());
+        updateNotice.setNoticeId(notice.getNoticeId());
         updateNotice.setMemberId(notice.getMemberId());
         updateNotice.setCreatedAt(notice.getCreatedAt());
         updateNotice.setActive(notice.getActive());
