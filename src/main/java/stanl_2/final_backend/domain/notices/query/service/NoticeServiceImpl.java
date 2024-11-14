@@ -12,11 +12,9 @@ import stanl_2.final_backend.domain.notices.query.repository.NoticeMapper;
 @Service("queryNoticeServiceImpl")
 public class NoticeServiceImpl implements NoticeService{
     private final NoticeRepository noticeRepository;
-    private final NoticeMapper noticeMapper;
 
     @Autowired
     public NoticeServiceImpl(NoticeMapper noticeMapper, NoticeRepository noticeRepository) {
-        this.noticeMapper = noticeMapper;
         this.noticeRepository = noticeRepository;
     }
 
@@ -26,4 +24,5 @@ public class NoticeServiceImpl implements NoticeService{
         return noticeRepository.findAll(pageable)
                 .map(NoticeDTO::new);
     }
+
 }

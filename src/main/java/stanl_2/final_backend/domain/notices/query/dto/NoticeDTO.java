@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Notice;
+import stanl_2.final_backend.domain.notices.query.repository.NoticeMapper;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,6 +32,7 @@ public class NoticeDTO {
 
     private String memberId;
 
+    
 
     public NoticeDTO(Notice notice) {
         this.noticeId = notice.getNoticeId();
