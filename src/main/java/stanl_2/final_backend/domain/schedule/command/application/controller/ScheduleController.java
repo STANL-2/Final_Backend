@@ -47,11 +47,11 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 수정 성공",
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
-    @PutMapping("{id}")
-    public ResponseEntity<ScheduleResponseMessage> modifySchedule(@PathVariable String id,
+    @PutMapping("{scheduleId}")
+    public ResponseEntity<ScheduleResponseMessage> modifySchedule(@PathVariable String scheduleId,
                                                                   @RequestBody ScheduleModifyDTO scheduleModifyDTO){
 
-        scheduleModifyDTO.setId(id);
+        scheduleModifyDTO.setId(scheduleId);
         Boolean answer = scheduleCommandService.modifySchedule(scheduleModifyDTO);
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
@@ -66,10 +66,10 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
-    @DeleteMapping("{id}")
-    public ResponseEntity<ScheduleResponseMessage> deleteSchedule(@PathVariable String id){
+    @DeleteMapping("{scheduleId}")
+    public ResponseEntity<ScheduleResponseMessage> deleteSchedule(@PathVariable String scheduleId){
 
-        Boolean answer = scheduleCommandService.deleteSchedule(id);
+        Boolean answer = scheduleCommandService.deleteSchedule(scheduleId);
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)

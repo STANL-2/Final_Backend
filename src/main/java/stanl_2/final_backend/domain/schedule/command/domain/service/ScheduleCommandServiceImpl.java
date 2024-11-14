@@ -36,6 +36,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+
+
     @Override
     @Transactional
     public Boolean registSchedule(ScheduleRegistDTO scheduleRegistDTO) {
@@ -70,7 +72,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Schedule schedule = scheduleRepository.findById(scheduleModifyDTO.getId())
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
 
-        if(scheduleModifyDTO.getMemberId() != schedule.getMemberId()){
+        if(!scheduleModifyDTO.getMemberId().equals(schedule.getMemberId())){
             throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
         }
 
@@ -88,6 +90,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteSchedule(String scheduleId) {
 
         Schedule schedule = scheduleRepository.findById(scheduleId)

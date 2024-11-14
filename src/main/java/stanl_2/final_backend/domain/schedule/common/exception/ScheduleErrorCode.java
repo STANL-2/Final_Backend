@@ -14,7 +14,6 @@ public enum ScheduleErrorCode {
      */
     DATA_INTEGRITY_VIOLATION(40001, HttpStatus.BAD_REQUEST, "데이터 무결 위반하였습니다."),
     CONSTRAINT_VIOLATION(40002, HttpStatus.BAD_REQUEST, "제약 조건 위반하였습니다."),
-    AUTHORIZATION_VIOLATION(40003, HttpStatus.BAD_REQUEST, "본인의 일정에만 접근 가능합니다."),
 
 
 
@@ -31,7 +30,7 @@ public enum ScheduleErrorCode {
      * 클라이언트는 콘텐츠에 접근할 권리를 가지고 있지 않습니다.
      * 예를들어 그들은 미승인이어서 서버는 거절을 위한 적절한 응답을 보냅니다. 401과 다른 점은 서버가 클라이언트가 누구인지 알고 있습니다.
      */
-
+    AUTHORIZATION_VIOLATION(40301, HttpStatus.BAD_REQUEST, "본인의 일정에만 접근 가능합니다."),
 
 
     /**
