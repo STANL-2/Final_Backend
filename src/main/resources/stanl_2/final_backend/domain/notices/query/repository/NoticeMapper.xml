@@ -17,8 +17,15 @@
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
+    <resultMap id="SearchNotice" type="stanl_2.final_backend.domain.notices.query.dto.SearchDTO">
+        <id property="noticeId" column="NOT_ID"/>
+        <result property="title" column="NOT_TTL"/>
+        <result property="tag" column="NOT_TAG"/>
+        <result property="classification" column="NOT_CLA"/>
+    </resultMap>
+
     <!-- 공지 전체 조회 페이지 네이션 -->
-    <select id="findAllNotices" resultMap="Notice" parameterType="map">
+    <select id="findAllNotices" resultMap="Notice" >
         SELECT
             A.NOT_ID,
             A.NOT_TTL,
@@ -44,43 +51,43 @@
     </select>
 
 
-    <select id="findNotices" resultMap="Notice" parameterType="map">
+    <select id="findNotices" resultMap="SearchNotice" parameterType="String" >
         SELECT
-        A.NOT_ID,
-        A.NOT_TTL,
-        A.NOT_TAG,
-        A.NOT_CLA,
-        A.NOT_CONT,
-        A.CREATED_AT,
-        A.UPDATED_AT,
-        A.DELETED_AT,
-        A.ACTIVE,
-        A.MEM_ID
+            A.NOT_ID,
+            A.NOT_TTL,
+            A.NOT_TAG,
+            A.NOT_CLA,
+            A.NOT_CONT,
+            A.CREATED_AT,
+            A.UPDATED_AT,
+            A.DELETED_AT,
+            A.ACTIVE,
+            A.MEM_ID
         FROM TB_NOTICE A
         <where>
             A.ACTIVE != 'false'
-            <if test="tag != null">
-                AND A.NOT_TAG = #{tag}
+            <if test="searchDTO.tag != null">
+                AND A.NOT_TAG = #{searchDTO.tag}
             </if>
-            <if test="classification != null">
-                AND A.NOT_CLA = #{classification}
+            <if test="searchDTO.classification != null">
+                AND A.NOT_CLA = #{searchDTO.classification}
             </if>
-            <if test="memberId != null">
-                AND A.MEM_ID = #{memberId}
+            <if test="searchDTO.memberId != null">
+                AND A.MEM_ID = #{searchDTO.memberId}
             </if>
-            <if test="title != null">
-                AND A.NOT_TTL = #{title}
+            <if test="searchDTO.title != null">
+                AND A.NOT_TTL LIKE CONCAT('%', #{searchDTO.title}, '%')
             </if>
-            <if test="startDate != null and endDate != null">
-                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            <if test="searchDTO.startDate != null and searchDTO.endDate != null">
+                AND A.CREATED_AT BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
             </if>
         </where>
         ORDER BY A.CREATED_AT DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
 
-    <select id="findNoticesCount" resultMap="Notice" parameterType="map">
+    <select id="findNoticesCount" resultMap="SearchNotice" parameterType="String">
         SELECT
         COUNT(*) AS CNT
         FROM TB_NOTICE A

@@ -10,13 +10,10 @@ import lombok.*;
 public class ScheduleYearMonthDTO {
 
     private String id;
-    private String content;
+    private String name;
+    private String tag;
     private String startAt;
     private String endAt;
-    private String createdAt;
-    private String updatedAt;
-    private String deletedAt;
-    private Boolean active;
     private String memberId;
 
     private String year;
