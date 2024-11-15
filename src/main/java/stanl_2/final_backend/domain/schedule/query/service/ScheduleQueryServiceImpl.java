@@ -65,11 +65,14 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         }
 
-        scheduleYearMonthDTO.setYearMonth(scheduleYearMonthDTO.getYear() + "-" + scheduleYearMonthDTO.getMonth());
+        String yearMonth = scheduleYearMonthDTO.getYear() + "-" + scheduleYearMonthDTO.getMonth();
 
+        Map<String, String> arg = new HashMap<>();
+        arg.put("memberId", scheduleYearMonthDTO.getMemberId());
+        arg.put("yearMonth", yearMonth);
 
         List<ScheduleYearMonthDTO> scheduleList =
-                scheduleMapper.findSchedulesByMemberIdAndYearMonth(scheduleYearMonthDTO);
+                scheduleMapper.findSchedulesByMemberIdAndYearMonth(arg);
 
         // Mapping 오류 체크 고려하기
 
@@ -89,8 +92,12 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         }
 
+        Map<String, String> arg = new HashMap<>();
+        arg.put("memberId", scheduleDetailDTO.getMemberId());
+        arg.put("scheduleId", scheduleDetailDTO.getId());
+
         ScheduleDetailDTO responseDetailSchedule
-                = scheduleMapper.findScheduleByMemberIdAndScheduleId(scheduleDetailDTO);
+                = scheduleMapper.findScheduleByMemberIdAndScheduleId(arg);
 
         // Mapping 오류 체크 고려하기
 

@@ -13,6 +13,7 @@ public class ScheduleDTO {
 
     private String id;
     private String name;
+    private String tag;
     private String startAt;
     private String endAt;
     private String memberId;

@@ -11,11 +11,11 @@ public class ScheduleYearMonthDTO {
 
     private String id;
     private String name;
+    private String tag;
     private String startAt;
     private String endAt;
     private String memberId;
 
     private String year;
     private String month;
-    private String yearMonth;
 }

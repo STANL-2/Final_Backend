@@ -13,7 +13,7 @@ public interface ScheduleMapper {
 
     List<ScheduleDTO> findSchedulesByMemberIdAndSrtAt(Map<String, String> arg);
 
-    List<ScheduleYearMonthDTO> findSchedulesByMemberIdAndYearMonth(ScheduleYearMonthDTO scheduleYearMonthDTO);
+    List<ScheduleYearMonthDTO> findSchedulesByMemberIdAndYearMonth(Map<String, String> arg);
 
-    ScheduleDetailDTO findScheduleByMemberIdAndScheduleId(ScheduleDetailDTO scheduleDetailDTO);
+    ScheduleDetailDTO findScheduleByMemberIdAndScheduleId(Map<String, String> arg);
 }
