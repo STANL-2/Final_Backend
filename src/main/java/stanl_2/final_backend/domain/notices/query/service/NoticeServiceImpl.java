@@ -39,9 +39,10 @@ public class NoticeServiceImpl implements NoticeService{
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
         List<NoticeDTO> notices = noticeMapper.findNotices(offset,size,searchDTO);
-        int totalElements = noticeMapper.findNoticesCount(searchDTO);
+        Integer count = noticeMapper.findNoticesCount(searchDTO);
+        int noticeCount = (count != null) ?  noticeMapper.findNoticesCount(searchDTO) : 0;
 
-        return new PageImpl<>(notices, pageable, totalElements);
+        return new PageImpl<>(notices, pageable, noticeCount);
     }
 
 }
