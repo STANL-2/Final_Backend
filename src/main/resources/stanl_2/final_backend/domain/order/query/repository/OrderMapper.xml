@@ -15,6 +15,20 @@
         <result property="productName" column="PROD_NAME"/>
     </resultMap>
 
+    <resultMap id="orderDetailResultMap" type="stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO">
+        <result property="orderId" column="ORD_ID"/>
+        <result property="title" column="ORD_TTL"/>
+        <result property="content" column="ORD_CONT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="status" column="ORD_STAT"/>
+        <result property="contractId" column="CONR_ID"/>
+        <result property="adminId" column="ADMIN_ID"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
     <select id="findAllOrderByMemberId" resultMap="orderResultMap">
         SELECT
                A.ORD_ID,
@@ -46,6 +60,25 @@
           FROM TB_ORDER A
          WHERE A.MEM_ID = #{memberId}
            AND A.ACTIVE = TRUE
+    </select>
+
+    <select id="findOrderByIdAndMemberId" resultMap="orderDetailResultMap" parameterType="map">
+        SELECT
+               A.ORD_ID,
+               A.ORD_TTL,
+               A.ORD_CONT,
+               A.ACTIVE,
+               A.CREATED_AT,
+               A.UPDATED_AT,
+               A.DELETED_AT,
+               A.ORD_STAT,
+               A.CONR_ID,
+               A.ADMIN_ID,
+               A.MEM_ID
+          FROM TB_ORDER A
+         WHERE A.MEM_ID = #{memberId}
+           AND A.ACTIVE = TRUE
+           AND A.ORD_ID = #{orderId}
     </select>
 
 </mapper>

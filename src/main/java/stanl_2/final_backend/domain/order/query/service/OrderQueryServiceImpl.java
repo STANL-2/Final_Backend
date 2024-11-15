@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectAllDTO;
+import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.repository.OrderMapper;
 
 import java.util.List;
@@ -36,5 +37,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         int totalElements = orderMapper.findOrderCountByMemberId(memberId);
 
         return new PageImpl<>(orders, pageable, totalElements);
+    }
+
+    @Override
+    public OrderSelectIdDTO selectDetailOrder(OrderSelectIdDTO orderSelectIdDTO) {
+
+        OrderSelectIdDTO order = orderMapper.findOrderByIdAndMemberId(orderSelectIdDTO.getOrderId(), orderSelectIdDTO.getMemberId());
+
+        if(order == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        return order;
     }
 }

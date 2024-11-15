@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.order.common.response.OrderResponseMessage;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectAllDTO;
+import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.service.OrderQueryService;
-
-import java.util.Map;
 
 @RestController("queryOrderController")
 @RequestMapping("/api/v1/order")
@@ -48,6 +47,28 @@ public class OrderController {
                                                    .httpStatus(200)
                                                    .msg("수주서 전체 조회 성공")
                                                    .result(responseOrders)
+                                                    .build());
+    }
+
+    @Operation(summary = "수주서 상세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 상세 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("{id}/{memberId}")
+    public ResponseEntity<OrderResponseMessage> getDetailOrder(@PathVariable("id") String orderId,
+                                                               @PathVariable("memberId") String memberId) {
+
+        OrderSelectIdDTO orderSelectIdDTO = new OrderSelectIdDTO();
+        orderSelectIdDTO.setOrderId(orderId);
+        orderSelectIdDTO.setMemberId(memberId);
+
+        OrderSelectIdDTO responseOrder = orderQueryService.selectDetailOrder(orderSelectIdDTO);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                                                   .httpStatus(200)
+                                                   .msg("수주서 상세 조회 성공")
+                                                   .result(responseOrder)
                                                     .build());
     }
 }
