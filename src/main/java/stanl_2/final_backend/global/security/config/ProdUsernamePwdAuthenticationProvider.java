@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
+import stanl_2.final_backend.global.exception.GlobalExceptionResponse;
 
 @Slf4j
 @Component
@@ -37,7 +38,7 @@ public class ProdUsernamePwdAuthenticationProvider implements AuthenticationProv
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if (userDetails == null) {
             log.error("UserDetails is null for username: {}", username);
-            throw new UsernameNotFoundException("User not found");
+            throw new GlobalCommonException(GlobalErrorCode.USER_NOT_FOUND);
         }
 
         if(passwordEncoder.matches(pwd, userDetails.getPassword())) {

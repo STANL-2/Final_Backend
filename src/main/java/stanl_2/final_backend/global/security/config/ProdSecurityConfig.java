@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
@@ -76,10 +75,8 @@ public class ProdSecurityConfig {
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-//                        .anyRequest().authenticated())
-                // 필터 순서: JWT 검증 -> CSRF -> JWT 생성
+                // 필터 순서: JWT 검증 -> CSRF
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), UsernamePasswordAuthenticationFilter.class)
-//                .addFilterAfter(new JWTTokenGeneratorFilter(jwtSecretKey, authenticationManager), BasicAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());

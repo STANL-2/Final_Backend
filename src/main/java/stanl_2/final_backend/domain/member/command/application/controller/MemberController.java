@@ -34,7 +34,7 @@ public class MemberController {
         }
 
         // 인증된 사용자 정보 출력
-        System.out.println("인증된 사용자: " + authentication.getName());
+        log.info("인증된 사용자: {}", authentication.getName());
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
                 .httpStatus(200)

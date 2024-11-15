@@ -35,8 +35,6 @@ public class DevSecurityConfig {
     @Value("${jwt.header}")
     private String jwtHeader;
 
-    private AuthenticationManager authenticationManager;
-
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
@@ -58,9 +56,7 @@ public class DevSecurityConfig {
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                // 필터 순서: JWT 검증 -> CSRF -> JWT 생성
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
-//                .addFilterAfter(new JWTTokenGeneratorFilter(jwtSecretKey, authenticationManager), BasicAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
