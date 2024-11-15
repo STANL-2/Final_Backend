@@ -16,6 +16,5 @@ public class ScheduleDTO {
     private String startAt;
     private String endAt;
     private String memberId;
-
-    private String month;
+    private String active;
 }

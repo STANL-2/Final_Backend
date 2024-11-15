@@ -11,7 +11,7 @@ import java.util.Map;
 @Mapper
 public interface ScheduleMapper {
 
-    List<ScheduleDTO> findSchedulesByMemberIdAndSrtAt(ScheduleDTO scheduleDTO);
+    List<ScheduleDTO> findSchedulesByMemberIdAndSrtAt(Map<String, String> arg);
 
     List<ScheduleYearMonthDTO> findSchedulesByMemberIdAndYearMonth(ScheduleYearMonthDTO scheduleYearMonthDTO);
 

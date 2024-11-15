@@ -15,7 +15,9 @@ import stanl_2.final_backend.domain.schedule.query.repository.ScheduleMapper;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -43,12 +45,14 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
         String currentMonth = getCurrentTime().substring(0,7);
 
-        ScheduleDTO scheduleDTO = new ScheduleDTO();
-        scheduleDTO.setMemberId(memberId);
-        scheduleDTO.setMonth(currentMonth);
+        Map<String, String> arg = new HashMap<>();
+        arg.put("memberId",memberId);
+        arg.put("month",currentMonth);
 
-        List<ScheduleDTO> scheduleList = scheduleMapper.findSchedulesByMemberIdAndSrtAt(scheduleDTO);
+        List<ScheduleDTO> scheduleList = scheduleMapper.findSchedulesByMemberIdAndSrtAt(arg);
 
+
+        log.info("값 확인:{}",scheduleList);
         // Mapping 오류 체크 고려하기
 
         return scheduleList;
