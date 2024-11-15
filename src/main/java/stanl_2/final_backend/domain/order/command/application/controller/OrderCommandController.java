@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
 import stanl_2.final_backend.domain.order.command.application.service.OrderCommandService;
@@ -35,7 +34,7 @@ public class OrderCommandController {
      *   "memId": "MEM_000000001"
      * }
      * */
-    @Operation(summary = "수주서 등록 테스트")
+    @Operation(summary = "수주서 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 등록 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -62,7 +61,7 @@ public class OrderCommandController {
      *   "memId": "MEM_000000001"
      * }
      * */
-    @Operation(summary = "수주서 수정 테스트")
+    @Operation(summary = "수주서 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 수정 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -71,7 +70,7 @@ public class OrderCommandController {
     public ResponseEntity<OrderResponseMessage> putOrder(@PathVariable String id,
                                                          @RequestBody OrderModifyDTO orderModifyDTO) {
 
-        orderModifyDTO.setId(id);
+        orderModifyDTO.setOrderId(id);
         OrderModifyDTO orderModifyResponseDTO = orderCommandService.modifyOrder(orderModifyDTO);
 
         return ResponseEntity.ok(OrderResponseMessage.builder()
@@ -90,7 +89,7 @@ public class OrderCommandController {
      *   "memId": "MEM_000000001"
      * }
      * */
-    @Operation(summary = "수주서 삭제 테스트")
+    @Operation(summary = "수주서 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
