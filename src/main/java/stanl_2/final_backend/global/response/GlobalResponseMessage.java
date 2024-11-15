@@ -1,4 +1,4 @@
-package stanl_2.final_backend.global.common.response;
+package stanl_2.final_backend.global.response;
 
 import lombok.*;
 

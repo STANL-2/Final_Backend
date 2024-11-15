@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
 
     // 사용자 정의 예외 처리
     @ExceptionHandler(value = {GlobalCommonException.class})
-    public ResponseEntity<?> handleCustomException(GlobalCommonException e) {
+    public ResponseEntity<GlobalExceptionResponse> handleCustomException(GlobalCommonException e) {
         log.error("handleCustomException() in GlobalExceptionHandler: {}", e.getMessage());
         GlobalExceptionResponse response = new GlobalExceptionResponse(e.getErrorCode());
 
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
 
     // 서버 내부 오류시 작동
     @ExceptionHandler(value = {Exception.class})
-    public ResponseEntity<?> handleServerException(Exception e) {
+    public ResponseEntity<GlobalExceptionResponse> handleServerException(Exception e) {
         log.info("occurred exception in handleServerError = {}", e.getMessage());
         e.printStackTrace();
         GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.INTERNAL_SERVER_ERROR).getErrorCode());
@@ -63,14 +63,14 @@ public class GlobalExceptionHandler {
 
     // 데이터 무결성 위반 예외 처리기 추가
     @ExceptionHandler(value = {DataIntegrityViolationException.class})
-    public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    public ResponseEntity<GlobalExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.error("handleDataIntegrityViolationException() in GlobalExceptionHandler : {}", e.getMessage());
         GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.DATA_INTEGRITY_VIOLATION).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<GlobalExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("유효성 검사 실패: {}", e.getMessage());
         GlobalExceptionResponse response = new GlobalExceptionResponse(new GlobalCommonException(GlobalErrorCode.VALIDATION_FAIL).getErrorCode());
         return new ResponseEntity<>(response, response.getHttpStatus());

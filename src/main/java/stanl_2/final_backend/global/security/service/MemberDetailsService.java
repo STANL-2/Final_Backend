@@ -24,7 +24,6 @@ public class MemberDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // JPA를 사용하여 로그인 ID로 회원 정보 조회
         Member member = memberRepository.findByLoginId(username);
-        log.info("@@@@!!! {}", member.toString());
         if (member == null) {
             throw new UsernameNotFoundException("유저 정보가 없습니다" + username);
         }
