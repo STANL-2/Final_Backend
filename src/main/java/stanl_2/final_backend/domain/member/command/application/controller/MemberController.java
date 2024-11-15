@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,21 +25,24 @@ public class MemberController {
         this.memberCommandService = memberCommandService;
     }
 
-
-    @GetMapping("authorities")
-    public ResponseEntity<MemberResponseMessage> check(Principal principal) {
-        if (principal == null || "anonymousUser".equals(principal.getName())) {
+    @GetMapping("/authorities")
+    public ResponseEntity<MemberResponseMessage> check(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                                    .body(MemberResponseMessage.builder()
-                                                    .httpStatus(401)
-                                                    .msg("Unauthorized")
-                                                    .build());
+                    .body(MemberResponseMessage.builder()
+                            .httpStatus(401)
+                            .msg("Unauthorized")
+                            .build());
         }
 
+        // 인증된 사용자 정보 출력
+        System.out.println("인증된 사용자: " + authentication.getName());
+
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                                                .httpStatus(200)
-                                                .msg("성공")
-                                                .result("인증된 사용자: " + principal)
-                                                .build());
+                .httpStatus(200)
+                .msg("성공")
+                .result("인증된 사용자: " + authentication.getName())
+                .build());
     }
+
 }
