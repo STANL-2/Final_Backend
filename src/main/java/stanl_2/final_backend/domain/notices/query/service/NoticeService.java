@@ -12,5 +12,6 @@ public interface NoticeService {
     Page<NoticeDTO> findAllNotices(Pageable pageable);
 
     Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO);
+    NoticeDTO findNotice(String noticeId);
 
 }

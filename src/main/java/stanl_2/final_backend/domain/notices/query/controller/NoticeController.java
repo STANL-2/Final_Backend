@@ -68,4 +68,17 @@ public class NoticeController {
 
         return ResponseEntity.ok(noticeDTOPage);
     }
+
+    @Operation(summary = "공지사항 Id로 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
+    })
+    @GetMapping("{noticeId}")
+    public ResponseEntity<NoticeDTO> getNotice(@PathVariable String noticeId){
+        NoticeDTO noticeDTO = noticeService.findNotice(noticeId);
+        return ResponseEntity.ok(noticeDTO);
+    }
+
+
 }
