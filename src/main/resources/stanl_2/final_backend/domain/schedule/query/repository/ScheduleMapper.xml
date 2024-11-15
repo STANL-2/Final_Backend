@@ -6,12 +6,8 @@
     <resultMap id="AllSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
         <id property="id" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
-<!--        <result property="content" column="SCH_CONT"/>-->
         <result property="startAt" column="SCH_SRT_AT"/>
         <result property="endAt" column="SCH_END_AT"/>
-<!--        <result property="createdAt" column="CREATED_AT"/>-->
-<!--        <result property="updatedAt" column="UPDATED_AT"/>-->
-<!--        <result property="deletedAt" column="DELETED_AT"/>-->
         <result property="active" column="ACTIVE"/>
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
@@ -21,7 +17,6 @@
                A.SCH_NAME,
                A.SCH_SRT_AT,
                A.SCH_END_AT,
-               A.ACTIVE,
                A.MEM_ID
           FROM TB_SCHEDULE A
          WHERE MEM_ID = #{ memberId }

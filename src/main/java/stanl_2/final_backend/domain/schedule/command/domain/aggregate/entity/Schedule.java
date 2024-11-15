@@ -52,7 +52,7 @@ public class Schedule {
     private String deletedAt;
 
     @Column(name = "ACTIVE", nullable = false)
-    private Boolean active = 1;
+    private Boolean active = true;
 
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;

@@ -51,8 +51,6 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
         List<ScheduleDTO> scheduleList = scheduleMapper.findSchedulesByMemberIdAndSrtAt(arg);
 
-
-        log.info("값 확인:{}",scheduleList);
         // Mapping 오류 체크 고려하기
 
         return scheduleList;
@@ -69,7 +67,6 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
         scheduleYearMonthDTO.setYearMonth(scheduleYearMonthDTO.getYear() + "-" + scheduleYearMonthDTO.getMonth());
 
-        log.info("값 출력: {}", scheduleYearMonthDTO);
 
         List<ScheduleYearMonthDTO> scheduleList =
                 scheduleMapper.findSchedulesByMemberIdAndYearMonth(scheduleYearMonthDTO);
