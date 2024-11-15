@@ -11,9 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.contract.common.exception.ContractCommonException;
-import stanl_2.final_backend.domain.contract.common.exception.ContractErrorCode;
-import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
+import stanl_2.final_backend.domain.contract.common.response.ContractResponseMessage;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
 import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
 import stanl_2.final_backend.domain.schedule.common.response.ResponseMessage;
@@ -38,14 +36,14 @@ public class ContractController {
     @Operation(summary = "계약서 전체 조회 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 전채 조회 성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @GetMapping("{memId}")
-    public ResponseEntity<ResponseMessage> getAllContract(@PathVariable("memId") String memId,
+    public ResponseEntity<ContractResponseMessage> getAllContract(@PathVariable("memId") String memId,
                                                           @PageableDefault(size = 10) Pageable pageable) {
         Page<Map<String, Object>> responseContracts = contractQueryService.selectAll(memId, pageable);
 
-         return ResponseEntity.ok(ResponseMessage.builder()
+         return ResponseEntity.ok(ContractResponseMessage.builder()
                  .httpStatus(200)
                  .msg("계약서 전체 조회 성공")
                  .result(responseContracts)
@@ -58,10 +56,10 @@ public class ContractController {
     @Operation(summary = "계약서 상세 조회 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 상세 조회 성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @GetMapping("{id}/{memId}")
-    public ResponseEntity<ResponseMessage> getDetailContract(@PathVariable("id") String id,
+    public ResponseEntity<ContractResponseMessage> getDetailContract(@PathVariable("id") String id,
                                                                 @PathVariable("memId") String memId) {
 
         ContractSeletIdDTO contractDTO = new ContractSeletIdDTO();
@@ -70,7 +68,7 @@ public class ContractController {
 
         ContractSeletIdDTO responseContract = contractQueryService.selectDetailContract(contractDTO);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
                 .msg("계약서 상세조회 성공")
                 .result(responseContract)
@@ -83,10 +81,10 @@ public class ContractController {
     @Operation(summary = "계약서 검색 조회 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 검색 조회 성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @GetMapping("/search")
-    public ResponseEntity<ResponseMessage> getContractBySearch(@RequestParam Map<String, String> params,
+    public ResponseEntity<ContractResponseMessage> getContractBySearch(@RequestParam Map<String, String> params,
                                                                @PageableDefault(size = 10) Pageable pageable) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("memId", params.get("memId"));
@@ -104,7 +102,7 @@ public class ContractController {
 
         Page<Map<String, Object>> responseContracts = contractQueryService.selectBySearch(paramMap);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
                 .msg("계약서 검색 조회 성공")
                 .result(responseContracts)
