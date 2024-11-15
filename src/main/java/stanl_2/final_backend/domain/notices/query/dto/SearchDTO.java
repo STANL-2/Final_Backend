@@ -2,8 +2,11 @@ package stanl_2.final_backend.domain.notices.query.dto;
 
 import lombok.*;
 
+@AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class SearchDTO {
     private String noticeId;
     private String title;

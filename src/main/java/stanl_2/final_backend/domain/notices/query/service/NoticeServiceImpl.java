@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Notice;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 import stanl_2.final_backend.domain.notices.query.repository.NoticeMapper;
@@ -39,9 +40,16 @@ public class NoticeServiceImpl implements NoticeService{
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
         List<NoticeDTO> notices = noticeMapper.findNotices(offset,size,searchDTO);
-        int totalElements = noticeMapper.findNoticesCount(searchDTO);
+        Integer count = noticeMapper.findNoticesCount(searchDTO);
+        int noticeCount = (count != null) ?  noticeMapper.findNoticesCount(searchDTO) : 0;
 
-        return new PageImpl<>(notices, pageable, totalElements);
+        return new PageImpl<>(notices, pageable, noticeCount);
+    }
+
+    @Override
+    public NoticeDTO findNotice(String noticeId) {
+        NoticeDTO notice = noticeMapper.findNotice(noticeId);
+        return notice;
     }
 
 }

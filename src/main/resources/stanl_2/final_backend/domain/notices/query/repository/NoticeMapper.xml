@@ -22,7 +22,6 @@
         <result property="title" column="NOT_TTL"/>
         <result property="tag" column="NOT_TAG"/>
         <result property="classification" column="NOT_CLA"/>
-        <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
     <!-- 공지 전체 조회 페이지 네이션 -->
@@ -67,20 +66,20 @@
         FROM TB_NOTICE A
         <where>
             A.ACTIVE != 'false'
-            <if test="tag != null">
-                AND A.NOT_TAG = #{tag}
+            <if test="searchDTO.tag != null">
+                AND A.NOT_TAG = #{searchDTO.tag}
             </if>
-            <if test="classification != null">
-                AND A.NOT_CLA = #{classification}
+            <if test="searchDTO.classification != null">
+                AND A.NOT_CLA = #{searchDTO.classification}
             </if>
-            <if test="memberId != null">
-                AND A.MEM_ID = #{memberId}
+            <if test="searchDTO.memberId != null">
+                AND A.MEM_ID = #{searchDTO.memberId}
             </if>
-            <if test="title != null">
-                AND A.NOT_TTL LIKE CONCAT('%', #{title}, '%')
+            <if test="searchDTO.title != null">
+                AND A.NOT_TTL LIKE CONCAT('%', #{searchDTO.title}, '%')
             </if>
-            <if test="startDate != null and endDate != null">
-                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            <if test="searchDTO.startDate != null and searchDTO.endDate != null">
+                AND A.CREATED_AT BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
             </if>
         </where>
         ORDER BY A.CREATED_AT DESC
