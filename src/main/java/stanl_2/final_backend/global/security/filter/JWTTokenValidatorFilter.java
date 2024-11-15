@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,6 +20,7 @@ import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Slf4j
 public class JWTTokenValidatorFilter extends OncePerRequestFilter {
@@ -78,30 +80,37 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     private void handleAccessToken(Claims claims, HttpServletRequest request) {
         // 클레임에서 사용자 정보 및 권한 추출
-//        String id = claims.get("id", String.class);
         String username = claims.get("username", String.class);
         String authorities = claims.get("authorities", String.class);
 
+        List<GrantedAuthority> authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+
         // SecurityContext에 인증 정보 설정
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                username, null,
-                AuthorityUtils.commaSeparatedStringToAuthorityList(authorities)
+                username, null, authorityList
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.info("Authenticated user: {}", username);
+        log.info("Authenticated user: {}, authorities: {}", username, authorities);
 
-        // 추가적으로, 추출된 정보를 request 속성에 설정
-//        request.setAttribute("id", id);
+        // 요청 속성에 사용자 정보 추가 (선택 사항)
         request.setAttribute("username", username);
         request.setAttribute("authorities", authorities);
     }
+
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // 특정 경로에서는 필터를 적용하지 않음
         String path = request.getServletPath();
-        return path.startsWith("/api/v1/auth") ||
-                path.startsWith("/api/v1/sample");
+        return path.equals("/api/v1/auth/signin") ||
+                path.equals("/api/v1/auth/signup") ||
+                path.equals("/api/v1/auth/refresh") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/swagger-resources") ||
+                path.startsWith("/webjars") ||
+                path.startsWith("/api/v1/sample") ||
+                path.equals("/api/v1/auth");
     }
 }

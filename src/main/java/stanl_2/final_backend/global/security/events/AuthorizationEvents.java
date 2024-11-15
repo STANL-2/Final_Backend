@@ -14,6 +14,6 @@ public class AuthorizationEvents {
     public void onFailure(AuthorizationDeniedEvent deniedEvent){
         log.error("권한 없음 유저: {} due to: {}", deniedEvent.getAuthentication().get().getName()
                 , deniedEvent.getAuthorizationDecision().toString());
-        throw new GlobalCommonException(GlobalErrorCode.FORBIDDEN_ROLE);
+        throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
     }
 }

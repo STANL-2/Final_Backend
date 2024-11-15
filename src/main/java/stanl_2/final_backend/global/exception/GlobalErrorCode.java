@@ -38,7 +38,7 @@ public enum GlobalErrorCode {
      * 클라이언트는 콘텐츠에 접근할 권리를 가지고 있지 않습니다.
      * 예를들어 그들은 미승인이어서 서버는 거절을 위한 적절한 응답을 보냅니다. 401과 다른 점은 서버가 클라이언트가 누구인지 알고 있습니다.
      */
-    FORBIDDEN_ROLE(40300, HttpStatus.FORBIDDEN, "권한이 존재하지 않습니다."),
+    UNAUTHORIZED(40300, HttpStatus.FORBIDDEN, "권한이 존재하지 않습니다."),
 
 
     /**

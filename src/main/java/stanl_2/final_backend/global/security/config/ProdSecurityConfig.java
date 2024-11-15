@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -22,7 +23,6 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import stanl_2.final_backend.global.security.filter.CsrfCookieFilter;
-import stanl_2.final_backend.global.security.filter.JWTTokenGeneratorFilter;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
 
 import java.util.Arrays;
@@ -41,28 +41,45 @@ public class ProdSecurityConfig {
     private String jwtHeader;
 
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
         CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
 
         http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth", "/api/v1/sample/**",
-                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**")
+                        .ignoringRequestMatchers(
+                                "/api/v1/auth/signup",
+                                "/api/v1/auth/signin",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/sample/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api/v1/auth"
+                        )
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger 관련 URL 접근 허용
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                         // 인증 없이 접근 가능한 API 설정
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/sample/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api/v1/auth/signin",
+                                "/api/v1/auth/signup",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/sample/**",
+                                "/api/v1/auth"
+                                ).permitAll()
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
 //                        .anyRequest().authenticated())
                 // 필터 순서: JWT 검증 -> CSRF -> JWT 생성
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
-                .addFilterAfter(new JWTTokenGeneratorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterAfter(new JWTTokenGeneratorFilter(jwtSecretKey, authenticationManager), BasicAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());

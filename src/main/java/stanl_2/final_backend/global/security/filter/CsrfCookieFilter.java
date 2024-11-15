@@ -33,8 +33,13 @@ public class CsrfCookieFilter extends OncePerRequestFilter {
         log.info("현재 요청의 CSRF 토큰: {}", csrfToken.getToken());
 
         if (csrfCookieValue == null || !csrfCookieValue.equals(csrfToken.getToken())) {
-            log.error("CSRF 토큰 불일치 - 쿠키와 요청의 토큰이 일치하지 않습니다.");
-            throw new GlobalCommonException(GlobalErrorCode.NOT_FOUND_CSRF_TOKEN);
+            log.warn("CSRF 토큰 불일치 - 새로운 CSRF 쿠키 설정");
+            Cookie csrfCookie = new Cookie("XSRF-TOKEN", csrfToken.getToken());
+            csrfCookie.setPath("/");
+            csrfCookie.setHttpOnly(false);
+            csrfCookie.setSecure(request.isSecure());
+            csrfCookie.setMaxAge(-1); // 세션 종료 시 삭제
+            response.addCookie(csrfCookie);
         }
 
         filterChain.doFilter(request, response);
@@ -55,11 +60,14 @@ public class CsrfCookieFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.startsWith("/api/v1/auth") ||
-                path.startsWith("/api/v1/sample") ||
-                path.startsWith("/swagger-ui/") ||
+        return path.equals("/api/v1/auth/signin") ||
+                path.equals("/api/v1/auth/signup") ||
+                path.equals("/api/v1/auth/refresh") ||
+                path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-resources") ||
-                path.startsWith("/webjars");
+                path.startsWith("/webjars") ||
+                path.startsWith("/api/v1/sample") ||
+                path.equals("/api/v1/auth");
     }
 }

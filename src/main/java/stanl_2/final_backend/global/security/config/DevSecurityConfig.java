@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import stanl_2.final_backend.global.security.filter.JWTTokenGeneratorFilter;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
 
 import java.util.Arrays;
@@ -36,22 +35,32 @@ public class DevSecurityConfig {
     @Value("${jwt.header}")
     private String jwtHeader;
 
+    private AuthenticationManager authenticationManager;
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(csrfConfig -> csrfConfig.disable());
         http.cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger 관련 URL 접근 허용
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                         // 인증 없이 접근 가능한 API 설정
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/sample/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api/v1/auth/signin",
+                                "/api/v1/auth/signup",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/sample/**",
+                                "/api/v1/auth"
+                        ).permitAll()
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 // 필터 순서: JWT 검증 -> CSRF -> JWT 생성
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
-                .addFilterAfter(new JWTTokenGeneratorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
+//                .addFilterAfter(new JWTTokenGeneratorFilter(jwtSecretKey, authenticationManager), BasicAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
