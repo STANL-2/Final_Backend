@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.order.query.repository.OrderMapper">
+
+    <resultMap id="orderResultMap" type="stanl_2.final_backend.domain.order.query.dto.OrderSelectAllDTO">
+        <result property="orderId" column="ORD_ID"/>
+        <result property="title" column="ORD_TTL"/>
+        <result property="content" column="ORD_CONT"/>
+        <result property="status" column="ORD_STAT"/>
+        <result property="contractName" column="CONR_NAME"/>
+        <result property="adminName" column="MEM_NAME"/>
+        <result property="memberName" column="MEM_NAME"/>
+        <result property="productName" column="PROD_NAME"/>
+    </resultMap>
+
+    <select id="findAllOrderByMemberId" resultMap="orderResultMap">
+        SELECT
+               A.ORD_ID,
+               A.ORD_TTL,
+               A.ORD_CONT,
+               A.ORD_STAT,
+               B.CONR_NAME,
+               D.MEM_NAME,
+               C.MEM_NAME,
+               E.PROD_NAME
+          FROM TB_ORDER A
+          LEFT JOIN TB_CONTRACT B
+            ON A.CONR_ID = B.CONR_ID
+          LEFT JOIN TB_MEMBER C
+            ON A.MEM_ID = C.MEM_ID
+          LEFT JOIN TB_MEMBER D
+            ON A.ADMIN_ID = D.MEM_ID
+          LEFT JOIN TB_PRODUCT E
+            ON B.PROD_ID = E.PROD_ID
+         WHERE A.MEM_ID = #{memberId}
+           AND A.ACTIVE = TRUE
+         ORDER BY A.CREATED_AT DESC
+         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findOrderCountByMemberId" resultType="int">
+        SELECT
+               COUNT(*) AS CNT
+          FROM TB_ORDER A
+         WHERE A.MEM_ID = #{memberId}
+           AND A.ACTIVE = TRUE
+    </select>
+
+</mapper>

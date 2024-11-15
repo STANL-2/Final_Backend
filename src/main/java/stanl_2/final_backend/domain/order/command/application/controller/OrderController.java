@@ -13,14 +13,14 @@ import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO
 import stanl_2.final_backend.domain.order.command.application.service.OrderCommandService;
 import stanl_2.final_backend.domain.order.common.response.OrderResponseMessage;
 
-@RestController
+@RestController("OrderCommandController")
 @RequestMapping("/api/v1/order")
-public class OrderCommandController {
+public class OrderController {
 
     private final OrderCommandService orderCommandService;
 
     @Autowired
-    public OrderCommandController(OrderCommandService orderCommandService) {
+    public OrderController(OrderCommandService orderCommandService) {
         this.orderCommandService = orderCommandService;
     }
 
