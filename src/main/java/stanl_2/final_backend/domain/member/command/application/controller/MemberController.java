@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.member.command.application.service.MemberCommandService;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
-import java.security.Principal;
-
 @Slf4j
 @RestController("commandMemberController")
 @RequestMapping("/api/v1/member")

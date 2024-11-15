@@ -48,11 +48,14 @@ public class ProdSecurityConfig {
         http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth", "/api/v1/sample/**")
+                        .ignoringRequestMatchers("/api/v1/auth/signup", "/api/v1/auth/signin", "/api/v1/auth", "/api/v1/sample/**",
+                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger 관련 URL 접근 허용
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+                        // 인증 없이 접근 가능한 API 설정
                         .requestMatchers("/api/v1/auth/**", "/api/v1/sample/**").permitAll()
-
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
