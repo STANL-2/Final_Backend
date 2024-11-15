@@ -75,7 +75,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
 
         if(!scheduleModifyDTO.getMemberId().equals(schedule.getMemberId())){
-            // 권한 오류
+            // 권한 오ㅋ
             throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
         }
 
