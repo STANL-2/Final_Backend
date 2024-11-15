@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
+public enum ScheduleErrorCode {
 
     /**
      * 400(Bad Request)
@@ -30,7 +30,7 @@ public enum ErrorCode {
      * 클라이언트는 콘텐츠에 접근할 권리를 가지고 있지 않습니다.
      * 예를들어 그들은 미승인이어서 서버는 거절을 위한 적절한 응답을 보냅니다. 401과 다른 점은 서버가 클라이언트가 누구인지 알고 있습니다.
      */
-
+    AUTHORIZATION_VIOLATION(40301, HttpStatus.BAD_REQUEST, "본인의 일정에만 접근 가능합니다."),
 
 
     /**
@@ -48,7 +48,9 @@ public enum ErrorCode {
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
     INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
-    MAPPING_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "ModleMapper 매핑 오류입니다.");
+    MAPPING_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "ModleMapper 매핑 오류입니다."),
+    DATA_ACCESS_ERROR(50002, HttpStatus.INTERNAL_SERVER_ERROR, "데이터베이스 접근 중 오류가 발생했습니다.");
+
 
 
     private final Integer code;

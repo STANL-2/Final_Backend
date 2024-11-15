@@ -36,6 +36,9 @@ public class Schedule {
     @Column(name = "SCH_CONT", nullable = false)
     private String content;
 
+    @Column(name = "SCH_TAG", nullable = false)
+    private String tag = "CONSULTATION";
+
     @Column(name = "SCH_SRT_AT", nullable = false)
     private String startAt;
 
