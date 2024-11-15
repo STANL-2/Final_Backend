@@ -1,6 +1,7 @@
 package stanl_2.final_backend.global.security.filter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
@@ -8,98 +9,75 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import stanl_2.final_backend.global.exception.GlobalCommonException;
-import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     private final String jwtSecretKey;
-    private final String jwtHeader;
 
-    public JWTTokenValidatorFilter(String jwtSecretKey, String jwtHeader) {
-        this.jwtHeader = jwtHeader;
+    public JWTTokenValidatorFilter(String jwtSecretKey) {
         this.jwtSecretKey = jwtSecretKey;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        // 요청 헤더에서 JWT 토큰 가져오기
-        String jwt = request.getHeader(jwtHeader);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        // 토큰이 존재하고 "Bearer "로 시작하는지 확인
-        if (jwt != null && jwt.startsWith("Bearer ")) {
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
             try {
-                // 비밀키를 사용하여 JWT 토큰을 검증
                 SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
-                String jwtToken = jwt.substring(7); // "Bearer " 부분 제거
-
-                // JWT 토큰 파싱 및 검증
                 Claims claims = Jwts.parserBuilder()
                         .setSigningKey(secretKey)
                         .build()
-                        .parseClaimsJws(jwtToken)
+                        .parseClaimsJws(token)
                         .getBody();
 
-                // 클레임에서 토큰 타입 확인
-                String subject = claims.getSubject();
+                // 사용자 정보 추출
+                String username = claims.get("username", String.class);
+                String authorities = claims.get("authorities", String.class);
 
-                // Access Token 처리
-                if ("Access Token".equals(subject)) {
-                    handleAccessToken(claims, request);
-                }
-                // Refresh Token은 인증 처리가 아닌, 토큰 재발급용으로만 사용
-                else if ("Refresh Token".equals(subject)) {
-                    log.info("$Refresh Token$");
-                } else {
-                    throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
+                // 예외 처리: authorities가 null인 경우
+                if (authorities == null || authorities.isEmpty()) {
+                    log.error("Invalid token: authorities are missing");
+                    SecurityContextHolder.clearContext();
+                    filterChain.doFilter(request, response);
+                    return;
                 }
 
+                List<GrantedAuthority> grantedAuthorities = Arrays.stream(authorities.split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
 
-
-            } catch (Exception exception) {
-                log.error("유효한 JWT Token", exception);
-                throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
+                // SecurityContext에 인증 정보 설정
+                if (username != null) {
+                    Authentication authentication = new UsernamePasswordAuthenticationToken(
+                            username, null, grantedAuthorities);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (JwtException e) {
+                logger.error("Invalid JWT token", e);
+                SecurityContextHolder.clearContext();
             }
         }
 
-        // 다음 필터로 요청 전달
         filterChain.doFilter(request, response);
-    }
-
-    private void handleAccessToken(Claims claims, HttpServletRequest request) {
-        // 클레임에서 사용자 정보 및 권한 추출
-        String username = claims.get("username", String.class);
-        String authorities = claims.get("authorities", String.class);
-
-        List<GrantedAuthority> authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-
-        // SecurityContext에 인증 정보 설정
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                username, null, authorityList
-        );
-
-        // SecurityContextHolder에 인증 정보 설정
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        log.info("Authenticated 유저: {}, authorities: {}", username, authorities);
-
-        // 요청 속성에 사용자 정보 추가 (선택 사항)
-        request.setAttribute("username", username);
-        request.setAttribute("authorities", authorities);
     }
 
 
@@ -109,7 +87,6 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         return path.equals("/api/v1/auth/signin") ||
                 path.equals("/api/v1/auth/signup") ||
-                path.equals("/api/v1/auth/refresh") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-resources") ||

@@ -13,6 +13,8 @@ import stanl_2.final_backend.domain.member.command.application.dto.*;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
+import java.security.GeneralSecurityException;
+
 @Slf4j
 @RestController("commandAuthController")
 @RequestMapping("/api/v1/auth")
@@ -31,7 +33,7 @@ public class AuthController {
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     @PostMapping("signup")
-    public ResponseEntity<MemberResponseMessage> signup(@RequestBody SignupDTO signupDTO){
+    public ResponseEntity<MemberResponseMessage> signup(@RequestBody SignupDTO signupDTO) throws GeneralSecurityException {
 
         authCommandService.signup(signupDTO);
 
@@ -67,7 +69,7 @@ public class AuthController {
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     public ResponseEntity<MemberResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO) {
-        // 서비스에서 로그인 및 토큰 생성 처리
+
         SigninResponseDTO responseDTO = authCommandService.signin(signinRequestDTO);
 
         return ResponseEntity.ok(
@@ -86,7 +88,9 @@ public class AuthController {
     })
     @PostMapping("refresh")
     public ResponseEntity<MemberResponseMessage> refresh(@RequestBody RefreshDTO refreshDTO) {
+
         RefreshDTO newAccessToken = authCommandService.refreshAccessToken(refreshDTO.getRefreshToken());
+
         return ResponseEntity.ok(MemberResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")

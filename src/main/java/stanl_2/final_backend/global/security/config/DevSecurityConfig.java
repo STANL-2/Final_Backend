@@ -55,7 +55,7 @@ public class DevSecurityConfig {
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey), BasicAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());

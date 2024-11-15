@@ -9,14 +9,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -34,28 +32,12 @@ public class ProdSecurityConfig {
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
-    @Value("${jwt.header}")
-    private String jwtHeader;
-
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
         CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
-
-        http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
-                .csrf(csrfConfig -> csrfConfig.csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
-                        .ignoringRequestMatchers(
-                                "/api/v1/auth/signup",
-                                "/api/v1/auth/signin",
-                                "/api/v1/auth/refresh",
-                                "/api/v1/sample/**",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**",
-                                "/api/v1/auth"
-                        ).csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        http.cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 API 설정
                         .requestMatchers(
@@ -73,7 +55,7 @@ public class ProdSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 // 필터 순서: JWT 검증 -> CSRF
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey), UsernamePasswordAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());

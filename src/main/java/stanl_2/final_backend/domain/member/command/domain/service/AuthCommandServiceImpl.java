@@ -3,9 +3,6 @@ package stanl_2.final_backend.domain.member.command.domain.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
@@ -28,9 +24,11 @@ import stanl_2.final_backend.domain.member.command.domain.repository.MemberRoleR
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
+import stanl_2.final_backend.global.utils.AESUtils;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -50,6 +48,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
     private final AuthQueryService authQueryService;
+    private final AESUtils aesUtils;
 
     @Autowired
     public AuthCommandServiceImpl(MemberRepository memberRepository,
@@ -57,13 +56,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                                   PasswordEncoder passwordEncoder,
                                   ModelMapper modelMapper,
                                   AuthenticationManager authenticationManager,
-                                  AuthQueryService authQueryService) {
+                                  AuthQueryService authQueryService,
+                                  AESUtils aesUtils) {
         this.memberRepository = memberRepository;
         this.memberRoleRepository = memberRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
         this.authenticationManager = authenticationManager;
         this.authQueryService = authQueryService;
+        this.aesUtils = aesUtils;
     }
 
     private String getCurrentTimestamp() {
@@ -73,10 +74,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public void signup(SignupDTO signupDTO) {
+    public void signup(SignupDTO signupDTO) throws GeneralSecurityException {
 
         String hashPwd = passwordEncoder.encode(signupDTO.getPassword());
         signupDTO.setPassword(hashPwd);
+        signupDTO.setName(aesUtils.encrypt(signupDTO.getName()));
+        signupDTO.setEmail(aesUtils.encrypt(signupDTO.getEmail()));
+        signupDTO.setIdenNo(aesUtils.encrypt(signupDTO.getIdenNo()));
+        signupDTO.setPhone(aesUtils.encrypt(signupDTO.getPhone()));
+        signupDTO.setEmergPhone(aesUtils.encrypt(signupDTO.getEmergPhone()));
+        signupDTO.setAddress(aesUtils.encrypt(signupDTO.getAddress()));
+        signupDTO.setBankName(aesUtils.encrypt(signupDTO.getBankName()));
+        signupDTO.setAccount(aesUtils.encrypt(signupDTO.getAccount()));
 
         Member registerMember = modelMapper.map(signupDTO, Member.class);
 
@@ -95,7 +104,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new GlobalCommonException(GlobalErrorCode.LOGIN_FAILURE);
         }
 
-        // 인증된 사용자 정보를 SecurityContext에 설정
+        // 인증된 사용자 정보를 SecurityContext에 저장
         SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
 
         // 권한 정보 추출
@@ -106,7 +115,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         // JWT 토큰 생성
         SecretKey secretKey = Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
         String accessToken = generateAccessToken(authenticationResponse.getName(), authorities, secretKey);
-        String refreshToken = generateRefreshToken(secretKey);
+        String refreshToken = generateRefreshToken(authenticationResponse.getName(), authorities,secretKey);
 
         return new SigninResponseDTO(accessToken, refreshToken);
     }
@@ -123,10 +132,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .compact();
     }
 
-    private String generateRefreshToken(SecretKey secretKey) {
+    private String generateRefreshToken(String username, String authorities, SecretKey secretKey) {
         return Jwts.builder()
                 .setIssuer("STANL2")
                 .setSubject("Refresh Token")
+                .claim("username", username)
+                .claim("authorities", authorities)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24시간 유효
                 .signWith(secretKey)
@@ -150,21 +161,17 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
         }
 
-        // 현재 인증된 사용자 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-                throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+        // 사용자 정보 추출
+        String username = claims.get("username", String.class);
+        String authorities = claims.get("authorities", String.class);
+
+        if (username == null || authorities == null) {
+            throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
         }
 
-        // 새로운 Access Token 생성 및 반환
+        // 새로운 Access Token 생성
         return RefreshDTO.builder()
-                .newAccessToken(
-                        generateAccessToken(authentication.getName(),
-                                authentication.getAuthorities().stream()
-                                        .map(GrantedAuthority::getAuthority)
-                                        .collect(Collectors.joining(",")),
-                                secretKey)
-                )
+                .newAccessToken(generateAccessToken(username, authorities, secretKey))
                 .build();
     }
 
