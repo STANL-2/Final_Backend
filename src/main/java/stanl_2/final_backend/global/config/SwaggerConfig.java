@@ -7,16 +7,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
-import jakarta.servlet.http.Cookie;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Arrays;
 
 @Configuration
 @OpenAPIDefinition(
@@ -48,31 +40,5 @@ public class SwaggerConfig {
                         )
                         .addSecurityItem(new io.swagger.v3.oas.models.security.SecurityRequirement()
                                 .addList("Bearer Authentication"));
-        }
-
-        @Bean
-        public WebMvcConfigurer swaggerCsrfConfigurer() {
-                return new WebMvcConfigurer() {
-                        @Override
-                        public void addInterceptors(InterceptorRegistry registry) {
-                                registry.addInterceptor(new HandlerInterceptor() {
-                                        @Override
-                                        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-                                                Cookie[] cookies = request.getCookies();
-                                                if (cookies != null) {
-                                                        String csrfToken = Arrays.stream(cookies)
-                                                                .filter(cookie -> "XSRF-TOKEN".equals(cookie.getName()))
-                                                                .map(Cookie::getValue)
-                                                                .findFirst()
-                                                                .orElse(null);
-                                                        if (csrfToken != null) {
-                                                                response.addHeader("X-XSRF-TOKEN", csrfToken);
-                                                        }
-                                                }
-                                                return true;
-                                        }
-                                }).addPathPatterns("/swagger-ui/**");
-                        }
-                };
         }
 }

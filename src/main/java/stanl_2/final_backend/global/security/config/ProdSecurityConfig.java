@@ -17,11 +17,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import stanl_2.final_backend.global.security.filter.CsrfCookieFilter;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
 
 import java.util.Arrays;
@@ -57,8 +55,7 @@ public class ProdSecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/api/v1/auth"
-                        )
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                        ).csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 API 설정
                         .requestMatchers(
@@ -77,7 +74,6 @@ public class ProdSecurityConfig {
                         .anyRequest().authenticated())
                 // 필터 순서: JWT 검증 -> CSRF
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, jwtHeader), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());

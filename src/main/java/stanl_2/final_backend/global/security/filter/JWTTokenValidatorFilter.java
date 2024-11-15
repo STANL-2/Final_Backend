@@ -63,13 +63,15 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 }
                 // Refresh Token은 인증 처리가 아닌, 토큰 재발급용으로만 사용
                 else if ("Refresh Token".equals(subject)) {
-                    log.info("Received Refresh Token");
+                    log.info("$Refresh Token$");
                 } else {
                     throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
                 }
 
+
+
             } catch (Exception exception) {
-                log.error("Invalid JWT Token", exception);
+                log.error("유효한 JWT Token", exception);
                 throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
             }
         }
@@ -89,9 +91,11 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 username, null, authorityList
         );
+
+        // SecurityContextHolder에 인증 정보 설정
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.info("Authenticated user: {}, authorities: {}", username, authorities);
+        log.info("Authenticated 유저: {}, authorities: {}", username, authorities);
 
         // 요청 속성에 사용자 정보 추가 (선택 사항)
         request.setAttribute("username", username);

@@ -9,12 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
-import stanl_2.final_backend.global.exception.GlobalExceptionResponse;
 
 @Slf4j
 @Component
@@ -37,7 +35,7 @@ public class ProdUsernamePwdAuthenticationProvider implements AuthenticationProv
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if (userDetails == null) {
-            log.error("UserDetails is null for username: {}", username);
+            log.error("현재 null인 userdetail의 username: {}", username);
             throw new GlobalCommonException(GlobalErrorCode.USER_NOT_FOUND);
         }
 

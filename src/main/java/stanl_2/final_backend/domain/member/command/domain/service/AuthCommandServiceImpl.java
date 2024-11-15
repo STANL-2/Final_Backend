@@ -3,6 +3,9 @@ package stanl_2.final_backend.domain.member.command.domain.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
@@ -112,9 +116,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .setIssuer("STANL2")
                 .setSubject("Access Token")
                 .claim("username", username)
-                .claim("authorities", authorities) // 권한 정보를 클레임에 추가
+                .claim("authorities", authorities)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1시간 유효
+                .setExpiration(new Date(System.currentTimeMillis() + 1800000)) // 30분 유효
                 .signWith(secretKey)
                 .compact();
     }
@@ -124,7 +128,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .setIssuer("STANL2")
                 .setSubject("Refresh Token")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 604800000)) // 7일 유효
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24시간 유효
                 .signWith(secretKey)
                 .compact();
     }

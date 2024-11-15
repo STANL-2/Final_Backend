@@ -31,7 +31,7 @@ public enum GlobalErrorCode {
      */
     LOGIN_FAILURE(40100, HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다"),
     INVALID_TOKEN_ERROR(40101, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    NOT_FOUND_CSRF_TOKEN(40102, HttpStatus.UNAUTHORIZED, "CSRF 토큰이 요류입니다."),
+    INVALID_CSRF_TOKEN(40102, HttpStatus.UNAUTHORIZED, "유효하지 않은 CSRF토큰입니다."),
 
     /**
      * 403(Forbidden)
@@ -50,6 +50,7 @@ public enum GlobalErrorCode {
      */
     USERDETAILS_NOT_FOUND(40400, HttpStatus.NOT_FOUND, "User Details를 찾을 수 없습니다."),
     USER_NOT_FOUND(40401, HttpStatus.NOT_FOUND, "유저 정보가 없습니다."),
+    NOT_FOUND_CSRF_TOKEN(40402, HttpStatus.NOT_FOUND, "CSRF토큰이 없습니다."),
 
     /**
      * 500(Internal Server Error)

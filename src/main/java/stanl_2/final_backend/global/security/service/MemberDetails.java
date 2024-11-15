@@ -57,13 +57,4 @@ public class MemberDetails implements UserDetails {
         return member.getActive();
     }
 
-    @Override
-    public String toString() {
-        return "MemberDetails{" +
-                "username='" + getUsername() + '\'' +
-                ", password='" + getPassword() + '\'' +
-                ", authorities=" + getAuthorities() +
-                '}';
-    }
-
 }
