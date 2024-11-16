@@ -59,7 +59,7 @@ public class ContractCommandController {
     @PostMapping("{id}")
     public ResponseEntity<ContractResponseMessage> postTest(@PathVariable String id,
                                                           @RequestBody ContractRegistDTO contractRegistRequestDTO) {
-        contractRegistRequestDTO.setMemId(id);
+        contractRegistRequestDTO.setMemberId(id);
         contractCommandService.registerContract(contractRegistRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
@@ -104,7 +104,7 @@ public class ContractCommandController {
     public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String id,
                                                                                @RequestBody ContractModifyDTO contractModifyRequestDTO) {
 
-        contractModifyRequestDTO.setId(id);
+        contractModifyRequestDTO.setContractId(id);
         ContractModifyDTO contractModifyDTO = contractCommandService.modifyContract(contractModifyRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()

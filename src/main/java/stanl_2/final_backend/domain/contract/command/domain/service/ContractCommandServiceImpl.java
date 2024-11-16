@@ -42,8 +42,8 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
         Contract contract = modelMapper.map(contractRegistRequestDTO, Contract.class);
 
-        contract.setCentId("CEN_000000001");    // 회원의 매장번호 넣기
-        contract.setProdId("PRO_000000001");    // 제품 번호 넣기
+        contract.setCenterId("CEN_000000001");    // 회원의 매장번호 넣기
+        contract.setProductId("PRO_000000001");    // 제품 번호 넣기
 
         contractRepository.save(contract);
     }
@@ -62,15 +62,15 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
         // 가져온 고객 정보에 수정된 값 넣기
 
-        Contract contract = contractRepository.findById(contractModifyRequestDTO.getId())
+        Contract contract = contractRepository.findById(contractModifyRequestDTO.getContractId())
                 .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
 
         Contract updateContract = modelMapper.map(contractModifyRequestDTO, Contract.class);
         updateContract.setCreatedAt(contract.getCreatedAt());
         updateContract.setUpdatedAt(contract.getUpdatedAt());
         updateContract.setActive(contract.isActive());
-        updateContract.setCentId(contract.getCentId());
-        updateContract.setProdId(contract.getProdId());
+        updateContract.setCenterId(contract.getCenterId());
+        updateContract.setProductId(contract.getProductId());
         updateContract.setCreatedUrl(contract.getCreatedUrl());
 
         contractRepository.save(updateContract);
