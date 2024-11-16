@@ -308,8 +308,10 @@ CREATE TABLE tb_alarm
     ALR_ID        VARCHAR(255) NOT NULL,
     ALR_MSG       VARCHAR(255) NOT NULL,
     ALR_URL       VARCHAR(255) NOT NULL,
+    ALR_TYPE      VARCHAR(255) NOT NULL,
     ALR_READ_STAT BOOLEAN      NOT NULL DEFAULT FALSE,
     CREATED_AT    CHAR(19)     NOT NULL,
+    ALR_SND    VARCHAR(255) NOT NULL DEFAULT 'NOTICE',
     MEM_ID        VARCHAR(255) NOT NULL,
     PRIMARY KEY (ALR_ID),
     FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
@@ -738,17 +740,19 @@ VALUES
      '2024-01-29 19:00:00', '2024-01-29 19:30:00', NULL, TRUE, 'MEM_000000010');
 
 
-INSERT INTO tb_alarm (ALR_ID, ALR_MSG, ALR_URL, ALR_READ_STAT, CREATED_AT, MEM_ID)
-VALUES ('ALR_000000001', '신차 출시 공지 알림', '/notices/1', FALSE, '2024-01-20 12:00:00', 'MEM_000000001'),
-       ('ALR_000000002', '스포티지 리콜 안내', '/notices/2', FALSE, '2024-01-21 14:00:00', 'MEM_000000002'),
-       ('ALR_000000003', 'K7 고객 이벤트 초대', '/events/3', TRUE, '2024-01-22 09:00:00', 'MEM_000000003'),
-       ('ALR_000000004', '셀토스 정비 완료', '/service/4', FALSE, '2024-01-23 10:00:00', 'MEM_000000004'),
-       ('ALR_000000005', 'K3 테스트 드라이브 일정 변경', '/schedules/5', TRUE, '2024-01-24 11:00:00', 'MEM_000000005'),
-       ('ALR_000000006', '모하비 부품 입고 알림', '/inventory/6', FALSE, '2024-01-25 12:00:00', 'MEM_000000006'),
-       ('ALR_000000007', 'K8 디자인 변경 확정', '/design/7', TRUE, '2024-01-26 13:00:00', 'MEM_000000007'),
-       ('ALR_000000008', '스팅어 성능 테스트 보고서', '/reports/8', FALSE, '2024-01-27 14:00:00', 'MEM_000000008'),
-       ('ALR_000000009', '니로 전기차 충전소 위치', '/maps/9', TRUE, '2024-01-28 15:00:00', 'MEM_000000009'),
-       ('ALR_000000010', 'K5 재고 부족 경고', '/inventory/10', FALSE, '2024-01-29 16:00:00', 'MEM_000000010');
+INSERT INTO tb_alarm (ALR_ID, ALR_MSG, ALR_URL, ALR_TYPE, ALR_READ_STAT, CREATED_AT, ALR_SND, MEM_ID)
+VALUES
+('ALR_000000001', '신규 보안 지침이 업데이트되었습니다.', 'api/v1/notice/1', 'NOTICE', FALSE, '2024-11-16 08:00:00', 'MEM_000000025', 'MEM_000000001'),
+('ALR_000000002', '회사 워크샵 일정 공지', 'api/v1/notice/2', 'NOTICE', FALSE, '2024-11-15 09:00:00', 'MEM_000000025', 'MEM_000000002'),
+('ALR_000000003', '연말 정산 안내 공지', 'api/v1/notice/3', 'NOTICE', FALSE, '2024-11-14 10:30:00', 'MEM_000000025', 'MEM_000000003'),
+('ALR_000000004', '신규 프로젝트 관련 공지사항', 'api/v1/notice/4', 'NOTICE', TRUE, '2024-11-13 11:00:00', 'MEM_000000025', 'MEM_000000004'),
+('ALR_000000005', '시스템 점검 일정 안내', 'api/v1/notice/5', 'NOTICE', FALSE, '2024-11-12 14:00:00', 'MEM_000000025', 'MEM_000000005'),
+('ALR_000000006', '홍길동 고객님과 미팅 1일 전입니다.', 'api/v1/schedule/6', 'SCHEDULE', FALSE, '2024-11-17 10:00:00', 'SYSTEM', 'MEM_000000006'),
+('ALR_000000007', '홍길동 고객님과 1시간 전입니다.', 'api/v1/schedule/7', 'SCHEDULE', FALSE, '2024-11-18 09:00:00', 'SYSTEM', 'MEM_000000006'),
+('ALR_000000008', '이순신 고객님과 미팅 1일 전입니다.', 'api/v1/schedule/8', 'SCHEDULE', TRUE, '2024-11-18 09:00:00', 'SYSTEM', 'MEM_000000008'),
+('ALR_000000009', '김구고객님과 미팅 1시간 전입니다.', 'api/v1/schedule/9', 'SCHEDULE', FALSE, '2024-11-18 11:00:00', 'SYSTEM', 'MEM_000000009'),
+('ALR_000000010', '지리리고객님과 미팅 1시간 전입니다.', 'api/v1/schedule/10', 'SCHEDULE', FALSE, '2024-11-18 15:00:00', 'SYSTEM', 'MEM_000000010');
+
 
 INSERT INTO tb_member_detail (MEM_DET_ID, MEM_DET_REL, MEM_DET_NAME, MEM_DET_BIR, MEM_DET_IDEN_NO, MEM_DET_PHO,
                               MEM_DET_SEX, MEM_DET_DIS, MEM_DET_DIE, MEM_DET_NOTE, MEM_DET_ENTD, MEM_DET_GRAD,
