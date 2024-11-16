@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @ToString
 public class ScheduleDTO {
 
-    private String id;
+    private String scheduleId;
     private String name;
     private String tag;
     private String startAt;

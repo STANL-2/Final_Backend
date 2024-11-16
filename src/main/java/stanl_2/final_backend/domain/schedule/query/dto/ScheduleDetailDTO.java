@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class ScheduleDetailDTO {
 
-    private String id;
+    private String scheduleId;
     private String name;
     private String content;
     private String tag;
