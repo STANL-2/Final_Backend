@@ -49,7 +49,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         arg.put("memberId",memberId);
         arg.put("month",currentMonth);
 
-        List<ScheduleDTO> scheduleList = scheduleMapper.findSchedulesByMemberIdAndSrtAt(arg);
+        List<ScheduleDTO> scheduleList = scheduleMapper.findSchedulesByMemberIdAndStartAt(arg);
 
         // Mapping 오류 체크 고려하기
 
@@ -88,13 +88,13 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         }
 
-        if(scheduleDetailDTO.getId() == null || scheduleDetailDTO.getId().trim().isEmpty()){
+        if(scheduleDetailDTO.getScheduleId() == null || scheduleDetailDTO.getScheduleId().trim().isEmpty()){
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         }
 
         Map<String, String> arg = new HashMap<>();
         arg.put("memberId", scheduleDetailDTO.getMemberId());
-        arg.put("scheduleId", scheduleDetailDTO.getId());
+        arg.put("scheduleId", scheduleDetailDTO.getScheduleId());
 
         ScheduleDetailDTO responseDetailSchedule
                 = scheduleMapper.findScheduleByMemberIdAndScheduleId(arg);

@@ -51,7 +51,7 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseMessage> modifySchedule(@PathVariable String scheduleId,
                                                                   @RequestBody ScheduleModifyDTO scheduleModifyDTO){
 
-        scheduleModifyDTO.setId(scheduleId);
+        scheduleModifyDTO.setScheduleId(scheduleId);
         Boolean answer = scheduleCommandService.modifySchedule(scheduleModifyDTO);
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
