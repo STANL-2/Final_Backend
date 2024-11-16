@@ -27,7 +27,7 @@ public class ContractRegistDTO {
     private String delveryDate;
     private String delveryLocation;
     private String status;
-    private String NumberOfVehicles;
+    private String numberOfVehicles;
     private String createdUrl;
     private String memberId;
 }

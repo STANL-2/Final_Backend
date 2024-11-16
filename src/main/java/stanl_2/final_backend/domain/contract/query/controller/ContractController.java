@@ -37,10 +37,10 @@ public class ContractController {
             @ApiResponse(responseCode = "200", description = "계약서 전채 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @GetMapping("{memId}")
-    public ResponseEntity<ContractResponseMessage> getAllContract(@PathVariable("memId") String memId,
+    @GetMapping("{memberId}")
+    public ResponseEntity<ContractResponseMessage> getAllContract(@PathVariable("memberId") String memberId,
                                                           @PageableDefault(size = 10) Pageable pageable) {
-        Page<Map<String, Object>> responseContracts = contractQueryService.selectAll(memId, pageable);
+        Page<Map<String, Object>> responseContracts = contractQueryService.selectAll(memberId, pageable);
 
          return ResponseEntity.ok(ContractResponseMessage.builder()
                  .httpStatus(200)
@@ -57,13 +57,13 @@ public class ContractController {
             @ApiResponse(responseCode = "200", description = "계약서 상세 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @GetMapping("{id}/{memId}")
+    @GetMapping("{id}/{memberId}")
     public ResponseEntity<ContractResponseMessage> getDetailContract(@PathVariable("id") String id,
-                                                                @PathVariable("memId") String memId) {
+                                                                @PathVariable("memberId") String memberId) {
 
         ContractSeletIdDTO contractDTO = new ContractSeletIdDTO();
-        contractDTO.setId(id);
-        contractDTO.setMemId(memId);
+        contractDTO.setContractId(id);
+        contractDTO.setMemberId(memberId);
 
         ContractSeletIdDTO responseContract = contractQueryService.selectDetailContract(contractDTO);
 
@@ -86,17 +86,17 @@ public class ContractController {
     public ResponseEntity<ContractResponseMessage> getContractBySearch(@RequestParam Map<String, String> params,
                                                                @PageableDefault(size = 10) Pageable pageable) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("memId", params.get("memId"));
-        paramMap.put("centId", params.get("centId"));
+        paramMap.put("memberId", params.get("memberId"));
+        paramMap.put("centerId", params.get("centerId"));
         paramMap.put("name", params.get("name"));
         paramMap.put("startAt", params.get("startAt"));
         paramMap.put("endAt", params.get("endAt"));
-        paramMap.put("custName", params.get("custName"));
-        paramMap.put("custCla", params.get("custCla"));
-        paramMap.put("prodId", params.get("prodId"));
+        paramMap.put("customerName", params.get("customerName"));
+        paramMap.put("customerClassifcation", params.get("customerClassifcation"));
+        paramMap.put("productId", params.get("productId"));
         paramMap.put("status", params.get("status"));
-        paramMap.put("compName", params.get("compName"));
-        paramMap.put("custPurCond", params.get("custCond"));
+        paramMap.put("companyName", params.get("companyName"));
+        paramMap.put("customerPurchaseCondition", params.get("customerPurchaseCondition"));
         paramMap.put("pageable", pageable);
 
         Page<Map<String, Object>> responseContracts = contractQueryService.selectBySearch(paramMap);

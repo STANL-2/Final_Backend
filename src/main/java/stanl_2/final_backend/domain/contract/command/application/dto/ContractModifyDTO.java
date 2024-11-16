@@ -23,12 +23,12 @@ public class ContractModifyDTO {
     private String selectOption;
     private Integer downPayment;
     private Integer intermediatePayment;
-    private Integer remremainderPaymentPay;
+    private Integer remainderPayment;
     private Integer consignmentPayment;
     private String delveryDate;
     private String delveryLocation;
     private String status;
-    private String NumberOfVehicles;
+    private String numberOfVehicles;
     private String createdUrl;
     private Boolean active;
     private String createdAt;

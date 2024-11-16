@@ -90,7 +90,7 @@ public class Contract {
 
     @Column(name = "CONR_NO_OF_VEH", nullable = false)
     @ColumnDefault("1")
-    private String NumberOfVehicles;
+    private String numberOfVehicles;
 
     @Lob
     @Column(name = "CREATED_URL", nullable = false, columnDefinition = "TEXT")

@@ -24,7 +24,7 @@
         <result property="delveryDate" column="CONR_DELV_DATE"/>
         <result property="delveryLocation" column="CONR_DELV_LOC"/>
         <result property="status" column="CONR_STAT"/>
-        <result property="NumberOfVehicles" column="CONR_NO_OF_VEH"/>
+        <result property="numberOfVehicles" column="CONR_NO_OF_VEH"/>
         <result property="createdUrl" column="CREATED_URL"/>
         <result property="deletedUrl" column="DELETED_URL"/>
         <result property="active" column="ACTIVE"/>
