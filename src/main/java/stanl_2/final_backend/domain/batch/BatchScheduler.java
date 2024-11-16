@@ -35,4 +35,3 @@ public class BatchScheduler {
         jobLauncher.run(checkJob, jobParameters);
     }
 }
-}
