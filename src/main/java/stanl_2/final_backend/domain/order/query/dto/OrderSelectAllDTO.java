@@ -12,7 +12,6 @@ import lombok.Setter;
 public class OrderSelectAllDTO {
     private String orderId;
     private String title;
-    private String content;
     private String status;
     private String contractName;
     private String adminName;

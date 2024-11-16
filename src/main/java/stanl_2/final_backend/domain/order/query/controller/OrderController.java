@@ -10,13 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.order.common.response.OrderResponseMessage;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectAllDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
+import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import stanl_2.final_backend.domain.order.query.service.OrderQueryService;
 
 @RestController("queryOrderController")
@@ -70,5 +68,30 @@ public class OrderController {
                                                    .msg("수주서 상세 조회 성공")
                                                    .result(responseOrder)
                                                     .build());
+    }
+
+    @Operation(summary = "수주서 검색 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 검색 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("/search/{memId}")
+    public ResponseEntity<OrderResponseMessage> getSearchOrder(@RequestParam(required = false) String title,
+                                                               @RequestParam(required = false) String status,
+                                                               @RequestParam(required = false) String adminId,
+                                                               @RequestParam(required = false) String memberId,
+                                                               @RequestParam(required = false) String startDate,
+                                                               @RequestParam(required = false) String endDate,
+                                                               @RequestParam(required = false) String memId,
+                                                               @PageableDefault(size = 10) Pageable pageable) {
+        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO(title, status, adminId, memberId, memId, startDate, endDate);
+
+        Page<OrderSelectSearchDTO> responseOrders = orderQueryService.selectSearchOrders(orderSelectSearchDTO, pageable);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("수주서 검색 조회 성공")
+                .result(responseOrders)
+                .build());
     }
 }
