@@ -26,9 +26,9 @@ public class ContractSearchDTO {
     private Integer remainderPayment;
     private Integer consignmentPayment;
     private String delveryDate;
-    private String ddelveryLocationelvLoc;
+    private String delveryLocationLoc;
     private String status;
-    private String NumberOfVehicles;
+    private String numberOfVehicles;
     private String createdUrl;
     private String updatedUrl;
     private boolean active;
@@ -36,10 +36,26 @@ public class ContractSearchDTO {
     private String updatedAt;
     private String deletedAt;
     private String memberId;
+    private String memId;
     private String centerId;
     private String customerId;
     private String productId;
     private String startAt;
     private String endAt;
     private String productName;
+
+    public ContractSearchDTO(String memberId, String memId, String centerId, String name, String startAt, String endAt, String customerName, String customerClassifcation, String productId, String status, String companyName, String customerPurchaseCondition) {
+        this.memberId = memberId;
+        this.memId = memId;
+        this.centerId = centerId;
+        this.name = name;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.customerName = customerName;
+        this.customerClassifcation = customerClassifcation;
+        this.productId = productId;
+        this.status = status;
+        this.companyName = companyName;
+        this.customerPurchaseCondition = customerPurchaseCondition;
+    }
 }

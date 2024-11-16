@@ -15,12 +15,12 @@ import stanl_2.final_backend.domain.contract.common.response.ContractResponseMes
 
 @RestController("contractController")
 @RequestMapping("/api/v1/contract")
-public class ContractCommandController {
+public class ContractController {
 
     private final ContractCommandService contractCommandService;
 
     @Autowired
-    public ContractCommandController(ContractCommandService contractCommandService) {
+    public ContractController(ContractCommandService contractCommandService) {
         this.contractCommandService = contractCommandService;
     }
 
@@ -51,20 +51,19 @@ public class ContractCommandController {
      *   "memId": "MEM_000000001"
      * }
      * */
-    @Operation(summary = "계약서 등록 테스트")
+    @Operation(summary = "계약서 등록")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
+            @ApiResponse(responseCode = "200", description = "계약서 등록 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @PostMapping("{id}")
-    public ResponseEntity<ContractResponseMessage> postTest(@PathVariable String id,
-                                                          @RequestBody ContractRegistDTO contractRegistRequestDTO) {
-        contractRegistRequestDTO.setMemberId(id);
+    @PostMapping("")
+    public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO) {
+
         contractCommandService.registerContract(contractRegistRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                                                 .httpStatus(200)
-                                                .msg("성공")
+                                                .msg("계약서가 성공적으로 등록되었습니다.")
                                                 .result(null)
                                                 .build());
     }
@@ -95,9 +94,9 @@ public class ContractCommandController {
      *   "memId": "MEM_000000001"
      * }
      * */
-    @Operation(summary = "계약서 수정 테스트")
+    @Operation(summary = "계약서 수정")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
+            @ApiResponse(responseCode = "200", description = "계약서 수정 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @PutMapping("{id}")
@@ -109,7 +108,7 @@ public class ContractCommandController {
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
-                .msg("계약서가 수정되었습니다.")
+                .msg("계약서가 성공적으로 수정되었습니다.")
                 .result(contractModifyDTO)
                 .build());
     }
@@ -117,9 +116,9 @@ public class ContractCommandController {
     /**
      * [DELETE] http://localhost:8080/api/v1/contract/CON_000000011
      * */
-    @Operation(summary = "샘플 삭제 테스트")
+    @Operation(summary = "샘플 삭제")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
+            @ApiResponse(responseCode = "200", description = "샘플 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @DeleteMapping("{id}")
@@ -130,7 +129,7 @@ public class ContractCommandController {
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("계약서를 성공적으로 삭제하였습니다.")
                 .result(null)
                 .build());
     }

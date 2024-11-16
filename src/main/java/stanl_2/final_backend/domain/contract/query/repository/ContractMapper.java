@@ -1,8 +1,8 @@
 package stanl_2.final_backend.domain.contract.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.domain.Pageable;
-import stanl_2.final_backend.domain.center.common.util.RequestList;
+import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
+import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
 
 import java.util.List;
@@ -12,11 +12,11 @@ import java.util.Map;
 public interface ContractMapper {
     ContractSeletIdDTO findContractByIdAndMemId(ContractSeletIdDTO contractDTO);
 
-    List<Map<String, Object>> findContractBySearch(Map<String, Object> paramMap);
+    List<ContractSearchDTO> findContractBySearch(Map<String, Object> map);
 
-    int findContractBySearchCount(Map<String, Object> paramMap);
+    int findContractBySearchCount(Map<String, Object> map);
 
-    List<Map<String, Object>> findContractAllByMemId(Map<String, Object> params);
+    List<ContractSelectAllDTO> findContractAllByMemId(Map<String, Object> map);
 
     int findContractCountByMemId(String memId);
 }

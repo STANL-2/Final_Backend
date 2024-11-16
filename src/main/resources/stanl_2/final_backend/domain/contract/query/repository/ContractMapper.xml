@@ -143,44 +143,39 @@
         B.PROD_NAME
         FROM TB_CONTRACT A
         JOIN TB_PRODUCT B ON A.PROD_ID = B.PROD_ID
-        WHERE A.MEM_ID = #{memberId}
-        AND A.ACTIVE = TRUE
-
-        <if test="centId != null and centId != ''">
-            AND A.CENT_ID LIKE CONCAT('%', #{centerId}, '%')
-        </if>
-        <if test="name != null and centId != ''">
-            AND A.CONR_NAME LIKE CONCAT('%', #{name}, '%')
-        </if>
-        <if test="custName != null and centId != ''">
-            AND A.CONR_CUST_NAME LIKE CONCAT('%', #{customerName}, '%')
-        </if>
-        <if test="custCla != null and centId != ''">
-            AND A.CONR_CUST_CLA LIKE CONCAT('%', #{customerClassifcation}, '%')
-        </if>
-        <if test="status != null and centId != ''">
-            AND A.CONR_STATUS = #{status}
-        </if>
-        <if test="compName != null and centId != ''">
-            AND A.CONR_COMP_NAME LIKE CONCAT('%', #{companyName}, '%')
-        </if>
-        <if test="custPurCond != null and centId != ''">
-            AND A.CONR_CUST_PUR_COND LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
-        </if>
-        <if test="startAt != null and endAt != null and centId != ''">
-            AND A.CREATED_AT BETWEEN #{startAt} AND #{endAt}
-        </if>
-        <if test="startAt != null and endAt == null and centId != ''">
-            AND A.CREATED_AT &gt; #{startAt}
-        </if>
-        <if test="startAt == null and endAt != null and centId != ''">
-            AND A.CREATED_AT &lt; #{endAt}
-        </if>
-        <if test="prodName != null and centId != ''">
-            AND B.PROD_NAME LIKE CONCAT('%', #{productName}, '%')
-        </if>
+        <where>
+            A.MEM_ID = #{memId}
+            AND A.ACTIVE = TRUE
+            <if test="centerId != null">
+                AND A.CENT_ID = #{centerId}
+            </if>
+            <if test="name != null">
+                AND A.CONR_NAME LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="customerName != null">
+                AND A.CONR_CUST_NAME LIKE CONCAT('%', #{customerName}, '%')
+            </if>
+            <if test="customerClassifcation != null">
+                AND A.CONR_CUST_CLA LIKE CONCAT('%', #{customerClassifcation}, '%')
+            </if>
+            <if test="status != null">
+                AND A.CONR_STAT = #{status}
+            </if>
+            <if test="companyName != null">
+                AND A.CONR_COMP_NAME LIKE CONCAT('%', #{companyName}, '%')
+            </if>
+            <if test="customerPurchaseCondition != null">
+                AND A.CONR_CUST_PUR_COND LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
+            </if>
+            <if test="startAt != null and endAt != null">
+                AND A.CREATED_AT BETWEEN #{startAt} AND #{endAt}
+            </if>
+            <if test="productId != null">
+                AND B.PROD_NAME LIKE CONCAT('%', #{productId}, '%')
+            </if>
+        </where>
         ORDER BY A.CREATED_AT DESC
-        LIMIT #{pageable.pageSize} OFFSET #{pageable.offset}
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findContractCountByMemId" resultType="int">
@@ -194,43 +189,37 @@
     <select id="findContractBySearchCount" resultType="int" parameterType="map">
         SELECT COUNT(*)
         FROM TB_CONTRACT A
-        JOIN TB_PRODUCT B ON A.PROD_ID = B.PROD_ID
-        WHERE A.MEM_ID = #{memberId}
-        AND A.ACTIVE = TRUE
-
-        <if test="centId != null and centId != ''">
-            AND A.CENT_ID LIKE CONCAT('%', #{centerId}, '%')
-        </if>
-        <if test="name != null and centId != ''">
-            AND A.CONR_NAME LIKE CONCAT('%', #{name}, '%')
-        </if>
-        <if test="custName != null and centId != ''">
-            AND A.CONR_CUST_NAME LIKE CONCAT('%', #{customerName}, '%')
-        </if>
-        <if test="custCla != null and centId != ''">
-            AND A.CONR_CUST_CLA LIKE CONCAT('%', #{customerClassifcation}, '%')
-        </if>
-        <if test="status != null and centId != ''">
-            AND A.CONR_STATUS = #{status}
-        </if>
-        <if test="compName != null and centId != ''">
-            AND A.CONR_COMP_NAME LIKE CONCAT('%', #{companyName}, '%')
-        </if>
-        <if test="custPurCond != null and centId != ''">
-            AND A.CONR_CUST_PUR_COND LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
-        </if>
-        <if test="startAt != null and endAt != null and centId != ''">
-            AND A.CREATED_AT BETWEEN #{startAt} AND #{endAt}
-        </if>
-        <if test="startAt != null and endAt == null and centId != ''">
-            AND A.CREATED_AT &gt; #{startAt}
-        </if>
-        <if test="startAt == null and endAt != null and centId != ''">
-            AND A.CREATED_AT &lt; #{endAt}
-        </if>
-        <if test="prodName != null and centId != ''">
-            AND B.PROD_NAME LIKE CONCAT('%', #{productName}, '%')
-        </if>
+        <where>
+            A.MEM_ID = #{memId}
+            AND A.ACTIVE = TRUE
+            <if test="centerId != null">
+                AND A.CENT_ID = #{centerId}
+            </if>
+            <if test="name != null">
+                AND A.CONR_NAME LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="customerName != null">
+                AND A.CONR_CUST_NAME LIKE CONCAT('%', #{customerName}, '%')
+            </if>
+            <if test="customerClassifcation != null">
+                AND A.CONR_CUST_CLA LIKE CONCAT('%', #{customerClassifcation}, '%')
+            </if>
+            <if test="status != null">
+                AND A.CONR_STAT = #{status}
+            </if>
+            <if test="companyName != null">
+                AND A.CONR_COMP_NAME LIKE CONCAT('%', #{companyName}, '%')
+            </if>
+            <if test="customerPurchaseCondition != null">
+                AND A.CONR_CUST_PUR_COND LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
+            </if>
+            <if test="startAt != null and endAt != null">
+                AND A.CREATED_AT BETWEEN #{startAt} AND #{endAt}
+            </if>
+            <if test="productId != null">
+                AND B.PROD_NAME LIKE CONCAT('%', #{productId}, '%')
+            </if>
+        </where>
     </select>
 
 </mapper>
