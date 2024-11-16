@@ -28,7 +28,7 @@ public class Schedule {
                       parameters = @Parameter(name = "prefix", value = "SCH")
     )
     @Column(name = "SCH_ID", nullable = false)
-    private String id;
+    private String scheduleId;
 
     @Column(name = "SCH_NAME", nullable = false)
     private String name;
