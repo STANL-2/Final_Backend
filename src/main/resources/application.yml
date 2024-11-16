@@ -27,6 +27,13 @@ spring:
     properties:
       hibernate.format_sql: true
 
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      name: checkJob
+      enabled: false
+
 jwt:
   secret-key: ${SECRET_KEY}
   secret-default-value: ${JWT_SECRET_DEFAULT_VALUE}
