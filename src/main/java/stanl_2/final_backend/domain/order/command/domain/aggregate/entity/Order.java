@@ -27,7 +27,7 @@ public class Order {
             parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "ORD")
     )
     @Column(name = "ORD_ID")
-    private String id;
+    private String orderId;
 
     @Column(name = "ORD_TTL", nullable = false)
     private String title;
@@ -52,13 +52,13 @@ public class Order {
     private String status;
 
     @Column(name = "CONR_ID", nullable = false)
-    private String conrId;
+    private String contractId;
 
     @Column(name = "ADMIN_ID")
     private String adminId;
 
     @Column(name = "MEM_ID", nullable = false)
-    private String memId;
+    private String memberId;
 
     // Insert 되기 전에 실행
     @PrePersist
