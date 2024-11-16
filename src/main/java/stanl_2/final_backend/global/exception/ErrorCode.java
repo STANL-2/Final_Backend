@@ -50,7 +50,6 @@ public enum ErrorCode {
      */
     USERDETAILS_NOT_FOUND(40400, HttpStatus.NOT_FOUND, "User Details를 찾을 수 없습니다."),
 
-
     /**
      * 500(Internal Server Error)
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
