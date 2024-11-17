@@ -25,13 +25,13 @@ public class Promotion {
             type = PrefixGeneratorConfig.class,
             parameters = @org.hibernate.annotations.Parameter(name="prefix", value = "PROM")
     )
-    @Column(name = "PROM_ID")
+    @Column(name = "PRM_ID")
     private String promotionId;
 
-    @Column(name = "PROM_TTL", nullable = false)
+    @Column(name = "PRM_TTL", nullable = false)
     private String title;
 
-    @Column(name = "PROM_CONT", nullable = false)
+    @Column(name = "PRM_CONT", nullable = false)
     private String content;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false, length=19)

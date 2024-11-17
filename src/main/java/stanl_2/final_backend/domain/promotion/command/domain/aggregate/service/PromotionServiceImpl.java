@@ -62,6 +62,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
         return promotionModify;
     }
 
+    @Transactional
     @Override
     public void deletePromotion(String promotionId) {
 
