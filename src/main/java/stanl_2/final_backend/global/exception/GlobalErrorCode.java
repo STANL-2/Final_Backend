@@ -31,14 +31,15 @@ public enum GlobalErrorCode {
      */
     LOGIN_FAILURE(40100, HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다"),
     INVALID_TOKEN_ERROR(40101, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    INVALID_CSRF_TOKEN(40102, HttpStatus.UNAUTHORIZED, "유효하지 않은 CSRF토큰입니다."),
+    JWT_EXPIRED(40102, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+
 
     /**
      * 403(Forbidden)
      * 클라이언트는 콘텐츠에 접근할 권리를 가지고 있지 않습니다.
      * 예를들어 그들은 미승인이어서 서버는 거절을 위한 적절한 응답을 보냅니다. 401과 다른 점은 서버가 클라이언트가 누구인지 알고 있습니다.
      */
-    UNAUTHORIZED(40300, HttpStatus.FORBIDDEN, "권한이 존재하지 않습니다."),
+    UNAUTHORIZED(40300, HttpStatus.FORBIDDEN, "접근 권한이 존재하지 않습니다."),
 
 
     /**

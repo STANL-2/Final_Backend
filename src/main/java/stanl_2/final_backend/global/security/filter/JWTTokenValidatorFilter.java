@@ -16,6 +16,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -54,12 +56,15 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 String authorities = claims.get("authorities", String.class);
 
                 // 예외 처리: authorities가 null인 경우
-                if (authorities == null || authorities.isEmpty()) {
-                    log.error("Invalid token: authorities are missing");
-                    SecurityContextHolder.clearContext();
-                    filterChain.doFilter(request, response);
-                    return;
+                // 예외 처리: 토큰에 유효한 권한이 없을 경우
+                if (username == null || authorities == null || authorities.isEmpty()) {
+                    throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
                 }
+//                if (authorities == null || authorities.isEmpty()) {
+//                    SecurityContextHolder.clearContext();
+//                    filterChain.doFilter(request, response);
+//                    return;
+//                }
 
                 List<GrantedAuthority> grantedAuthorities = Arrays.stream(authorities.split(","))
                         .map(SimpleGrantedAuthority::new)
@@ -72,9 +77,14 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (JwtException e) {
-                logger.error("Invalid JWT token", e);
-                SecurityContextHolder.clearContext();
+                log.error("Invalid JWT token: {}", e.getMessage());
+                throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
+//                logger.error("Invalid JWT token", e);
+//                SecurityContextHolder.clearContext();
             }
+        }else {
+            // 토큰이 없을 경우 예외 처리
+            throw new GlobalCommonException(GlobalErrorCode.LOGIN_FAILURE);
         }
 
         filterChain.doFilter(request, response);
@@ -91,7 +101,6 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-resources") ||
                 path.startsWith("/webjars") ||
-                path.startsWith("/api/v1/sample") ||
-                path.equals("/api/v1/auth");
+                path.equals("/api/v1/auth");    // 권한 부여때문에(일단 열어둠)
     }
 }
