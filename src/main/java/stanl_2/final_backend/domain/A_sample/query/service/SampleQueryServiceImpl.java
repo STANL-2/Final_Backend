@@ -11,12 +11,12 @@ import stanl_2.final_backend.domain.A_sample.query.repository.SampleMapper;
 
 @Slf4j
 @Service
-public class SampleQueryQueryServiceImpl implements SampleQueryService {
+public class SampleQueryServiceImpl implements SampleQueryService {
 
     private final SampleMapper sampleMapper;
 
     @Autowired
-    public SampleQueryQueryServiceImpl(SampleMapper sampleMapper) {
+    public SampleQueryServiceImpl(SampleMapper sampleMapper) {
         this.sampleMapper = sampleMapper;
     }
 
