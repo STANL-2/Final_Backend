@@ -23,7 +23,7 @@ public class Promotion {
     @GeneratedValue(generator = "PrefixGeneratorConfig")
     @GenericGenerator(name = "PrefixGeneratorConfig",
             type = PrefixGeneratorConfig.class,
-            parameters = @org.hibernate.annotations.Parameter(name="prefix", value = "NOT")
+            parameters = @org.hibernate.annotations.Parameter(name="prefix", value = "PROM")
     )
     @Column(name = "PROM_ID")
     private String promotionId;
