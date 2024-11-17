@@ -23,9 +23,8 @@ public class BatchScheduler {
         this.checkJob = checkJob;
     }
 
-
     @Scheduled(cron = "0 03 00 * * ?", zone = "Asia/Seoul")
-    public void testJobRun() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException,
+    public void checkJobRun() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException,
                                     JobParametersInvalidException, JobRestartException {
 
         JobParameters jobParameters = new JobParameters(

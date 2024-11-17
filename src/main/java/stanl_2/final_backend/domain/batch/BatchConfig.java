@@ -40,7 +40,7 @@ public class BatchConfig {
     public Step checkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new StepBuilder(STEP_NAME, jobRepository)
                 .<SalesHistory,SalesStatistics>chunk(5,transactionManager)
-                .reqder(checkReader())
+                .reader(checkReader())
                 .processor(checkProcessor())
                 .writer(checkWriter())
                 .build();
@@ -48,7 +48,7 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public RepositoryItemWriter<SalesStatistics> checkWtriter(){
+    public RepositoryItemWriter<SalesStatistics> checkWriter(){
         return new RepositoryItemWriter<SalesStatistics>()
                 .repository(SalesStatisticsRepository)
                 .methodName("save")
@@ -71,7 +71,7 @@ public class BatchConfig {
     public RepositoryItemReader<SalesHistory> checkReader(){
         return new RepositoryItemReaderBuilder<SalesHistory>()
                 .name("checkReader")
-                .repository(SalesStatisticsRepository)
+                .repository(SalesHistoryRepository)
                 .methodName("findAll")
                 .pageSize(5)
                 .arguments(List.of())
