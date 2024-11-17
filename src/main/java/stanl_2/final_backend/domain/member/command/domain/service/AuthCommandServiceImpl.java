@@ -80,9 +80,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         signupDTO.setPassword(hashPwd);
         signupDTO.setName(aesUtils.encrypt(signupDTO.getName()));
         signupDTO.setEmail(aesUtils.encrypt(signupDTO.getEmail()));
-        signupDTO.setIdenNo(aesUtils.encrypt(signupDTO.getIdenNo()));
+        signupDTO.setIdentNo(aesUtils.encrypt(signupDTO.getIdentNo()));
         signupDTO.setPhone(aesUtils.encrypt(signupDTO.getPhone()));
-        signupDTO.setEmergPhone(aesUtils.encrypt(signupDTO.getEmergPhone()));
+        signupDTO.setEmergePhone(aesUtils.encrypt(signupDTO.getEmergePhone()));
         signupDTO.setAddress(aesUtils.encrypt(signupDTO.getAddress()));
         signupDTO.setBankName(aesUtils.encrypt(signupDTO.getBankName()));
         signupDTO.setAccount(aesUtils.encrypt(signupDTO.getAccount()));

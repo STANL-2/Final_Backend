@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class GrantDTO {
     private String memberId;
     private String loginId;

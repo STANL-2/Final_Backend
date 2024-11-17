@@ -2,12 +2,8 @@ package stanl_2.final_backend.domain.member.command.application.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.member.command.application.service.MemberCommandService;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
@@ -58,5 +54,8 @@ public class MemberController {
                 .result("인증된 사용자: " + principal.getName())
                 .build());
     }
+
+
+
 
 }

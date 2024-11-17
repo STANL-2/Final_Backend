@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class SigninResponseDTO {
     private String accessToken;
     private String refreshToken;
