@@ -13,9 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
@@ -26,18 +25,20 @@ import java.util.Collections;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@Profile("prod")
-public class ProdSecurityConfig {
+@Profile("dev")
+public class DevSecurityConfig {
 
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
-    @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    @Value("${jwt.header}")
+    private String jwtHeader;
 
-        CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+    @Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrfConfig -> csrfConfig.disable());
         http.cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 API 설정
                         .requestMatchers(
@@ -48,13 +49,12 @@ public class ProdSecurityConfig {
                                 "/api/v1/auth/signin",
                                 "/api/v1/auth/signup",
                                 "/api/v1/auth/refresh",
-                                "/api/v1/auth"  // 권한 부여때문에(일단 열어둠)
-                                ).permitAll()
+                                "/api/v1/auth"      // 권한 부여때문에(일단 열어둠)
+                        ).permitAll()
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                // 필터 순서: JWT 검증 -> CSRF
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey), BasicAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
@@ -87,12 +87,13 @@ public class ProdSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService){
 
-        ProdUsernamePwdAuthenticationProvider authenticationProvider =
-                new ProdUsernamePwdAuthenticationProvider(userDetailsService, passwordEncoder());
+        DevUsernamePwdAuthenticationProvide authenticationProvider =
+                new DevUsernamePwdAuthenticationProvide(userDetailsService);
 
         ProviderManager providerManager = new ProviderManager(authenticationProvider);
 
         providerManager.setEraseCredentialsAfterAuthentication(false);
+
         return providerManager;
     }
 }
