@@ -8,10 +8,13 @@ import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.order.command.domain.repository.OrderRepository;
 import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
+import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderModifyDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderRegistDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.service.PurchaseOrderCommandService;
 import stanl_2.final_backend.domain.purchase_order.command.domain.aggregate.entity.PurchaseOrder;
 import stanl_2.final_backend.domain.purchase_order.command.domain.repository.PurchaseOrderRepository;
+import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
+import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
 
 @Service
 public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandService {
@@ -31,19 +34,15 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     @Transactional
     public void registerPurchaseOrder(PurchaseOrderRegistDTO purchaseOrderRegistDTO) {
 
-        // 회원인지 확인
-
-        // 수주서가 맞는지
-        Order orderCheck = orderRepository.findByOrderIdAndMemberId(purchaseOrderRegistDTO.getOrderId(), purchaseOrderRegistDTO.getMemberId());
-
-        if(orderCheck == null) {
+        // 수주서가 존재하는지 확인
+        Order order = orderRepository.findByOrderIdAndMemberId(
+                purchaseOrderRegistDTO.getOrderId(), purchaseOrderRegistDTO.getMemberId());
+        if (order == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
-        // 수주서의 승인상태가 APPROVED인지 확인
-        Order orderStatus = orderRepository.findByOrderIdAndStatus(orderCheck.getOrderId(), "APPROVED");
-
-        if(orderStatus == null) {
+        // 수주서의 상태가 APPROVED인지 확인
+        if (!"APPROVED".equals(order.getStatus())) {
             throw new OrderCommonException(OrderErrorCode.ORDER_STATUS_NOT_APPROVED);
         }
 
@@ -51,5 +50,40 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         purchaseOrder.setStatus("WAIT");
 
         purchaseOrderRepository.save(purchaseOrder);
+    }
+
+    @Override
+    @Transactional
+    public PurchaseOrderModifyDTO modifyPurchaseOrder(PurchaseOrderModifyDTO purchaseOrderModifyDTO) {
+
+        // 회원인지 확인 및 발주서 조회
+        PurchaseOrder purchaseOrder = (PurchaseOrder) purchaseOrderRepository.findByPurchaseOrderIdAndMemberId(
+                        purchaseOrderModifyDTO.getPurchaseOrderId(), purchaseOrderModifyDTO.getMemberId())
+                .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
+
+        // 수주서가 존재하는지 확인
+        Order order = orderRepository.findByOrderIdAndMemberId(
+                purchaseOrderModifyDTO.getOrderId(), purchaseOrderModifyDTO.getMemberId());
+        if (order == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        // 수주서의 상태가 APPROVED인지 확인
+        if (!"APPROVED".equals(order.getStatus())) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_STATUS_NOT_APPROVED);
+        }
+
+        PurchaseOrder updatePurchaseOrder = modelMapper.map(purchaseOrderModifyDTO, PurchaseOrder.class);
+
+        updatePurchaseOrder.setCreatedAt(purchaseOrder.getCreatedAt());
+        updatePurchaseOrder.setUpdatedAt(purchaseOrder.getUpdatedAt());
+        updatePurchaseOrder.setStatus(purchaseOrder.getStatus());
+        updatePurchaseOrder.setActive(purchaseOrder.getActive());
+
+        purchaseOrderRepository.save(updatePurchaseOrder);
+
+        PurchaseOrderModifyDTO purchaseOrderModifyResponse = modelMapper.map(updatePurchaseOrder, PurchaseOrderModifyDTO.class);
+
+        return purchaseOrderModifyResponse;
     }
 }
