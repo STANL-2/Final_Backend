@@ -29,6 +29,11 @@ public class AESUtils {
      * AES 대칭키를 사용하여 문자열을 암호화합니다.
      */
     public String encrypt(String data) throws GeneralSecurityException {
+
+        if(data == null){
+            return null;
+        }
+
         Cipher cipher = Cipher.getInstance(transformation);
         SecretKey secretKey = new SecretKeySpec(secretKeyValue.getBytes(StandardCharsets.UTF_8), algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -40,6 +45,11 @@ public class AESUtils {
      * AES 대칭키를 사용하여 암호화된 문자열을 복호화합니다.
      */
     public String decrypt(String encryptedData) throws GeneralSecurityException {
+
+        if(encryptedData == null){
+            return null;
+        }
+
         Cipher cipher = Cipher.getInstance(transformation);
         SecretKey secretKey = new SecretKeySpec(secretKeyValue.getBytes(StandardCharsets.UTF_8), algorithm);
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
