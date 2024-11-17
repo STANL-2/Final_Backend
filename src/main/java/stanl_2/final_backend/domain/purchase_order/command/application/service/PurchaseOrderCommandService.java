@@ -7,4 +7,6 @@ public interface PurchaseOrderCommandService {
     void registerPurchaseOrder(PurchaseOrderRegistDTO purchaseOrderRegistDTO);
 
     PurchaseOrderModifyDTO modifyPurchaseOrder(PurchaseOrderModifyDTO purchaseOrderModifyDTO);
+
+    void deletePurchaseOrder(String id);
 }

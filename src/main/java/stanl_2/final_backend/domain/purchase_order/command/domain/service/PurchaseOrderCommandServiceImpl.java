@@ -16,6 +16,10 @@ import stanl_2.final_backend.domain.purchase_order.command.domain.repository.Pur
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandService {
 
@@ -28,6 +32,11 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
+    }
+
+    private String  getCurrentTime() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     @Override
@@ -85,5 +94,21 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         PurchaseOrderModifyDTO purchaseOrderModifyResponse = modelMapper.map(updatePurchaseOrder, PurchaseOrderModifyDTO.class);
 
         return purchaseOrderModifyResponse;
+    }
+
+    @Override
+    @Transactional
+    public void deletePurchaseOrder(String id) {
+        // 발주서가 해당 회원의 것인지 확인 (회원도 받아와서 하는걸로 나중에 수정)
+//        PurchaseOrder purchaseOrder = purchaseOrderRepository.findByIdAndMemberId(id, memberId)
+//                .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
+
+        PurchaseOrder purchaseOrder = (PurchaseOrder) purchaseOrderRepository.findByPurchaseOrderId(id)
+                .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
+
+        purchaseOrder.setActive(false);
+        purchaseOrder.setDeletedAt(getCurrentTime());
+
+        purchaseOrderRepository.save(purchaseOrder);
     }
 }

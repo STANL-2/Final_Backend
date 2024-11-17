@@ -57,4 +57,21 @@ public class PurchaseOrderController {
                                                             .result(purchaseOrderModifyResponse)
                                                             .build());
     }
+
+    @Operation(summary = "발주서 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "발주서 삭제 성공",
+                    content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
+    })
+    @DeleteMapping("{id}")
+    public ResponseEntity<PurchaseOrderResponseMessage> deletePurchaseOrder(@PathVariable String id) {
+
+        purchaseOrderCommandService.deletePurchaseOrder(id);
+
+        return ResponseEntity.ok(PurchaseOrderResponseMessage.builder()
+                                                           .httpStatus(200)
+                                                           .msg("발주서가 성공적으로 삭제되었습니다.")
+                                                            .result(null)
+                                                           .build());
+    }
 }
