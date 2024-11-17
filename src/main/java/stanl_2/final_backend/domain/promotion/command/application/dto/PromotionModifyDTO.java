@@ -15,5 +15,4 @@ public class PromotionModifyDTO {
 
     private String content;
 
-    private String memberId;
 }
