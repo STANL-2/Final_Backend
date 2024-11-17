@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.member.query.repository.MemberMapper">
+    <resultMap id="Member" type="stanl_2.final_backend.domain.member.query.dto.MemberDTO">
+        <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="name" column="MEM_NAME"/>
+        <result property="email" column="MEM_EMA"/>
+        <result property="age" column="MEM_AGE"/>
+        <result property="sex" column="MEM_SEX"/>
+        <result property="identNo" column="MEM_IDEN_NO"/>
+        <result property="phone" column="MEM_PHO"/>
+        <result property="emergePhone" column="MEM_EMER_PHO"/>
+        <result property="address" column="MEM_ADR"/>
+        <result property="note" column="MEM_NOTE"/>
+        <result property="position" column="MEM_POS"/>
+        <result property="grade" column="MEM_GRD"/>
+        <result property="jobType" column="MEM_JOB_TYPE"/>
+        <result property="military" column="MEM_MIL"/>
+        <result property="bankName" column="MEM_BANK_NAME"/>
+        <result property="account" column="MEM_ACC"/>
+    </resultMap>
+
+    <select id="findMemberInfoById" resultMap="Member" parameterType="String">
+        SELECT
+               A.MEM_LOGIN_ID,
+               A.MEM_NAME,
+               A.MEM_EMA,
+               A.MEM_AGE,
+               A.MEM_SEX,
+               A.MEM_IDEN_NO,
+               A.MEM_PHO,
+               A.MEM_EMER_PHO,
+               A.MEM_ADR,
+               A.MEM_NOTE,
+               A.MEM_POS,
+               A.MEM_GRD,
+               A.MEM_JOB_TYPE,
+               A.MEM_MIL,
+               A.MEM_BANK_NAME,
+               A.MEM_ACC
+          FROM TB_MEMBER A
+         WHERE A.MEM_LOGIN_ID = #{ loginId }
+    </select>
+
+</mapper>

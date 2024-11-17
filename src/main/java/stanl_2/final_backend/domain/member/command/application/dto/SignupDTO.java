@@ -1,12 +1,12 @@
 package stanl_2.final_backend.domain.member.command.application.dto;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class SignupDTO {
     private String loginId;
     private String password;
@@ -14,9 +14,9 @@ public class SignupDTO {
     private String email;
     private Integer age;
     private String sex;
-    private String idenNo;
+    private String identNo;
     private String phone;
-    private String emergPhone;
+    private String emergePhone;
     private String address;
     private String note;
     private String position;
@@ -25,4 +25,6 @@ public class SignupDTO {
     private String military;
     private String bankName;
     private String account;
+    private String centerId;
+    private String organizationId;
 }

@@ -50,13 +50,13 @@ public class Member {
     private String sex;
 
     @Column(name = "MEM_IDEN_NO", nullable = false)
-    private String idenNo;
+    private String identNo;
 
-    @Column(name = "MEM_MEM_PHO", nullable = false)
+    @Column(name = "MEM_PHO", nullable = false)
     private String phone;
 
     @Column(name = "MEM_EMER_PHO")
-    private String emergPhone;
+    private String emergePhone;
 
     @Column(name = "MEM_ADR", nullable = false)
     private String address;
@@ -94,9 +94,16 @@ public class Member {
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
 
+    @Column(name = "CENTER_ID", nullable = false)
+    private String centerId;
+
+    @Column(name = "ORG_CHA_ID", nullable = false)
+    private String organizationId;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "MEM_ID")
     private List<MemberRole> roles = new ArrayList<>();
+
 
     /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행
