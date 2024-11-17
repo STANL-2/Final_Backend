@@ -4,22 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.data.RepositoryItemReader;
-import org.springframework.batch.item.data.RepositoryItemWriter;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
-import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
+
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -42,7 +39,7 @@ public class BatchConfig {
     @JobScope
     public Step checkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new StepBuilder(STEP_NAME, jobRepository)
-                .<>chunk(5,transactionManager)
+                .<SalesHistory,SalesStatistics>chunk(5,transactionManager)
                 .reqder(checkReader())
                 .processor(checkProcessor())
                 .writer(checkWriter())
@@ -51,9 +48,35 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public RepositoryItemWriter<> checkWtriter(){
-        return new RepositoryItemWriter<>()
-                .repository
+    public RepositoryItemWriter<SalesStatistics> checkWtriter(){
+        return new RepositoryItemWriter<SalesStatistics>()
+                .repository(SalesStatisticsRepository)
+                .methodName("save")
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public ItemProcessor<SalesHistory, SalesStatistics> checkProcessor(){
+        return new ItemProcessor<SalesHistory, SalesStatistics>() {
+            @Override
+            public SalesStatistics process(SalesHistory item) throws Exception {
+                return new SalesStatistics(item);
+            }
+        };
+    }
+
+    @Bean
+    @StepScope
+    public RepositoryItemReader<SalesHistory> checkReader(){
+        return new RepositoryItemReaderBuilder<SalesHistory>()
+                .name("checkReader")
+                .repository(SalesStatisticsRepository)
+                .methodName("findAll")
+                .pageSize(5)
+                .arguments(List.of())
+                .sorts(Collections.singletonMap("id", Sort.Direction.ASC))
+                .build();
     }
 
 //    @Bean
