@@ -13,10 +13,13 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.data.RepositoryItemReader;
+import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
 
 @Slf4j
 @Configuration
@@ -39,20 +42,30 @@ public class BatchConfig {
     @JobScope
     public Step checkStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new StepBuilder(STEP_NAME, jobRepository)
-                .tasklet(checkTasklet(), transactionManager)
+                .<>chunk(5,transactionManager)
+                .reqder(checkReader())
+                .processor(checkProcessor())
+                .writer(checkWriter())
                 .build();
     }
 
     @Bean
     @StepScope
-    public Tasklet checkTasklet(){
-        return new Tasklet(){
-            @Override
-            public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-                log.info("Spring batch check Suceess");
-                // 원하는 비지니스 모델 추가
-                return RepeatStatus.FINISHED;
-            }
-        };
+    public RepositoryItemWriter<> checkWtriter(){
+        return new RepositoryItemWriter<>()
+                .repository
     }
+
+//    @Bean
+//    @StepScope
+//    public Tasklet checkTasklet(){
+//        return new Tasklet(){
+//            @Override
+//            public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
+//                log.info("Spring batch check Suceess");
+//                // 원하는 비지니스 모델 추가
+//                return RepeatStatus.FINISHED;
+//            }
+//        };
+//    }
 }
