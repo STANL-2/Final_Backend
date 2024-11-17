@@ -44,6 +44,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
         contract.setCenterId("CEN_000000001");    // 회원의 매장번호 넣기
         contract.setProductId("PRO_000000001");    // 제품 번호 넣기
+        contract.setCustomerId("CUS_000000001");    // 제품 번호 넣기
 
         contractRepository.save(contract);
     }

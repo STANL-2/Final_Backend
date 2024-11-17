@@ -118,7 +118,7 @@ public class Contract {
     @Column(name = "CENT_ID", nullable = false)
     private String centerId;
 
-    @Column(name = "CUST_ID")
+    @Column(name = "CUST_ID", nullable = false)
     private String customerId;
 
     @Column(name = "PROD_ID", nullable = false)

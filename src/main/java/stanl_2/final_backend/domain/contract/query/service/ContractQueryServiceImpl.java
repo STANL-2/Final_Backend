@@ -1,6 +1,7 @@
 package stanl_2.final_backend.domain.contract.query.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -57,6 +58,10 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         if (responseContract == null) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
+
+        // 이스케이프된 HTML 제거
+        String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
+        responseContract.setCreatedUrl(unescapedHtml);
 
         return responseContract;
     }
