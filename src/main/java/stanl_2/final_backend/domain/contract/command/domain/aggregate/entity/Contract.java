@@ -29,60 +29,60 @@ public class Contract {
             parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CON")
     )
     @Column(name = "CONR_ID")
-    private String id;
+    private String contractId;
 
     @Column(name = "CONR_NAME", nullable = false)
     private String name;
 
     @Column(name = "CONR_CUST_NAME", nullable = false)
-    private String custName;
+    private String customerName;
 
     @Column(name = "CONR_CUST_IDEN_NO", nullable = false)
-    private String custIdenNo;
+    private String customerIdentifiNo;
 
     @Column(name = "CONR_CUST_ADR", nullable = false)
-    private String custAddrress;
+    private String customerAddrress;
 
     @Column(name = "CONR_CUST_EMA", nullable = false)
-    private String custEmail;
+    private String customerEmail;
 
     @Column(name = "CONR_CUST_PHO", nullable = false)
-    private String custPhone;
+    private String customerPhone;
 
     @Column(name = "CONR_COMP_NAME")
-    private String compName;
+    private String companyName;
 
     @Column(name = "CONR_CUST_CLA", nullable = false)
     @ColumnDefault("'PERSONAL'")
-    private String custCla;
+    private String customerClassifcation;
 
     @Column(name = "CONR_CUST_PUR_COND", nullable = false)
     @ColumnDefault("'CASH'")
-    private String custPurCond;
+    private String customerPurchaseCondition;
 
     @Column(name = "CONR_SERI_NUM", nullable = false)
-    private String seriNum;
+    private String serialNum;
 
     @Column(name = "CONR_SELE_OPTI", nullable = false)
-    private String seleOpti;
+    private String selectOption;
 
     @Column(name = "CONR_DOWN_PAY", nullable = false)
-    private Integer downPay;
+    private Integer downPayment;
 
     @Column(name = "CONR_INTE_PAY", nullable = false)
-    private Integer intePay;
+    private Integer intermediatePayment;
 
     @Column(name = "CONR_REM_PAY", nullable = false)
-    private Integer remPay;
+    private Integer remainderPayment;
 
     @Column(name = "CONR_CONS_PAY", nullable = false)
-    private Integer consPay;
+    private Integer consignmentPayment;
 
     @Column(name = "CONR_DELV_DATE")
-    private String delvDate;
+    private String delveryDate;
 
     @Column(name = "CONR_DELV_LOC")
-    private String delvLoc;
+    private String delveryLocation;
 
     @Column(name = "CONR_STAT", nullable = false)
     @ColumnDefault("'WAIT'")
@@ -90,7 +90,7 @@ public class Contract {
 
     @Column(name = "CONR_NO_OF_VEH", nullable = false)
     @ColumnDefault("1")
-    private String noOfVeh;
+    private String numberOfVehicles;
 
     @Lob
     @Column(name = "CREATED_URL", nullable = false, columnDefinition = "TEXT")
@@ -113,16 +113,16 @@ public class Contract {
     private String deletedAt;
 
     @Column(name = "MEM_ID", nullable = false)
-    private String memId;
+    private String memberId;
 
     @Column(name = "CENT_ID", nullable = false)
-    private String centId;
+    private String centerId;
 
-    @Column(name = "CUST_ID")
-    private String custId;
+    @Column(name = "CUST_ID", nullable = false)
+    private String customerId;
 
     @Column(name = "PROD_ID", nullable = false)
-    private String prodId;
+    private String productId;
 
     /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행

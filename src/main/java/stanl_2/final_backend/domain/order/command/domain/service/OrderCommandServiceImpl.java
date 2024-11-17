@@ -54,7 +54,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     public OrderModifyDTO modifyOrder(OrderModifyDTO orderModifyDTO) {
         // 회원인지 확인여부
 
-        Order order = orderRepository.findById(orderModifyDTO.getId())
+        Order order = orderRepository.findById(orderModifyDTO.getOrderId())
                 .orElseThrow(() -> new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND));
 
         Order updateOrder = modelMapper.map(orderModifyDTO, Order.class);
@@ -62,7 +62,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         updateOrder.setUpdatedAt(order.getUpdatedAt());
         updateOrder.setStatus(order.getStatus());
         updateOrder.setActive(order.getActive());
-        updateOrder.setConrId(order.getConrId());
+        updateOrder.setContractId(order.getContractId());
 
         orderRepository.save(updateOrder);
 

@@ -10,6 +10,6 @@ import lombok.*;
 public class OrderRegistDTO {
     private String title;
     private String content;
-    private String conrId;
-    private String memId;
+    private String contractId;
+    private String memberId;
 }

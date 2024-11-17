@@ -9,37 +9,53 @@ import lombok.*;
 @ToString
 public class ContractSearchDTO {
 
-    private String id;
+    private String contractId;
     private String name;
-    private String custName;
-    private String custIdenNo;
-    private String custAddrress;
-    private String custEmail;
-    private String custPhone;
-    private String compName;
-    private String custCla;
-    private String custPurCond;
-    private String seriNum;
-    private String seleOpti;
-    private Integer downPay;
-    private Integer intePay;
-    private Integer remPay;
-    private Integer consPay;
-    private String delvDate;
-    private String delvLoc;
+    private String customerName;
+    private String customerIdentifiNo;
+    private String customerAddrress;
+    private String customerEmail;
+    private String customerPhone;
+    private String companyName;
+    private String customerClassifcation;
+    private String customerPurchaseCondition;
+    private String serialNum;
+    private String selectOption;
+    private Integer downPayment;
+    private Integer intermediatePayment;
+    private Integer remainderPayment;
+    private Integer consignmentPayment;
+    private String delveryDate;
+    private String delveryLocationLoc;
     private String status;
-    private String noOfVeh;
+    private String numberOfVehicles;
     private String createdUrl;
     private String updatedUrl;
     private boolean active;
     private String createdAt;
     private String updatedAt;
     private String deletedAt;
+    private String memberId;
     private String memId;
-    private String centId;
-    private String custId;
-    private String prodId;
+    private String centerId;
+    private String customerId;
+    private String productId;
     private String startAt;
     private String endAt;
-    private String prodName;
+    private String productName;
+
+    public ContractSearchDTO(String memberId, String memId, String centerId, String name, String startAt, String endAt, String customerName, String customerClassifcation, String productId, String status, String companyName, String customerPurchaseCondition) {
+        this.memberId = memberId;
+        this.memId = memId;
+        this.centerId = centerId;
+        this.name = name;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.customerName = customerName;
+        this.customerClassifcation = customerClassifcation;
+        this.productId = productId;
+        this.status = status;
+        this.companyName = companyName;
+        this.customerPurchaseCondition = customerPurchaseCondition;
+    }
 }

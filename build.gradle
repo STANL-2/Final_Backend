@@ -58,6 +58,11 @@ dependencies {
     //hibernate core
     implementation 'org.hibernate.orm:hibernate-core:6.5.2.Final'
 
+    // Spring batch + scheduler
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+
 }
 
 tasks.named('test') {
