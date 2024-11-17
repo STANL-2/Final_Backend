@@ -4,7 +4,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- 자식 테이블부터 삭제
 DROP TABLE IF EXISTS tb_product_option;
 DROP TABLE IF EXISTS tb_update_history;
-DROP TABLE IF EXISTS tb_member_detail;
 DROP TABLE IF EXISTS tb_alarm;
 DROP TABLE IF EXISTS tb_schedule;
 DROP TABLE IF EXISTS tb_file;
@@ -390,37 +389,6 @@ CREATE TABLE tb_career
     MEM_ID          VARCHAR(255) NOT NULL,
     PRIMARY KEY (CAR_ID),
     FOREIGN KEY (MEM_ID) REFERENCES tb_member(MEM_ID)
-);
-
-CREATE TABLE tb_member_detail
-(
-    MEM_DET_ID       VARCHAR(255) NOT NULL,
-    MEM_DET_REL      VARCHAR(255) NULL,
-    MEM_DET_NAME     VARCHAR(255) NULL,
-    MEM_DET_BIR      VARCHAR(255) NULL,
-    MEM_DET_IDEN_NO  VARCHAR(255) NULL,
-    MEM_DET_PHO      VARCHAR(255) NULL,
-    MEM_DET_SEX      VARCHAR(255) NULL COMMENT 'FEMALE/MALE',
-    MEM_DET_DIS      BOOLEAN      NULL,
-    MEM_DET_DIE      BOOLEAN      NULL,
-    MEM_DET_NOTE     VARCHAR(255) NULL,
-    MEM_DET_ENTD     VARCHAR(255) NOT NULL,
-    MEM_DET_GRAD     VARCHAR(255) NOT NULL,
-    MEM_DET_FNL_EDC  VARCHAR(255) NOT NULL,
-    MEM_DET_EDU      VARCHAR(255) NULL,
-    MEM_DET_MJR      VARCHAR(255) NULL,
-    MEM_DET_EMP_DATE VARCHAR(255) NULL,
-    MEM_DET_RTR_DATE VARCHAR(255) NULL,
-    CAR_INFO         VARCHAR(255) NULL,
-    CERT_DATE        VARCHAR(255) NULL,
-    CERT_INST        VARCHAR(255) NULL,
-    CERT_NAME        VARCHAR(255) NULL,
-    CERT_SCO         VARCHAR(255) NULL,
-    CREATED_AT       CHAR(19)     NOT NULL,
-    UPDATED_AT       CHAR(19)     NOT NULL,
-    MEM_ID           VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고',
-    PRIMARY KEY (MEM_DET_ID),
-    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
 );
 
 CREATE TABLE tb_UPDATE_HISTORY
@@ -969,41 +937,6 @@ VALUES
     ('CAR_000000008', '2018-01-01', '2022-06-30', 'CJ제일제당', '품질관리팀', '2024-01-17 17:00:00', '2024-01-17 18:00:00', 'MEM_000000008'),
     ('CAR_000000009', '2010-07-01', '2014-09-30', '롯데케미칼', '안전관리팀', '2024-01-18 19:00:00', '2024-01-18 20:00:00', 'MEM_000000009'),
     ('CAR_000000010', '2016-03-01', '2020-10-31', '한화생명', '재무팀', '2024-01-19 09:00:00', '2024-01-19 10:00:00', 'MEM_000000010');
-
-INSERT INTO tb_member_detail (MEM_DET_ID, MEM_DET_REL, MEM_DET_NAME, MEM_DET_BIR, MEM_DET_IDEN_NO, MEM_DET_PHO,
-                              MEM_DET_SEX, MEM_DET_DIS, MEM_DET_DIE, MEM_DET_NOTE, MEM_DET_ENTD, MEM_DET_GRAD,
-                              MEM_DET_FNL_EDC, MEM_DET_EDU, MEM_DET_MJR, MEM_DET_EMP_DATE, MEM_DET_RTR_DATE, CAR_INFO,
-                              CERT_DATE, CERT_INST, CERT_NAME, CERT_SCO, CREATED_AT, UPDATED_AT, MEM_ID)
-VALUES ('DET_000000001', '배우자', '박미숙', '1988-05-12', '880512-1234567', '010-1111-2222', 'FEMALE', FALSE, FALSE, NULL,
-        '2010', 'A', '대졸', '경영학', '기아', '2020-01-01', '2025-01-01', 'K5', '2023-06-01', '기아자동차', '세일즈', '95',
-           '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000001'),
-       ('DET_000000002', '자녀', '김철수', '2012-08-05', '120805-2345678', '010-2222-3333', 'MALE', FALSE, FALSE, NULL,
-        '2022', 'B+', '고졸', '정보통신', '기아', '2022-01-15', '2027-01-15', 'K3', '2023-07-15', '기아자동차', '서비스', '88',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000002'),
-       ('DET_000000003', '배우자', '이영희', '1985-03-09', '850309-3456789', '010-3333-4444', 'FEMALE', FALSE, FALSE,
-        '부부 동반 여행', '2009', 'A-', '대졸', '경제학', '기아', '2019-05-12', '2024-05-12', '스포티지', '2023-04-20', '기아자동차', '기술지원',
-        '92', '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000003'),
-       ('DET_000000004', '배우자', '정수민', '1990-11-11', '901111-4567890', '010-4444-5555', 'FEMALE', FALSE, FALSE, NULL,
-        '2015', 'A', '대졸', '기계공학', '기아', '2021-09-01', '2026-09-01', 'K7', '2023-02-10', '기아자동차', '품질관리', '87',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000004'),
-       ('DET_000000005', '자녀', '한지수', '2016-01-20', '160120-5678901', '010-5555-6666', 'MALE', TRUE, FALSE, '특별 교육 필요',
-        '2021', 'B', '초등학교', '과학', '기아', '2023-03-05', '2028-03-05', '니로', '2023-03-01', '기아자동차', '연구개발', '85',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000005'),
-       ('DET_000000006', '자녀', '최지우', '2005-06-15', '050615-6789012', '010-6666-7777', 'FEMALE', FALSE, FALSE, NULL,
-        '2023', 'A+', '대졸', '디자인', '기아', '2020-07-01', '2025-07-01', '스팅어', '2023-08-20', '기아자동차', '디자인', '90',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000006'),
-       ('DET_000000007', '배우자', '윤미라', '1987-12-30', '871230-7890123', '010-7777-8888', 'FEMALE', FALSE, FALSE,
-        '해외 출장 동반', '2011', 'B+', '대졸', '마케팅', '기아', '2020-12-01', '2025-12-01', '쏘렌토', '2023-01-25', '기아자동차', '마케팅',
-        '93', '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000007'),
-       ('DET_000000008', '자녀', '이동희', '2010-09-10', '100910-8901234', '010-8888-9999', 'MALE', FALSE, FALSE, NULL,
-        '2025', 'B-', '중졸', '정보기술', '기아', '2023-05-05', '2028-05-05', '모하비', '2023-12-30', '기아자동차', '엔지니어링', '89',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000008'),
-       ('DET_000000009', '배우자', '정수영', '1991-04-17', '910417-9012345', '010-9999-0000', 'FEMALE', FALSE, FALSE,
-        '가족 동반 캠핑', '2018', 'A-', '대졸', '화학', '기아', '2022-06-15', '2027-06-15', '셀토스', '2023-11-22', '기아자동차', '생산',
-        '91', '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000009'),
-       ('DET_000000010', '자녀', '김준호', '2014-07-22', '140722-0123456', '010-0000-1111', 'MALE', FALSE, FALSE, NULL,
-        '2027', 'B+', '고졸', '경영', '기아', '2023-08-12', '2028-08-12', 'K8', '2023-09-10', '기아자동차', '세일즈', '87',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000010');
 
 INSERT INTO tb_update_history (UPD_ID, UPD_IP, UPDATED_AT, UPDATED_URL, MEM_ID, CONR_ID)
 VALUES ('UPD_000000001', '192.168.1.10', '2024-01-10 12:00:00', '/contracts/1', 'MEM_000000001', 'CON_000000001'),
