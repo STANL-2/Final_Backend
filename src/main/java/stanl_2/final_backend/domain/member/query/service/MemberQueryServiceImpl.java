@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
-import stanl_2.final_backend.domain.member.query.dto.MemberDetailDTO;
 import stanl_2.final_backend.domain.member.query.repository.MemberMapper;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -45,13 +44,5 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         memberInfo.setAccount(aesUtils.decrypt(memberInfo.getAccount()));
 
         return memberInfo;
-    }
-
-    @Override
-    public MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException {
-
-        MemberDetailDTO memberDetail = memberMapper.findMemberDetailById(name);
-
-        return null;
     }
 }

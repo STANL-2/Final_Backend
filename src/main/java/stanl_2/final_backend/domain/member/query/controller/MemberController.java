@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
-import stanl_2.final_backend.domain.member.query.dto.MemberDetailDTO;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 
 import java.security.GeneralSecurityException;
@@ -50,22 +49,6 @@ public class MemberController {
     }
 
 
-    @Operation(summary = "회원 상세 정보 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
-            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
-                    content = @Content(mediaType = "application/json"))
-    })
-    public ResponseEntity<MemberResponseMessage> getMemberDetail(Principal principal) throws GeneralSecurityException {
 
-        MemberDetailDTO memberDetail = memberQueryService.selectMemberDetail(principal.getName());
-
-        return ResponseEntity.ok(MemberResponseMessage.builder()
-                                                        .httpStatus(200)
-                                                        .msg("성공")
-                                                        .result(memberDetail)
-                                                        .build());
-    }
 
 }
