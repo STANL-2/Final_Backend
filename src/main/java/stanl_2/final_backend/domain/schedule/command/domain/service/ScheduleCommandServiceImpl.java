@@ -7,6 +7,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
+import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleModifyDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleRegistDTO;
 import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
@@ -67,8 +69,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public Boolean modifySchedule(ScheduleModifyDTO scheduleModifyDTO) {
 
         if(scheduleModifyDTO.getMemberId() == null){
-            // 향후 memberException으로 바꿀 예정
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
         }
 
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleModifyDTO.getScheduleId())

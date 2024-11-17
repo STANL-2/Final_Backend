@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
+import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
@@ -39,8 +41,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     public List<ScheduleDTO> selectAllSchedule(String memberId) {
 
         if(memberId == null || memberId.trim().isEmpty()){
-            // 향후 Member의 ErrorCode로 수정할 예정
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
         }
 
         String currentMonth = getCurrentTime().substring(0,7);
@@ -61,8 +62,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     public List<ScheduleYearMonthDTO> selectYearMonthSchedule(ScheduleYearMonthDTO scheduleYearMonthDTO) {
 
         if(scheduleYearMonthDTO.getMemberId() == null || scheduleYearMonthDTO.getMemberId().trim().isEmpty()){
-            // 향후 Member의 ErrorCode로 수정할 예정
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
         }
 
         String yearMonth = scheduleYearMonthDTO.getYear() + "-" + scheduleYearMonthDTO.getMonth();
@@ -84,8 +84,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     public ScheduleDetailDTO selectDetailSchedule(ScheduleDetailDTO scheduleDetailDTO) {
 
         if(scheduleDetailDTO.getMemberId() == null || scheduleDetailDTO.getMemberId().trim().isEmpty()){
-            // 향후 Member의 ErrorCode로 수정할 예정
-            throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
+            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
         }
 
         if(scheduleDetailDTO.getScheduleId() == null || scheduleDetailDTO.getScheduleId().trim().isEmpty()){

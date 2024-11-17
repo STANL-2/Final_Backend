@@ -13,6 +13,8 @@ import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleReg
 import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
 import stanl_2.final_backend.domain.schedule.common.response.ScheduleResponseMessage;
 
+import java.security.Principal;
+
 @RestController("commandScheduleController")
 @RequestMapping("/api/v1/schedule")
 public class ScheduleController {
@@ -30,7 +32,11 @@ public class ScheduleController {
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ScheduleResponseMessage> registSchedule(@RequestBody ScheduleRegistDTO scheduleRegistDTO){
+    public ResponseEntity<ScheduleResponseMessage> registSchedule(Principal principal
+                                                                 ,@RequestBody ScheduleRegistDTO scheduleRegistDTO){
+
+        String memberId = principal.getName();
+        scheduleRegistDTO.setMemberId(memberId);
 
         Boolean answer = scheduleCommandService.registSchedule(scheduleRegistDTO);
 
@@ -48,10 +54,14 @@ public class ScheduleController {
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
     @PutMapping("{scheduleId}")
-    public ResponseEntity<ScheduleResponseMessage> modifySchedule(@PathVariable String scheduleId,
+    public ResponseEntity<ScheduleResponseMessage> modifySchedule(Principal principal,
+                                                                  @PathVariable String scheduleId,
                                                                   @RequestBody ScheduleModifyDTO scheduleModifyDTO){
 
+        String memberId = principal.getName();
+        scheduleModifyDTO.setMemberId(memberId);
         scheduleModifyDTO.setScheduleId(scheduleId);
+
         Boolean answer = scheduleCommandService.modifySchedule(scheduleModifyDTO);
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()

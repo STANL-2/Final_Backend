@@ -17,6 +17,7 @@ import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO;
 import stanl_2.final_backend.domain.schedule.query.service.ScheduleQueryService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController("queryScheduleController")
@@ -35,9 +36,10 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
-    @GetMapping("{memberId}")
-    public ResponseEntity<ScheduleResponseMessage> selectAllSchedule(@PathVariable("memberId") String memberId){
+    @GetMapping("")
+    public ResponseEntity<ScheduleResponseMessage> selectAllSchedule(Principal principal){
 
+        String memberId = principal.getName();
         List<ScheduleDTO> schedules = scheduleQueryService.selectAllSchedule(memberId);
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
@@ -53,10 +55,12 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 조건별(년&일) 전체 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
-    @GetMapping("{memberId}/{year}/{month}")
-    public ResponseEntity<ScheduleResponseMessage> selectMonthSchedule(@PathVariable("memberId") String memberId,
+    @GetMapping("{year}/{month}")
+    public ResponseEntity<ScheduleResponseMessage> selectMonthSchedule(Principal principal,
                                                                        @PathVariable("year") String year,
                                                                        @PathVariable("month") String month){
+
+        String memberId = principal.getName();
 
         ScheduleYearMonthDTO scheduleYearMonthDTO = new ScheduleYearMonthDTO();
         scheduleYearMonthDTO.setMemberId(memberId);
@@ -78,9 +82,11 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 상세 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
-    @GetMapping("{memberId}/{scheduleId}")
-    public ResponseEntity<ScheduleResponseMessage> selectDetailSchedule(@PathVariable("memberId") String memberId,
+    @GetMapping("{scheduleId}")
+    public ResponseEntity<ScheduleResponseMessage> selectDetailSchedule(Principal principal,
                                                                         @PathVariable("scheduleId") String scheduleId){
+
+        String memberId = principal.getName();;
 
         ScheduleDetailDTO scheduleDetailDTO = new ScheduleDetailDTO();
         scheduleDetailDTO.setMemberId(memberId);
