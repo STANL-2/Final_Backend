@@ -30,9 +30,6 @@ public class CareerQueryServiceImpl implements CareerQueryService {
 
         String loginId = authQueryService.selectMemberIdByLoginId(id);
 
-        log.info("#####");
-        log.info(loginId);
-
         List<CareerDTO> careerList = careerMapper.selectCareerInfo(loginId);
 
         return careerList;

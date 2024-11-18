@@ -11,5 +11,6 @@ public class CertificationDTO {
     private String name;
     private String agency;
     private String acquisitionDate;
+    private String score;
     private String note;
 }
