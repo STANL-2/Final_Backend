@@ -9,17 +9,17 @@ import lombok.*;
 @ToString
 public class ContractSelectAllDTO {
 
-    private String id;
+    private String contractId;
     private String name;
-    private String custName;
-    private String compName;
+    private String customerName;
+    private String companyName;
     private String status;
     private String createdUrl;
     private String updatedUrl;
     private boolean active;
-    private String memId;
-    private String centId;
-    private String custId;
-    private String prodId;
-    private String prodName;
+    private String memberId;
+    private String centerId;
+    private String customerId;
+    private String productId;
+    private String productName;
 }

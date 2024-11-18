@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,9 @@ import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModif
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 
+import java.security.Principal;
+
+@Slf4j
 @RestController("commandSampleController")
 @RequestMapping("/api/v1/sample")
 public class SampleController {
@@ -38,7 +42,11 @@ public class SampleController {
                         content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<SampleResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO) {
+    public ResponseEntity<SampleResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO,
+                                                          Principal principal) {
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
 
         sampleCommandService.registerSample(sampleRegistRequestDTO);
 
@@ -63,7 +71,11 @@ public class SampleController {
     })
     @PutMapping("{id}")
     public ResponseEntity<SampleResponseMessage> putTest(@PathVariable String id,
-                                                         @RequestBody SampleModifyDTO sampleModifyRequestDTO) {
+                                                         @RequestBody SampleModifyDTO sampleModifyRequestDTO,
+                                                         Principal principal) {
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
 
         sampleModifyRequestDTO.setId(id);
         SampleModifyDTO sampleModifyDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
@@ -84,7 +96,11 @@ public class SampleController {
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<SampleResponseMessage> deleteTest(@PathVariable String id) {
+    public ResponseEntity<SampleResponseMessage> deleteTest(@PathVariable String id,
+                                                            Principal principal) {
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
 
         sampleCommandService.deleteSample(id);
 
