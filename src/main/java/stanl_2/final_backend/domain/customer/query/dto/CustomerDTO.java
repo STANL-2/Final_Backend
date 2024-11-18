@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomerDTO {
+    private String customerId;
     private String name;
     private Integer age;
     private String sex;
@@ -17,4 +18,8 @@ public class CustomerDTO {
     private String emergePhone;
     private String email;
     private String memberId;
+    private Boolean active;
+    private String createdAt;
+    private String updatedAt;
+    private String deletedAt;
 }
