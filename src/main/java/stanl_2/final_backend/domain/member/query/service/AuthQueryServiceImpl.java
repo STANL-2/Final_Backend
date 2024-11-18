@@ -26,7 +26,7 @@ public class AuthQueryServiceImpl implements AuthQueryService {
         String id = authMapper.selectIdByMemberName(loginId);
 
         if(id == null){
-            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+            throw new MemberCommonException(MemberErrorCode.MEMBER_ID_NOT_FOUND);
         }
 
         return id;
