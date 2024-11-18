@@ -27,6 +27,30 @@ public class AuthController {
         this.authCommandService = authCommandService;
     }
 
+    /**
+     * 회원가입 @ResponseBody
+     * {
+     *     "loginId": "test",
+     *     "password": "test",
+     *     "name": "이름1",
+     *     "email": "test@test.com",
+     *     "age": 30,
+     *     "sex": "MALE",
+     *     "identNo": "12123",
+     *     "phone": "01012345678",
+     *     "emergePhone": "01088888888",
+     *     "address": "서울",
+     *     "note": "비고1",
+     *     "position": "인턴",
+     *     "grade": "고졸",
+     *     "jobType": "영업",
+     *     "military": "미필",
+     *     "bankName": "국민은행",
+     *     "account": "110-2324-131313-12232",
+     *     "centerId": "CEN_000000001",
+     *     "organizationId": "ORG_000000001"
+     * }
+     */
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
@@ -43,6 +67,14 @@ public class AuthController {
                                                 .result(null)
                                                 .build());
     }
+
+    /**
+     * 권한 부여 @ResponseBody
+     * {
+     *     "loginId": "test",
+     *     "role": "ADMIN"
+     * }
+     */
 
     @Operation(summary = "권한 부여")
     @ApiResponses(value = {
@@ -62,12 +94,19 @@ public class AuthController {
     }
 
 
-    @PostMapping("signin")
+    /**
+     * 로그인 @ResponseBody
+     * {
+     *     "loginId": "test",
+     *     "password": "test"
+     * }
+     */
     @Operation(summary = "로그인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
+    @PostMapping("signin")
     public ResponseEntity<MemberResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO) {
 
         SigninResponseDTO responseDTO = authCommandService.signin(signinRequestDTO);
