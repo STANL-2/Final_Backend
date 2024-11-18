@@ -17,6 +17,8 @@ import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMes
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
 
+import java.security.GeneralSecurityException;
+
 @RestController(value = "queryCustomerController")
 @RequestMapping("/api/v1/customer")
 public class CustomerController {
@@ -36,7 +38,7 @@ public class CustomerController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("/{customerId}")
-    public ResponseEntity<CustomerResponseMessage> getCustomerInfo(@PathVariable String customerId){
+    public ResponseEntity<CustomerResponseMessage> getCustomerInfo(@PathVariable String customerId) throws GeneralSecurityException {
 
         CustomerDTO customerInfoDTO = customerQueryService.selectCustomerInfo(customerId);
 

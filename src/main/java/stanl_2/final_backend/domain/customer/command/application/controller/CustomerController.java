@@ -17,6 +17,7 @@ import stanl_2.final_backend.domain.customer.command.application.service.Custome
 import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @Slf4j
@@ -41,7 +42,7 @@ public class CustomerController {
     })
     @PostMapping("")
     public ResponseEntity<CustomerResponseMessage> postCustomer(@RequestBody CustomerRegistDTO customerRegistDTO,
-                                                                Principal principal) {
+                                                                Principal principal) throws GeneralSecurityException {
 
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
 
@@ -63,7 +64,7 @@ public class CustomerController {
     })
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerResponseMessage> postCustomer(@PathVariable String customerId,
-                                                                @RequestBody CustomerModifyDTO customerModifyDTO) {
+                                                                @RequestBody CustomerModifyDTO customerModifyDTO) throws GeneralSecurityException {
 
         customerModifyDTO.setCustomerId(customerId);
 

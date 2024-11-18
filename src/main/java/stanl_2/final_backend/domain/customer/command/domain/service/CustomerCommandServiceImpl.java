@@ -12,6 +12,9 @@ import stanl_2.final_backend.domain.customer.command.domain.aggregate.entity.Cus
 import stanl_2.final_backend.domain.customer.command.domain.repository.CustomerRepository;
 import stanl_2.final_backend.domain.customer.common.exception.CustomerCommonException;
 import stanl_2.final_backend.domain.customer.common.exception.CustomerErrorCode;
+import stanl_2.final_backend.global.utils.AESUtils;
+
+import java.security.GeneralSecurityException;
 
 @Slf4j
 @Service("commandCustomerService")
@@ -19,32 +22,43 @@ public class CustomerCommandServiceImpl implements CustomerCommandService {
 
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private final AESUtils aesUtils;
 
     @Autowired
     public CustomerCommandServiceImpl(CustomerRepository customerRepository,
-                                      ModelMapper modelMapper) {
+                                      ModelMapper modelMapper,
+                                      AESUtils aesUtils) {
         this.customerRepository = customerRepository;
         this.modelMapper = modelMapper;
+        this.aesUtils = aesUtils;
     }
 
     @Override
     @Transactional
-    public void registerCustomerInfo(CustomerRegistDTO customerRegistDTO) {
+    public void registerCustomerInfo(CustomerRegistDTO customerRegistDTO) throws GeneralSecurityException {
 
         Customer customer = modelMapper.map(customerRegistDTO, Customer.class);
+
+        customer.setPhone(aesUtils.encrypt(customer.getPhone()));
+        customer.setEmergePhone(aesUtils.encrypt(customer.getEmergePhone()));
+        customer.setEmail(aesUtils.encrypt(customer.getEmail()));
 
         customerRepository.save(customer);
     }
 
     @Override
     @Transactional
-    public void modifyCustomerInfo(CustomerModifyDTO customerModifyDTO) {
+    public void modifyCustomerInfo(CustomerModifyDTO customerModifyDTO) throws GeneralSecurityException {
 
         Customer customer = customerRepository.findById(customerModifyDTO.getCustomerId())
                 .orElseThrow(() -> new CustomerCommonException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
+        customerModifyDTO.setPhone(aesUtils.encrypt(customerModifyDTO.getPhone()));
+        customerModifyDTO.setEmergePhone(aesUtils.encrypt(customerModifyDTO.getEmergePhone()));
+        customerModifyDTO.setEmail(aesUtils.encrypt(customerModifyDTO.getEmail()));
+
         modelMapper.map(customerModifyDTO, customer);
-        log.info(customer.toString());
+
         customerRepository.save(customer);
     }
 
