@@ -1,6 +1,5 @@
 package stanl_2.final_backend.domain.education.query.dto;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 @NoArgsConstructor
