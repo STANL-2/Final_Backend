@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleModifyDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleRegistDTO;
 import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
@@ -26,12 +28,15 @@ import java.time.format.DateTimeFormatter;
 public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     private final ScheduleRepository scheduleRepository;
+    private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ScheduleCommandServiceImpl(ScheduleRepository scheduleRepository, ModelMapper modelMapper) {
+    public ScheduleCommandServiceImpl(ScheduleRepository scheduleRepository, ModelMapper modelMapper,
+                                      AuthQueryService authQueryService) {
         this.scheduleRepository = scheduleRepository;
         this.modelMapper = modelMapper;
+        this.authQueryService = authQueryService;
     }
 
     private String  getCurrentTime() {
@@ -44,13 +49,11 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Transactional
     public Boolean registSchedule(ScheduleRegistDTO scheduleRegistDTO) {
 
+        String memberId = authQueryService.selectMemberLoginId(scheduleRegistDTO.getMemberLoginId());
+        scheduleRegistDTO.setMemberId(memberId);
+
         try {
             Schedule schedule = modelMapper.map(scheduleRegistDTO, Schedule.class);
-
-            if(schedule.getMemberId() == null){
-                // 매핑 오류
-                throw new ScheduleCommonException(ScheduleErrorCode.MAPPING_ERROR);
-            }
 
             scheduleRepository.save(schedule);
 
@@ -68,9 +71,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Transactional
     public Boolean modifySchedule(ScheduleModifyDTO scheduleModifyDTO) {
 
-        if(scheduleModifyDTO.getMemberId() == null){
-            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
-        }
+        String memberId = authQueryService.selectMemberLoginId(scheduleModifyDTO.getMemberLoginId());
+        scheduleModifyDTO.setMemberId(memberId);
 
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleModifyDTO.getScheduleId())
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
@@ -82,11 +84,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         try {
             Schedule updateSchedule = modelMapper.map(scheduleModifyDTO, Schedule.class);
-
-            if(updateSchedule.getMemberId() == null){
-                // 매핑 오류
-                throw new ScheduleCommonException(ScheduleErrorCode.MAPPING_ERROR);
-            }
 
             updateSchedule.setCreatedAt(schedule.getCreatedAt());
             updateSchedule.setActive(schedule.getActive());
@@ -105,10 +102,17 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     @Transactional
-    public Boolean deleteSchedule(String scheduleId) {
+    public Boolean deleteSchedule(ScheduleDeleteDTO scheduleDeleteDTO) {
 
-        Schedule schedule = scheduleRepository.findByScheduleId(scheduleId)
+        String memberId = authQueryService.selectMemberLoginId(scheduleDeleteDTO.getMemberLoginId());
+
+        Schedule schedule = scheduleRepository.findByScheduleId(scheduleDeleteDTO.getScheduleId())
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+
+        if(!memberId.equals(schedule.getMemberId())){
+            // 권한 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
+        }
 
         schedule.setActive(false);
         schedule.setDeletedAt(getCurrentTime());

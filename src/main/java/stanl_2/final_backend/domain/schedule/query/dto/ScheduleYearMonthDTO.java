@@ -15,6 +15,7 @@ public class ScheduleYearMonthDTO {
     private String startAt;
     private String endAt;
     private String memberId;
+    private String memberLoginId;
 
     private String year;
     private String month;

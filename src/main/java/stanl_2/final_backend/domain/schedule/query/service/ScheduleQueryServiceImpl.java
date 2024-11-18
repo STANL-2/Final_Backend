@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
@@ -26,23 +27,23 @@ import java.util.Map;
 public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     private final ScheduleMapper scheduleMapper;
+    private final AuthQueryService authQueryService;
     private String  getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     @Autowired
-    public ScheduleQueryServiceImpl(ScheduleMapper scheduleMapper) {
+    public ScheduleQueryServiceImpl(ScheduleMapper scheduleMapper, AuthQueryService authQueryService) {
         this.scheduleMapper = scheduleMapper;
+        this.authQueryService = authQueryService;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ScheduleDTO> selectAllSchedule(String memberId) {
+    public List<ScheduleDTO> selectAllSchedule(String memberLogindId) {
 
-        if(memberId == null || memberId.trim().isEmpty()){
-            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
-        }
+        String memberId = authQueryService.selectMemberLoginId(memberLogindId);
 
         String currentMonth = getCurrentTime().substring(0,7);
 
@@ -61,9 +62,8 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Transactional(readOnly = true)
     public List<ScheduleYearMonthDTO> selectYearMonthSchedule(ScheduleYearMonthDTO scheduleYearMonthDTO) {
 
-        if(scheduleYearMonthDTO.getMemberId() == null || scheduleYearMonthDTO.getMemberId().trim().isEmpty()){
-            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
-        }
+        String memberId = authQueryService.selectMemberLoginId(scheduleYearMonthDTO.getMemberLoginId());
+        scheduleYearMonthDTO.setMemberId(memberId);
 
         String yearMonth = scheduleYearMonthDTO.getYear() + "-" + scheduleYearMonthDTO.getMonth();
 
@@ -83,9 +83,8 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Transactional(readOnly = true)
     public ScheduleDetailDTO selectDetailSchedule(ScheduleDetailDTO scheduleDetailDTO) {
 
-        if(scheduleDetailDTO.getMemberId() == null || scheduleDetailDTO.getMemberId().trim().isEmpty()){
-            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
-        }
+        String memberId = authQueryService.selectMemberLoginId(scheduleDetailDTO.getMemberLoginId());
+        scheduleDetailDTO.setMemberId(memberId);
 
         if(scheduleDetailDTO.getScheduleId() == null || scheduleDetailDTO.getScheduleId().trim().isEmpty()){
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);

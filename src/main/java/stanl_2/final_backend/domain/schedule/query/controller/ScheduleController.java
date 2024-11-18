@@ -39,8 +39,8 @@ public class ScheduleController {
     @GetMapping("")
     public ResponseEntity<ScheduleResponseMessage> selectAllSchedule(Principal principal){
 
-        String memberId = principal.getName();
-        List<ScheduleDTO> schedules = scheduleQueryService.selectAllSchedule(memberId);
+        String memberLogindId = principal.getName();
+        List<ScheduleDTO> schedules = scheduleQueryService.selectAllSchedule(memberLogindId);
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)
@@ -60,10 +60,10 @@ public class ScheduleController {
                                                                        @PathVariable("year") String year,
                                                                        @PathVariable("month") String month){
 
-        String memberId = principal.getName();
+        String memberLoginId = principal.getName();
 
         ScheduleYearMonthDTO scheduleYearMonthDTO = new ScheduleYearMonthDTO();
-        scheduleYearMonthDTO.setMemberId(memberId);
+        scheduleYearMonthDTO.setMemberLoginId(memberLoginId);
         scheduleYearMonthDTO.setYear(year);
         scheduleYearMonthDTO.setMonth(month);
 
@@ -86,10 +86,10 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseMessage> selectDetailSchedule(Principal principal,
                                                                         @PathVariable("scheduleId") String scheduleId){
 
-        String memberId = principal.getName();;
+        String memberLoginId = principal.getName();;
 
         ScheduleDetailDTO scheduleDetailDTO = new ScheduleDetailDTO();
-        scheduleDetailDTO.setMemberId(memberId);
+        scheduleDetailDTO.setMemberLoginId(memberLoginId);
         scheduleDetailDTO.setScheduleId(scheduleId);
 
         ScheduleDetailDTO responseDetailSchedule = scheduleQueryService.selectDetailSchedule(scheduleDetailDTO);
