@@ -10,7 +10,7 @@ import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationCommon
 import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationErrorCode;
 import stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
-import stanl_2.final_backend.domain.evaluation.query.respository.EvaluationMapper;
+import stanl_2.final_backend.domain.evaluation.query.repository.EvaluationMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -48,10 +48,11 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
     @Transactional(readOnly = true)
     public Page<Map<String, Object>> selectEvaluationByCenter(String centerId, Pageable pageable) {
         EvaluationRequestList<?> requestList = EvaluationRequestList.builder()
+                .data(centerId)
                 .pageable(pageable)
                 .build();
 
-        List<Map<String, Object>> evaluationList = evaluationMapper.findEvaluationByCenterId(centerId, requestList);
+        List<Map<String, Object>> evaluationList = evaluationMapper.findEvaluationByCenterId(requestList);
 
         int total = evaluationMapper.findEvaluationCountByCenterId();
 

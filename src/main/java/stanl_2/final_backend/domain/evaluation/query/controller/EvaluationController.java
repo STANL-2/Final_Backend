@@ -62,7 +62,7 @@ public class EvaluationController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("{centerId}")
+    @GetMapping("/{centerId}")
     public ResponseEntity<EvaluationResponseMessage> getEvaluationByCenter(@PathVariable String centerId, Pageable pageable){
 
         Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectEvaluationByCenter(centerId, pageable);

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="stanl_2.final_backend.domain.center.query.repository.EvaluationMapper">
+<mapper namespace="stanl_2.final_backend.domain.evaluation.query.repository.EvaluationMapper">
 
     <resultMap id="evaluationAllResultMap" type="stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO">
         <id property="evalId" column="EVAL_ID"/>
@@ -15,7 +15,7 @@
         <result property="writerId" column="WRI_ID"/>
     </resultMap>
 
-    <select id="findAllEvaluations" resultMap="evaluationAllResultMap" parameterType="java.util.Map">
+    <select id="findAllEvaluations" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList">
         SELECT
         A.EVAL_ID
         , A.EVAL_TTL
@@ -30,7 +30,7 @@
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
     </select>
 
-    <select id="findByCenterId" resultMap="evaluationAllResultMap" parameterType="String">
+    <select id="findEvaluationByCenterId" resultMap="evaluationAllResultMap" parameterType="String">
         SELECT
         A.EVAL_ID
         , A.EVAL_TTL
@@ -40,7 +40,7 @@
         , A.CREATED_AT
         , A.UPDATED_AT
         FROM TB_EVALUATION A
-        WHERE A.CENT_ID = #{id} AND A.ACTIVE = TRUE
+        WHERE A.CENT_ID = #{data.centerId} AND A.ACTIVE = TRUE
         ORDER BY CREATED_AT DESC
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
     </select>

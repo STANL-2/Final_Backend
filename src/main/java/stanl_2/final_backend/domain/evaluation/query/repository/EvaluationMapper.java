@@ -1,6 +1,7 @@
-package stanl_2.final_backend.domain.evaluation.query.respository;
+package stanl_2.final_backend.domain.evaluation.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
 
@@ -10,7 +11,7 @@ import java.util.Map;
 @Mapper
 public interface EvaluationMapper {
 
-    List<Map<String, Object>> findEvaluationByCenterId(String centerId, EvaluationRequestList<?> requestList);
+    List<Map<String, Object>> findEvaluationByCenterId(@Param("requestList") EvaluationRequestList<?> requestList);
 
     EvaluationDTO findEvaluationById(String id);
 
