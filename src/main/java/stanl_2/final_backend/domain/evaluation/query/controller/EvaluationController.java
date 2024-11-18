@@ -6,17 +6,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
-import stanl_2.final_backend.domain.A_sample.query.service.SampleQueryService;
 import stanl_2.final_backend.domain.evaluation.common.response.EvaluationResponseMessage;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
 import stanl_2.final_backend.domain.evaluation.query.service.EvaluationQueryService;
+
+import java.util.Map;
 
 @RestController(value = "queryEvaluationController")
 @RequestMapping("/api/v1/evaluation")
@@ -31,22 +33,44 @@ public class EvaluationController {
     /**
      * [GET] http://localhost:7777/api/v1/sample/SAM_000000001
      * */
-    @Operation(summary = "평가서 조회 테스트")
+    @Operation(summary = "평가서 담당자 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("{id}")
-    public ResponseEntity<EvaluationResponseMessage> getTest(@PathVariable String id){
+    @GetMapping("")
+    public ResponseEntity<EvaluationResponseMessage> getAllEvaluations(@PageableDefault(size = 20) Pageable pageable){
 
-        EvaluationDTO evaluationDTO = evaluationQueryService.selectEvaluation(id);
+        Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectAllEvaluations(pageable);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(evaluationDTO)
+                .result(responseEvaluations)
+                .build());
+    }
+
+    /**
+     * [GET] http://localhost:7777/api/v1/sample/SAM_000000001
+     * */
+    @Operation(summary = "평가서 관리자 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("{centerId}")
+    public ResponseEntity<EvaluationResponseMessage> getEvaluationByCenter(@PathVariable String centerId, Pageable pageable){
+
+        Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectEvaluationByCenter(centerId, pageable);
+
+        return ResponseEntity.ok(EvaluationResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(responseEvaluations)
                 .build());
     }
 
@@ -61,14 +85,14 @@ public class EvaluationController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("/detail/{id}")
-    public ResponseEntity<EvaluationResponseMessage> getDetailTest(@PathVariable String id) {
+    public ResponseEntity<EvaluationResponseMessage> getDetailEvaluation(@PathVariable String id) {
 
-        String name = evaluationQueryService.selectEvaluationName(id);
+        EvaluationDTO evaluationDTO  = evaluationQueryService.selectEvaluationById(id);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(name)
+                .result(evaluationDTO)
                 .build());
     }
 

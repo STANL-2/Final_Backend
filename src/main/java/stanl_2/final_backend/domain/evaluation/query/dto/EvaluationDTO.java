@@ -8,5 +8,14 @@ import lombok.*;
 @Setter
 @ToString
 public class EvaluationDTO {
-    private String id;
+    private String evalId;
+    private String title;
+    private String content;
+    private String createdAt;
+    private String updatedAt;
+    private String deletedAt;
+    private Boolean active;
+    private String centerId;
+    private String memberId;
+    private String writerId;
 }

@@ -8,8 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationModifyDTO;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationRegistDTO;
@@ -60,7 +58,6 @@ public class EvaluationController {
     public ResponseEntity<EvaluationResponseMessage> putTest(@PathVariable String id,
                                                          @RequestBody EvaluationModifyDTO evaluationModifyRequestDTO) {
 
-//        evaluationModifyRequestDTO.setEvaluationId(id);
         evaluationCommandService.modifyEvaluation(id,evaluationModifyRequestDTO);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
