@@ -16,7 +16,7 @@ spring:
 
   devtools:
     livereload:
-      enabled: true
+      enabled: false
     restart:
       enabled: false
 
@@ -35,9 +35,14 @@ spring:
       enabled: false
 
 jwt:
-  secret-key: ${SECRET_KEY}
-  secret-default-value: ${JWT_SECRET_DEFAULT_VALUE}
+  secret-key: ${JWT_SECRET_KEY}
   header: ${JWT_HEADER}
+
+encryption:
+  algorithm: ${ALGORITHM}
+  transformation: ${TRANSFORMATION}
+  secret-key: ${SECRET_DEFAULT_KEY}
+
 
 logging:
   pattern:
@@ -46,8 +51,3 @@ logging:
     org:
       springframework:
         security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
-
-#server:
-#  servlet:
-#    session:
-#      timeout: ${SESSION_TIMEOUT:20m}
