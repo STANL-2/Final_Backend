@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - feat/backend-operation
-
+      - feat/integration
 jobs:
   deploy:
     runs-on: ubuntu-latest
