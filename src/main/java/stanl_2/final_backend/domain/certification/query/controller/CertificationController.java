@@ -37,16 +37,16 @@ public class CertificationController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("/other/{id}")
-    public ResponseEntity<CareerResponseMessage> getCertificationByOther(@PathVariable String id){
+    @GetMapping("/other/{loginId}")
+    public ResponseEntity<CareerResponseMessage> getCertificationByOther(@PathVariable String loginId){
 
-        List<CertificationDTO> certificationList = certificationQueryService.selectCertificationList(id);
+        List<CertificationDTO> certificationList = certificationQueryService.selectCertificationList(loginId);
 
         return ResponseEntity.ok(CareerResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(certificationList)
-                .build());
+                                                       .httpStatus(200)
+                                                       .msg("성공")
+                                                       .result(certificationList)
+                                                       .build());
     }
 
     @Operation(summary = "자격증/외국어 조회(접속중인 사용자)")
@@ -62,9 +62,9 @@ public class CertificationController {
         List<CertificationDTO> careerList = certificationQueryService.selectCertificationList(principal.getName());
 
         return ResponseEntity.ok(CareerResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(careerList)
-                .build());
+                                                       .httpStatus(200)
+                                                       .msg("성공")
+                                                       .result(careerList)
+                                                       .build());
     }
 }

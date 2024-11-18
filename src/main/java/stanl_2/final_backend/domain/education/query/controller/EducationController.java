@@ -39,16 +39,16 @@ public class EducationController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("/other/{id}")
-    public ResponseEntity<EducationResponseMessage> getEducation(@PathVariable String id){
+    @GetMapping("/other/{loginId}")
+    public ResponseEntity<EducationResponseMessage> getEducation(@PathVariable String loginId){
 
-        List<EducationDTO> educationList = educationQueryService.selectEducationList(id);
+        List<EducationDTO> educationList = educationQueryService.selectEducationList(loginId);
 
         return ResponseEntity.ok(EducationResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(educationList)
-                .build());
+                                                         .httpStatus(200)
+                                                         .msg("성공")
+                                                         .result(educationList)
+                                                         .build());
     }
 
     @Operation(summary = "학력 조회(접속중인 사용자)")
@@ -64,9 +64,9 @@ public class EducationController {
         List<EducationDTO> educationList = educationQueryService.selectEducationList(principal.getName());
 
         return ResponseEntity.ok(EducationResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(educationList)
-                .build());
+                                                         .httpStatus(200)
+                                                         .msg("성공")
+                                                         .result(educationList)
+                                                         .build());
     }
 }

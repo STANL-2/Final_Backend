@@ -23,11 +23,11 @@ public class EducationQueryServiceImpl implements EducationQueryService{
     }
 
     @Override
-    public List<EducationDTO> selectEducationList(String id) {
+    public List<EducationDTO> selectEducationList(String loginId) {
 
-        String loginId = authQueryService.selectMemberIdByLoginId(id);
+        String memberId = authQueryService.selectMemberIdByLoginId(loginId);
 
-        List<EducationDTO> educationList = educationMapper.selectEducationInfo(loginId);
+        List<EducationDTO> educationList = educationMapper.selectEducationInfo(memberId);
 
         return educationList;
     }

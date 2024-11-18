@@ -39,16 +39,16 @@ public class CareerController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("/other/{id}")
-    public ResponseEntity<CareerResponseMessage> getCareerByOther(@PathVariable String id){
+    @GetMapping("/other/{loginId}")
+    public ResponseEntity<CareerResponseMessage> getCareerByOther(@PathVariable String loginId){
 
-        List<CareerDTO> careerList = careerQueryService.selectCareerList(id);
+        List<CareerDTO> careerList = careerQueryService.selectCareerList(loginId);
 
         return ResponseEntity.ok(CareerResponseMessage.builder()
-                                                        .httpStatus(200)
-                                                        .msg("성공")
-                                                        .result(careerList)
-                                                        .build());
+                                                       .httpStatus(200)
+                                                       .msg("성공")
+                                                       .result(careerList)
+                                                       .build());
     }
 
     @Operation(summary = "경력 조회(접속중인 사용자)")
@@ -64,9 +64,9 @@ public class CareerController {
         List<CareerDTO> careerList = careerQueryService.selectCareerList(principal.getName());
 
         return ResponseEntity.ok(CareerResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(careerList)
-                .build());
+                                                       .httpStatus(200)
+                                                       .msg("성공")
+                                                       .result(careerList)
+                                                       .build());
     }
 }

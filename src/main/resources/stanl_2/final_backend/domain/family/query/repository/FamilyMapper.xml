@@ -3,6 +3,31 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stanl_2.final_backend.domain.family.query.repository.FamilyMapper">
-
+    <resultMap id="Family" type="stanl_2.final_backend.domain.family.query.dto.FamilyDTO">
+        <result property="name" column="FAM_NAME"/>
+        <result property="relation" column="FAM_REL"/>
+        <result property="birth" column="FAM_BIR"/>
+        <result property="identNo" column="FAM_IDEN_NO"/>
+        <result property="phone" column="FAM_PHO"/>
+        <result property="sex" column="FAM_SEX"/>
+        <result property="disability" column="FAM_DIS"/>
+        <result property="die" column="FAM_DIE"/>
+        <result property="note" column="FAM_NOTE"/>
+    </resultMap>
+    <select id="selectFamilyInfo" resultMap="Family" parameterType="String">
+        SELECT
+               A.FAM_NAME,
+               A.FAM_REL,
+               A.FAM_BIR,
+               A.FAM_IDEN_NO,
+               A.FAM_PHO,
+               A.FAM_SEX,
+               A.FAM_DIS,
+               A.FAM_DIE,
+               A.FAM_NOTE
+          FROM TB_FAMILY A
+          JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
+         WHERE A.MEM_ID = #{ memberId }
+    </select>
 
 </mapper>
