@@ -53,6 +53,7 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+
     //hibernate core
     implementation 'org.hibernate.orm:hibernate-core:6.5.2.Final'
 
