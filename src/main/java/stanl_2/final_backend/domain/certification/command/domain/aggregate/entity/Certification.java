@@ -46,7 +46,6 @@ public class Certification {
     @Column(name = "MEM_ID", nullable = false)
     private String memId;
 
-    /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행
     @PrePersist
     private void prePersist() {
