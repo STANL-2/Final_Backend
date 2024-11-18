@@ -12,16 +12,14 @@ import java.util.Collection;
 @NoArgsConstructor
 @Setter
 @Getter
-public class PurchaseOrderSelectIdDTO {
+public class PurchaseOrderSelectAllDTO {
     private String PurchaseOrderId;
     private String title;
-    private String content;
-    private Boolean active;
     private String status;
-    private String createdAt;
-    private String updatedAt;
-    private String deletedAt;
     private String orderId;
+    private String adminName;
+    private String memberName;
+    private String productName;
     private String adminId;
     private String memberId;
     private Collection<? extends GrantedAuthority> roles;

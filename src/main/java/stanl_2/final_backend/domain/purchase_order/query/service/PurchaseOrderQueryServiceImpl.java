@@ -1,43 +1,40 @@
 package stanl_2.final_backend.domain.purchase_order.query.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
+import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectIdDTO;
 import stanl_2.final_backend.domain.purchase_order.query.repository.PurchaseOrderMapper;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
+import stanl_2.final_backend.global.utils.AESUtils;
+
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService {
 
     private final PurchaseOrderMapper purchaseOrderMapper;
-    private final AuthQueryService authQueryService;
+    private final AESUtils aesUtils;
 
     @Autowired
-    public PurchaseOrderQueryServiceImpl(PurchaseOrderMapper purchaseOrderMapper, AuthQueryService authQueryService) {
+    public PurchaseOrderQueryServiceImpl(PurchaseOrderMapper purchaseOrderMapper, AESUtils aesUtils) {
         this.purchaseOrderMapper = purchaseOrderMapper;
-        this.authQueryService = authQueryService;
+        this.aesUtils = aesUtils;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PurchaseOrderSelectIdDTO selectDetailPurchaseOrder(PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO) {
-        if(purchaseOrderSelectIdDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_EMPLOYEE".equals(role.getAuthority()))) {
-
-            String memberId = authQueryService.selectMemberIdByLoginId(purchaseOrderSelectIdDTO.getMemberId());
-
-            PurchaseOrderSelectIdDTO purchaseOrder = purchaseOrderMapper.findPurchaseOrderByIdAndMemberId(purchaseOrderSelectIdDTO.getPurchaseOrderId(), memberId);
-
-            if (purchaseOrder == null) {
-                throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
-            }
-            return purchaseOrder;
-        } else if (purchaseOrderSelectIdDTO.getRoles().stream()
+        if (purchaseOrderSelectIdDTO.getRoles().stream()
                 .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()) || "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
 
             PurchaseOrderSelectIdDTO purchaseOrder = purchaseOrderMapper.findPurchaseOrderById(purchaseOrderSelectIdDTO.getPurchaseOrderId());
@@ -46,6 +43,38 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
                 throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
             }
             return purchaseOrder;
+        } else {
+            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PurchaseOrderSelectAllDTO> selectAllPurchaseOrder(Pageable pageable, PurchaseOrderSelectAllDTO purchaseOrderSelectAllDTO) {
+
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+
+        if (purchaseOrderSelectAllDTO.getRoles().stream()
+                .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()) || "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
+
+            List<PurchaseOrderSelectAllDTO> purchaseOrders = purchaseOrderMapper.findAllPurchaseOrder(offset, pageSize);
+
+            if (purchaseOrders == null || purchaseOrders.isEmpty()) {
+                throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
+            }
+
+            purchaseOrders.forEach(purchaseOrder -> {
+                try {
+                    purchaseOrder.setMemberName(aesUtils.decrypt(purchaseOrder.getMemberName()));
+                } catch (GeneralSecurityException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            int total = purchaseOrderMapper.findAllPurchaseOrderCount();
+
+            return new PageImpl<>(purchaseOrders, pageable, total);
         } else {
             throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
         }

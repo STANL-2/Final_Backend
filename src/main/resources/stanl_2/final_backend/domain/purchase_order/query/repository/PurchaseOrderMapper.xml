@@ -18,7 +18,17 @@
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
-    <select id="findPurchaseOrderByIdAndMemberId" resultMap="purchaseOrderDetailResultMap" parameterType="map">
+    <resultMap id="purchaseOrderAllResultMap" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO">
+        <id property="purchaseOrderId" column="PUR_ORD_ID"/>
+        <result property="title" column="PUR_ORD_TTL"/>
+        <result property="status" column="PUR_ORD_STAT"/>
+        <result property="orderName" column="ORD_NAME"/>
+        <result property="adminName" column="ADMIN_NAME"/>
+        <result property="memberName" column="MEM_NAME"/>
+        <result property="productName" column="PROD_NAME"/>
+    </resultMap>
+
+    <select id="findPurchaseOrderById" resultMap="purchaseOrderDetailResultMap" parameterType="string">
         SELECT
                A.PUR_ORD_ID,
                A.PUR_ORD_TTL,
@@ -32,9 +42,40 @@
                A.ADMIN_ID,
                A.MEM_ID
           FROM TB_PURCHASE_ORDER A
-         WHERE A.MEM_ID = #{memberId}
-           AND A.ACTIVE = TRUE
+         WHERE A.ACTIVE = TRUE
            AND A.PUR_ORD_ID = #{purchaseOrderId}
+    </select>
+
+    <select id="findAllPurchaseOrder" resultMap="purchaseOrderAllResultMap">
+        SELECT
+               A.PUR_ORD_ID,
+               A.PUR_ORD_TTL,
+               A.PUR_ORD_STAT,
+               B.ORD_TTL,
+               D.MEM_NAME AS ADMIN_NAME,
+               C.MEM_NAME AS MEM_NAME,
+               F.PROD_NAME
+          FROM TB_PURCHASE_ORDER A
+          LEFT JOIN TB_ORDER B
+            ON A.ORD_ID = B.ORD_ID
+          LEFT JOIN TB_MEMBER C
+            ON A.MEM_ID = C.MEM_ID
+          LEFT JOIN TB_MEMBER D
+            ON A.ADMIN_ID = D.MEM_ID
+          LEFT JOIN TB_CONTRACT E
+            ON B.CONR_ID = E.CONR_ID
+          LEFT JOIN TB_PRODUCT F
+            ON E.PROD_ID = F.PROD_ID
+         WHERE A.ACTIVE = TRUE
+         ORDER BY A.CREATED_AT DESC
+         LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findAllPurchaseOrderCount" resultType="int">
+        SELECT
+               COUNT(*) AS CNT
+          FROM TB_PURCHASE_ORDER A
+         WHERE A.ACTIVE = TRUE
     </select>
 
 
