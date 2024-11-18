@@ -6,5 +6,7 @@ import stanl_2.final_backend.domain.customer.command.application.dto.CustomerReg
 public interface CustomerCommandService {
     void registerCustomerInfo(CustomerRegistDTO customerRegistDTO);
 
-    void modifyCustomerId(CustomerModifyDTO customerModifyDTO);
+    void modifyCustomerInfo(CustomerModifyDTO customerModifyDTO);
+
+    void deleteCustomerId(String customerId);
 }

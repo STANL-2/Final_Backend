@@ -38,13 +38,25 @@ public class CustomerCommandServiceImpl implements CustomerCommandService {
 
     @Override
     @Transactional
-    public void modifyCustomerId(CustomerModifyDTO customerModifyDTO) {
+    public void modifyCustomerInfo(CustomerModifyDTO customerModifyDTO) {
 
         Customer customer = customerRepository.findById(customerModifyDTO.getCustomerId())
                 .orElseThrow(() -> new CustomerCommonException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
         modelMapper.map(customerModifyDTO, customer);
         log.info(customer.toString());
+        customerRepository.save(customer);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCustomerId(String customerId) {
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerCommonException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
+
+        customer.setActive(false);
+
         customerRepository.save(customer);
     }
 }

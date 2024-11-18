@@ -41,7 +41,7 @@ public class CustomerController {
     })
     @PostMapping("")
     public ResponseEntity<CustomerResponseMessage> postCustomer(@RequestBody CustomerRegistDTO customerRegistDTO,
-                                                                Principal principal){
+                                                                Principal principal) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
 
@@ -63,16 +63,33 @@ public class CustomerController {
     })
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerResponseMessage> postCustomer(@PathVariable String customerId,
-                                                                @RequestBody CustomerModifyDTO customerModifyDTO){
+                                                                @RequestBody CustomerModifyDTO customerModifyDTO) {
 
         customerModifyDTO.setCustomerId(customerId);
 
-        customerCommandService.modifyCustomerId(customerModifyDTO);
+        customerCommandService.modifyCustomerInfo(customerModifyDTO);
 
         return ResponseEntity.ok(CustomerResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(null)
-                .build());
+                                                        .httpStatus(200)
+                                                        .msg("성공")
+                                                        .result(null)
+                                                        .build());
+    }
+
+    @Operation(summary = "고객정보 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+    })
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<CustomerResponseMessage> deleteCustomer(@PathVariable String customerId) {
+
+        customerCommandService.deleteCustomerId(customerId);
+
+        return ResponseEntity.ok(CustomerResponseMessage.builder()
+                                                        .httpStatus(200)
+                                                        .msg("성공")
+                                                        .result(null)
+                                                        .build());
     }
 }
