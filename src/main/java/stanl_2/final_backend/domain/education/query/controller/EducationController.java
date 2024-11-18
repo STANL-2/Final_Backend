@@ -51,22 +51,22 @@ public class EducationController {
                 .build());
     }
 
-//    @Operation(summary = "자격증/외국어 조회(접속중인 사용자)")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "성공",
-//                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
-//            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
-//                    content = @Content(mediaType = "application/json"))
-//    })
-//    @GetMapping("")
-//    public ResponseEntity<CareerResponseMessage> getCertification(Principal principal){
-//
-//        List<CertificationDTO> careerList = certificationQueryService.selectCertificationList(principal.getName());
-//
-//        return ResponseEntity.ok(CareerResponseMessage.builder()
-//                .httpStatus(200)
-//                .msg("성공")
-//                .result(careerList)
-//                .build());
-//    }
+    @Operation(summary = "학력 조회(접속중인 사용자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("")
+    public ResponseEntity<EducationResponseMessage> getCertification(Principal principal){
+
+        List<EducationDTO> educationList = educationQueryService.selectEducationList(principal.getName());
+
+        return ResponseEntity.ok(EducationResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(educationList)
+                .build());
+    }
 }
