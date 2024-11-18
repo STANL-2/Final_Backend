@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,9 +42,14 @@ public class EvaluationController {
                         content = @Content(mediaType = "application/json"))
         })
         @GetMapping("")
-        public ResponseEntity<EvaluationResponseMessage> getAllEvaluations(@PageableDefault(size = 20) Pageable pageable){
+        public ResponseEntity<EvaluationResponseMessage> getAllEvaluations(@PageableDefault(size = 20) Pageable pageable,
+                                                                           Authentication authentication){
 
-            Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectAllEvaluations(pageable);
+            EvaluationDTO evaluationDTO = new EvaluationDTO();
+
+            evaluationDTO.setRoles(authentication.getAuthorities());
+
+            Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectAllEvaluations(pageable, evaluationDTO);
 
             return ResponseEntity.ok(EvaluationResponseMessage.builder()
                     .httpStatus(200)
@@ -65,7 +71,7 @@ public class EvaluationController {
     @GetMapping("/{centerId}")
     public ResponseEntity<EvaluationResponseMessage> getEvaluationByCenter(@PathVariable String centerId, Pageable pageable){
 
-        Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectEvaluationByCenter(centerId, pageable);
+        Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectEvaluationByCenter(centerId, pageable);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)

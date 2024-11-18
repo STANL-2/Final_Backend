@@ -11,7 +11,9 @@ import java.util.Map;
 @Mapper
 public interface EvaluationMapper {
 
-    List<Map<String, Object>> findEvaluationByCenterId(@Param("requestList") EvaluationRequestList<?> requestList);
+    List<EvaluationDTO> findEvaluationByCenterId(@Param("size") int size
+                                                        ,@Param("offset") int offset
+                                                        ,@Param("centerId") String centerId);
 
     EvaluationDTO findEvaluationById(String id);
 
@@ -19,5 +21,5 @@ public interface EvaluationMapper {
 
     int findEvaluationCount();
 
-    int findEvaluationCountByCenterId();
+    int findEvaluationCountByCenterId(@Param("centerId") String centerId);
 }

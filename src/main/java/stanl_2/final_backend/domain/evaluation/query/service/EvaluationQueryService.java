@@ -8,9 +8,9 @@ import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
 import java.util.Map;
 
 public interface EvaluationQueryService {
-    Page<Map<String, Object>> selectAllEvaluations(Pageable pageable);
+    Page<Map<String, Object>> selectAllEvaluations(Pageable pageable, EvaluationDTO evaluationDTO);
 
     EvaluationDTO selectEvaluationById(String id);
 
-    Page<Map<String, Object>> selectEvaluationByCenter(String centerId, Pageable pageable);
+    Page<EvaluationDTO> selectEvaluationByCenter(String centerId, Pageable pageable);
 }

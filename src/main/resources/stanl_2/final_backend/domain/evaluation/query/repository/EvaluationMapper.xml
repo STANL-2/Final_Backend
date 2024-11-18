@@ -30,7 +30,7 @@
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
     </select>
 
-    <select id="findEvaluationByCenterId" resultMap="evaluationAllResultMap" parameterType="String">
+    <select id="findEvaluationByCenterId" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList">
         SELECT
         A.EVAL_ID
         , A.EVAL_TTL
@@ -40,12 +40,12 @@
         , A.CREATED_AT
         , A.UPDATED_AT
         FROM TB_EVALUATION A
-        WHERE A.CENT_ID = #{data.centerId} AND A.ACTIVE = TRUE
+        WHERE A.CENT_ID = #{centerId} AND A.ACTIVE = TRUE
         ORDER BY CREATED_AT DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findEvaluationById" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO">
+    <select id="findEvaluationById" resultMap="evaluationAllResultMap" parameterType="String">
         SELECT
         A.EVAL_ID
         , A.EVAL_TTL
@@ -56,7 +56,7 @@
         , A.CREATED_AT
         , A.UPDATED_AT
         FROM TB_EVALUATION A
-        WHERE A.ACTIVE = TRUE
+        WHERE A.EVAL_ID = #{id} AND A.ACTIVE = TRUE
     </select>
 
 
@@ -64,14 +64,14 @@
         SELECT
         COUNT(*) AS CNT
         FROM TB_EVALUATION A
-        WHERE A.ACTIVE = TRUE;
+        WHERE A.ACTIVE = TRUE
     </select>
 
-    <select id="findEvaluationCountByCenterId" resultType="int">
+    <select id="findEvaluationCountByCenterId" resultType="int" parameterType="String">
         SELECT
         COUNT(*) AS CNT
         FROM TB_EVALUATION A
-        WHERE A.ACTIVE = TRUE;
+        WHERE A.CENT_ID = #{centerId} AND A.ACTIVE = TRUE;
     </select>
 
 

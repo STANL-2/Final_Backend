@@ -11,6 +11,7 @@ import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationErrorC
 import stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
 import stanl_2.final_backend.domain.evaluation.query.repository.EvaluationMapper;
+import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -19,15 +20,17 @@ import java.util.Map;
 public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 
     private final EvaluationMapper evaluationMapper;
+    private final AESUtils aesUtils;
 
     @Autowired
-    public EvaluationQueryServiceImpl(EvaluationMapper evaluationMapper) {
+    public EvaluationQueryServiceImpl(EvaluationMapper evaluationMapper, AESUtils aesUtils) {
         this.evaluationMapper = evaluationMapper;
+        this.aesUtils = aesUtils;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Map<String, Object>> selectAllEvaluations(Pageable pageable) {
+    public Page<Map<String, Object>> selectAllEvaluations(Pageable pageable, EvaluationDTO evaluationDTO) {
 
         EvaluationRequestList<?> requestList = EvaluationRequestList.builder()
                 .pageable(pageable)
@@ -37,7 +40,7 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 
         int total = evaluationMapper.findEvaluationCount();
 
-        if(evaluationList == null || total == 0){
+        if(evaluationList.isEmpty() || total == 0){
             throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
         }
         return new PageImpl<>(evaluationList, pageable, total);
@@ -46,17 +49,15 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Map<String, Object>> selectEvaluationByCenter(String centerId, Pageable pageable) {
-        EvaluationRequestList<?> requestList = EvaluationRequestList.builder()
-                .data(centerId)
-                .pageable(pageable)
-                .build();
+    public Page<EvaluationDTO> selectEvaluationByCenter(String centerId, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
 
-        List<Map<String, Object>> evaluationList = evaluationMapper.findEvaluationByCenterId(requestList);
+        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterId(size,offset, centerId);
 
-        int total = evaluationMapper.findEvaluationCountByCenterId();
+        int total = evaluationMapper.findEvaluationCountByCenterId(centerId);
 
-        if(evaluationList == null || total == 0){
+        if(evaluationList.isEmpty() || total == 0){
             throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
         }
         return new PageImpl<>(evaluationList, pageable, total);
