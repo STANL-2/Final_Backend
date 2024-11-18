@@ -13,11 +13,11 @@ services:
     expose:
       - "8081"
     depends_on:
-      redis:
-        condition: service_healthy
+      - redis
     networks:
       - app-network
     restart: always
+    entrypoint: [ "sh", "-c", "sleep 10 && java -jar app.jar" ]
 
   redis:
     image: redis:7.0-alpine
@@ -30,7 +30,7 @@ services:
       - redis-data:/data
     restart: always
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-h", "localhost", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -42,10 +42,9 @@ services:
       dockerfile: Dockerfile
     container_name: nginx
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     ports:
-      - "80:80"  # Nginx가 8080 포트로 내부 백엔드에 접근
+      - "80:80"
     networks:
       - app-network
     restart: always
