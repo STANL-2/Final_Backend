@@ -26,11 +26,11 @@ public class CareerQueryServiceImpl implements CareerQueryService {
 
     @Override
     @Transactional
-    public List<CareerDTO> selectCareerList(String id) {
+    public List<CareerDTO> selectCareerList(String loginId) {
 
-        String loginId = authQueryService.selectMemberIdByLoginId(id);
+        String memberId = authQueryService.selectMemberIdByLoginId(loginId);
 
-        List<CareerDTO> careerList = careerMapper.selectCareerInfo(loginId);
+        List<CareerDTO> careerList = careerMapper.selectCareerInfo(memberId);
 
         return careerList;
     }

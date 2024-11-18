@@ -13,5 +13,5 @@ public class CareerRegistDTO {
     private String resignDate;
     private String name;
     private String note;
-    private String memId;
+    private String memberId;
 }

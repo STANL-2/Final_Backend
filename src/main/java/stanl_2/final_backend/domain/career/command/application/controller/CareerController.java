@@ -38,7 +38,7 @@ public class CareerController {
     @PostMapping("")
     public ResponseEntity<CareerResponseMessage> postCareer(@RequestBody CareerRegistDTO careerRegistDTO){
 
-        careerRegistDTO.setMemId(authQueryService.selectMemberIdByLoginId(careerRegistDTO.getMemberLoginId()));
+        careerRegistDTO.setMemberId(authQueryService.selectMemberIdByLoginId(careerRegistDTO.getMemberLoginId()));
 
         careerCommandService.registCareer(careerRegistDTO);
 

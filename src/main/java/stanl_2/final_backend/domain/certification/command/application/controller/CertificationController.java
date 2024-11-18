@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
-import stanl_2.final_backend.domain.career.command.application.dto.CareerRegistDTO;
 import stanl_2.final_backend.domain.career.common.response.CareerResponseMessage;
 import stanl_2.final_backend.domain.certification.command.application.dto.CertificationRegisterDTO;
 import stanl_2.final_backend.domain.certification.command.application.service.CertificationCommandService;
@@ -40,7 +39,7 @@ public class CertificationController {
     @PostMapping("")
     public ResponseEntity<CareerResponseMessage> postCertification(@RequestBody CertificationRegisterDTO certificationRegisterDTO){
 
-        certificationRegisterDTO.setMemId(authQueryService.selectMemberIdByLoginId(certificationRegisterDTO.getMemberLoginId()));
+        certificationRegisterDTO.setMemberId(authQueryService.selectMemberIdByLoginId(certificationRegisterDTO.getMemberLoginId()));
 
         certificationCommandService.registCertification(certificationRegisterDTO);
 

@@ -13,5 +13,5 @@ public class CertificationRegisterDTO {
     private String agency;
     private String acquisitionDate;
     private String note;
-    private String memId;
+    private String memberId;
 }

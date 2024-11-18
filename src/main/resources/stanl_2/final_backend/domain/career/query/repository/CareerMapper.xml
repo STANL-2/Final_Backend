@@ -18,6 +18,6 @@
                A.CAR_NOTE
           FROM TB_CAREER A
           JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
-         WHERE A.MEM_ID = #{ loginId }
+         WHERE A.MEM_ID = #{ memberId }
     </select>
 </mapper>

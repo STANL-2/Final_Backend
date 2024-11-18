@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.career.common.response.CareerResponseMessage;
-import stanl_2.final_backend.domain.career.query.dto.CareerDTO;
 import stanl_2.final_backend.domain.certification.query.dto.CertificationDTO;
 import stanl_2.final_backend.domain.certification.query.service.CertificationQueryService;
 
@@ -38,34 +37,34 @@ public class CertificationController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("/other/{id}")
-    public ResponseEntity<CareerResponseMessage> getCertificationByOther(@PathVariable String id){
+    @GetMapping("/other/{loginId}")
+    public ResponseEntity<CareerResponseMessage> getCertificationByOther(@PathVariable String loginId){
 
-        List<CertificationDTO> certificationList = certificationQueryService.selectCertificationList(id);
+        List<CertificationDTO> certificationList = certificationQueryService.selectCertificationList(loginId);
 
         return ResponseEntity.ok(CareerResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(certificationList)
-                .build());
+                                                       .httpStatus(200)
+                                                       .msg("성공")
+                                                       .result(certificationList)
+                                                       .build());
     }
 
-//    @Operation(summary = "경력 조회(접속중인 사용자)")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "성공",
-//                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
-//            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
-//                    content = @Content(mediaType = "application/json"))
-//    })
-//    @GetMapping("")
-//    public ResponseEntity<CareerResponseMessage> getCareer(Principal principal){
-//
-//        List<CareerDTO> careerList = careerQueryService.selectCareerList(principal.getName());
-//
-//        return ResponseEntity.ok(CareerResponseMessage.builder()
-//                .httpStatus(200)
-//                .msg("성공")
-//                .result(careerList)
-//                .build());
-//    }
+    @Operation(summary = "자격증/외국어 조회(접속중인 사용자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("")
+    public ResponseEntity<CareerResponseMessage> getCertification(Principal principal){
+
+        List<CertificationDTO> careerList = certificationQueryService.selectCertificationList(principal.getName());
+
+        return ResponseEntity.ok(CareerResponseMessage.builder()
+                                                       .httpStatus(200)
+                                                       .msg("성공")
+                                                       .result(careerList)
+                                                       .build());
+    }
 }

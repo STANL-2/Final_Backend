@@ -2,6 +2,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 자식 테이블부터 삭제
+DROP TABLE IF EXISTS sample;
 DROP TABLE IF EXISTS tb_sales_history;
 DROP TABLE IF EXISTS tb_update_history;
 DROP TABLE IF EXISTS tb_product_option;
