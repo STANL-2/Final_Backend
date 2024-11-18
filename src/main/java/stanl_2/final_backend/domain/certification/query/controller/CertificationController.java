@@ -50,7 +50,7 @@ public class CertificationController {
                 .build());
     }
 
-//    @Operation(summary = "경력 조회(접속중인 사용자)")
+//    @Operation(summary = "자격증/외국어 조회(접속중인 사용자)")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "200", description = "성공",
 //                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
@@ -58,7 +58,7 @@ public class CertificationController {
 //                    content = @Content(mediaType = "application/json"))
 //    })
 //    @GetMapping("")
-//    public ResponseEntity<CareerResponseMessage> getCareer(Principal principal){
+//    public ResponseEntity<CareerResponseMessage> getCertification(Principal principal){
 //
 //        List<CareerDTO> careerList = careerQueryService.selectCareerList(principal.getName());
 //

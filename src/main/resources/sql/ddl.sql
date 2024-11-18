@@ -596,10 +596,7 @@ VALUES ('MEM_000000001', 101, 'pwd1234', '김철수', 'chulsoo@example.com', 35,
         '2024-01-08 12:00:00', TRUE),
        ('MEM_000000009', 109, 'pwd9012', '윤아름', 'areum@example.com', 27, 'FEMALE', '901234-5678901', '010-1098-7654',
         '충청북도 청주시', 'Assistant', 'High School', 'Intern', 'CEN_000000009', 'ORG_000000006', '2024-01-09 12:00:00',
-        '2024-01-09 12:00:00', TRUE),
-       ('MEM_000000010', 110, 'pwd0123', '김정훈', 'junghoon@example.com', 33, 'MALE', '012345-6789012', '010-0987-6543',
-        '전라북도 전주시', 'Consultant', 'Master', 'Contract', 'CEN_000000010', 'ORG_000000009', '2024-01-10 12:00:00',
-        '2024-01-10 12:00:00', TRUE);
+        '2024-01-09 12:00:00', TRUE);
 
 INSERT INTO tb_member_role (MEM_ROL_ID, MEM_ROL_NAME, MEM_ID)
 VALUES ('MEM_ROL_000000001', '영업 사원', 'MEM_000000001'),
