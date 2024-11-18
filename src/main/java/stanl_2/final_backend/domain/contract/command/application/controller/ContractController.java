@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.contract.command.application.dto.ContractDeleteDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractModifyDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractRegistDTO;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
@@ -57,8 +59,11 @@ public class ContractController {
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO) {
+    public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO,
+                                                            Authentication authentication) {
 
+        contractRegistRequestDTO.setMemberId(authentication.getName());
+        contractRegistRequestDTO.setRoles(authentication.getAuthorities());
         contractCommandService.registerContract(contractRegistRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
@@ -101,9 +106,12 @@ public class ContractController {
     })
     @PutMapping("{id}")
     public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String id,
-                                                                               @RequestBody ContractModifyDTO contractModifyRequestDTO) {
+                                                               @RequestBody ContractModifyDTO contractModifyRequestDTO,
+                                                               Authentication authentication) {
 
         contractModifyRequestDTO.setContractId(id);
+        contractModifyRequestDTO.setMemberId(authentication.getName());
+        contractModifyRequestDTO.setRoles(authentication.getAuthorities());
         ContractModifyDTO contractModifyDTO = contractCommandService.modifyContract(contractModifyRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
@@ -122,10 +130,14 @@ public class ContractController {
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<ContractResponseMessage> deleteContract(@PathVariable String id) {
+    public ResponseEntity<ContractResponseMessage> deleteContract(@PathVariable String id,
+                                                                  Authentication authentication) {
 
-        // 회원 아이디 받아와야 함
-        contractCommandService.deleteContract(id);
+        ContractDeleteDTO contractDeleteDTO = new ContractDeleteDTO();
+        contractDeleteDTO.setContractId(id);
+        contractDeleteDTO.setMemberId(authentication.getName());
+        contractDeleteDTO.setRoles(authentication.getAuthorities());
+        contractCommandService.deleteContract(contractDeleteDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)

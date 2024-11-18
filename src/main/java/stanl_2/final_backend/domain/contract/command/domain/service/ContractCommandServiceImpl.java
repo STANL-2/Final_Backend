@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.contract.command.domain.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.contract.command.application.dto.ContractDeleteDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractModifyDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractRegistDTO;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
@@ -10,6 +11,7 @@ import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Con
 import stanl_2.final_backend.domain.contract.command.domain.repository.ContractRepository;
 import stanl_2.final_backend.domain.contract.common.exception.ContractCommonException;
 import stanl_2.final_backend.domain.contract.common.exception.ContractErrorCode;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -19,10 +21,12 @@ import java.time.format.DateTimeFormatter;
 public class ContractCommandServiceImpl implements ContractCommandService {
 
     private final ContractRepository contractRepository;
+    private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
 
-    public ContractCommandServiceImpl(ContractRepository contractRepository, ModelMapper modelMapper) {
+    public ContractCommandServiceImpl(ContractRepository contractRepository, AuthQueryService authQueryService, ModelMapper modelMapper) {
         this.contractRepository = contractRepository;
+        this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
     }
 
@@ -53,7 +57,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     @Transactional
     public ContractModifyDTO modifyContract(ContractModifyDTO contractModifyRequestDTO) {
 
-        // 회원인지 확인여부 및 값 가져오기
+        String memberId = authQueryService.selectMemberIdByLoginId(contractModifyRequestDTO.getMemberId());
 
         // 일련번호로 제품테이블의 총식별번호 찾아서 제품 가져오기
 
@@ -63,7 +67,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
         // 가져온 고객 정보에 수정된 값 넣기
 
-        Contract contract = contractRepository.findById(contractModifyRequestDTO.getContractId())
+        Contract contract = (Contract) contractRepository.findByContractIdAndMemberId(contractModifyRequestDTO.getContractId(), memberId)
                 .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
 
         Contract updateContract = modelMapper.map(contractModifyRequestDTO, Contract.class);
@@ -83,11 +87,11 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
     @Override
     @Transactional
-    public void deleteContract(String id) {
+    public void deleteContract(ContractDeleteDTO contractDeleteDTO) {
 
-        // 회원 확인
+        String memberId = authQueryService.selectMemberIdByLoginId(contractDeleteDTO.getMemberId());
 
-        Contract contract = contractRepository.findById(id)
+        Contract contract = (Contract) contractRepository.findByContractIdAndMemberId(contractDeleteDTO.getContractId(), memberId)
                 .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
 
         contract.setActive(false);
