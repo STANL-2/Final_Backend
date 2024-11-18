@@ -31,6 +31,11 @@ DROP TABLE IF EXISTS BATCH_JOB_SEQ;
 DROP TABLE IF EXISTS BATCH_STEP_EXECUTION;
 DROP TABLE IF EXISTS BATCH_JOB_EXECUTION;
 DROP TABLE IF EXISTS BATCH_JOB_INSTANCE;
+DROP TABLE IF EXISTS sample;
+DROP TABLE IF EXISTS tb_career;
+DROP TABLE IF EXISTS tb_certification;
+DROP TABLE IF EXISTS tb_education;
+DROP TABLE IF EXISTS tb_family;
 
 -- 조직 관련 테이블 생성
 CREATE TABLE tb_organization_chart
@@ -123,7 +128,7 @@ CREATE TABLE tb_product
     UPDATED_AT  CHAR(19)     NOT NULL DEFAULT 'CURRENT_TIMESTAMP',
     DELETED_AT  CHAR(19)     NULL,
     ACTIVE      BOOLEAN      NOT NULL DEFAULT TRUE,
-    PRIMARY KEY (PROD_ID, PROD_SER_NO)
+    PRIMARY KEY (PROD_ID)
 );
 
 CREATE TABLE tb_contract
@@ -397,9 +402,8 @@ CREATE TABLE tb_PRODUCT_OPTION
     OPT_OTDR_PCKG    CHAR(1)      NOT NULL DEFAULT '0',
     OPT_SUN_ROOF     CHAR(1)      NOT NULL DEFAULT '0',
     OPT_SOND         CHAR(1)      NOT NULL DEFAULT '0',
-    ACTIVE           BOOLEAN      NOT NULL DEFAULT TRUE,
-    PRIMARY KEY (PROD_ID, PROD_SER_NO),
-    FOREIGN KEY (PROD_ID, PROD_SER_NO) REFERENCES tb_product (PROD_ID, PROD_SER_NO) ON DELETE CASCADE
+    PRIMARY KEY (PROD_ID),
+    FOREIGN KEY (PROD_ID) REFERENCES tb_product (PROD_ID) ON DELETE CASCADE
 );
 
 CREATE TABLE tb_sales_history
@@ -601,17 +605,17 @@ VALUES ('CUS_000000001', '홍길동', 45, 'MALE', '010-1111-2222', '010-2222-333
         'MEM_000000010');
 
 INSERT INTO tb_product (PROD_ID, PROD_SER_NO, PROD_COST, PROD_NAME, PROD_STCK, CREATED_AT, UPDATED_AT, ACTIVE)
-VALUES ('PRO_000000001', 'KNAHAA4AALU1A00001', 25000000, '쏘렌토', 10, '2024-01-10 10:00:00', '2024-01-10 11:00:00', TRUE),
-       ('PRO_000000002', 'KNAHBA4BALR2Z00002', 22000000, '스포티지', 15, '2024-01-11 11:00:00', '2024-01-11 12:00:00',
+VALUES ('PROD_000000001', 'KNAHAA4AALU1A00001', 25000000, '쏘렌토', 10, '2024-01-10 10:00:00', '2024-01-10 11:00:00', TRUE),
+       ('PROD_000000002', 'KNAHBA4BALR2Z00002', 22000000, '스포티지', 15, '2024-01-11 11:00:00', '2024-01-11 12:00:00',
         TRUE),
-       ('PRO_000000003', 'KMBHC64CAMJ5A00003', 28000000, 'K7', 8, '2024-01-12 12:00:00', '2024-01-12 13:00:00', TRUE),
-       ('PRO_000000004', 'KNJFA42DALU3C00004', 19000000, '셀토스', 12, '2024-01-13 13:00:00', '2024-01-13 14:00:00', TRUE),
-       ('PRO_000000005', 'KFBGBM5EARP1M00005', 18000000, 'K3', 20, '2024-01-14 14:00:00', '2024-01-14 15:00:00', TRUE),
-       ('PRO_000000006', 'KNHGA6BALUP7A00006', 34000000, '모하비', 7, '2024-01-15 15:00:00', '2024-01-15 16:00:00', TRUE),
-       ('PRO_000000007', 'KNJFA34AALU4Z00007', 32000000, 'K8', 5, '2024-01-16 16:00:00', '2024-01-16 17:00:00', TRUE),
-       ('PRO_000000008', 'KMAHDA2AAMJ3T00008', 27000000, '스팅어', 9, '2024-01-17 17:00:00', '2024-01-17 18:00:00', TRUE),
-       ('PRO_000000009', 'KNAHCA5BALU5C00009', 23000000, '니로', 14, '2024-01-18 18:00:00', '2024-01-18 19:00:00', TRUE),
-       ('PRO_000000010', 'KNFHC54CAMR1A00010', 28000000, 'K5', 6, '2024-01-19 19:00:00', '2024-01-19 20:00:00', TRUE);
+       ('PROD_000000003', 'KMBHC64CAMJ5A00003', 28000000, 'K7', 8, '2024-01-12 12:00:00', '2024-01-12 13:00:00', TRUE),
+       ('PROD_000000004', 'KNJFA42DALU3C00004', 19000000, '셀토스', 12, '2024-01-13 13:00:00', '2024-01-13 14:00:00', TRUE),
+       ('PROD_000000005', 'KFBGBM5EARP1M00005', 18000000, 'K3', 20, '2024-01-14 14:00:00', '2024-01-14 15:00:00', TRUE),
+       ('PROD_000000006', 'KNHGA6BALUP7A00006', 34000000, '모하비', 7, '2024-01-15 15:00:00', '2024-01-15 16:00:00', TRUE),
+       ('PROD_000000007', 'KNJFA34AALU4Z00007', 32000000, 'K8', 5, '2024-01-16 16:00:00', '2024-01-16 17:00:00', TRUE),
+       ('PROD_000000008', 'KMAHDA2AAMJ3T00008', 27000000, '스팅어', 9, '2024-01-17 17:00:00', '2024-01-17 18:00:00', TRUE),
+       ('PROD_000000009', 'KNAHCA5BALU5C00009', 23000000, '니로', 14, '2024-01-18 18:00:00', '2024-01-18 19:00:00', TRUE),
+       ('PROD_000000010', 'KNFHC54CAMR1A00010', 28000000, 'K5', 6, '2024-01-19 19:00:00', '2024-01-19 20:00:00', TRUE);
 
 
 INSERT INTO tb_contract (CONR_ID, CONR_NAME, CONR_CUST_NAME, CONR_CUST_IDEN_NO, CONR_CUST_ADR,
@@ -947,38 +951,38 @@ INSERT INTO tb_product_option (PROD_ID, PROD_SER_NO, OPT_CNTY, OPT_MNFR, OPT_VHC
                                OPT_SFTY_DVCE, OPT_ENGN_CPCT, OPT_SCRT_CODE, OPT_PRDC_YEAR, OPT_PRDC_PLNT, OPT_ENGN,
                                OPT_MSSN,
                                OPT_TRIM, OPT_XTNL_COLR, OPT_ITNL_COLR, OPT_HUD, OPT_NAVI, OPT_DRVE_WISE, OPT_SMRT_CNCT,
-                               OPT_STYL, OPT_MY_CFRT_PCKG, OPT_OTDR_PCKG, OPT_SUN_ROOF, OPT_SOND, ACTIVE)
+                               OPT_STYL, OPT_MY_CFRT_PCKG, OPT_OTDR_PCKG, OPT_SUN_ROOF, OPT_SOND)
 VALUES
 -- 데이터 1
-('PRO_000000001', 'KNAHAA4AALU1A00001', 'K', 'N', 'A', 'A', 'L', '4', '2', 'A', 'P', 'A', 'U', '1', '0', '1', 'B', 'W',
- '1', '1', '1', '1', '1', '0', '1', '1', '1', TRUE),
+('PROD_000000001', 'KNAHAA4AALU1A00001', 'K', 'N', 'A', 'A', 'L', '4', '2', 'A', 'P', 'A', 'U', '1', '0', '1', 'B', 'W',
+ '1', '1', '1', '1', '1', '0', '1', '1', '1'),
 -- 데이터 2
-('PRO_000000002', 'KNAHBA4BALR2Z00002', 'K', 'N', 'H', 'B', 'L', '4', '4', 'B', 'R', 'B', 'Z', '1', '1', '0', 'G', 'B',
- '0', '1', '0', '1', '0', '1', '0', '0', '1', TRUE),
+('PROD_000000002', 'KNAHBA4BALR2Z00002', 'K', 'N', 'H', 'B', 'L', '4', '4', 'B', 'R', 'B', 'Z', '1', '1', '0', 'G', 'B',
+ '0', '1', '0', '1', '0', '1', '0', '0', '1'),
 -- 데이터 3
-('PRO_000000003', 'KMBHC64CAMJ5A00003', 'K', 'M', 'H', 'C', 'M', '6', '3', 'C', 'P', 'C', 'A', '0', '1', '1', 'R', 'G',
- '1', '1', '1', '0', '1', '1', '0', '1', '0', TRUE),
+('PROD_000000003', 'KMBHC64CAMJ5A00003', 'K', 'M', 'H', 'C', 'M', '6', '3', 'C', 'P', 'C', 'A', '0', '1', '1', 'R', 'G',
+ '1', '1', '1', '0', '1', '1', '0', '1', '0'),
 -- 데이터 4
-('PRO_000000004', 'KNJFA42DALU3C00004', 'K', 'N', 'J', 'D', 'L', '2', '4', 'A', 'R', 'D', 'C', '1', '0', '0', 'B', 'R',
- '0', '0', '0', '1', '0', '0', '1', '0', '1', TRUE),
+('PROD_000000004', 'KNJFA42DALU3C00004', 'K', 'N', 'J', 'D', 'L', '2', '4', 'A', 'R', 'D', 'C', '1', '0', '0', 'B', 'R',
+ '0', '0', '0', '1', '0', '0', '1', '0', '1'),
 -- 데이터 5
-('PRO_000000005', 'KFBGBM5EARP1M00005', 'K', 'B', 'F', 'B', 'M', '5', '1', 'B', 'P', 'E', 'M', '1', '1', '1', 'W', 'B',
- '1', '1', '0', '0', '1', '1', '0', '1', '1', TRUE),
+('PROD_000000005', 'KFBGBM5EARP1M00005', 'K', 'B', 'F', 'B', 'M', '5', '1', 'B', 'P', 'E', 'M', '1', '1', '1', 'W', 'B',
+ '1', '1', '0', '0', '1', '1', '0', '1', '1'),
 -- 데이터 6
-('PRO_000000006', 'KNHGA6BALUP7A00006', 'K', 'N', 'H', 'G', 'L', '6', '3', 'A', 'R', 'F', 'A', '0', '0', '1', 'B', 'G',
- '1', '1', '1', '1', '0', '1', '1', '0', '0', TRUE),
+('PROD_000000006', 'KNHGA6BALUP7A00006', 'K', 'N', 'H', 'G', 'L', '6', '3', 'A', 'R', 'F', 'A', '0', '0', '1', 'B', 'G',
+ '1', '1', '1', '1', '0', '1', '1', '0', '0'),
 -- 데이터 7
-('PRO_000000007', 'KNJFA34AALU4Z00007', 'K', 'N', 'J', 'A', 'M', '4', '4', 'C', 'P', 'G', 'Z', '1', '1', '0', 'R', 'W',
- '0', '0', '1', '0', '1', '0', '1', '1', '1', TRUE),
+('PROD_000000007', 'KNJFA34AALU4Z00007', 'K', 'N', 'J', 'A', 'M', '4', '4', 'C', 'P', 'G', 'Z', '1', '1', '0', 'R', 'W',
+ '0', '0', '1', '0', '1', '0', '1', '1', '1'),
 -- 데이터 8
-('PRO_000000008', 'KMAHDA2AAMJ3T00008', 'K', 'M', 'H', 'D', 'L', '2', '2', 'A', 'R', 'H', 'T', '0', '0', '1', 'B', 'G',
- '1', '1', '0', '1', '0', '1', '1', '0', '0', TRUE),
+('PROD_000000008', 'KMAHDA2AAMJ3T00008', 'K', 'M', 'H', 'D', 'L', '2', '2', 'A', 'R', 'H', 'T', '0', '0', '1', 'B', 'G',
+ '1', '1', '0', '1', '0', '1', '1', '0', '0'),
 -- 데이터 9
-('PRO_000000009', 'KNAHCA5BALU5C00009', 'K', 'N', 'A', 'C', 'M', '5', '1', 'B', 'P', 'J', 'C', '1', '1', '0', 'R', 'R',
- '0', '1', '1', '1', '1', '0', '1', '1', '0', TRUE),
+('PROD_000000009', 'KNAHCA5BALU5C00009', 'K', 'N', 'A', 'C', 'M', '5', '1', 'B', 'P', 'J', 'C', '1', '1', '0', 'R', 'R',
+ '0', '1', '1', '1', '1', '0', '1', '1', '0'),
 -- 데이터 10
-('PRO_000000010', 'KNFHC54CAMR1A00010', 'K', 'N', 'F', 'F', 'N', '4', '3', 'C', 'R', 'K', 'A', '0', '1', '1', 'W', 'B',
- '1', '1', '0', '0', '0', '1', '0', '1', '1', TRUE);
+('PROD_000000010', 'KNFHC54CAMR1A00010', 'K', 'N', 'F', 'F', 'N', '4', '3', 'C', 'R', 'K', 'A', '0', '1', '1', 'W', 'B',
+ '1', '1', '0', '0', '0', '1', '0', '1', '1');
 
 INSERT INTO tb_sales_history (SAL_HIST_ID, CONR_ID)
 VALUES ('SAL_000000001', 'CON_000000001'),
