@@ -3,5 +3,24 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stanl_2.final_backend.domain.education.query.repository.EducationMapper">
-
+    <resultMap id="Education" type="stanl_2.final_backend.domain.education.query.dto.EducationDTO">
+        <result property="entranceDate" column="EDU_ENTD"/>
+        <result property="graduationDate" column="EDU_GRAD"/>
+        <result property="name" column="EDU_NAME"/>
+        <result property="major" column="EDU_MJR"/>
+        <result property="score" column="EDU_SCO"/>
+        <result property="note" column="EDU_NOTE"/>
+    </resultMap>
+    <select id="selectEducationInfo" resultMap="Education" parameterType="String">
+        SELECT
+               A.EDU_ENTD,
+               A.EDU_GRAD,
+               A.EDU_NAME,
+               A.EDU_MJR,
+               A.EDU_SCO,
+               A.EDU_NOTE
+          FROM TB_EDUCATION A
+          JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
+         WHERE A.MEM_ID = #{ memberId }
+    </select>
 </mapper>

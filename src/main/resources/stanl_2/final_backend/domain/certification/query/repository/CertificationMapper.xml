@@ -20,6 +20,6 @@
                A.CER_NOTE
           FROM TB_CERTIFICATION A
           JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
-         WHERE A.MEM_ID = #{ loginId }
+         WHERE A.MEM_ID = #{ memberId }
     </select>
 </mapper>
