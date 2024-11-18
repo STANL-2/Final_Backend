@@ -1,10 +1,25 @@
 package stanl_2.final_backend.domain.evaluation.query.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class EvaluationSearchDTO {
     private String evalId;
     private String title;
-    private String writerId;
-    private String memberId;
+    private String writerName;
+    private String memberName;
     private String centerId;
-    private String createdAt;
+    private String startDate;
+    private String endDate;
+    private Collection<? extends GrantedAuthority> roles;
+    private String searcherName;
 }

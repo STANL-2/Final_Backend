@@ -9,7 +9,6 @@ import java.util.Collection;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class EvaluationDTO {
     private String evalId;
     private String title;
