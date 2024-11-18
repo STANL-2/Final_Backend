@@ -2,9 +2,9 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 자식 테이블부터 삭제
-DROP TABLE IF EXISTS tb_product_option;
+DROP TABLE IF EXISTS tb_sales_history;
 DROP TABLE IF EXISTS tb_update_history;
-DROP TABLE IF EXISTS tb_member_detail;
+DROP TABLE IF EXISTS tb_product_option;
 DROP TABLE IF EXISTS tb_alarm;
 DROP TABLE IF EXISTS tb_schedule;
 DROP TABLE IF EXISTS tb_file;
@@ -15,27 +15,17 @@ DROP TABLE IF EXISTS tb_problem;
 DROP TABLE IF EXISTS tb_order;
 DROP TABLE IF EXISTS tb_notice;
 DROP TABLE IF EXISTS tb_contract;
-DROP TABLE IF EXISTS tb_product;
 DROP TABLE IF EXISTS tb_customer_info;
 DROP TABLE IF EXISTS tb_member_role;
 DROP TABLE IF EXISTS tb_member;
 DROP TABLE IF EXISTS tb_center;
-DROP TABLE IF EXISTS tb_organization_chart;
-DROP TABLE IF EXISTS tb_sales_history;
-DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_SEQ;
-DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_CONTEXT;
-DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_CONTEXT;
-DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_PARAMS;
-DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_SEQ;
-DROP TABLE IF EXISTS BATCH_JOB_SEQ;
-DROP TABLE IF EXISTS BATCH_STEP_EXECUTION;
-DROP TABLE IF EXISTS BATCH_JOB_EXECUTION;
-DROP TABLE IF EXISTS BATCH_JOB_INSTANCE;
-DROP TABLE IF EXISTS sample;
-DROP TABLE IF EXISTS tb_career;
-DROP TABLE IF EXISTS tb_certification;
-DROP TABLE IF EXISTS tb_education;
 DROP TABLE IF EXISTS tb_family;
+DROP TABLE IF EXISTS tb_education;
+DROP TABLE IF EXISTS tb_certification;
+DROP TABLE IF EXISTS tb_career;
+DROP TABLE IF EXISTS tb_product;
+DROP TABLE IF EXISTS tb_organization_chart;
+
 
 -- 조직 관련 테이블 생성
 CREATE TABLE tb_organization_chart
@@ -128,7 +118,7 @@ CREATE TABLE tb_product
     UPDATED_AT  CHAR(19)     NOT NULL DEFAULT 'CURRENT_TIMESTAMP',
     DELETED_AT  CHAR(19)     NULL,
     ACTIVE      BOOLEAN      NOT NULL DEFAULT TRUE,
-    PRIMARY KEY (PROD_ID)
+    PRIMARY KEY (PROD_ID, PROD_SER_NO)
 );
 
 CREATE TABLE tb_contract
@@ -205,7 +195,7 @@ CREATE TABLE tb_order
     FOREIGN KEY (CONR_ID) REFERENCES tb_contract (CONR_ID) ON DELETE CASCADE
 );
 
-CREATE TABLE tb_PROBLEM
+CREATE TABLE tb_problem
 (
     PROB_ID    VARCHAR(255) NOT NULL,
     PROB_TTL   VARCHAR(255) NOT NULL,
@@ -322,44 +312,73 @@ CREATE TABLE tb_alarm
     ALR_ID        VARCHAR(255) NOT NULL,
     ALR_MSG       VARCHAR(255) NOT NULL,
     ALR_URL       VARCHAR(255) NOT NULL,
-    ALR_TYPE      VARCHAR(255) NOT NULL,
     ALR_READ_STAT BOOLEAN      NOT NULL DEFAULT FALSE,
     CREATED_AT    CHAR(19)     NOT NULL,
-    ALR_SND    VARCHAR(255) NOT NULL DEFAULT 'NOTICE',
     MEM_ID        VARCHAR(255) NOT NULL,
     PRIMARY KEY (ALR_ID),
     FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
 );
 
-CREATE TABLE tb_member_detail
+CREATE TABLE tb_family
 (
-    MEM_DET_ID       VARCHAR(255) NOT NULL,
-    MEM_DET_REL      VARCHAR(255) NULL,
-    MEM_DET_NAME     VARCHAR(255) NULL,
-    MEM_DET_BIR      VARCHAR(255) NULL,
-    MEM_DET_IDEN_NO  VARCHAR(255) NULL,
-    MEM_DET_PHO      VARCHAR(255) NULL,
-    MEM_DET_SEX      VARCHAR(255) NULL COMMENT 'FEMALE/MALE',
-    MEM_DET_DIS      BOOLEAN      NULL,
-    MEM_DET_DIE      BOOLEAN      NULL,
-    MEM_DET_NOTE     VARCHAR(255) NULL,
-    MEM_DET_ENTD     VARCHAR(255) NOT NULL,
-    MEM_DET_GRAD     VARCHAR(255) NOT NULL,
-    MEM_DET_FNL_EDC  VARCHAR(255) NOT NULL,
-    MEM_DET_EDU      VARCHAR(255) NULL,
-    MEM_DET_MJR      VARCHAR(255) NULL,
-    MEM_DET_EMP_DATE VARCHAR(255) NULL,
-    MEM_DET_RTR_DATE VARCHAR(255) NULL,
-    CAR_INFO         VARCHAR(255) NULL,
-    CERT_DATE        VARCHAR(255) NULL,
-    CERT_INST        VARCHAR(255) NULL,
-    CERT_NAME        VARCHAR(255) NULL,
-    CERT_SCO         VARCHAR(255) NULL,
-    CREATED_AT       CHAR(19)     NOT NULL,
-    UPDATED_AT       CHAR(19)     NOT NULL,
-    MEM_ID           VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고',
-    PRIMARY KEY (MEM_DET_ID),
-    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
+    FAM_ID          VARCHAR(255) NOT NULL,
+    FAM_NAME        VARCHAR(255) NOT NULL,
+    FAM_REL         VARCHAR(255) NOT NULL,
+    FAM_BIR         VARCHAR(255) NOT NULL,
+    FAM_IDEN_NO     VARCHAR(255) NOT NULL,
+    FAM_PHO         VARCHAR(255) NOT NULL,
+    FAM_SEX         VARCHAR(255) NOT NULL,
+    FAM_DIS         BOOLEAN      NOT NULL,
+    FAM_DIE         BOOLEAN      NOT NULL,
+    FAM_NOTE        VARCHAR(255) NULL,
+    CREATED_AT      CHAR(19)     NOT NULL,
+    UPDATED_AT      CHAR(19)     NOT NULL,
+    MEM_ID          VARCHAR(255) NOT NULL,
+    PRIMARY KEY (FAM_ID),
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member(MEM_ID)
+);
+
+CREATE TABLE tb_education
+(
+    EDU_ID          VARCHAR(255) NOT NULL,
+    EDU_ENTD        VARCHAR(255) NOT NULL,
+    EDU_GRAD        VARCHAR(255) NOT NULL,
+    EDU_NAME        VARCHAR(255) NOT NULL,
+    EDU_MJR         VARCHAR(255) NOT NULL,
+    EDU_SCO         VARCHAR(255) NULL,
+    EDU_NOTE        VARCHAR(255) NULL,
+    CREATED_AT      CHAR(19)     NOT NULL,
+    UPDATED_AT      CHAR(19)     NOT NULL,
+    MEM_ID          VARCHAR(255) NOT NULL,
+    PRIMARY KEY (EDU_ID),
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member(MEM_ID)
+);
+
+CREATE TABLE tb_certification
+(
+    CER_ID          VARCHAR(255) NOT NULL,
+    CER_DATE        VARCHAR(255) NOT NULL,
+    CER_INST        VARCHAR(255) NOT NULL,
+    CER_NAME        VARCHAR(255) NOT NULL,
+    CER_SCO         VARCHAR(255) NOT NULL,
+    CER_NOTE        VARCHAR(255) NULL,
+    CREATED_AT      CHAR(19)     NOT NULL,
+    MEM_ID          VARCHAR(255) NOT NULL,
+    PRIMARY KEY (CER_ID),
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member(MEM_ID)
+);
+
+CREATE TABLE tb_career
+(
+    CAR_ID          VARCHAR(255) NOT NULL,
+    CAR_EMP_DATE    VARCHAR(255) NOT NULL,
+    CAR_RTR_DATE    VARCHAR(255) NULL,
+    CAR_NAME        VARCHAR(255) NOT NULL,
+    CAR_NOTE        VARCHAR(255) NULL,
+    CREATED_AT      CHAR(19)     NOT NULL,
+    MEM_ID          VARCHAR(255) NOT NULL,
+    PRIMARY KEY (CAR_ID),
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member(MEM_ID)
 );
 
 CREATE TABLE tb_UPDATE_HISTORY
@@ -404,8 +423,9 @@ CREATE TABLE tb_PRODUCT_OPTION
     OPT_OTDR_PCKG    CHAR(1)      NOT NULL DEFAULT '0',
     OPT_SUN_ROOF     CHAR(1)      NOT NULL DEFAULT '0',
     OPT_SOND         CHAR(1)      NOT NULL DEFAULT '0',
-    PRIMARY KEY (PROD_ID),
-    FOREIGN KEY (PROD_ID) REFERENCES tb_product (PROD_ID) ON DELETE CASCADE
+    ACTIVE           BOOLEAN      NOT NULL DEFAULT TRUE,
+    PRIMARY KEY (PROD_ID, PROD_SER_NO),
+    FOREIGN KEY (PROD_ID, PROD_SER_NO) REFERENCES tb_product (PROD_ID, PROD_SER_NO) ON DELETE CASCADE
 );
 
 CREATE TABLE tb_sales_history
@@ -413,96 +433,6 @@ CREATE TABLE tb_sales_history
     SAL_HIST_ID VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고',
     CONR_ID     VARCHAR(255) NOT NULL COMMENT 'Comment 1번 참고'
 );
-
-# spring batch & scheduler 테이블
-CREATE TABLE BATCH_JOB_INSTANCE
-(
-    JOB_INSTANCE_ID BIGINT       NOT NULL PRIMARY KEY,
-    VERSION         BIGINT,
-    JOB_NAME        VARCHAR(100) NOT NULL,
-    JOB_KEY         VARCHAR(32)  NOT NULL,
-    constraint JOB_INST_UN unique (JOB_NAME, JOB_KEY)
-) ENGINE = InnoDB;
-
-CREATE TABLE BATCH_JOB_EXECUTION
-(
-    JOB_EXECUTION_ID BIGINT      NOT NULL PRIMARY KEY,
-    VERSION          BIGINT,
-    JOB_INSTANCE_ID  BIGINT      NOT NULL,
-    CREATE_TIME      DATETIME(6) NOT NULL,
-    START_TIME       DATETIME(6) DEFAULT NULL,
-    END_TIME         DATETIME(6) DEFAULT NULL,
-    STATUS           VARCHAR(10),
-    EXIT_CODE        VARCHAR(2500),
-    EXIT_MESSAGE     VARCHAR(2500),
-    LAST_UPDATED     DATETIME(6),
-    constraint JOB_INST_EXEC_FK foreign key (JOB_INSTANCE_ID)
-        references BATCH_JOB_INSTANCE (JOB_INSTANCE_ID)
-) ENGINE = InnoDB;
-
-CREATE TABLE BATCH_JOB_EXECUTION_PARAMS
-(
-    JOB_EXECUTION_ID BIGINT       NOT NULL,
-    PARAMETER_NAME   VARCHAR(100) NOT NULL,
-    PARAMETER_TYPE   VARCHAR(100) NOT NULL,
-    PARAMETER_VALUE  VARCHAR(2500),
-    IDENTIFYING      CHAR(1)      NOT NULL,
-    constraint JOB_EXEC_PARAMS_FK foreign key (JOB_EXECUTION_ID)
-        references BATCH_JOB_EXECUTION (JOB_EXECUTION_ID)
-) ENGINE = InnoDB;
-
-CREATE TABLE BATCH_STEP_EXECUTION
-(
-    STEP_EXECUTION_ID  BIGINT       NOT NULL PRIMARY KEY,
-    VERSION            BIGINT       NOT NULL,
-    STEP_NAME          VARCHAR(100) NOT NULL,
-    JOB_EXECUTION_ID   BIGINT       NOT NULL,
-    CREATE_TIME        DATETIME(6)  NOT NULL,
-    START_TIME         DATETIME(6) DEFAULT NULL,
-    END_TIME           DATETIME(6) DEFAULT NULL,
-    STATUS             VARCHAR(10),
-    COMMIT_COUNT       BIGINT,
-    READ_COUNT         BIGINT,
-    FILTER_COUNT       BIGINT,
-    WRITE_COUNT        BIGINT,
-    READ_SKIP_COUNT    BIGINT,
-    WRITE_SKIP_COUNT   BIGINT,
-    PROCESS_SKIP_COUNT BIGINT,
-    ROLLBACK_COUNT     BIGINT,
-    EXIT_CODE          VARCHAR(2500),
-    EXIT_MESSAGE       VARCHAR(2500),
-    LAST_UPDATED       DATETIME(6),
-    constraint JOB_EXEC_STEP_FK foreign key (JOB_EXECUTION_ID)
-        references BATCH_JOB_EXECUTION (JOB_EXECUTION_ID)
-) ENGINE = InnoDB;
-
-CREATE TABLE BATCH_STEP_EXECUTION_CONTEXT
-(
-    STEP_EXECUTION_ID  BIGINT        NOT NULL PRIMARY KEY,
-    SHORT_CONTEXT      VARCHAR(2500) NOT NULL,
-    SERIALIZED_CONTEXT TEXT,
-    constraint STEP_EXEC_CTX_FK foreign key (STEP_EXECUTION_ID)
-        references BATCH_STEP_EXECUTION (STEP_EXECUTION_ID)
-) ENGINE = InnoDB;
-
-CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT
-(
-    JOB_EXECUTION_ID   BIGINT        NOT NULL PRIMARY KEY,
-    SHORT_CONTEXT      VARCHAR(2500) NOT NULL,
-    SERIALIZED_CONTEXT TEXT,
-    constraint JOB_EXEC_CTX_FK foreign key (JOB_EXECUTION_ID)
-        references BATCH_JOB_EXECUTION (JOB_EXECUTION_ID)
-) ENGINE = InnoDB;
-
-CREATE SEQUENCE BATCH_STEP_EXECUTION_SEQ START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775806
-    INCREMENT BY 1 NOCACHE NOCYCLE ENGINE =InnoDB;
-
-CREATE SEQUENCE BATCH_JOB_EXECUTION_SEQ START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775806
-    INCREMENT BY 1 NOCACHE NOCYCLE ENGINE =InnoDB;
-
-CREATE SEQUENCE BATCH_JOB_SEQ START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775806
-    INCREMENT BY 1 NOCACHE NOCYCLE ENGINE =InnoDB;
-
 
 INSERT INTO tb_organization_chart (ORG_CHA_ID, ORG_CHA_NAME, ORG_CHA_DEPTH)
 VALUES ('ORG_000000001', '본사', 1),
@@ -564,25 +494,19 @@ VALUES ('MEM_000000001', 101, 'pwd1234', '김철수', 'chulsoo@example.com', 35,
         '2024-01-07 12:00:00', TRUE),
        ('MEM_000000008', 108, 'pwd8901', '이준호', 'junho@example.com', 36, 'MALE', '890123-4567890', '010-2109-8765',
         '경기도 수원시', 'Technician', 'Bachelor', 'Full-time', 'CEN_000000008', 'ORG_000000008', '2024-01-08 12:00:00',
-        '2024-01-08 12:00:00', TRUE),
-       ('MEM_000000009', 109, 'pwd9012', '윤아름', 'areum@example.com', 27, 'FEMALE', '901234-5678901', '010-1098-7654',
-        '충청북도 청주시', 'Assistant', 'High School', 'Intern', 'CEN_000000009', 'ORG_000000006', '2024-01-09 12:00:00',
-        '2024-01-09 12:00:00', TRUE),
-       ('MEM_000000010', 110, 'pwd0123', '김정훈', 'junghoon@example.com', 33, 'MALE', '012345-6789012', '010-0987-6543',
-        '전라북도 전주시', 'Consultant', 'Master', 'Contract', 'CEN_000000010', 'ORG_000000009', '2024-01-10 12:00:00',
-        '2024-01-10 12:00:00', TRUE);
+        '2024-01-08 12:00:00', TRUE);
 
 INSERT INTO tb_member_role (MEM_ROL_ID, MEM_ROL_NAME, MEM_ID)
-VALUES ('ROL_000000001', '영업 사원', 'MEM_000000001'),
-       ('ROL_000000002', '영업 사원', 'MEM_000000002'),
-       ('ROL_000000003', '영업 사원', 'MEM_000000003'),
-       ('ROL_000000004', '영업 사원', 'MEM_000000004'),
-       ('ROL_000000005', '영업 관리자', 'MEM_000000005'),
-       ('ROL_000000006', '영업 관리자', 'MEM_000000009'),
-       ('ROL_000000007', '영업 관리자', 'MEM_000000007'),
-       ('ROL_000000008', '영업 담당자', 'MEM_000000008'),
-       ('ROL_000000009', '영업 담당자', 'MEM_000000010'),
-       ('ROL_000000010', '영업 담당자', 'MEM_000000006');
+VALUES ('MEM_ROL_000000001', '영업 사원', 'MEM_000000001'),
+       ('MEM_ROL_000000002', '영업 사원', 'MEM_000000002'),
+       ('MEM_ROL_000000003', '영업 사원', 'MEM_000000003'),
+       ('MEM_ROL_000000004', '영업 사원', 'MEM_000000004'),
+       ('MEM_ROL_000000005', '영업 관리자', 'MEM_000000005'),
+       ('MEM_ROL_000000006', '영업 관리자', 'MEM_000000009'),
+       ('MEM_ROL_000000007', '영업 관리자', 'MEM_000000007'),
+       ('MEM_ROL_000000008', '영업 담당자', 'MEM_000000008'),
+       ('MEM_ROL_000000009', '영업 담당자', 'MEM_000000010'),
+       ('MEM_ROL_000000010', '영업 담당자', 'MEM_000000006');
 
 INSERT INTO tb_customer_info (CUST_ID, CUST_NAME, CUST_AGE, CUST_SEX, CUST_PHO, CUST_EMER_PHO, CUST_EMA, ACTIVE, MEM_ID)
 VALUES ('CUS_000000001', '홍길동', 45, 'MALE', '010-1111-2222', '010-2222-3333', 'gildong@example.com', TRUE,
@@ -607,17 +531,17 @@ VALUES ('CUS_000000001', '홍길동', 45, 'MALE', '010-1111-2222', '010-2222-333
         'MEM_000000010');
 
 INSERT INTO tb_product (PROD_ID, PROD_SER_NO, PROD_COST, PROD_NAME, PROD_STCK, CREATED_AT, UPDATED_AT, ACTIVE)
-VALUES ('PROD_000000001', 'KNAHAA4AALU1A00001', 25000000, '쏘렌토', 10, '2024-01-10 10:00:00', '2024-01-10 11:00:00', TRUE),
-       ('PROD_000000002', 'KNAHBA4BALR2Z00002', 22000000, '스포티지', 15, '2024-01-11 11:00:00', '2024-01-11 12:00:00',
+VALUES ('PRO_000000001', 'KNAHAA4AALU1A00001', 25000000, '쏘렌토', 10, '2024-01-10 10:00:00', '2024-01-10 11:00:00', TRUE),
+       ('PRO_000000002', 'KNAHBA4BALR2Z00002', 22000000, '스포티지', 15, '2024-01-11 11:00:00', '2024-01-11 12:00:00',
         TRUE),
-       ('PROD_000000003', 'KMBHC64CAMJ5A00003', 28000000, 'K7', 8, '2024-01-12 12:00:00', '2024-01-12 13:00:00', TRUE),
-       ('PROD_000000004', 'KNJFA42DALU3C00004', 19000000, '셀토스', 12, '2024-01-13 13:00:00', '2024-01-13 14:00:00', TRUE),
-       ('PROD_000000005', 'KFBGBM5EARP1M00005', 18000000, 'K3', 20, '2024-01-14 14:00:00', '2024-01-14 15:00:00', TRUE),
-       ('PROD_000000006', 'KNHGA6BALUP7A00006', 34000000, '모하비', 7, '2024-01-15 15:00:00', '2024-01-15 16:00:00', TRUE),
-       ('PROD_000000007', 'KNJFA34AALU4Z00007', 32000000, 'K8', 5, '2024-01-16 16:00:00', '2024-01-16 17:00:00', TRUE),
-       ('PROD_000000008', 'KMAHDA2AAMJ3T00008', 27000000, '스팅어', 9, '2024-01-17 17:00:00', '2024-01-17 18:00:00', TRUE),
-       ('PROD_000000009', 'KNAHCA5BALU5C00009', 23000000, '니로', 14, '2024-01-18 18:00:00', '2024-01-18 19:00:00', TRUE),
-       ('PROD_000000010', 'KNFHC54CAMR1A00010', 28000000, 'K5', 6, '2024-01-19 19:00:00', '2024-01-19 20:00:00', TRUE);
+       ('PRO_000000003', 'KMBHC64CAMJ5A00003', 28000000, 'K7', 8, '2024-01-12 12:00:00', '2024-01-12 13:00:00', TRUE),
+       ('PRO_000000004', 'KNJFA42DALU3C00004', 19000000, '셀토스', 12, '2024-01-13 13:00:00', '2024-01-13 14:00:00', TRUE),
+       ('PRO_000000005', 'KFBGBM5EARP1M00005', 18000000, 'K3', 20, '2024-01-14 14:00:00', '2024-01-14 15:00:00', TRUE),
+       ('PRO_000000006', 'KNHGA6BALUP7A00006', 34000000, '모하비', 7, '2024-01-15 15:00:00', '2024-01-15 16:00:00', TRUE),
+       ('PRO_000000007', 'KNJFA34AALU4Z00007', 32000000, 'K8', 5, '2024-01-16 16:00:00', '2024-01-16 17:00:00', TRUE),
+       ('PRO_000000008', 'KMAHDA2AAMJ3T00008', 27000000, '스팅어', 9, '2024-01-17 17:00:00', '2024-01-17 18:00:00', TRUE),
+       ('PRO_000000009', 'KNAHCA5BALU5C00009', 23000000, '니로', 14, '2024-01-18 18:00:00', '2024-01-18 19:00:00', TRUE),
+       ('PRO_000000010', 'KNFHC54CAMR1A00010', 28000000, 'K5', 6, '2024-01-19 19:00:00', '2024-01-19 20:00:00', TRUE);
 
 
 INSERT INTO tb_contract (CONR_ID, CONR_NAME, CONR_CUST_NAME, CONR_CUST_IDEN_NO, CONR_CUST_ADR,
@@ -844,55 +768,69 @@ VALUES
     ('SCH_000000010', 'K5 재고 점검', 'K5 재고 관리 및 점검', 'MEETING', '2024-11-28 15:00:00', '2024-11-28 17:00:00',
      '2024-01-29 19:00:00', '2024-01-29 19:30:00', NULL, TRUE, 'MEM_000000010');
 
+INSERT INTO tb_alarm (ALR_ID, ALR_MSG, ALR_URL, ALR_READ_STAT, CREATED_AT, MEM_ID)
+VALUES ('ALR_000000001', '신차 출시 공지 알림', '/notices/1', FALSE, '2024-01-20 12:00:00', 'MEM_000000001'),
+       ('ALR_000000002', '스포티지 리콜 안내', '/notices/2', FALSE, '2024-01-21 14:00:00', 'MEM_000000002'),
+       ('ALR_000000003', 'K7 고객 이벤트 초대', '/events/3', TRUE, '2024-01-22 09:00:00', 'MEM_000000003'),
+       ('ALR_000000004', '셀토스 정비 완료', '/service/4', FALSE, '2024-01-23 10:00:00', 'MEM_000000004'),
+       ('ALR_000000005', 'K3 테스트 드라이브 일정 변경', '/schedules/5', TRUE, '2024-01-24 11:00:00', 'MEM_000000005'),
+       ('ALR_000000006', '모하비 부품 입고 알림', '/inventory/6', FALSE, '2024-01-25 12:00:00', 'MEM_000000006'),
+       ('ALR_000000007', 'K8 디자인 변경 확정', '/design/7', TRUE, '2024-01-26 13:00:00', 'MEM_000000007'),
+       ('ALR_000000008', '스팅어 성능 테스트 보고서', '/reports/8', FALSE, '2024-01-27 14:00:00', 'MEM_000000008'),
+       ('ALR_000000009', '니로 전기차 충전소 위치', '/maps/9', TRUE, '2024-01-28 15:00:00', 'MEM_000000009'),
+       ('ALR_000000010', 'K5 재고 부족 경고', '/inventory/10', FALSE, '2024-01-29 16:00:00', 'MEM_000000010');
 
-INSERT INTO tb_alarm (ALR_ID, ALR_MSG, ALR_URL, ALR_TYPE, ALR_READ_STAT, CREATED_AT, ALR_SND, MEM_ID)
+INSERT INTO tb_family (FAM_ID, FAM_NAME, FAM_REL, FAM_BIR, FAM_IDEN_NO, FAM_PHO, FAM_SEX, FAM_DIS, FAM_DIE, FAM_NOTE, CREATED_AT, UPDATED_AT, MEM_ID)
 VALUES
-('ALR_000000001', '신규 보안 지침이 업데이트되었습니다.', 'api/v1/notice/1', 'NOTICE', FALSE, '2024-11-16 08:00:00', 'MEM_000000025', 'MEM_000000001'),
-('ALR_000000002', '회사 워크샵 일정 공지', 'api/v1/notice/2', 'NOTICE', FALSE, '2024-11-15 09:00:00', 'MEM_000000025', 'MEM_000000002'),
-('ALR_000000003', '연말 정산 안내 공지', 'api/v1/notice/3', 'NOTICE', FALSE, '2024-11-14 10:30:00', 'MEM_000000025', 'MEM_000000003'),
-('ALR_000000004', '신규 프로젝트 관련 공지사항', 'api/v1/notice/4', 'NOTICE', TRUE, '2024-11-13 11:00:00', 'MEM_000000025', 'MEM_000000004'),
-('ALR_000000005', '시스템 점검 일정 안내', 'api/v1/notice/5', 'NOTICE', FALSE, '2024-11-12 14:00:00', 'MEM_000000025', 'MEM_000000005'),
-('ALR_000000006', '홍길동 고객님과 미팅 1일 전입니다.', 'api/v1/schedule/6', 'SCHEDULE', FALSE, '2024-11-17 10:00:00', 'SYSTEM', 'MEM_000000006'),
-('ALR_000000007', '홍길동 고객님과 1시간 전입니다.', 'api/v1/schedule/7', 'SCHEDULE', FALSE, '2024-11-18 09:00:00', 'SYSTEM', 'MEM_000000006'),
-('ALR_000000008', '이순신 고객님과 미팅 1일 전입니다.', 'api/v1/schedule/8', 'SCHEDULE', TRUE, '2024-11-18 09:00:00', 'SYSTEM', 'MEM_000000008'),
-('ALR_000000009', '김구고객님과 미팅 1시간 전입니다.', 'api/v1/schedule/9', 'SCHEDULE', FALSE, '2024-11-18 11:00:00', 'SYSTEM', 'MEM_000000009'),
-('ALR_000000010', '지리리고객님과 미팅 1시간 전입니다.', 'api/v1/schedule/10', 'SCHEDULE', FALSE, '2024-11-18 15:00:00', 'SYSTEM', 'MEM_000000010');
+    ('FAM_000000001', '김영희', '배우자', '1988-03-25', '880325-1234567', '010-1234-5678', 'FEMALE', FALSE, FALSE, NULL, '2024-01-10 10:00:00', '2024-01-10 11:00:00', 'MEM_000000001'),
+    ('FAM_000000002', '이수진', '자녀', '2015-05-12', '150512-2345678', '010-2345-6789', 'FEMALE', FALSE, FALSE, '초등학교 3학년', '2024-01-11 12:00:00', '2024-01-11 13:00:00', 'MEM_000000002'),
+    ('FAM_000000003', '박철수', '배우자', '1985-07-11', '850711-3456789', '010-3456-7890', 'MALE', FALSE, FALSE, NULL, '2024-01-12 14:00:00', '2024-01-12 15:00:00', 'MEM_000000003'),
+    ('FAM_000000004', '최민수', '자녀', '2012-11-03', '121103-4567890', '010-4567-8901', 'MALE', TRUE, FALSE, '특수 교육 필요', '2024-01-13 09:00:00', '2024-01-13 10:00:00', 'MEM_000000004'),
+    ('FAM_000000005', '정수정', '배우자', '1990-09-20', '900920-5678901', '010-5678-9012', 'FEMALE', FALSE, FALSE, NULL, '2024-01-14 11:00:00', '2024-01-14 12:00:00', 'MEM_000000005'),
+    ('FAM_000000006', '김지훈', '자녀', '2010-06-15', '100615-6789012', '010-6789-0123', 'MALE', FALSE, FALSE, '중학교 1학년', '2024-01-15 13:00:00', '2024-01-15 14:00:00', 'MEM_000000006'),
+    ('FAM_000000007', '한지민', '배우자', '1987-02-28', '870228-7890123', '010-7890-1234', 'FEMALE', FALSE, FALSE, NULL, '2024-01-16 15:00:00', '2024-01-16 16:00:00', 'MEM_000000007'),
+    ('FAM_000000008', '이동수', '자녀', '2017-12-10', '171210-8901234', '010-8901-2345', 'MALE', FALSE, FALSE, '유치원생', '2024-01-17 17:00:00', '2024-01-17 18:00:00', 'MEM_000000008'),
+    ('FAM_000000009', '윤소희', '배우자', '1989-04-03', '890403-9012345', '010-9012-3456', 'FEMALE', FALSE, FALSE, NULL, '2024-01-18 19:00:00', '2024-01-18 20:00:00', 'MEM_000000009'),
+    ('FAM_000000010', '박성준', '자녀', '2014-08-25', '140825-0123456', '010-0123-4567', 'MALE', FALSE, FALSE, '초등학교 5학년', '2024-01-19 09:00:00', '2024-01-19 10:00:00', 'MEM_000000010');
 
+INSERT INTO tb_education (EDU_ID, EDU_ENTD, EDU_GRAD, EDU_NAME, EDU_MJR, EDU_SCO, EDU_NOTE, CREATED_AT, UPDATED_AT, MEM_ID)
+VALUES
+    ('EDU_000000001', '2006-03-01', '2010-02-28', '서울대학교', '경영학', '3.8', NULL, '2024-01-10 10:00:00', '2024-01-10 11:00:00', 'MEM_000000001'),
+    ('EDU_000000002', '2008-03-01', '2012-02-28', '연세대학교', '경제학', '3.5', '졸업 논문 우수상', '2024-01-11 12:00:00', '2024-01-11 13:00:00', 'MEM_000000002'),
+    ('EDU_000000003', '2005-03-01', '2009-02-28', '고려대학교', '컴퓨터공학', '3.9', NULL, '2024-01-12 14:00:00', '2024-01-12 15:00:00', 'MEM_000000003'),
+    ('EDU_000000004', '2010-03-01', '2014-02-28', '서강대학교', '심리학', '3.6', '사회봉사 활동 참여', '2024-01-13 09:00:00', '2024-01-13 10:00:00', 'MEM_000000004'),
+    ('EDU_000000005', '2007-03-01', '2011-02-28', '성균관대학교', '화학공학', '3.7', NULL, '2024-01-14 11:00:00', '2024-01-14 12:00:00', 'MEM_000000005'),
+    ('EDU_000000006', '2009-03-01', '2013-02-28', '한양대학교', '전자공학', '4.0', '학과 대표', '2024-01-15 13:00:00', '2024-01-15 14:00:00', 'MEM_000000006'),
+    ('EDU_000000007', '2004-03-01', '2008-02-28', '이화여자대학교', '디자인', '3.8', '졸업 작품전 참여', '2024-01-16 15:00:00', '2024-01-16 16:00:00', 'MEM_000000007'),
+    ('EDU_000000008', '2011-03-01', '2015-02-28', '중앙대학교', '물리학', '3.4', NULL, '2024-01-17 17:00:00', '2024-01-17 18:00:00', 'MEM_000000008'),
+    ('EDU_000000009', '2003-03-01', '2007-02-28', '부산대학교', '수학', '3.9', '우수 장학금 수상', '2024-01-18 19:00:00', '2024-01-18 20:00:00', 'MEM_000000009'),
+    ('EDU_000000010', '2012-03-01', '2016-02-28', '경북대학교', '환경공학', '3.6', NULL, '2024-01-19 09:00:00', '2024-01-19 10:00:00', 'MEM_000000010');
 
-INSERT INTO tb_member_detail (MEM_DET_ID, MEM_DET_REL, MEM_DET_NAME, MEM_DET_BIR, MEM_DET_IDEN_NO, MEM_DET_PHO,
-                              MEM_DET_SEX, MEM_DET_DIS, MEM_DET_DIE, MEM_DET_NOTE, MEM_DET_ENTD, MEM_DET_GRAD,
-                              MEM_DET_FNL_EDC, MEM_DET_EDU, MEM_DET_MJR, MEM_DET_EMP_DATE, MEM_DET_RTR_DATE, CAR_INFO,
-                              CERT_DATE, CERT_INST, CERT_NAME, CERT_SCO, CREATED_AT, UPDATED_AT, MEM_ID)
-VALUES ('DET_000000001', '배우자', '박미숙', '1988-05-12', '880512-1234567', '010-1111-2222', 'FEMALE', FALSE, FALSE, NULL,
-        '2010', 'A', '대졸', '경영학', '기아', '2020-01-01', '2025-01-01', 'K5', '2023-06-01', '기아자동차', '세일즈', '95',
-           '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000001'),
-       ('DET_000000002', '자녀', '김철수', '2012-08-05', '120805-2345678', '010-2222-3333', 'MALE', FALSE, FALSE, NULL,
-        '2022', 'B+', '고졸', '정보통신', '기아', '2022-01-15', '2027-01-15', 'K3', '2023-07-15', '기아자동차', '서비스', '88',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000002'),
-       ('DET_000000003', '배우자', '이영희', '1985-03-09', '850309-3456789', '010-3333-4444', 'FEMALE', FALSE, FALSE,
-        '부부 동반 여행', '2009', 'A-', '대졸', '경제학', '기아', '2019-05-12', '2024-05-12', '스포티지', '2023-04-20', '기아자동차', '기술지원',
-        '92', '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000003'),
-       ('DET_000000004', '배우자', '정수민', '1990-11-11', '901111-4567890', '010-4444-5555', 'FEMALE', FALSE, FALSE, NULL,
-        '2015', 'A', '대졸', '기계공학', '기아', '2021-09-01', '2026-09-01', 'K7', '2023-02-10', '기아자동차', '품질관리', '87',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000004'),
-       ('DET_000000005', '자녀', '한지수', '2016-01-20', '160120-5678901', '010-5555-6666', 'MALE', TRUE, FALSE, '특별 교육 필요',
-        '2021', 'B', '초등학교', '과학', '기아', '2023-03-05', '2028-03-05', '니로', '2023-03-01', '기아자동차', '연구개발', '85',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000005'),
-       ('DET_000000006', '자녀', '최지우', '2005-06-15', '050615-6789012', '010-6666-7777', 'FEMALE', FALSE, FALSE, NULL,
-        '2023', 'A+', '대졸', '디자인', '기아', '2020-07-01', '2025-07-01', '스팅어', '2023-08-20', '기아자동차', '디자인', '90',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000006'),
-       ('DET_000000007', '배우자', '윤미라', '1987-12-30', '871230-7890123', '010-7777-8888', 'FEMALE', FALSE, FALSE,
-        '해외 출장 동반', '2011', 'B+', '대졸', '마케팅', '기아', '2020-12-01', '2025-12-01', '쏘렌토', '2023-01-25', '기아자동차', '마케팅',
-        '93', '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000007'),
-       ('DET_000000008', '자녀', '이동희', '2010-09-10', '100910-8901234', '010-8888-9999', 'MALE', FALSE, FALSE, NULL,
-        '2025', 'B-', '중졸', '정보기술', '기아', '2023-05-05', '2028-05-05', '모하비', '2023-12-30', '기아자동차', '엔지니어링', '89',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000008'),
-       ('DET_000000009', '배우자', '정수영', '1991-04-17', '910417-9012345', '010-9999-0000', 'FEMALE', FALSE, FALSE,
-        '가족 동반 캠핑', '2018', 'A-', '대졸', '화학', '기아', '2022-06-15', '2027-06-15', '셀토스', '2023-11-22', '기아자동차', '생산',
-        '91', '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000009'),
-       ('DET_000000010', '자녀', '김준호', '2014-07-22', '140722-0123456', '010-0000-1111', 'MALE', FALSE, FALSE, NULL,
-        '2027', 'B+', '고졸', '경영', '기아', '2023-08-12', '2028-08-12', 'K8', '2023-09-10', '기아자동차', '세일즈', '87',
-        '2024-11-22 14:00:00', '2024-11-22 16:00:00', 'MEM_000000010');
+INSERT INTO tb_certification (CER_ID, CER_DATE, CER_INST, CER_NAME, CER_SCO, CER_NOTE, CREATED_AT, MEM_ID)
+VALUES
+    ('CER_000000001', '2018-06-20', '한국무역협회', '무역영어 1급', 'PASS', NULL, '2024-01-10 10:00:00', 'MEM_000000001'),
+    ('CER_000000002', '2019-03-15', '한국산업인력공단', '정보처리기사', 'PASS', '필기 및 실기 합격', '2024-01-11 12:00:00', 'MEM_000000002'),
+    ('CER_000000003', '2017-11-05', '대한상공회의소', '전산회계 2급', '90', NULL, '2024-01-12 14:00:00', 'MEM_000000003'),
+    ('CER_000000004', '2020-08-10', '국제공인회계사협회', 'CPA', 'PASS', '국제 회계 자격증', '2024-01-13 09:00:00', 'MEM_000000004'),
+    ('CER_000000005', '2016-02-22', '대한건설협회', '건축기사', 'PASS', NULL, '2024-01-14 11:00:00', 'MEM_000000005'),
+    ('CER_000000006', '2021-05-30', '한국능률협회', 'PMP', 'PASS', '프로젝트 관리 자격증', '2024-01-15 13:00:00', 'MEM_000000006'),
+    ('CER_000000007', '2015-12-12', '한국관광공사', '국내여행안내사', '85', NULL, '2024-01-16 15:00:00', 'MEM_000000007'),
+    ('CER_000000008', '2018-09-18', '한국소방안전협회', '소방안전관리자 1급', 'PASS', NULL, '2024-01-17 17:00:00', 'MEM_000000008'),
+    ('CER_000000009', '2022-04-25', '대한적십자사', '응급처치 강사', 'PASS', '응급처치 교육 수료', '2024-01-18 19:00:00', 'MEM_000000009'),
+    ('CER_000000010', '2019-11-11', '한국정보통신기술협회', '정보보안기사', 'PASS', NULL, '2024-01-19 09:00:00', 'MEM_000000010');
+
+INSERT INTO tb_career (CAR_ID, CAR_EMP_DATE, CAR_RTR_DATE, CAR_NAME, CAR_NOTE, CREATED_AT, MEM_ID)
+VALUES
+    ('CAR_000000001', '2012-03-01', '2016-12-31', '삼성전자', '마케팅팀 근무', '2024-01-10 10:00:00', 'MEM_000000001'),
+    ('CAR_000000002', '2015-05-01', '2019-08-31', 'LG화학', '연구개발팀 근무', '2024-01-11 12:00:00', 'MEM_000000002'),
+    ('CAR_000000003', '2010-09-01', '2015-02-28', '포스코', '공정관리팀', '2024-01-12 14:00:00', 'MEM_000000003'),
+    ('CAR_000000004', '2013-01-01', '2018-03-31', '현대자동차', '생산기술팀', '2024-01-13 09:00:00', 'MEM_000000004'),
+    ('CAR_000000005', '2017-06-01', '2021-11-30', 'SK텔레콤', '네트워크 운영팀', '2024-01-14 11:00:00', 'MEM_000000005'),
+    ('CAR_000000006', '2011-02-01', '2016-07-31', '네이버', '프론트엔드 개발자', '2024-01-15 13:00:00', 'MEM_000000006'),
+    ('CAR_000000007', '2014-04-01', '2019-12-31', '카카오', '백엔드 개발자', '2024-01-16 15:00:00', 'MEM_000000007'),
+    ('CAR_000000008', '2018-01-01', '2022-06-30', 'CJ제일제당', '품질관리팀', '2024-01-17 17:00:00', 'MEM_000000008'),
+    ('CAR_000000009', '2010-07-01', '2014-09-30', '롯데케미칼', '안전관리팀', '2024-01-18 19:00:00', 'MEM_000000009'),
+    ('CAR_000000010', '2016-03-01', '2020-10-31', '한화생명', '재무팀', '2024-01-19 09:00:00', 'MEM_000000010');
 
 INSERT INTO tb_update_history (UPD_ID, UPD_IP, UPDATED_AT, UPDATED_URL, MEM_ID, CONR_ID)
 VALUES ('UPD_000000001', '192.168.1.10', '2024-01-10 12:00:00', '/contracts/1', 'MEM_000000001', 'CON_000000001'),
@@ -955,38 +893,38 @@ INSERT INTO tb_product_option (PROD_ID, PROD_SER_NO, OPT_CNTY, OPT_MNFR, OPT_VHC
                                OPT_SFTY_DVCE, OPT_ENGN_CPCT, OPT_SCRT_CODE, OPT_PRDC_YEAR, OPT_PRDC_PLNT, OPT_ENGN,
                                OPT_MSSN,
                                OPT_TRIM, OPT_XTNL_COLR, OPT_ITNL_COLR, OPT_HUD, OPT_NAVI, OPT_DRVE_WISE, OPT_SMRT_CNCT,
-                               OPT_STYL, OPT_MY_CFRT_PCKG, OPT_OTDR_PCKG, OPT_SUN_ROOF, OPT_SOND)
+                               OPT_STYL, OPT_MY_CFRT_PCKG, OPT_OTDR_PCKG, OPT_SUN_ROOF, OPT_SOND, ACTIVE)
 VALUES
 -- 데이터 1
-('PROD_000000001', 'KNAHAA4AALU1A00001', 'K', 'N', 'A', 'A', 'L', '4', '2', 'A', 'P', 'A', 'U', '1', '0', '1', 'B', 'W',
- '1', '1', '1', '1', '1', '0', '1', '1', '1'),
+('PRO_000000001', 'KNAHAA4AALU1A00001', 'K', 'N', 'A', 'A', 'L', '4', '2', 'A', 'P', 'A', 'U', '1', '0', '1', 'B', 'W',
+ '1', '1', '1', '1', '1', '0', '1', '1', '1', TRUE),
 -- 데이터 2
-('PROD_000000002', 'KNAHBA4BALR2Z00002', 'K', 'N', 'H', 'B', 'L', '4', '4', 'B', 'R', 'B', 'Z', '1', '1', '0', 'G', 'B',
- '0', '1', '0', '1', '0', '1', '0', '0', '1'),
+('PRO_000000002', 'KNAHBA4BALR2Z00002', 'K', 'N', 'H', 'B', 'L', '4', '4', 'B', 'R', 'B', 'Z', '1', '1', '0', 'G', 'B',
+ '0', '1', '0', '1', '0', '1', '0', '0', '1', TRUE),
 -- 데이터 3
-('PROD_000000003', 'KMBHC64CAMJ5A00003', 'K', 'M', 'H', 'C', 'M', '6', '3', 'C', 'P', 'C', 'A', '0', '1', '1', 'R', 'G',
- '1', '1', '1', '0', '1', '1', '0', '1', '0'),
+('PRO_000000003', 'KMBHC64CAMJ5A00003', 'K', 'M', 'H', 'C', 'M', '6', '3', 'C', 'P', 'C', 'A', '0', '1', '1', 'R', 'G',
+ '1', '1', '1', '0', '1', '1', '0', '1', '0', TRUE),
 -- 데이터 4
-('PROD_000000004', 'KNJFA42DALU3C00004', 'K', 'N', 'J', 'D', 'L', '2', '4', 'A', 'R', 'D', 'C', '1', '0', '0', 'B', 'R',
- '0', '0', '0', '1', '0', '0', '1', '0', '1'),
+('PRO_000000004', 'KNJFA42DALU3C00004', 'K', 'N', 'J', 'D', 'L', '2', '4', 'A', 'R', 'D', 'C', '1', '0', '0', 'B', 'R',
+ '0', '0', '0', '1', '0', '0', '1', '0', '1', TRUE),
 -- 데이터 5
-('PROD_000000005', 'KFBGBM5EARP1M00005', 'K', 'B', 'F', 'B', 'M', '5', '1', 'B', 'P', 'E', 'M', '1', '1', '1', 'W', 'B',
- '1', '1', '0', '0', '1', '1', '0', '1', '1'),
+('PRO_000000005', 'KFBGBM5EARP1M00005', 'K', 'B', 'F', 'B', 'M', '5', '1', 'B', 'P', 'E', 'M', '1', '1', '1', 'W', 'B',
+ '1', '1', '0', '0', '1', '1', '0', '1', '1', TRUE),
 -- 데이터 6
-('PROD_000000006', 'KNHGA6BALUP7A00006', 'K', 'N', 'H', 'G', 'L', '6', '3', 'A', 'R', 'F', 'A', '0', '0', '1', 'B', 'G',
- '1', '1', '1', '1', '0', '1', '1', '0', '0'),
+('PRO_000000006', 'KNHGA6BALUP7A00006', 'K', 'N', 'H', 'G', 'L', '6', '3', 'A', 'R', 'F', 'A', '0', '0', '1', 'B', 'G',
+ '1', '1', '1', '1', '0', '1', '1', '0', '0', TRUE),
 -- 데이터 7
-('PROD_000000007', 'KNJFA34AALU4Z00007', 'K', 'N', 'J', 'A', 'M', '4', '4', 'C', 'P', 'G', 'Z', '1', '1', '0', 'R', 'W',
- '0', '0', '1', '0', '1', '0', '1', '1', '1'),
+('PRO_000000007', 'KNJFA34AALU4Z00007', 'K', 'N', 'J', 'A', 'M', '4', '4', 'C', 'P', 'G', 'Z', '1', '1', '0', 'R', 'W',
+ '0', '0', '1', '0', '1', '0', '1', '1', '1', TRUE),
 -- 데이터 8
-('PROD_000000008', 'KMAHDA2AAMJ3T00008', 'K', 'M', 'H', 'D', 'L', '2', '2', 'A', 'R', 'H', 'T', '0', '0', '1', 'B', 'G',
- '1', '1', '0', '1', '0', '1', '1', '0', '0'),
+('PRO_000000008', 'KMAHDA2AAMJ3T00008', 'K', 'M', 'H', 'D', 'L', '2', '2', 'A', 'R', 'H', 'T', '0', '0', '1', 'B', 'G',
+ '1', '1', '0', '1', '0', '1', '1', '0', '0', TRUE),
 -- 데이터 9
-('PROD_000000009', 'KNAHCA5BALU5C00009', 'K', 'N', 'A', 'C', 'M', '5', '1', 'B', 'P', 'J', 'C', '1', '1', '0', 'R', 'R',
- '0', '1', '1', '1', '1', '0', '1', '1', '0'),
+('PRO_000000009', 'KNAHCA5BALU5C00009', 'K', 'N', 'A', 'C', 'M', '5', '1', 'B', 'P', 'J', 'C', '1', '1', '0', 'R', 'R',
+ '0', '1', '1', '1', '1', '0', '1', '1', '0', TRUE),
 -- 데이터 10
-('PROD_000000010', 'KNFHC54CAMR1A00010', 'K', 'N', 'F', 'F', 'N', '4', '3', 'C', 'R', 'K', 'A', '0', '1', '1', 'W', 'B',
- '1', '1', '0', '0', '0', '1', '0', '1', '1');
+('PRO_000000010', 'KNFHC54CAMR1A00010', 'K', 'N', 'F', 'F', 'N', '4', '3', 'C', 'R', 'K', 'A', '0', '1', '1', 'W', 'B',
+ '1', '1', '0', '0', '0', '1', '0', '1', '1', TRUE);
 
 INSERT INTO tb_sales_history (SAL_HIST_ID, CONR_ID)
 VALUES ('SAL_000000001', 'CON_000000001'),
