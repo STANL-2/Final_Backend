@@ -24,7 +24,7 @@ public class PurchaseOrder {
     @GeneratedValue(generator = "PrefixGeneratorConfig")
     @GenericGenerator(name = "PrefixGeneratorConfig",
             type = PrefixGeneratorConfig.class,
-            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "PUR")
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "PUR_ORD")
     )
     @Column(name = "PUR_ORD_ID")
     private String purchaseOrderId;
