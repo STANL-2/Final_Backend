@@ -17,5 +17,6 @@ public class ScheduleModifyDTO {
     private String tag;
     private String startAt;
     private String endAt;
+    private String memberLoginId;
     private String memberId;
 }

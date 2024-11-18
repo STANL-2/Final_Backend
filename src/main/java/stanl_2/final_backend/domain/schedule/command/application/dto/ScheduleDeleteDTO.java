@@ -9,13 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ScheduleRegistDTO {
+public class ScheduleDeleteDTO {
 
-    private String name;
-    private String content;
-    private String tag;
-    private String startAt;
-    private String endAt;
+    private String scheduleId;
     private String memberLoginId;
-    private String memberId;
 }
