@@ -27,10 +27,6 @@ spring:
     properties:
       hibernate.format_sql: true
 
-  batch:
-    jdbc:
-      initialize-schema: always
-
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   header: ${JWT_HEADER}

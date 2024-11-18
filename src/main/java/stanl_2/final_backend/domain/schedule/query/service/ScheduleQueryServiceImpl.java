@@ -43,7 +43,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Transactional(readOnly = true)
     public List<ScheduleDTO> selectAllSchedule(String memberLogindId) {
 
-        String memberId = authQueryService.selectMemberLoginId(memberLogindId);
+        String memberId = authQueryService.selectMemberIdByLoginId(memberLogindId);
 
         String currentMonth = getCurrentTime().substring(0,7);
 
@@ -62,7 +62,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Transactional(readOnly = true)
     public List<ScheduleYearMonthDTO> selectYearMonthSchedule(ScheduleYearMonthDTO scheduleYearMonthDTO) {
 
-        String memberId = authQueryService.selectMemberLoginId(scheduleYearMonthDTO.getMemberLoginId());
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleYearMonthDTO.getMemberLoginId());
         scheduleYearMonthDTO.setMemberId(memberId);
 
         String yearMonth = scheduleYearMonthDTO.getYear() + "-" + scheduleYearMonthDTO.getMonth();
@@ -83,7 +83,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     @Transactional(readOnly = true)
     public ScheduleDetailDTO selectDetailSchedule(ScheduleDetailDTO scheduleDetailDTO) {
 
-        String memberId = authQueryService.selectMemberLoginId(scheduleDetailDTO.getMemberLoginId());
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleDetailDTO.getMemberLoginId());
         scheduleDetailDTO.setMemberId(memberId);
 
         if(scheduleDetailDTO.getScheduleId() == null || scheduleDetailDTO.getScheduleId().trim().isEmpty()){

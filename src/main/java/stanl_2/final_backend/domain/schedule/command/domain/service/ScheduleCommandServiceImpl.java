@@ -49,7 +49,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Transactional
     public Boolean registSchedule(ScheduleRegistDTO scheduleRegistDTO) {
 
-        String memberId = authQueryService.selectMemberLoginId(scheduleRegistDTO.getMemberLoginId());
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleRegistDTO.getMemberLoginId());
         scheduleRegistDTO.setMemberId(memberId);
 
         try {
@@ -71,7 +71,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Transactional
     public Boolean modifySchedule(ScheduleModifyDTO scheduleModifyDTO) {
 
-        String memberId = authQueryService.selectMemberLoginId(scheduleModifyDTO.getMemberLoginId());
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleModifyDTO.getMemberLoginId());
         scheduleModifyDTO.setMemberId(memberId);
 
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleModifyDTO.getScheduleId())
@@ -104,7 +104,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Transactional
     public Boolean deleteSchedule(ScheduleDeleteDTO scheduleDeleteDTO) {
 
-        String memberId = authQueryService.selectMemberLoginId(scheduleDeleteDTO.getMemberLoginId());
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleDeleteDTO.getMemberLoginId());
 
         Schedule schedule = scheduleRepository.findByScheduleId(scheduleDeleteDTO.getScheduleId())
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
