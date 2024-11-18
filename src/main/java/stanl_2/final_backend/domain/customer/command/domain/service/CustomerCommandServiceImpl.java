@@ -44,7 +44,7 @@ public class CustomerCommandServiceImpl implements CustomerCommandService {
                 .orElseThrow(() -> new CustomerCommonException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
         modelMapper.map(customerModifyDTO, customer);
-
+        log.info(customer.toString());
         customerRepository.save(customer);
     }
 }
