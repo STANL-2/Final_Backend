@@ -3,6 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stanl_2.final_backend.domain.customer.query.repository.CustomerMapper">
+
     <resultMap id="Customer" type="stanl_2.final_backend.domain.customer.query.dto.CustomerDTO">
         <id property="customerId" column="CUST_ID"/>
         <result property="name" column="CUST_NAME"/>
@@ -17,6 +18,7 @@
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
     </resultMap>
+
     <select id="selectCustomerInfoById" resultMap="Customer" parameterType="String">
         SELECT
                A.CUST_ID,
@@ -33,5 +35,30 @@
                A.DELETED_AT
           FROM TB_CUSTOMER_INFO A
          WHERE A.CUST_ID = #{ customerId }
+    </select>
+
+    <select id="selectCustomerList" resultMap="Customer" parameterType="_int">
+        SELECT
+               A.CUST_ID,
+               A.CUST_NAME,
+               A.CUST_AGE,
+               A.CUST_SEX,
+               A.CUST_PHO,
+               A.CUST_EMER_PHO,
+               A.CUST_EMA,
+               A.MEM_ID,
+               A.ACTIVE,
+               A.CREATED_AT,
+               A.UPDATED_AT,
+               A.DELETED_AT
+          FROM TB_CUSTOMER_INFO A
+         LIMIT #{ size } OFFSET #{ offset }
+    </select>
+    
+    <select id="selectCustomerCount" resultType="_int">
+        SELECT
+               COUNT(*)
+          FROM TB_CUSTOMER_INFO A
+         WHERE A.ACTIVE != 'false';
     </select>
 </mapper>
