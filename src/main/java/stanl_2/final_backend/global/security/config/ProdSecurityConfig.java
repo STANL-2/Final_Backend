@@ -51,7 +51,8 @@ public class ProdSecurityConfig {
                                 "/api/v1/auth"  // 권한 부여때문에(일단 열어둠)
                                 ).permitAll()
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
-                        .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasAnyRole("ADMIN", "MEMBER")
                         .anyRequest().authenticated())
                 // 필터 순서: JWT 검증 -> CSRF
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey), UsernamePasswordAuthenticationFilter.class)
