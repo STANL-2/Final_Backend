@@ -26,7 +26,7 @@ public class Problem {
             parameters = @org.hibernate.annotations.Parameter(name="prefix", value = "PROB")
     )
     @Column(name = "PROB_ID")
-    private String promotionId;
+    private String problemId;
 
     @Column(name = "PROB_TTL", nullable = false)
     private String title;
