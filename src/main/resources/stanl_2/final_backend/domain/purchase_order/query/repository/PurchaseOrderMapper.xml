@@ -18,7 +18,7 @@
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
-    <resultMap id="purchaseOrderAllResultMap" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO">
+    <resultMap id="purchaseOrderResultMap" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO">
         <id property="purchaseOrderId" column="PUR_ORD_ID"/>
         <result property="title" column="PUR_ORD_TTL"/>
         <result property="status" column="PUR_ORD_STAT"/>
@@ -46,7 +46,7 @@
            AND A.PUR_ORD_ID = #{purchaseOrderId}
     </select>
 
-    <select id="findAllPurchaseOrder" resultMap="purchaseOrderAllResultMap">
+    <select id="findAllPurchaseOrder" resultMap="purchaseOrderResultMap">
         SELECT
                A.PUR_ORD_ID,
                A.PUR_ORD_TTL,
@@ -76,6 +76,72 @@
                COUNT(*) AS CNT
           FROM TB_PURCHASE_ORDER A
          WHERE A.ACTIVE = TRUE
+    </select>
+
+    <select id="findSearchPurchaseOrder" resultMap="purchaseOrderResultMap" parameterType="map">
+        SELECT
+        A.PUR_ORD_ID,
+        A.PUR_ORD_TTL,
+        A.PUR_ORD_STAT,
+        B.ORD_TTL,
+        D.MEM_NAME AS ADMIN_NAME,
+        C.MEM_NAME AS MEM_NAME,
+        F.PROD_NAME
+        FROM TB_PURCHASE_ORDER A
+        LEFT JOIN TB_ORDER B
+        ON A.ORD_ID = B.ORD_ID
+        LEFT JOIN TB_MEMBER C
+        ON A.MEM_ID = C.MEM_ID
+        LEFT JOIN TB_MEMBER D
+        ON A.ADMIN_ID = D.MEM_ID
+        LEFT JOIN TB_CONTRACT E
+        ON B.CONR_ID = E.CONR_ID
+        LEFT JOIN TB_PRODUCT F
+        ON E.PROD_ID = F.PROD_ID
+        <where>
+            A.ACTIVE = TRUE
+            <if test="title != null">
+                AND A.PUR_ORD_TTL LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="status != null">
+                AND A.PUR_ORD_STAT = #{status}
+            </if>
+            <if test="adminId != null">
+                AND A.ADMIN_ID = #{adminId}
+            </if>
+            <if test="searchMemberId != null">
+                AND A.MEM_ID = #{searchMemberId}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+        ORDER BY A.CREATED_AT DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findSearchPurchaseOrderCount" resultType="int" parameterType="map">
+        SELECT
+               COUNT(*) AS CNT
+          FROM TB_PURCHASE_ORDER A
+        <where>
+            A.ACTIVE = TRUE
+            <if test="title != null">
+                AND A.ORD_TTL LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="status != null">
+                AND A.ORD_STAT = #{status}
+            </if>
+            <if test="adminId != null">
+                AND A.ADMIN_ID = #{adminId}
+            </if>
+            <if test="searchMemberId != null">
+                AND A.MEM_ID = #{searchMemberId}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
     </select>
 
 

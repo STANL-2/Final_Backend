@@ -20,7 +20,6 @@ public class PurchaseOrderSelectAllDTO {
     private String adminName;
     private String memberName;
     private String productName;
-    private String adminId;
     private String memberId;
     private Collection<? extends GrantedAuthority> roles;
 }

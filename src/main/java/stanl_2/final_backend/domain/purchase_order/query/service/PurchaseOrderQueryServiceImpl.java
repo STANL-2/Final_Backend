@@ -10,13 +10,16 @@ import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrde
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectIdDTO;
+import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO;
 import stanl_2.final_backend.domain.purchase_order.query.repository.PurchaseOrderMapper;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -73,6 +76,45 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
             });
 
             int total = purchaseOrderMapper.findAllPurchaseOrderCount();
+
+            return new PageImpl<>(purchaseOrders, pageable, total);
+        } else {
+            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+        }
+    }
+
+    @Override
+    public Page<PurchaseOrderSelectSearchDTO> selectSearchPurchaseOrder(PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO, Pageable pageable) {
+
+        if (purchaseOrderSelectSearchDTO.getRoles().stream()
+                .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()) || "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("title", purchaseOrderSelectSearchDTO.getTitle());
+            map.put("status", purchaseOrderSelectSearchDTO.getStatus());
+            map.put("adminId", purchaseOrderSelectSearchDTO.getAdminId());
+            map.put("searchMemberId", purchaseOrderSelectSearchDTO.getSearchMemberId());
+            map.put("startDate", purchaseOrderSelectSearchDTO.getStartDate());
+            map.put("endDate", purchaseOrderSelectSearchDTO.getEndDate());
+            map.put("roles", purchaseOrderSelectSearchDTO.getRoles());
+            map.put("pageSize", pageable.getPageSize());
+            map.put("offset", pageable.getOffset());
+
+            List<PurchaseOrderSelectSearchDTO> purchaseOrders = purchaseOrderMapper.findSearchPurchaseOrder(map);
+
+            if (purchaseOrders == null || purchaseOrders.isEmpty()) {
+                throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
+            }
+
+            purchaseOrders.forEach(purchaseOrder -> {
+                try {
+                    purchaseOrder.setMemberName(aesUtils.decrypt(purchaseOrder.getMemberName()));
+                } catch (GeneralSecurityException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            int total = purchaseOrderMapper.findSearchPurchaseOrderCount();
 
             return new PageImpl<>(purchaseOrders, pageable, total);
         } else {
