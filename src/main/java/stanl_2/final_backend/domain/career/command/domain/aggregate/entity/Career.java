@@ -46,6 +46,9 @@ public class Career {
     @Column(name = "UPDATED_AT", nullable = false)
     private String  updatedAt;
 
+    @Column(name = "MEM_ID", nullable = false)
+    private String memId;
+
 
     /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행

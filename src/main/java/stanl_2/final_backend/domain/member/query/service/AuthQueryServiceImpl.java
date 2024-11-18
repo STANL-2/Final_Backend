@@ -21,7 +21,7 @@ public class AuthQueryServiceImpl implements AuthQueryService {
 
     @Override
     @Transactional
-    public String selectMemberLoginId(String loginId){
+    public String selectMemberIdByLoginId(String loginId){
 
         String id = authMapper.selectIdByMemberName(loginId);
 

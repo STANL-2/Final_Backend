@@ -179,7 +179,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public void grantAuthority(GrantDTO grantDTO) {
 
-        String id = authQueryService.selectMemberLoginId(grantDTO.getLoginId());
+        String id = authQueryService.selectMemberIdByLoginId(grantDTO.getLoginId());
 
         MemberRole newMemberRole = modelMapper.map(grantDTO, MemberRole.class);
 
