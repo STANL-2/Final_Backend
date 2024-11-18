@@ -8,19 +8,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionModifyDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.service.PromotionCommandService;
 import stanl_2.final_backend.domain.promotion.common.response.PromotionResponseMessage;
 
+import java.security.Principal;
+
 @RestController("commandPromotionController")
 @RequestMapping("/api/v1/promotion")
 public class PromotionController {
     private final PromotionCommandService promotionCommandService;
+    private final AuthQueryService authQueryService;
 
     @Autowired
-    public PromotionController(PromotionCommandService promotionCommandService) {
+    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService) {
         this.promotionCommandService = promotionCommandService;
+        this.authQueryService =authQueryService;
     }
 
     @Operation(summary = "프로모션 작성")
@@ -29,7 +34,9 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<PromotionResponseMessage> postNotice(@RequestBody PromotionRegistDTO prmotionRegistDTO){
+    public ResponseEntity<PromotionResponseMessage> postNotice(@RequestBody PromotionRegistDTO prmotionRegistDTO, Principal principal){
+        String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
+        prmotionRegistDTO.setMemberId(memberId);
         promotionCommandService.registerPromotion(prmotionRegistDTO);
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)
