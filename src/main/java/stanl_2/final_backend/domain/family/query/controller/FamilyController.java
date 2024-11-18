@@ -45,28 +45,28 @@ public class FamilyController {
         List<FamilyDTO> familyList = familyQueryService.selectFamilyList(loginId);
 
         return ResponseEntity.ok(FamilyResponseMessage.builder()
-                                                        .httpStatus(200)
-                                                        .msg("성공")
-                                                        .result(familyList)
-                                                        .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(familyList)
+                                                      .build());
     }
 
-//    @Operation(summary = "학력 조회(접속중인 사용자)")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "성공",
-//                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
-//            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
-//                    content = @Content(mediaType = "application/json"))
-//    })
-//    @GetMapping("")
-//    public ResponseEntity<EducationResponseMessage> getCertification(Principal principal){
-//
-//        List<EducationDTO> educationList = educationQueryService.selectEducationList(principal.getName());
-//
-//        return ResponseEntity.ok(EducationResponseMessage.builder()
-//                .httpStatus(200)
-//                .msg("성공")
-//                .result(educationList)
-//                .build());
-//    }
+    @Operation(summary = "가족 구성원 조회(접속중인 사용자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("")
+    public ResponseEntity<FamilyResponseMessage> getCertification(Principal principal){
+
+        List<FamilyDTO> familyList = familyQueryService.selectFamilyList(principal.getName());
+
+        return ResponseEntity.ok(FamilyResponseMessage.builder()
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(familyList)
+                                                      .build());
+    }
 }
