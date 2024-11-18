@@ -57,7 +57,7 @@
                COUNT(*) AS CNT
           FROM TB_ORDER A
          WHERE A.MEM_ID = #{memberId}
-           AND A.ACTIVE = TRUE TRUE
+           AND A.ACTIVE = TRUE
     </select>
 
     <select id="findOrderByIdAndMemberId" resultMap="orderDetailResultMap" parameterType="map">

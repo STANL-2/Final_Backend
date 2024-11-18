@@ -35,7 +35,6 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public PurchaseOrderSelectIdDTO selectDetailPurchaseOrder(PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO) {
         if (purchaseOrderSelectIdDTO.getRoles().stream()
                 .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()) || "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
@@ -52,7 +51,6 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Page<PurchaseOrderSelectAllDTO> selectAllPurchaseOrder(Pageable pageable, PurchaseOrderSelectAllDTO purchaseOrderSelectAllDTO) {
 
         int offset = Math.toIntExact(pageable.getOffset());

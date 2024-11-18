@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class PurchaseOrderRegistDTO {
     private String title;
     private String content;
