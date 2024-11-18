@@ -2,6 +2,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 자식 테이블부터 삭제
+DROP TABLE IF EXISTS sample;
 DROP TABLE IF EXISTS tb_sales_history;
 DROP TABLE IF EXISTS tb_update_history;
 DROP TABLE IF EXISTS tb_product_option;
@@ -195,7 +196,7 @@ CREATE TABLE tb_order
     FOREIGN KEY (CONR_ID) REFERENCES tb_contract (CONR_ID) ON DELETE CASCADE
 );
 
-CREATE TABLE tb_PROBLEM
+CREATE TABLE tb_problem
 (
     PROB_ID    VARCHAR(255) NOT NULL,
     PROB_TTL   VARCHAR(255) NOT NULL,
@@ -494,10 +495,7 @@ VALUES ('MEM_000000001', 101, 'pwd1234', '김철수', 'chulsoo@example.com', 35,
         '2024-01-07 12:00:00', TRUE),
        ('MEM_000000008', 108, 'pwd8901', '이준호', 'junho@example.com', 36, 'MALE', '890123-4567890', '010-2109-8765',
         '경기도 수원시', 'Technician', 'Bachelor', 'Full-time', 'CEN_000000008', 'ORG_000000008', '2024-01-08 12:00:00',
-        '2024-01-08 12:00:00', TRUE),
-       ('MEM_000000009', 109, 'pwd9012', '윤아름', 'areum@example.com', 27, 'FEMALE', '901234-5678901', '010-1098-7654',
-        '충청북도 청주시', 'Assistant', 'High School', 'Intern', 'CEN_000000009', 'ORG_000000006', '2024-01-09 12:00:00',
-        '2024-01-09 12:00:00', TRUE);
+        '2024-01-08 12:00:00', TRUE);
 
 INSERT INTO tb_member_role (MEM_ROL_ID, MEM_ROL_NAME, MEM_ID)
 VALUES ('MEM_ROL_000000001', '영업 사원', 'MEM_000000001'),
