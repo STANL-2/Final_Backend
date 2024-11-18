@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,9 @@ import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessa
 import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
 import stanl_2.final_backend.domain.A_sample.query.service.SampleQueryService;
 
+import java.security.Principal;
+
+@Slf4j
 @RestController(value = "querySampleController")
 @RequestMapping("/api/v1/sample")
 public class SampleController {
@@ -34,7 +38,11 @@ public class SampleController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("{id}")
-    public ResponseEntity<SampleResponseMessage> getTest(@PathVariable String id){
+    public ResponseEntity<SampleResponseMessage> getTest(@PathVariable String id,
+                                                         Principal principal){
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
 
         SampleDTO sampleDTO = sampleQueryService.selectSampleInfo(id);
 

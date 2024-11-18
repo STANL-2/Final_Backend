@@ -84,7 +84,7 @@ public class ScheduleController {
 
         ScheduleDetailDTO scheduleDetailDTO = new ScheduleDetailDTO();
         scheduleDetailDTO.setMemberId(memberId);
-        scheduleDetailDTO.setId(scheduleId);
+        scheduleDetailDTO.setScheduleId(scheduleId);
 
         ScheduleDetailDTO responseDetailSchedule = scheduleQueryService.selectDetailSchedule(scheduleDetailDTO);
 
