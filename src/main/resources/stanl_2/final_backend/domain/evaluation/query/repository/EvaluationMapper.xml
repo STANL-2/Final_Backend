@@ -10,12 +10,25 @@
         <result property="content" column="EVAL_CONT"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
-        <result property="deletedAt" column="deleted_at"/>
-        <result property="active" column="ACTIVE"/>
         <result property="centerId" column="CENT_ID"/>
         <result property="memberId" column="MEM_ID"/>
         <result property="writerId" column="WRI_ID"/>
     </resultMap>
+
+    <select id="findAllEvaluations" resultMap="evaluationAllResultMap" parameterType="java.util.Map">
+        SELECT
+        A.EVAL_ID
+        , A.EVAL_TTL
+        , A.CENT_ID
+        , A.MEM_ID
+        , A.WRI_ID
+        , A.CREATED_AT
+        , A.UPDATED_AT
+        FROM TB_EVALUATION A
+        WHERE A.ACTIVE = TRUE
+        ORDER BY A.CREATED_AT DESC
+        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+    </select>
 
     <select id="findByCenterId" resultMap="evaluationAllResultMap" parameterType="String">
         SELECT
@@ -34,26 +47,9 @@
 
     <select id="findEvaluationById" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO">
         SELECT
-        A.CENT_ID
-        , A.CENT_NAME
-        , A.CENT_ADR
-        , A.CENT_PHO
-        , A.CENT_MEM_CNT
-        , A.CENT_OPR_AT
-        , A.CREATED_AT
-        , A.UPDATED_AT
-        , A.DELETED_AT
-        , A.ACTIVE
-        FROM TB_CENTER A
-        WHERE A.ACTIVE = TRUE
-        ORDER BY CREATED_AT DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
-    </select>
-
-    <select id="findAllEvaluations" resultMap="evaluationAllResultMap" parameterType="java.util.Map">
-        SELECT
         A.EVAL_ID
         , A.EVAL_TTL
+        , A.EVAL_CONT
         , A.CENT_ID
         , A.MEM_ID
         , A.WRI_ID
@@ -61,63 +57,22 @@
         , A.UPDATED_AT
         FROM TB_EVALUATION A
         WHERE A.ACTIVE = TRUE
-        ORDER BY A.CREATED_AT DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
     </select>
 
-    <select id="findAllEvaluations" resultMap="evaluationAllResultMap" parameterType="java.util.Map">
-        SELECT
-        A.EVAL_ID
-        , A.EVAL_TTL
-        , A.CENT_ID
-        , A.MEM_ID
-        , A.WRI_ID
-        , A.CREATED_AT
-        , A.UPDATED_AT
-        FROM TB_EVALUATION A
-        WHERE A.ACTIVE = TRUE
-        ORDER BY CREATED_AT DESC
-        <if test="centerSearchRequestDTO.id != null">
-            AND A.CENT_ID LIKE #{centerSearchRequestDTO.id}
-        </if>
-        <if test="centerSearchRequestDTO.name != null">
-            AND A.CENT_NAME LIKE #{centerSearchRequestDTO.name}
-        </if>
-        <if test="centerSearchRequestDTO.address != null">
-            AND A.CENT_ADR LIKE #{centerSearchRequestDTO.address}
-        </if>
-        ORDER BY A.CREATED_AT DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
-    </select>
 
     <select id="findEvaluationCount" resultType="int">
         SELECT
         COUNT(*) AS CNT
-        FROM TB_CENTER A
+        FROM TB_EVALUATION A
         WHERE A.ACTIVE = TRUE;
     </select>
 
     <select id="findEvaluationCountByCenterId" resultType="int">
         SELECT
         COUNT(*) AS CNT
-        FROM TB_CENTER A
+        FROM TB_EVALUATION A
         WHERE A.ACTIVE = TRUE;
     </select>
 
-    <select id="findEvaluationCountByCenterId" resultType="int" parameterType="java.util.Map">
-        SELECT
-        COUNT(*) AS CNT
-        FROM TB_CENTER A
-        WHERE A.ACTIVE = TRUE
-        <if test="centerSearchRequestDTO.id != null">
-            AND CENT_ID like #{centerSearchRequestDTO.id}
-        </if>
-        <if test="centerSearchRequestDTO.name != null">
-            AND CENT_NAME like #{centerSearchRequestDTO.name}
-        </if>
-        <if test="centerSearchRequestDTO.address != null">
-            AND CENT_ADR like #{centerSearchRequestDTO.address}
-        </if>
-    </select>
 
 </mapper>

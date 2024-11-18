@@ -13,8 +13,6 @@ public class EvaluationDTO {
     private String content;
     private String createdAt;
     private String updatedAt;
-    private String deletedAt;
-    private Boolean active;
     private String centerId;
     private String memberId;
     private String writerId;

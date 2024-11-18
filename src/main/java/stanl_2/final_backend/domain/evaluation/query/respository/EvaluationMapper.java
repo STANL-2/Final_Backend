@@ -10,7 +10,7 @@ import java.util.Map;
 @Mapper
 public interface EvaluationMapper {
 
-    List<Map<String, Object>> findByCenterId(String centerId, EvaluationRequestList<?> requestList);
+    List<Map<String, Object>> findEvaluationByCenterId(String centerId, EvaluationRequestList<?> requestList);
 
     EvaluationDTO findEvaluationById(String id);
 

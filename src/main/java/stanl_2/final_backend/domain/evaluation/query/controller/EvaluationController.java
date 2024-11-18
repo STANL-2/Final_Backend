@@ -33,23 +33,23 @@ public class EvaluationController {
     /**
      * [GET] http://localhost:7777/api/v1/sample/SAM_000000001
      * */
-    @Operation(summary = "평가서 담당자 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
-            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
-                    content = @Content(mediaType = "application/json"))
-    })
-    @GetMapping("")
-    public ResponseEntity<EvaluationResponseMessage> getAllEvaluations(@PageableDefault(size = 20) Pageable pageable){
+        @Operation(summary = "평가서 담당자 조회")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "성공",
+                        content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
+                @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                        content = @Content(mediaType = "application/json"))
+        })
+        @GetMapping("")
+        public ResponseEntity<EvaluationResponseMessage> getAllEvaluations(@PageableDefault(size = 20) Pageable pageable){
 
-        Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectAllEvaluations(pageable);
+            Page<Map<String, Object>> responseEvaluations = evaluationQueryService.selectAllEvaluations(pageable);
 
-        return ResponseEntity.ok(EvaluationResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(responseEvaluations)
-                .build());
+            return ResponseEntity.ok(EvaluationResponseMessage.builder()
+                    .httpStatus(200)
+                    .msg("성공")
+                    .result(responseEvaluations)
+                    .build());
     }
 
     /**
@@ -85,7 +85,7 @@ public class EvaluationController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("/detail/{id}")
-    public ResponseEntity<EvaluationResponseMessage> getDetailEvaluation(@PathVariable String id) {
+    public ResponseEntity<EvaluationResponseMessage> getEvaluationDetail(@PathVariable String id) {
 
         EvaluationDTO evaluationDTO  = evaluationQueryService.selectEvaluationById(id);
 

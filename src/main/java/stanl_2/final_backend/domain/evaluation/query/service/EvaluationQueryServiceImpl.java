@@ -51,7 +51,7 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
                 .pageable(pageable)
                 .build();
 
-        List<Map<String, Object>> evaluationList = evaluationMapper.findByCenterId(centerId, requestList);
+        List<Map<String, Object>> evaluationList = evaluationMapper.findEvaluationByCenterId(centerId, requestList);
 
         int total = evaluationMapper.findEvaluationCountByCenterId();
 
