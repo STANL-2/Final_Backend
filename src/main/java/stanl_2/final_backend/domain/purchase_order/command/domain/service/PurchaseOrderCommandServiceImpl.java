@@ -53,7 +53,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     @Transactional
     public void registerPurchaseOrder(PurchaseOrderRegistDTO purchaseOrderRegistDTO) {
 
-        String memberId = authQueryService.selectMemberLoginId(purchaseOrderRegistDTO.getMemberId());
+        String memberId = authQueryService.selectMemberIdByLoginId(purchaseOrderRegistDTO.getMemberId());
 
         // 수주서가 존재하는지 확인
         Order order = orderRepository.findByOrderIdAndMemberId(purchaseOrderRegistDTO.getOrderId(), memberId);
@@ -76,7 +76,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     @Transactional
     public PurchaseOrderModifyDTO modifyPurchaseOrder(PurchaseOrderModifyDTO purchaseOrderModifyDTO) {
 
-        String memberId = authQueryService.selectMemberLoginId(purchaseOrderModifyDTO.getMemberId());
+        String memberId = authQueryService.selectMemberIdByLoginId(purchaseOrderModifyDTO.getMemberId());
 
         // 회원인지 확인 및 발주서 조회
         PurchaseOrder purchaseOrder = (PurchaseOrder) purchaseOrderRepository.findByPurchaseOrderIdAndMemberId(
@@ -113,7 +113,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     @Transactional
     public void deletePurchaseOrder(String id, String loginId) {
 
-        String memberId = authQueryService.selectMemberLoginId(loginId);
+        String memberId = authQueryService.selectMemberIdByLoginId(loginId);
 
         // 발주서가 해당 회원의 것인지 확인
         PurchaseOrder purchaseOrder = (PurchaseOrder) purchaseOrderRepository.findByPurchaseOrderIdAndMemberId(id, memberId)
@@ -129,7 +129,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     @Transactional
     public void modifyPurchaseOrderStatus(PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO) {
 
-        String adminId = authQueryService.selectMemberLoginId(purchaseOrderStatusModifyDTO.getAdminId());
+        String adminId = authQueryService.selectMemberIdByLoginId(purchaseOrderStatusModifyDTO.getAdminId());
 
         if ("[ROLE_REPRESENTATIVE]".equals(purchaseOrderStatusModifyDTO.getRole())) {
             PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(purchaseOrderStatusModifyDTO.getPurchaseOrderId())
