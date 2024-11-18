@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
+import stanl_2.final_backend.domain.career.command.application.dto.CareerModifyDTO;
 import stanl_2.final_backend.domain.career.command.application.dto.CareerRegistDTO;
 import stanl_2.final_backend.domain.career.command.application.service.CareerCommandService;
 import stanl_2.final_backend.domain.career.common.response.CareerResponseMessage;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 
 @Slf4j
 @RestController("commandCareerController")
@@ -48,5 +48,24 @@ public class CareerController {
                                                         .msg("성공")
                                                         .result(null)
                                                         .build());
+    }
+
+    @Operation(summary = "경력 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+    })
+    @PutMapping("")
+    public ResponseEntity<CareerResponseMessage> putCareer(@RequestBody CareerModifyDTO careerModifyDTO){
+
+        careerModifyDTO.setMemId(authQueryService.selectMemberIdByLoginId(careerModifyDTO.getMemberLoginId()));
+
+        careerCommandService.modifyCareer(careerModifyDTO);
+
+        return ResponseEntity.ok(CareerResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(null)
+                .build());
     }
 }

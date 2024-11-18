@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.career.command.application.dto.CareerModifyDTO;
 import stanl_2.final_backend.domain.career.command.application.dto.CareerRegistDTO;
 import stanl_2.final_backend.domain.career.command.application.service.CareerCommandService;
 import stanl_2.final_backend.domain.career.command.domain.aggregate.entity.Career;
@@ -28,5 +29,12 @@ public class CareerCommandServiceImpl implements CareerCommandService {
         Career career = modelMapper.map(careerRegistDTO, Career.class);
 
         careerRepository.save(career);
+    }
+
+    @Override
+    @Transactional
+    public void modifyCareer(CareerModifyDTO careerModifyDTO) {
+
+
     }
 }
