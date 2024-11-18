@@ -6,7 +6,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 @Configuration
 public class RedisConfig {
-
     private final RedisConnectionFactory redisConnectionFactory;
 
     public RedisConfig(RedisConnectionFactory redisConnectionFactory) {
