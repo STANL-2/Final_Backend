@@ -8,8 +8,10 @@ import lombok.*;
 @Getter
 @ToString
 public class CertificationRegisterDTO {
+    private String memberLoginId;
     private String name;
     private String agency;
     private String acquisitionDate;
     private String note;
+    private String memId;
 }
