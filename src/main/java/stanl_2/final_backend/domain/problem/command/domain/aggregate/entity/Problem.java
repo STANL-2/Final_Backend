@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
-@Table(name="TB_PROMOTION")
+@Table(name="TB_PROBLEM")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
