@@ -8,21 +8,25 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModifyDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 import stanl_2.final_backend.domain.notices.command.application.service.NoticeCommandService;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
+
+import java.security.Principal;
 
 @RestController("commandNoticeController")
 @RequestMapping("/api/v1/notice")
 public class NoticeController {
 
     private final NoticeCommandService noticeCommandService;
+    private final AuthQueryService authQueryService;
 
     @Autowired
-    public NoticeController(NoticeCommandService noticeCommandService) {
+    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService){
         this.noticeCommandService = noticeCommandService;
+        this.authQueryService =authQueryService;
     }
 
     @Operation(summary = "공지사항 작성")
@@ -31,7 +35,9 @@ public class NoticeController {
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestBody NoticeRegistDTO noticeRegistDTO){
+    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestBody NoticeRegistDTO noticeRegistDTO, Principal principal){
+        String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
+        noticeRegistDTO.setMemberId(memberId);
         noticeCommandService.registerNotice(noticeRegistDTO);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)

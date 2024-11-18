@@ -218,7 +218,7 @@ CREATE TABLE tb_purchase_order
 (
     PUR_ORD_ID   VARCHAR(255) NOT NULL,
     PUR_ORD_TTL  VARCHAR(255) NOT NULL,
-    PUR_CONT     TEXT         NOT NULL,
+    PUR_ORD_CONT     TEXT         NOT NULL,
     CREATED_AT   CHAR(19)     NOT NULL,
     UPDATED_AT   CHAR(19)     NOT NULL,
     DELETED_AT   CHAR(19)     NULL,
@@ -226,9 +226,11 @@ CREATE TABLE tb_purchase_order
     PUR_ORD_STAT VARCHAR(255) NOT NULL DEFAULT 'WAIT',
     ORD_ID       VARCHAR(255) NOT NULL,
     MEM_ID       VARCHAR(255) NOT NULL,
+    ADMIN_ID     VARCHAR(255) NULL,
     PRIMARY KEY (PUR_ORD_ID),
     FOREIGN KEY (ORD_ID) REFERENCES tb_order (ORD_ID),
-    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID)
+    FOREIGN KEY (MEM_ID) REFERENCES tb_member (MEM_ID),
+    FOREIGN KEY (ADMIN_ID) REFERENCES tb_member (MEM_ID)
 );
 
 CREATE TABLE tb_EVALUATION
@@ -679,28 +681,28 @@ VALUES ('PROB_000000001', '쏘렌토 엔진 문제', '엔진에서 소음 발생
        ('PROB_000000010', 'K5 시동 문제', '시동이 걸리지 않음', '2024-01-21 17:00:00', '2024-01-21 18:00:00', TRUE, 'CUS_000000010',
         'MEM_000000010', 'PRO_000000010');
 
-INSERT INTO tb_purchase_order (PUR_ORD_ID, PUR_ORD_TTL, PUR_CONT, CREATED_AT, UPDATED_AT, ACTIVE, PUR_ORD_STAT, ORD_ID,
-                               MEM_ID)
-VALUES ('PUR_000000001', '쏘렌토 부품 주문', '엔진 부품 요청', '2024-01-12 10:00:00', '2024-01-12 11:00:00', TRUE, 'WAIT',
-        'ORD_000000001', 'MEM_000000001'),
-       ('PUR_000000002', '스포티지 타이어 주문', '타이어 4개 요청', '2024-01-13 12:00:00', '2024-01-13 13:00:00', TRUE, 'CONFIRMED',
-        'ORD_000000002', 'MEM_000000002'),
-       ('PUR_000000003', 'K7 배터리 주문', '배터리 교체 요청', '2024-01-14 13:00:00', '2024-01-14 14:00:00', TRUE, 'DELIVERED',
-        'ORD_000000003', 'MEM_000000003'),
-       ('PUR_000000004', '셀토스 브레이크 주문', '브레이크 패드 요청', '2024-01-15 14:00:00', '2024-01-15 15:00:00', TRUE, 'WAIT',
-        'ORD_000000004', 'MEM_000000004'),
-       ('PUR_000000005', 'K3 내비게이션 주문', '내비게이션 교체', '2024-01-16 15:00:00', '2024-01-16 16:00:00', TRUE, 'CANCELLED',
-        'ORD_000000005', 'MEM_000000005'),
-       ('PUR_000000006', '모하비 오일 필터 주문', '오일 필터 10개 요청', '2024-01-17 09:00:00', '2024-01-17 10:00:00', TRUE,
-        'CONFIRMED', 'ORD_000000006', 'MEM_000000006'),
-       ('PUR_000000007', 'K8 헤드라이트 주문', 'LED 헤드라이트 2개 요청', '2024-01-18 10:00:00', '2024-01-18 11:00:00', TRUE, 'WAIT',
-        'ORD_000000007', 'MEM_000000007'),
-       ('PUR_000000008', '스팅어 도어 핸들 주문', '도어 핸들 4개 요청', '2024-01-19 12:00:00', '2024-01-19 13:00:00', TRUE, 'CONFIRMED',
-        'ORD_000000008', 'MEM_000000008'),
-       ('PUR_000000009', '니로 충전 케이블 주문', '전기차 충전 케이블 요청', '2024-01-20 14:00:00', '2024-01-20 15:00:00', TRUE,
-        'DELIVERED', 'ORD_000000009', 'MEM_000000009'),
-       ('PUR_000000010', 'K5 엔진오일 주문', '엔진오일 20L 요청', '2024-01-21 15:00:00', '2024-01-21 16:00:00', TRUE, 'WAIT',
-        'ORD_000000010', 'MEM_000000010');
+INSERT INTO tb_purchase_order (PUR_ORD_ID, PUR_ORD_TTL, PUR_ORD_CONT, CREATED_AT, UPDATED_AT, ACTIVE, PUR_ORD_STAT, ORD_ID,
+                               MEM_ID, ADMIN_ID)
+VALUES ('PUR_ORD_000000001', '쏘렌토 부품 주문', '엔진 부품 요청', '2024-01-12 10:00:00', '2024-01-12 11:00:00', TRUE, 'WAIT',
+        'ORD_000000001', 'MEM_000000001', NULL),
+       ('PUR_ORD_000000002', '스포티지 타이어 주문', '타이어 4개 요청', '2024-01-13 12:00:00', '2024-01-13 13:00:00', TRUE, 'CONFIRMED',
+        'ORD_000000002', 'MEM_000000002', NULL),
+       ('PUR_ORD_000000003', 'K7 배터리 주문', '배터리 교체 요청', '2024-01-14 13:00:00', '2024-01-14 14:00:00', TRUE, 'DELIVERED',
+        'ORD_000000003', 'MEM_000000003', NULL),
+       ('PUR_ORD_000000004', '셀토스 브레이크 주문', '브레이크 패드 요청', '2024-01-15 14:00:00', '2024-01-15 15:00:00', TRUE, 'WAIT',
+        'ORD_000000004', 'MEM_000000004', NULL),
+       ('PUR_ORD_000000005', 'K3 내비게이션 주문', '내비게이션 교체', '2024-01-16 15:00:00', '2024-01-16 16:00:00', TRUE, 'CANCELLED',
+        'ORD_000000005', 'MEM_000000005', NULL),
+       ('PUR_ORD_000000006', '모하비 오일 필터 주문', '오일 필터 10개 요청', '2024-01-17 09:00:00', '2024-01-17 10:00:00', TRUE,
+        'CONFIRMED', 'ORD_000000006', 'MEM_000000006', NULL),
+       ('PUR_ORD_000000007', 'K8 헤드라이트 주문', 'LED 헤드라이트 2개 요청', '2024-01-18 10:00:00', '2024-01-18 11:00:00', TRUE, 'WAIT',
+        'ORD_000000007', 'MEM_000000007', NULL),
+       ('PUR_ORD_000000008', '스팅어 도어 핸들 주문', '도어 핸들 4개 요청', '2024-01-19 12:00:00', '2024-01-19 13:00:00', TRUE, 'CONFIRMED',
+        'ORD_000000008', 'MEM_000000008', NULL),
+       ('PUR_ORD_000000009', '니로 충전 케이블 주문', '전기차 충전 케이블 요청', '2024-01-20 14:00:00', '2024-01-20 15:00:00', TRUE,
+        'DELIVERED', 'ORD_000000009', 'MEM_000000009', NULL),
+       ('PUR_ORD_000000010', 'K5 엔진오일 주문', '엔진오일 20L 요청', '2024-01-21 15:00:00', '2024-01-21 16:00:00', TRUE, 'WAIT',
+        'ORD_000000010', 'MEM_000000010', NULL);
 
 INSERT INTO tb_notice (NOT_ID, NOT_TTL, NOT_TAG, NOT_CLA, NOT_CONT, CREATED_AT, UPDATED_AT, ACTIVE, MEM_ID)
 VALUES ('NOT_000000001', '신차 출시 공지', 'ALL', 'IMPORTANT', '신형 쏘렌토가 출시되었습니다.', '2024-01-10 09:00:00',
