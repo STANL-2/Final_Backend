@@ -43,7 +43,7 @@ public class NoticeController {
     @Operation(summary = "공지사항 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
     @PutMapping("{id}")
     public ResponseEntity<NoticeResponseMessage> modifyNotice(@PathVariable String id,

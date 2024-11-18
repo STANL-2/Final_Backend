@@ -15,9 +15,9 @@ public interface CenterMapper {
 
     List<Map<String, Object>> findCenterAll(RequestList<?> requestList);
 
-    int findCenterCount();
+    Integer findCenterCount();
 
-    int findCenterBySearchCount(Map<String, Object> params);
+    Integer findCenterBySearchCount(Map<String, Object> params);
 
     List<Map<String, Object>> findCenterBySearch(Map<String, Object> params);
 

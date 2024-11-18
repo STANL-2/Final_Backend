@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stanl_2.final_backend.domain.schedule.query.repository.ScheduleMapper">
     <resultMap id="AllSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
-        <id property="id" column="SCH_ID"/>
+        <id property="scheduleId" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
         <result property="tag" column="SCH_TAG"/>
         <result property="startAt" column="SCH_SRT_AT"/>
@@ -12,7 +12,7 @@
         <result property="active" column="ACTIVE"/>
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
-    <select id="findSchedulesByMemberIdAndSrtAt" resultMap="AllSchedules" parameterType="hashmap">
+    <select id="findSchedulesByMemberIdAndStartAt" resultMap="AllSchedules" parameterType="hashmap">
         SELECT
                A.SCH_ID,
                A.SCH_NAME,
@@ -27,7 +27,7 @@
     </select>
 
     <resultMap id="yearMonthSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO">
-        <id property="id" column="SCH_ID"/>
+        <id property="scheduleId" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
         <result property="tag" column="SCH_TAG"/>
         <result property="startAt" column="SCH_SRT_AT"/>
@@ -50,7 +50,7 @@
     </select>
 
     <resultMap id="detailSchedule" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO">
-        <id property="id" column="SCH_ID"/>
+        <id property="scheduleId" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
         <result property="content" column="SCH_CONT"/>
         <result property="tag" column="SCH_TAG"/>

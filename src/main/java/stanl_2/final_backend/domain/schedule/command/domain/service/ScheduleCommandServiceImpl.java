@@ -71,7 +71,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND);
         }
 
-        Schedule schedule = scheduleRepository.findById(scheduleModifyDTO.getId())
+        Schedule schedule = scheduleRepository.findByScheduleId(scheduleModifyDTO.getScheduleId())
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
 
         if(!scheduleModifyDTO.getMemberId().equals(schedule.getMemberId())){
@@ -106,7 +106,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Transactional
     public Boolean deleteSchedule(String scheduleId) {
 
-        Schedule schedule = scheduleRepository.findById(scheduleId)
+        Schedule schedule = scheduleRepository.findByScheduleId(scheduleId)
                 .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
 
         schedule.setActive(false);
