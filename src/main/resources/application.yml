@@ -19,20 +19,25 @@ spring:
 
   devtools:
     livereload:
-      enabled: true
+      enabled: false
     restart:
       enabled: false
 
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate.format_sql: true
 jwt:
-  secret-key: ${SECRET_KEY}
-  secret-default-value: c29tZSBzZWN1cmUgMTI4LWJpdCBzZWNyZXQga2V5IGZvciBKU1VfUElQ
-  header: Authorization
+  secret-key: ${JWT_SECRET_KEY}
+  header: ${JWT_HEADER}
+
+encryption:
+  algorithm: ${ALGORITHM}
+  transformation: ${TRANSFORMATION}
+  secret-key: ${SECRET_DEFAULT_KEY}
+
 
 logging:
   pattern:

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.center.query.repository.CenterMapper">
+
+    <resultMap id="centerAllResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO">
+        <id property="id" column="CENT_ID"/>
+        <result property="name" column="CENT_NAME"/>
+        <result property="address" column="CENT_ADR"/>
+        <result property="phone" column="CENT_PHO"/>
+        <result property="memberCount" column="CENT_MEM_CNT"/>
+        <result property="operatingAt" column="CENT_OPR_AT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="active" column="ACTIVE"/>
+    </resultMap>
+
+    <resultMap id="centerIdResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO">
+        <id property="id" column="CENT_ID"/>
+        <result property="name" column="CENT_NAME"/>
+        <result property="address" column="CENT_ADR"/>
+        <result property="phone" column="CENT_PHO"/>
+        <result property="memberCount" column="CENT_MEM_CNT"/>
+        <result property="operatingAt" column="CENT_OPR_AT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="active" column="ACTIVE"/>
+    </resultMap>
+
+
+    <select id="findCenterById" resultMap="centerIdResultMap" parameterType="String">
+        SELECT
+              A.CENT_ID
+            , A.CENT_NAME
+            , A.CENT_ADR
+            , A.CENT_PHO
+            , A.CENT_MEM_CNT
+            , A.CENT_OPR_AT
+            , A.CREATED_AT
+            , A.UPDATED_AT
+            , A.DELETED_AT
+            , A.ACTIVE
+          FROM TB_CENTER A
+         WHERE A.CENT_ID = #{id} AND A.ACTIVE = TRUE
+    </select>
+
+    <select id="findCenterAll" resultMap="centerAllResultMap" parameterType="stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO">
+        SELECT
+               A.CENT_ID
+             , A.CENT_NAME
+             , A.CENT_ADR
+             , A.CENT_PHO
+             , A.CENT_MEM_CNT
+             , A.CENT_OPR_AT
+             , A.CREATED_AT
+             , A.UPDATED_AT
+             , A.DELETED_AT
+             , A.ACTIVE
+          FROM TB_CENTER A
+         WHERE A.ACTIVE = TRUE
+         ORDER BY CREATED_AT DESC
+        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+    </select>
+
+    <select id="findCenterBySearch" resultMap="centerAllResultMap" parameterType="java.util.Map">
+        SELECT
+        A.CENT_ID
+        , A.CENT_NAME
+        , A.CENT_ADR
+        , A.CENT_PHO
+        , A.CENT_MEM_CNT
+        , A.CENT_OPR_AT
+        , A.CREATED_AT
+        , A.UPDATED_AT
+        , A.DELETED_AT
+        , A.ACTIVE
+        FROM TB_CENTER A
+        WHERE A.ACTIVE = TRUE
+        <if test="centerSearchRequestDTO.id != null">
+            AND A.CENT_ID LIKE #{centerSearchRequestDTO.id}
+        </if>
+        <if test="centerSearchRequestDTO.name != null">
+            AND A.CENT_NAME LIKE #{centerSearchRequestDTO.name}
+        </if>
+        <if test="centerSearchRequestDTO.address != null">
+            AND A.CENT_ADR LIKE #{centerSearchRequestDTO.address}
+        </if>
+        ORDER BY A.CREATED_AT DESC
+        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+    </select>
+
+    <select id="findCenterCount" resultType="int">
+        SELECT
+         COUNT(*) AS CNT
+          FROM TB_CENTER A
+        WHERE A.ACTIVE = TRUE;
+    </select>
+
+    <select id="findCenterBySearchCount" resultType="int" parameterType="java.util.Map">
+        SELECT
+              COUNT(*) AS CNT
+          FROM TB_CENTER A
+         WHERE A.ACTIVE = TRUE
+        <if test="centerSearchRequestDTO.id != null">
+            AND CENT_ID like #{centerSearchRequestDTO.id}
+        </if>
+        <if test="centerSearchRequestDTO.name != null">
+            AND CENT_NAME like #{centerSearchRequestDTO.name}
+        </if>
+        <if test="centerSearchRequestDTO.address != null">
+            AND CENT_ADR like #{centerSearchRequestDTO.address}
+        </if>
+    </select>
+
+</mapper>
