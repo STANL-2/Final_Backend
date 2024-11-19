@@ -12,8 +12,15 @@ import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractDeleteDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractModifyDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractRegistDTO;
+import stanl_2.final_backend.domain.contract.command.application.dto.ContractStatusModifyDTO;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.common.response.ContractResponseMessage;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import java.security.GeneralSecurityException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController("contractController")
 @RequestMapping("/api/v1/contract")
@@ -60,17 +67,17 @@ public class ContractController {
     })
     @PostMapping("")
     public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO,
-                                                            Authentication authentication) {
+                                                            Authentication authentication) throws GeneralSecurityException {
 
         contractRegistRequestDTO.setMemberId(authentication.getName());
         contractRegistRequestDTO.setRoles(authentication.getAuthorities());
         contractCommandService.registerContract(contractRegistRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
-                                                .httpStatus(200)
-                                                .msg("계약서가 성공적으로 등록되었습니다.")
-                                                .result(null)
-                                                .build());
+                .httpStatus(200)
+                .msg("계약서가 성공적으로 등록되었습니다.")
+                .result(null)
+                .build());
     }
 
     /**
@@ -107,7 +114,7 @@ public class ContractController {
     @PutMapping("{id}")
     public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String id,
                                                                @RequestBody ContractModifyDTO contractModifyRequestDTO,
-                                                               Authentication authentication) {
+                                                               Authentication authentication) throws GeneralSecurityException {
 
         contractModifyRequestDTO.setContractId(id);
         contractModifyRequestDTO.setMemberId(authentication.getName());
@@ -124,9 +131,9 @@ public class ContractController {
     /**
      * [DELETE] http://localhost:8080/api/v1/contract/CON_000000011
      * */
-    @Operation(summary = "샘플 삭제")
+    @Operation(summary = "계약서 삭제")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "샘플 삭제 성공",
+            @ApiResponse(responseCode = "200", description = "계약서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @DeleteMapping("{id}")
@@ -145,4 +152,37 @@ public class ContractController {
                 .result(null)
                 .build());
     }
+
+    @Operation(summary = "계약서 승인상태 수정(관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 승인상태 수정 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @PutMapping("/status/{id}")
+    public ResponseEntity<ContractResponseMessage> putContractStatus(
+            @PathVariable String id,
+            @RequestBody ContractStatusModifyDTO contractStatusModifyDTO,
+            Authentication authentication) {
+
+        // 권한 정보를 String 리스트로 변환
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(role -> role.getAuthority())
+                .toList();
+
+        // DTO에 설정
+        contractStatusModifyDTO.setRoles(roles);
+        contractStatusModifyDTO.setContractId(id);
+        contractStatusModifyDTO.setAdminId(authentication.getName());
+
+        // 서비스 호출
+        contractCommandService.modifyContractStatus(contractStatusModifyDTO);
+
+        return ResponseEntity.ok(ContractResponseMessage.builder()
+                .httpStatus(200)
+                .msg("계약서 승인 상태가 성공적으로 변경되었습니다.")
+                .result(null)
+                .build());
+    }
+
+
 }

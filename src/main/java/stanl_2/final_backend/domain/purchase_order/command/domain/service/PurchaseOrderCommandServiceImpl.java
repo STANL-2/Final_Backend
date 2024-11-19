@@ -127,7 +127,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
         String adminId = authQueryService.selectMemberIdByLoginId(purchaseOrderStatusModifyDTO.getAdminId());
 
-        if ("[ROLE_REPRESENTATIVE]".equals(purchaseOrderStatusModifyDTO.getRole())) {
+        if ("[ROLE_REPRESENTATIVE]".equals(purchaseOrderStatusModifyDTO.getRoles())) {
             PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(purchaseOrderStatusModifyDTO.getPurchaseOrderId())
                     .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
 

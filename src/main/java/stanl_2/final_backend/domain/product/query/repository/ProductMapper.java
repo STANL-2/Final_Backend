@@ -18,4 +18,6 @@ public interface ProductMapper {
     List<Map<String, Object>> findProductBySearch(Map<String, Object> paramMap);
 
     int findProductBySearchCount(Map<String, Object> paramMap);
+
+    ProductSelectIdDTO findProductBySerialNumber(String serialNumber);
 }

@@ -12,13 +12,14 @@ import java.util.Collection;
 public class ContractModifyDTO {
 
     private String contractId;
-    private String name;
+    private String title;
     private String customerName;
     private String customerIdentifiNo;
     private String customerAddrress;
     private String customerEmail;
     private String customerPhone;
     private String companyName;
+    private String carName;
     private String customerClassifcation;
     private String customerPurchaseCondition;
     private String serialNum;
@@ -27,6 +28,7 @@ public class ContractModifyDTO {
     private Integer intermediatePayment;
     private Integer remainderPayment;
     private Integer consignmentPayment;
+    private Integer totalSales;
     private String delveryDate;
     private String delveryLocation;
     private String status;

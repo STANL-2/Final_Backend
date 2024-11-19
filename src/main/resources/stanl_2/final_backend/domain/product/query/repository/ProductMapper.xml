@@ -83,6 +83,17 @@
          WHERE A.PROD_ID = #{id} AND A.ACTIVE = TRUE
     </select>
 
+    <select id="findProductBySerialNumber" resultMap="productIdResultMap" parameterType="String">
+        SELECT
+        A.PROD_ID
+        , A.PROD_NAME
+        , A.PROD_SER_NO
+        , A.PROD_COST
+        , A.PROD_STCK
+        FROM TB_PRODUCT A
+        WHERE A.PROD_SER_NO = #{serialNumber} AND A.ACTIVE = TRUE
+    </select>
+
     <select id="findProductAll" resultMap="productAllResultMap" parameterType="stanl_2.final_backend.domain.product.common.util.RequestList">
         SELECT
               A.PROD_ID

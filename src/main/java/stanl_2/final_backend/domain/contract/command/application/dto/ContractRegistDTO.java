@@ -11,7 +11,7 @@ import java.util.Collection;
 @Getter
 public class ContractRegistDTO {
 
-    private String name;
+    private String title;
     private String customerName;
     private String customerIdentifiNo;
     private String customerAddrress;
@@ -26,6 +26,8 @@ public class ContractRegistDTO {
     private Integer intermediatePayment;
     private Integer remainderPayment;
     private Integer consignmentPayment;
+    private Integer totalSales;
+    private String carName;
     private String delveryDate;
     private String delveryLocation;
     private String status;
