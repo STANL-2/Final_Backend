@@ -30,8 +30,7 @@ public interface EvaluationMapper {
 
     List<EvaluationDTO> findEvaluationByCenterIdAndSearch(@Param("size") int size
             ,@Param("offset") int offset
-            ,@Param("evaluationSearchDTO") EvaluationSearchDTO evaluationSearchDTO
-            ,@Param("centerId") String centerId);
+            ,@Param("evaluationSearchDTO") EvaluationSearchDTO evaluationSearchDTO);
 
     int findEvaluationBySearchCount(@Param("evaluationSearchDTO") EvaluationSearchDTO evaluationSearchDTO);
 

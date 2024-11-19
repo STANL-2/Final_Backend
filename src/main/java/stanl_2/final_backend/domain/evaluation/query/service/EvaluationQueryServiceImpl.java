@@ -22,6 +22,7 @@ import stanl_2.final_backend.global.utils.AESUtils;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class EvaluationQueryServiceImpl implements EvaluationQueryService {
@@ -41,24 +42,25 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<EvaluationDTO> selectAllEvaluations(EvaluationDTO evaluationDTO, Pageable pageable) throws GeneralSecurityException {
+    public Page<EvaluationDTO> selectAllEvaluationsByManager(EvaluationDTO evaluationDTO, Pageable pageable) throws GeneralSecurityException {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        if(evaluationDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()))){
+        MemberDTO memberDTO = memberQueryService.selectMemberInfo(evaluationDTO.getMemberId());
+//        String centerId = aesUtils.decrypt(memberDTO.getCenterId());
+        String centerId = memberDTO.getCenterId();
 
-            MemberDTO memberDTO = memberQueryService.selectMemberInfo(evaluationDTO.getMemberId());
-            String centerId = aesUtils.decrypt(memberDTO.getCenterId());
+        System.out.println("centerId: " + centerId);
 
-            List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterId(size,offset, centerId);
+        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterId(size,offset, centerId);
 
-            int total = evaluationMapper.findEvaluationCountByCenterId(centerId);
+        int total = evaluationMapper.findEvaluationCountByCenterId(centerId);
 
-            if(evaluationList.isEmpty() || total == 0){
-                throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
-            }
-/* 설명. ID를 LOGINID로 바꿔주는 메소드 찾아서... */
+        if(evaluationList.isEmpty() || total == 0) {
+            throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
+        }
+
+        /* 설명. ID를 LOGINID로 바꿔주는 메소드 찾아서... */
 //            evaluationList.forEach(evaluation -> {
 //                try {
 //                    evaluation.setMemberId(evaluation.getMemberName()));
@@ -66,22 +68,32 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 //                    throw new RuntimeException(e);
 //                }
 //            });
-            return new PageImpl<>(evaluationList, pageable, total);
-        } else if(evaluationDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
+        return new PageImpl<>(evaluationList, pageable, total);
+    }
 
-            List<EvaluationDTO> evaluationList = evaluationMapper.findAllEvaluations(size,offset);
+    @Override
+    @Transactional(readOnly = true)
+    public Page<EvaluationDTO> selectAllEvaluationsByRepresentative(EvaluationDTO evaluationDTO, Pageable pageable) throws GeneralSecurityException {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
 
-            int total = evaluationMapper.findEvaluationCount();
+        List<EvaluationDTO> evaluationList = evaluationMapper.findAllEvaluations(size,offset);
 
-            if(evaluationList.isEmpty() || total == 0) {
-                throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
-            }
+        int total = evaluationMapper.findEvaluationCount();
 
-            return new PageImpl<>(evaluationList, pageable, total);
-        } else{
-            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+        if(evaluationList.isEmpty() || total == 0) {
+            throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
         }
+
+        /* 설명. ID를 LOGINID로 바꿔주는 메소드 찾아서... */
+//            evaluationList.forEach(evaluation -> {
+//                try {
+//                    evaluation.setMemberId(evaluation.getMemberName()));
+//                } catch (GeneralSecurityException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            });
+        return new PageImpl<>(evaluationList, pageable, total);
     }
 
     @Override
@@ -98,30 +110,29 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<EvaluationDTO> selectEvaluationBySearch(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException {
+    public Page<EvaluationDTO> selectEvaluationBySearchByManager(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        if(!evaluationSearchDTO.getWriterName().isEmpty()) {
-            evaluationSearchDTO.setWriterName(authQueryService.selectMemberIdByLoginId(evaluationSearchDTO.getWriterName()));
+        String writerName = Optional.ofNullable(evaluationSearchDTO.getWriterName()).orElse("");
+        if (!writerName.isEmpty()) {
+            evaluationSearchDTO.setWriterName(authQueryService.selectMemberIdByLoginId(writerName));
         }
-        if(!evaluationSearchDTO.getWriterName().isEmpty()) {
-            evaluationSearchDTO.setMemberName(authQueryService.selectMemberIdByLoginId(evaluationSearchDTO.getMemberName()));
+        String memberName = Optional.ofNullable(evaluationSearchDTO.getMemberName()).orElse("");
+        if (!memberName.isEmpty()) {
+            evaluationSearchDTO.setMemberName(authQueryService.selectMemberIdByLoginId(memberName));
         }
 
-        if(evaluationSearchDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()))){
+        MemberDTO memberDTO = memberQueryService.selectMemberInfo(evaluationSearchDTO.getSearcherName());
+        evaluationSearchDTO.setCenterId(memberDTO.getCenterId());
 
-            MemberDTO memberDTO = memberQueryService.selectMemberInfo(evaluationSearchDTO.getSearcherName());
-            String centerId = aesUtils.decrypt(memberDTO.getCenterId());
+        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterIdAndSearch(size,offset, evaluationSearchDTO);
 
-            List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterIdAndSearch(size,offset, evaluationSearchDTO, centerId);
+        int total = evaluationMapper.findEvaluationByCenterIdAndSearchCount(evaluationSearchDTO);
 
-            int total = evaluationMapper.findEvaluationByCenterIdAndSearchCount(evaluationSearchDTO);
-
-            if(evaluationList.isEmpty() || total == 0){
-                throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
-            }
+        if(evaluationList.isEmpty() || total == 0){
+            throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
+        }
             /* 설명. ID를 LOGINID로 바꿔주는 메소드 찾아서... */
 //            evaluationList.forEach(evaluation -> {
 //                try {
@@ -130,22 +141,32 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 //                    throw new RuntimeException(e);
 //                }
 //            });
-            return new PageImpl<>(evaluationList, pageable, total);
-        } else if(evaluationSearchDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
+        return new PageImpl<>(evaluationList, pageable, total);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public Page<EvaluationDTO> selectEvaluationBySearchByRepresentative(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
 
-            List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationBySearch(size,offset, evaluationSearchDTO);
-
-            int total = evaluationMapper.findEvaluationBySearchCount(evaluationSearchDTO);
-
-            if(evaluationList.isEmpty() || total == 0) {
-                throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
-            }
-
-            return new PageImpl<>(evaluationList, pageable, total);
-        } else{
-            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+        String writerName = Optional.ofNullable(evaluationSearchDTO.getWriterName()).orElse("");
+        if (!writerName.isEmpty()) {
+            evaluationSearchDTO.setWriterName(authQueryService.selectMemberIdByLoginId(writerName));
         }
+        String memberName = Optional.ofNullable(evaluationSearchDTO.getMemberName()).orElse("");
+        if (!memberName.isEmpty()) {
+            evaluationSearchDTO.setMemberName(authQueryService.selectMemberIdByLoginId(memberName));
+        }
+
+        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationBySearch(size,offset, evaluationSearchDTO);
+
+        int total = evaluationMapper.findEvaluationBySearchCount(evaluationSearchDTO);
+
+        if(evaluationList.isEmpty() || total == 0) {
+            throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
+        }
+
+        return new PageImpl<>(evaluationList, pageable, total);
 
     }
 }

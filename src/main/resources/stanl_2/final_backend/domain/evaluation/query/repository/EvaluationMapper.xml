@@ -67,7 +67,7 @@
         a.created_at
         FROM tb_evaluation a
         <where>
-            a.active = TRUE AND a.cent_id = #{centerId}
+            a.active = TRUE AND a.cent_id = #{evaluationSearchDTO.centerId}
             <if test="evaluationSearchDTO.evalId != null">
                 AND a.eval_id = #{evaluationSearchDTO.evalId}
             </if>
@@ -168,7 +168,7 @@
         COUNT(*) AS cnt
         FROM tb_evaluation a
         <where>
-            a.active = TRUE AND a.cent_id = #{centerId}
+            a.active = TRUE AND a.cent_id = #{evaluationSearchDTO.centerId}
             <if test="evaluationSearchDTO.evalId != null">
                 AND a.eval_id = #{evaluationSearchDTO.evalId}
             </if>
