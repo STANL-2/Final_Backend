@@ -157,7 +157,7 @@
             </if>
             <if test="evaluationSearchDTO.title != null">
                 AND A.EVAL_TTL LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
-            </if>
+            </if>`
             <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
                 AND A.CREATED_AT BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
             </if>
