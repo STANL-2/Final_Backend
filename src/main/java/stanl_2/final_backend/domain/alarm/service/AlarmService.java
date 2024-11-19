@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import stanl_2.final_backend.domain.alarm.aggregate.dto.AlarmDTO;
 import stanl_2.final_backend.domain.alarm.aggregate.entity.Alarm;
+import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 
 public interface AlarmService {
     SseEmitter subscribe(AlarmDTO alarmDTO, HttpServletResponse response);
@@ -13,4 +14,6 @@ public interface AlarmService {
     void send(String memberLoginId, String message, String redirectUrl, String type, String createdAt);
 
     Alarm createAlarm(String memberId, String message, String redirectUrl, String type, String createdAt);
+
+    void sendNoticeAlarm(NoticeRegistDTO noticeRegistDTO);
 }

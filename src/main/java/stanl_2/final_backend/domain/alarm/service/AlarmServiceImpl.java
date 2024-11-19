@@ -11,8 +11,13 @@ import stanl_2.final_backend.domain.alarm.aggregate.entity.Alarm;
 import stanl_2.final_backend.domain.alarm.repository.AlarmRepository;
 import stanl_2.final_backend.domain.alarm.repository.EmitterRepository;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
+import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Slf4j
@@ -22,15 +27,21 @@ public class AlarmServiceImpl implements AlarmService {
     private final EmitterRepository emitterRepository;
     private final AlarmRepository alarmRepository;
     private final AuthQueryService authQueryService;
+    private final MemberQueryService memberQueryService;
+    private String  getCurrentTime() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
 
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
     @Autowired
     public AlarmServiceImpl(AlarmRepository alarmRepository, EmitterRepository emitterRepository,
-                            AuthQueryService authQueryService) {
+                            AuthQueryService authQueryService, MemberQueryService memberQueryService) {
         this.alarmRepository = alarmRepository;
         this.emitterRepository = emitterRepository;
         this.authQueryService = authQueryService;
+        this.memberQueryService = memberQueryService;
     }
 
     @Override
@@ -105,6 +116,12 @@ public class AlarmServiceImpl implements AlarmService {
         alarm.setCreatedAt(createdAt);
 
         return alarm;
+    }
+
+    @Override
+    public void sendNoticeAlarm(NoticeRegistDTO noticeRegistDTO){
+
+        String currentTime = getCurrentTime();
     }
 
 }
