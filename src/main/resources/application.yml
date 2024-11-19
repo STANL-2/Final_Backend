@@ -34,9 +34,9 @@ jwt:
   header: ${JWT_HEADER}
 
 encryption:
-  algorithm: ${ALGORITHM}
-  transformation: ${TRANSFORMATION}
-  secret-key: ${SECRET_DEFAULT_KEY}
+  algorithm: AES
+  transformation: AES/ECB/PKCS5Padding
+  secret-key: haWh*9teA@2sT!nLaO$i0lEcj3cU282d
 
 
 logging:
