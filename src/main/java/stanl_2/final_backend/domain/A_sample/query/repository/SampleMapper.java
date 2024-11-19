@@ -6,7 +6,7 @@ import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
 
 @Mapper
 public interface SampleMapper {
-    String selectNameById(@Param("id") String id);
+    String selectNameById(@Param("id") Object id);
 
     SampleDTO selectById(@Param("id") String id);
 }
