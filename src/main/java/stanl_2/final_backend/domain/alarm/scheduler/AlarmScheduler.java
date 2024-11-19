@@ -9,6 +9,7 @@ import stanl_2.final_backend.domain.alarm.aggregate.entity.Alarm;
 import stanl_2.final_backend.domain.alarm.repository.EmitterRepository;
 import stanl_2.final_backend.domain.alarm.service.AlarmService;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
+import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO;
 import stanl_2.final_backend.domain.schedule.query.service.ScheduleQueryService;
 
 import java.time.ZoneId;
@@ -43,7 +44,7 @@ public class AlarmScheduler {
 
         String currentDay = getCurrentTime().substring(0,10);
 
-        List<ScheduleDTO> todaySchedules = scheduleQueryService.findSchedulesByDate(currentDay);
+        List<ScheduleDayDTO> todaySchedules = scheduleQueryService.findSchedulesByDate(currentDay);
 
         // 사용자 별로 알림 전송
         todaySchedules.forEach(schedule -> {

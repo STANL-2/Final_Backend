@@ -3,15 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stanl_2.final_backend.domain.member.query.repository.MemberRoleMapper">
-    <resultMap id="detailMemberRole" type="string">
-        <id property="memberRoleId" column="MEM_ROl_ID"/>
-        <result property="role" column="MEM_ROL_NAME"/>
-        <result property="memberId" column="MEM_ID"/>
-    </resultMap>
-    <select id="findMembersbyRole" resultMap="detailSchedule" parameterType="string">
+    <select id="findMembersbyRole" resultType="string" parameterType="string">
         SELECT
                a.mem_id
-          FROM tb_mem_role a
-         WHERE a.role_name = #{ memberRole }
+          FROM tb_member_role a
+         WHERE a.mem_rol_name = #{ memberRole }
     </select>
 </mapper>

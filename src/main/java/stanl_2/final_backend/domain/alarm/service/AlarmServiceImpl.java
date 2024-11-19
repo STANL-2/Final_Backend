@@ -3,7 +3,6 @@ package stanl_2.final_backend.domain.alarm.service;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -13,8 +12,7 @@ import stanl_2.final_backend.domain.alarm.repository.AlarmRepository;
 import stanl_2.final_backend.domain.alarm.repository.EmitterRepository;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
-import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
-import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
+import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -31,7 +29,6 @@ public class AlarmServiceImpl implements AlarmService {
     private final AlarmRepository alarmRepository;
     private final AuthQueryService authQueryService;
     private final MemberQueryService memberQueryService;
-    private final AlarmService alarmService;
 
     private String  getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -42,12 +39,11 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Autowired
     public AlarmServiceImpl(AlarmRepository alarmRepository, EmitterRepository emitterRepository,
-                            AuthQueryService authQueryService, MemberQueryService memberQueryService, @Qualifier("alarmService") AlarmService alarmService) {
+                            AuthQueryService authQueryService, MemberQueryService memberQueryService){
         this.alarmRepository = alarmRepository;
         this.emitterRepository = emitterRepository;
         this.authQueryService = authQueryService;
         this.memberQueryService = memberQueryService;
-        this.alarmService = alarmService;
     }
 
     @Override
@@ -125,23 +121,20 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public void sendNoticeAlarm(NoticeRegistDTO noticeRegistDTO){
+    public void sendNoticeAlarm(NoticeAlarmDTO noticeAlarmDTO){
 
-        List<String> memberIdList = memberQueryService.selectMemberByRole(noticeRegistDTO.getTag());
+        List<String> memberIdList = memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag());
 
         memberIdList.forEach(member -> {
             String memberId = member;
             String type = "NOTICE";
-            String tag = noticeRegistDTO.getClassification();
+            String tag = noticeAlarmDTO.getClassification();
             String message = "[" + tag + "] 영업 관리자 대상 공지사항이 등록되었습니다.";
-//            String redirectUrl = "/api/v1/notice" + noticeRegistDTO.getNoteiceId();
-            String redirectUrl = "/api/v1/notice";
+            String redirectUrl = "/api/v1/notice" + noticeAlarmDTO.getNoticeId();
             String createdAt = getCurrentTime();
 
-            alarmService.send(memberId, message, redirectUrl, type, createdAt);
+            send(memberId, message, redirectUrl, type, createdAt);
         });
-
-
     }
 
 }

@@ -12,7 +12,7 @@ import stanl_2.final_backend.domain.alarm.service.AlarmService;
 
 import java.security.Principal;
 
-@RestController("queryAlarmController")
+@RestController
 @RequestMapping("/api/v1/alarm")
 public class AlarmController {
 
