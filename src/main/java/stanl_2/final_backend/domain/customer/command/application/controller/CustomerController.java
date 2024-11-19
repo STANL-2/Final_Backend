@@ -56,7 +56,7 @@ public class CustomerController {
                                                         .build());
     }
 
-    @Operation(summary = "고객정보 수정")
+    @Operation(summary = "고객정보 수정(자기 고객만)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
@@ -76,7 +76,7 @@ public class CustomerController {
                                                         .build());
     }
 
-    @Operation(summary = "고객정보 수정")
+    @Operation(summary = "고객정보 삭제(자기 고객만)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
