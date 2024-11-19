@@ -41,9 +41,7 @@ public class NoticeController {
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
         System.out.println("memberId"+memberId);
         noticeRegistDTO.setMemberId(memberId);
-        System.out.println("1.=========================");
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
-        System.out.println("2.=========================");
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
