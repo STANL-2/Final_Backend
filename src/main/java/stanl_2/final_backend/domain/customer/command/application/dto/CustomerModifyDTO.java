@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CustomerModifyDTO {
+    private String memberId;
     private String customerId;
     private String name;
     private Integer age;

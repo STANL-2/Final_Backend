@@ -63,9 +63,13 @@ public class CustomerController {
     })
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerResponseMessage> postCustomer(@PathVariable String customerId,
-                                                                @RequestBody CustomerModifyDTO customerModifyDTO) throws GeneralSecurityException {
+                                                                @RequestBody CustomerModifyDTO customerModifyDTO,
+                                                                Principal principal) throws GeneralSecurityException {
+
+        String memberId = principal.getName();
 
         customerModifyDTO.setCustomerId(customerId);
+        customerModifyDTO.setMemberId(memberId);
 
         customerCommandService.modifyCustomerInfo(customerModifyDTO);
 
