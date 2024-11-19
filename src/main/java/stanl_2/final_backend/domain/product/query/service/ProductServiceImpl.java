@@ -58,4 +58,15 @@ public class ProductServiceImpl implements ProductService{
 
         return new PageImpl<>(productList, pageable, total);
     }
+
+    @Override
+    @Transactional
+    public ProductSelectIdDTO selectByProductSerialNumber(String id) {
+
+        /* 설명. 상세 조회 시, Mapper에서 product와 productOption join해서 보여줄 것 */
+        ProductSelectIdDTO productSelectIdDTO = productMapper.findProductBySerialNumber(id);
+
+        return productSelectIdDTO;
+    }
+
 }

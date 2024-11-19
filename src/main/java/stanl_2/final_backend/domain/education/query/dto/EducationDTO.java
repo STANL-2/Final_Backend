@@ -6,7 +6,6 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 public class EducationDTO {
     private String entranceDate;
     private String graduationDate;

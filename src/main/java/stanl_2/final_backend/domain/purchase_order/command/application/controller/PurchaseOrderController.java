@@ -96,12 +96,10 @@ public class PurchaseOrderController {
     public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrderStatus(@PathVariable String id,
                                                                                PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO,
                                                                                Authentication authentication) {
-        String role = authentication.getAuthorities().toString();
-        String adminId = authentication.getName();
 
         purchaseOrderStatusModifyDTO.setPurchaseOrderId(id);
-        purchaseOrderStatusModifyDTO.setRole(role);
-        purchaseOrderStatusModifyDTO.setAdminId(adminId);
+        purchaseOrderStatusModifyDTO.setRoles(authentication.getAuthorities());
+        purchaseOrderStatusModifyDTO.setAdminId(authentication.getName());
 
         purchaseOrderCommandService.modifyPurchaseOrderStatus(purchaseOrderStatusModifyDTO);
 

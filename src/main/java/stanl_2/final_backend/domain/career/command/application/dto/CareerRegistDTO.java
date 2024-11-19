@@ -6,9 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class CareerRegistDTO {
-    private String memberLoginId;
     private String emplDate;
     private String resignDate;
     private String name;

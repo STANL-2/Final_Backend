@@ -12,4 +12,6 @@ public interface ScheduleQueryService {
     List<ScheduleYearMonthDTO> selectYearMonthSchedule(ScheduleYearMonthDTO scheduleYearMonthDTO);
 
     ScheduleDetailDTO selectDetailSchedule(ScheduleDetailDTO scheduleDetailDTO);
+
+    List<ScheduleDTO> findSchedulesByDate(String currentDay);
 }

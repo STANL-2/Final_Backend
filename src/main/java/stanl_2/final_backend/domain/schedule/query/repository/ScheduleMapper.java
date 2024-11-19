@@ -16,4 +16,6 @@ public interface ScheduleMapper {
     ScheduleDetailDTO findScheduleByMemberIdAndScheduleId(Map<String, String> arg);
 
     List<ScheduleDTO> findSchedulesByMemberIdAndStartAt(Map<String, String> arg);
+
+    List<ScheduleDTO> findAllSchedulesByDay(String currentDay);
 }
