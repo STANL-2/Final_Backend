@@ -7,18 +7,9 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
-public class NoticeRegistDTO {
-    private String title;
-
-    private String tag;
-
-    private String classification;
-
-    private String content;
-
+@Setter
+public class NoticeDeleteDTO {
+    private String NoticeId;
     private String memberLoginId;
-
-    private String memberId;
 }
