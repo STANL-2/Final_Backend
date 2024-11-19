@@ -8,8 +8,8 @@ import lombok.*;
 @Getter
 @ToString
 public class OrderModifyDTO {
-    private String id;
+    private String orderId;
     private String title;
     private String content;
-    private String memId;
+    private String memberId;
 }

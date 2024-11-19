@@ -39,6 +39,7 @@ public enum OrderErrorCode {
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
     ORDER_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "수주서를 찾지 못했습니다"),
+    ORDER_STATUS_NOT_APPROVED(404002, HttpStatus.NOT_FOUND, "승인되지 않은 수주서입니다."),
     /**
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
