@@ -10,4 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SalesHistorySelectIdDTO {
+    private String temp2;
 }
