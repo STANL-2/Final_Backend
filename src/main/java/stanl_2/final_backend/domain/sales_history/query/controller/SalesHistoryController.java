@@ -6,12 +6,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.sales_history.common.response.SalesHistoryResponseMessage;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectAllDTO;
+import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
 import stanl_2.final_backend.domain.sales_history.query.service.SalesHistoryQueryService;
 
 @RestController(value = "querySalesHistoryController")
@@ -32,14 +35,19 @@ public class SalesHistoryController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("")
-    public ResponseEntity<SalesHistoryResponseMessage> getAllSalesHistory(){
+    public ResponseEntity<SalesHistoryResponseMessage> getAllSalesHistory(Authentication authentication,
+                                                                          Pageable pageable){
+        SalesHistorySelectDTO salesHistorySelectDTO = new SalesHistorySelectDTO();
 
-        SalesHistorySelectAllDTO salesHistorySelectAllDTO = salesHistoryQueryService.selectAllSalesHistory();
+        salesHistorySelectDTO.setRoles(authentication.getAuthorities());
+        salesHistorySelectDTO.setSearcherName(authentication.getName());
+
+        Page<SalesHistorySelectDTO> responseSalesHistory = salesHistoryQueryService.selectAllSalesHistory(salesHistorySelectDTO, pageable);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(salesHistorySelectAllDTO)
+                .result(responseSalesHistory)
                 .build());
     }
 
