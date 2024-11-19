@@ -3,7 +3,6 @@ package stanl_2.final_backend.domain;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 @RestController
 public class operation_test {
     @GetMapping("health")
