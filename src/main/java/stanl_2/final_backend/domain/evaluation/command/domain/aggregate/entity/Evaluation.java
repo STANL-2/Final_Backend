@@ -26,7 +26,7 @@ public class Evaluation {
             parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "EVAL")
     )
     @Column(name = "EVAL_ID")
-    private String id;
+    private String evaluationId;
 
     @Column(name = "EVAL_TTL")
     private String title;

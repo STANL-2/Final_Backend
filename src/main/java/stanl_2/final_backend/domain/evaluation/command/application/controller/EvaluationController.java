@@ -31,7 +31,7 @@ public class EvaluationController {
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<EvaluationResponseMessage> postTest(@RequestBody EvaluationRegistDTO evaluationRegistRequestDTO) {
+    public ResponseEntity<EvaluationResponseMessage> postEvaluation(@RequestBody EvaluationRegistDTO evaluationRegistRequestDTO) {
 
         evaluationCommandService.registerEvaluation(evaluationRegistRequestDTO);
 
@@ -55,7 +55,7 @@ public class EvaluationController {
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PutMapping("{id}")
-    public ResponseEntity<EvaluationResponseMessage> putTest(@PathVariable String id,
+    public ResponseEntity<EvaluationResponseMessage> putEvaluation(@PathVariable String id,
                                                          @RequestBody EvaluationModifyDTO evaluationModifyRequestDTO) {
 
         evaluationCommandService.modifyEvaluation(id,evaluationModifyRequestDTO);
@@ -76,7 +76,7 @@ public class EvaluationController {
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))})
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<EvaluationResponseMessage> deleteTest(@PathVariable String id) {
+    public ResponseEntity<EvaluationResponseMessage> deleteEvaluation(@PathVariable String id) {
 
         evaluationCommandService.deleteEvaluation(id);
 

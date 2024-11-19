@@ -50,7 +50,7 @@ public class EvaluationCommandServiceImpl implements EvaluationCommandService {
 
         Evaluation updateEvaluation = modelMapper.map(evaluationModifyRequestDTO, Evaluation.class);
 
-        updateEvaluation.setId(evaluation.getId());
+        updateEvaluation.setEvaluationId(evaluation.getEvaluationId());
         updateEvaluation.setCreatedAt(evaluation.getCreatedAt());
         updateEvaluation.setUpdatedAt(getCurrentTime());
         updateEvaluation.setActive(evaluation.getActive());

@@ -39,7 +39,6 @@ public enum EvaluationErrorCode {
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
     SAMPLE_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "sample 데이터를 찾지 못했습니다"),
-    CENTER_NOT_FOUND(404002, HttpStatus.NOT_FOUND, "center 데이터를 찾지 못했습니다."),
     EVALUATION_NOT_FOUND(404002, HttpStatus.NOT_FOUND, "evaluation 데이터를 찾지 못했습니다."),
     /**
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
