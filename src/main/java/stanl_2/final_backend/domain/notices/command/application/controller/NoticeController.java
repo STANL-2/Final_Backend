@@ -39,7 +39,6 @@ public class NoticeController {
     @PostMapping("")
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestBody NoticeRegistDTO noticeRegistDTO, Principal principal){
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
-        System.out.println("memberId"+memberId);
         noticeRegistDTO.setMemberId(memberId);
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
