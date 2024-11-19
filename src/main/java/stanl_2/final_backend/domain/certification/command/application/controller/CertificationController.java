@@ -17,6 +17,8 @@ import stanl_2.final_backend.domain.certification.command.application.dto.Certif
 import stanl_2.final_backend.domain.certification.command.application.service.CertificationCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 
+import java.security.Principal;
+
 @RestController("commandCertificationController")
 @RequestMapping("/api/v1/certification")
 public class CertificationController {
@@ -37,16 +39,17 @@ public class CertificationController {
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<CareerResponseMessage> postCertification(@RequestBody CertificationRegisterDTO certificationRegisterDTO){
+    public ResponseEntity<CareerResponseMessage> postCertification(@RequestBody CertificationRegisterDTO certificationRegisterDTO,
+                                                                   Principal principal){
 
-        certificationRegisterDTO.setMemberId(authQueryService.selectMemberIdByLoginId(certificationRegisterDTO.getMemberLoginId()));
+        certificationRegisterDTO.setMemberId(authQueryService.selectMemberIdByLoginId(principal.getName()));
 
         certificationCommandService.registCertification(certificationRegisterDTO);
 
         return ResponseEntity.ok(CareerResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(null)
-                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
     }
 }

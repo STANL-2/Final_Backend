@@ -15,6 +15,8 @@ import stanl_2.final_backend.domain.career.command.application.service.CareerCom
 import stanl_2.final_backend.domain.career.common.response.CareerResponseMessage;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 
+import java.security.Principal;
+
 @Slf4j
 @RestController("commandCareerController")
 @RequestMapping("/api/v1/career")
@@ -36,9 +38,10 @@ public class CareerController {
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<CareerResponseMessage> postCareer(@RequestBody CareerRegistDTO careerRegistDTO){
+    public ResponseEntity<CareerResponseMessage> postCareer(@RequestBody CareerRegistDTO careerRegistDTO,
+                                                            Principal principal){
 
-        careerRegistDTO.setMemberId(authQueryService.selectMemberIdByLoginId(careerRegistDTO.getMemberLoginId()));
+        careerRegistDTO.setMemberId(authQueryService.selectMemberIdByLoginId(principal.getName()));
 
         careerCommandService.registCareer(careerRegistDTO);
 

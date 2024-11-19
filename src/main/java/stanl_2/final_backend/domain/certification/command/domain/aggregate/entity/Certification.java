@@ -37,6 +37,9 @@ public class Certification {
     @Column(name = "CER_DATE", nullable = false)
     private String acquisitionDate;
 
+    @Column(name = "CER_SCO", nullable = false)
+    private String score;
+
     @Column(name = "CER_NOTE")
     private String note;
 
@@ -44,7 +47,7 @@ public class Certification {
     private String createdAt;
 
     @Column(name = "MEM_ID", nullable = false)
-    private String memId;
+    private String memberId;
 
     // Insert 되기 전에 실행
     @PrePersist

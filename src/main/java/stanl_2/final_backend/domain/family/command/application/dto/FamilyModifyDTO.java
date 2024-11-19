@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class FamilyModifyDTO {
     private String relation;
     private String phone;

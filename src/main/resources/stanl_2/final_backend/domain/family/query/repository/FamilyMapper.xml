@@ -16,18 +16,18 @@
     </resultMap>
     <select id="selectFamilyInfo" resultMap="Family" parameterType="String">
         SELECT
-               A.FAM_NAME,
-               A.FAM_REL,
-               A.FAM_BIR,
-               A.FAM_IDEN_NO,
-               A.FAM_PHO,
-               A.FAM_SEX,
-               A.FAM_DIS,
-               A.FAM_DIE,
-               A.FAM_NOTE
-          FROM TB_FAMILY A
-          JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
-         WHERE A.MEM_ID = #{ memberId }
+        a.fam_name,
+        a.fam_rel,
+        a.fam_bir,
+        a.fam_iden_no,
+        a.fam_pho,
+        a.fam_sex,
+        a.fam_dis,
+        a.fam_die,
+        a.fam_note
+          FROM tb_family a
+          JOIN tb_member b ON(a.mem_id = b.mem_id)
+         WHERE a.mem_id = #{ memberId }
     </select>
 
 </mapper>
