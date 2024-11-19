@@ -28,10 +28,10 @@ public class Evaluation {
     @Column(name = "EVAL_ID")
     private String evaluationId;
 
-    @Column(name = "EVAL_TTL")
+    @Column(name = "EVAL_TTL", nullable = false)
     private String title;
 
-    @Column(name = "EVAL_CONT")
+    @Column(name = "EVAL_CONT", nullable = false)
     private String content;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
@@ -43,16 +43,16 @@ public class Evaluation {
     @Column(name = "DELETED_AT")
     private String deletedAt;
 
-    @Column(name = "ACTIVE")
+    @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
 
-    @Column(name = "CENT_ID")
+    @Column(name = "CENT_ID", nullable = false)
     private String centerId;
 
-    @Column(name = "MEM_ID")
+    @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
-    @Column(name = "WRI_ID")
+    @Column(name = "WRI_ID", nullable = false)
     private String writerId;
 
     /* 설명. updatedAt 자동화 */

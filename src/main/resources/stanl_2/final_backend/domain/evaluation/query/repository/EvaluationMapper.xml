@@ -8,8 +8,8 @@
         <id property="evalId" column="EVAL_ID"/>
         <result property="title" column="EVAL_TTL"/>
         <result property="content" column="EVAL_CONT"/>
-        <result property="createdAt" column="created_at"/>
-        <result property="updatedAt" column="updated_at"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
         <result property="centerId" column="CENT_ID"/>
         <result property="memberId" column="MEM_ID"/>
         <result property="writerId" column="WRI_ID"/>
@@ -17,176 +17,174 @@
 
     <select id="findAllEvaluations" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList">
         SELECT
-        A.EVAL_ID
-        , A.EVAL_TTL
-        , A.CENT_ID
-        , A.MEM_ID
-        , A.WRI_ID
-        , A.CREATED_AT
-        FROM TB_EVALUATION A
-        WHERE A.ACTIVE = TRUE
-        ORDER BY A.CREATED_AT DESC
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findEvaluationByCenterId" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList">
         SELECT
-        A.EVAL_ID
-        , A.EVAL_TTL
-        , A.CENT_ID
-        , A.MEM_ID
-        , A.WRI_ID
-        , A.CREATED_AT
-        FROM TB_EVALUATION A
-        WHERE A.CENT_ID = #{centerId} AND A.ACTIVE = TRUE
-        ORDER BY CREATED_AT DESC
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
+        WHERE a.cent_id = #{centerId} AND a.active = TRUE
+        ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findEvaluationById" resultMap="evaluationAllResultMap" parameterType="String">
         SELECT
-        A.EVAL_ID
-        , A.EVAL_TTL
-        , A.EVAL_CONT
-        , A.CENT_ID
-        , A.MEM_ID
-        , A.WRI_ID
-        , A.CREATED_AT
-        , A.UPDATED_AT
-        FROM TB_EVALUATION A
-        WHERE A.EVAL_ID = #{id} AND A.ACTIVE = TRUE
+        a.eval_id,
+        a.eval_ttl,
+        a.eval_cont,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at,
+        a.updated_at
+        FROM tb_evaluation a
+        WHERE a.eval_id = #{id} AND a.active = TRUE
     </select>
 
-
-    <select id="findEvaluationByCenterIdAndSearch" resultMap="evaluationAllResultMap" parameterType="String" >
+    <select id="findEvaluationByCenterIdAndSearch" resultMap="evaluationAllResultMap" parameterType="String">
         SELECT
-        A.EVAL_ID
-        , A.EVAL_TTL
-        , A.CENT_ID
-        , A.MEM_ID
-        , A.WRI_ID
-        , A.CREATED_AT
-        FROM TB_EVALUATION A
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
         <where>
-            A.ACTIVE = TRUE AND A.CENT_ID = #{centerId}
+            a.active = TRUE AND a.cent_id = #{centerId}
             <if test="evaluationSearchDTO.evalId != null">
-                AND A.EVAL_ID = #{evaluationSearchDTO.evalId}
+                AND a.eval_id = #{evaluationSearchDTO.evalId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
-                AND A.WRI_ID = #{evaluationSearchDTO.writerName}
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
             </if>
             <if test="evaluationSearchDTO.memberName != null">
-                AND A.MEM_ID = #{evaluationSearchDTO.memberName}
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
             </if>
             <if test="evaluationSearchDTO.title != null">
-                AND A.EVAL_TTL LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
             </if>
             <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND A.CREATED_AT BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
             </if>
         </where>
-        ORDER BY A.CREATED_AT DESC
+        ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findEvaluationBySearch" resultMap="evaluationAllResultMap" parameterType="String" >
+    <select id="findEvaluationBySearch" resultMap="evaluationAllResultMap" parameterType="String">
         SELECT
-        A.EVAL_ID
-        , A.EVAL_TTL
-        , A.CENT_ID
-        , A.MEM_ID
-        , A.WRI_ID
-        , A.CREATED_AT
-        FROM TB_EVALUATION A
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
         <where>
-            A.ACTIVE = TRUE
+            a.active = TRUE
             <if test="evaluationSearchDTO.evalId != null">
-                AND A.EVAL_ID = #{evaluationSearchDTO.evalId}
+                AND a.eval_id = #{evaluationSearchDTO.evalId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
-                AND A.WRI_ID = #{evaluationSearchDTO.writerName}
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
             </if>
             <if test="evaluationSearchDTO.memberName != null">
-                AND A.MEM_ID = #{evaluationSearchDTO.memberName}
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
             </if>
             <if test="evaluationSearchDTO.centerId != null">
-                AND A.CENT_ID = #{evaluationSearchDTO.centerId}
+                AND a.cent_id = #{evaluationSearchDTO.centerId}
             </if>
             <if test="evaluationSearchDTO.title != null">
-                AND A.EVAL_TTL LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
             </if>
             <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND A.CREATED_AT BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
             </if>
         </where>
-        ORDER BY A.CREATED_AT DESC
+        ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findEvaluationCount" resultType="int">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_EVALUATION A
-        WHERE A.ACTIVE = TRUE
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
+        WHERE a.active = TRUE
     </select>
 
     <select id="findEvaluationCountByCenterId" resultType="int" parameterType="String">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_EVALUATION A
-        WHERE A.CENT_ID = #{centerId} AND A.ACTIVE = TRUE;
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
+        WHERE a.cent_id = #{centerId} AND a.active = TRUE;
     </select>
 
     <select id="findEvaluationBySearchCount" resultType="int" parameterType="String">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_EVALUATION A
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
         <where>
-            A.ACTIVE = TRUE
+            a.active = TRUE
             <if test="evaluationSearchDTO.evalId != null">
-                AND A.EVAL_ID = #{evaluationSearchDTO.evalId}
+                AND a.eval_id = #{evaluationSearchDTO.evalId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
-                AND A.WRI_ID = #{evaluationSearchDTO.writerName}
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
             </if>
             <if test="evaluationSearchDTO.memberName != null">
-                AND A.MEM_ID = #{evaluationSearchDTO.memberName}
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
             </if>
             <if test="evaluationSearchDTO.centerId != null">
-                AND A.CENT_ID = #{evaluationSearchDTO.centerId}
+                AND a.cent_id = #{evaluationSearchDTO.centerId}
             </if>
             <if test="evaluationSearchDTO.title != null">
-                AND A.EVAL_TTL LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
-            </if>`
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+            </if>
             <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND A.CREATED_AT BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
             </if>
         </where>
     </select>
 
     <select id="findEvaluationByCenterIdAndSearchCount" resultType="int" parameterType="String">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_EVALUATION A
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
         <where>
-            A.ACTIVE = TRUE AND A.CENT_ID = #{centerId}
+            a.active = TRUE AND a.cent_id = #{centerId}
             <if test="evaluationSearchDTO.evalId != null">
-                AND A.EVAL_ID = #{evaluationSearchDTO.evalId}
+                AND a.eval_id = #{evaluationSearchDTO.evalId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
-                AND A.WRI_ID = #{evaluationSearchDTO.writerName}
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
             </if>
             <if test="evaluationSearchDTO.memberName != null">
-                AND A.MEM_ID = #{evaluationSearchDTO.memberName}
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
             </if>
             <if test="evaluationSearchDTO.title != null">
-                AND A.EVAL_TTL LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
             </if>
             <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND A.CREATED_AT BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
             </if>
         </where>
     </select>
-
 
 </mapper>
