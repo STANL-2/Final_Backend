@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
@@ -43,16 +43,15 @@ public class SampleController {
                         content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<SampleResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO,
-                                                          Principal principal,
-                                                          Authentication authentication) {
+    public ResponseEntity<SampleResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO
+                                                          ) {
 
         log.info("현재 접속한 회원의 권한");
-        log.info("{}", authentication.getAuthorities());
+
 
         log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
-        log.info(principal.getName());
-        log.info(authentication.getName());
+
+
 
         sampleCommandService.registerSample(sampleRegistRequestDTO);
 
