@@ -12,6 +12,7 @@ services:
       - REDIS_PORT=6379
       - ALGORITHM=AES
       - TRANSFORMATION=AES/GCM/NoPadding
+      - JWT_SECRET_KEY=s4G7tL9qH8vI2eP0j5W1uF3bM6nK8rXc
     expose:
       - "8080"
     depends_on:
