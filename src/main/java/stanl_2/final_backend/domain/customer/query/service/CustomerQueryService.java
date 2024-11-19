@@ -10,7 +10,7 @@ import java.security.GeneralSecurityException;
 public interface CustomerQueryService {
     CustomerDTO selectCustomerInfo(String customerId) throws GeneralSecurityException;
 
-    Page<CustomerDTO> selectCustomerList(Pageable pageable);
+    Page<CustomerDTO> selectCustomerList(Pageable pageable) throws GeneralSecurityException;
 
-    Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO);
+    Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException;
 }

@@ -63,7 +63,7 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseMessage> getCustomers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-    ){
+    ) throws GeneralSecurityException {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<CustomerDTO> customerDTOPage = customerQueryService.selectCustomerList(pageable);
@@ -90,11 +90,11 @@ public class CustomerController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String sex,
             @RequestParam(required = false) String phone
-    ) {
+    ) throws GeneralSecurityException {
         Pageable pageable = PageRequest.of(page, size);
         CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(null , name, sex, phone);
         Page<CustomerDTO> customerDTOPage = customerQueryService.findCustomerByCondition(pageable, customerSearchDTO);
-        
+
         return ResponseEntity.ok(CustomerResponseMessage.builder()
                                                         .httpStatus(200)
                                                         .msg("성공")

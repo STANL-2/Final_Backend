@@ -46,18 +46,26 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
     @Override
     @Transactional
-    public Page<CustomerDTO> selectCustomerList(Pageable pageable) {
+    public Page<CustomerDTO> selectCustomerList(Pageable pageable) throws GeneralSecurityException {
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         List<CustomerDTO> customerList = customerMapper.selectCustomerList(page*size, size);
         int totalElements = customerMapper.selectCustomerCount();
+
+        // 복호화
+        for(int i=0;i< customerList.size();i++){
+            customerList.get(i).setPhone(aesUtils.decrypt(customerList.get(i).getPhone()));
+            customerList.get(i).setEmergePhone(aesUtils.decrypt(customerList.get(i).getEmergePhone()));
+            customerList.get(i).setEmail(aesUtils.decrypt(customerList.get(i).getEmail()));
+        }
+
 
         return new PageImpl<>(customerList, pageable, totalElements);
     }
 
     @Override
     @Transactional
-    public Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) {
+    public Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException {
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         int offset = page*size;
@@ -72,6 +80,13 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         List<CustomerDTO> customerList = customerMapper.findCustomerByConditions(params);
 
         Integer count = customerMapper.findCustomerCnt(params);
+
+        for(int i=0;i< customerList.size();i++){
+            customerList.get(i).setPhone(aesUtils.decrypt(customerList.get(i).getPhone()));
+            customerList.get(i).setEmergePhone(aesUtils.decrypt(customerList.get(i).getEmergePhone()));
+            customerList.get(i).setEmail(aesUtils.decrypt(customerList.get(i).getEmail()));
+        }
+
 
         return new PageImpl<>(customerList, pageable, count);
     }
