@@ -28,87 +28,86 @@
 
     <select id="selectCustomerInfoById" resultMap="Customer" parameterType="String">
         SELECT
-               A.CUST_ID,
-               A.CUST_NAME,
-               A.CUST_AGE,
-               A.CUST_SEX,
-               A.CUST_PHO,
-               A.CUST_EMER_PHO,
-               A.CUST_EMA,
-               A.MEM_ID,
-               A.ACTIVE,
-               A.CREATED_AT,
-               A.UPDATED_AT,
-               A.DELETED_AT
-          FROM TB_CUSTOMER_INFO A
-         WHERE A.CUST_ID = #{ customerId }
+               a.cust_id,
+               a.cust_name,
+               a.cust_age,
+               a.cust_sex,
+               a.cust_pho,
+               a.cust_emer_pho,
+               a.cust_ema,
+               a.mem_id,
+               a.active,
+               a.created_at,
+               a.updated_at,
+               a.deleted_at
+          FROM tb_customer_info a
+         WHERE a.cust_id = #{ customerId }
     </select>
 
     <select id="selectCustomerList" resultMap="Customer" parameterType="_int">
         SELECT
-               A.CUST_ID,
-               A.CUST_NAME,
-               A.CUST_AGE,
-               A.CUST_SEX,
-               A.CUST_PHO,
-               A.CUST_EMER_PHO,
-               A.CUST_EMA,
-               A.MEM_ID,
-               A.ACTIVE,
-               A.CREATED_AT,
-               A.UPDATED_AT,
-               A.DELETED_AT
-          FROM TB_CUSTOMER_INFO A
+               a.cust_id,
+               a.cust_name,
+               a.cust_age,
+               a.cust_sex,
+               a.cust_pho,
+               a.cust_emer_pho,
+               a.cust_ema,
+               a.mem_id,
+               a.active,
+               a.created_at,
+               a.updated_at,
+               a.deleted_at
+          FROM tb_cutomer_info a
          LIMIT #{ size } OFFSET #{ offset }
     </select>
     
     <select id="selectCustomerCount" resultType="_int">
         SELECT
                COUNT(*)
-          FROM TB_CUSTOMER_INFO A
-         WHERE A.ACTIVE != 'false';
+          FROM tb_customer_info a
+         WHERE a.active != 'false';
     </select>
 
     <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="map">
         SELECT
-               A.CUST_ID,
-               A.CUST_NAME,
-               A.CUST_SEX,
-               A.CUST_PHO
-          FROM TB_CUSTOMER_INFO A
+               a.cust_id,
+               a.cust_name,
+               a.cust_sex,
+               a.cust_pho
+          FROM tb_customer_info a
         <where>
-            A.ACTIVE != 'false'
+            a.active != 'false'
             <if test="name != null">
-                AND A.CUST_NAME LIKE CONCAT('%', #{ name }, '%')
+                AND a.cust_name LIKE CONCAT('%', #{ name }, '%')
             </if>
             <if test="sex != null">
-                AND A.CUST_SEX = #{ sex }
+                AND a.cust_sex = #{ sex }
             </if>
             <if test="phone != null">
-                AND A.CUST_PHO = #{ phone }
+                AND a.cust_pho = #{ phone }
             </if>
         </where>
-        ORDER BY A.CREATED_AT DESC
+        ORDER BY a.created_at DESC
         LIMIT #{ size } OFFSET #{ offset }
     </select>
 
 
     <select id="findCustomerCnt" resultType="_int" parameterType="map">
         SELECT
-        COUNT(*) AS CNT
-          FROM TB_CUSTOMER_INFO A
+         COUNT(*) AS CNT
+          FROM tb_customer_info a
         <where>
-            A.ACTIVE != 'false'
+            a.active != 'false'
             <if test="name != null">
-                AND A.CUST_NAME = #{name}
+                AND a.cust_name = #{ name }
             </if>
             <if test="sex != null">
-                AND A.CUST_SEX = #{sex}
+                AND a.cust_sex = #{ sex }
             </if>
             <if test="phone != null">
-                AND A.CUST_PHO = #{phone}
+                AND a.cust_pho = #{ phone }
             </if>
         </where>
     </select>
-
 </mapper>

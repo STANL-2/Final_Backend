@@ -12,12 +12,12 @@
 
     <select id="selectCareerInfo" resultMap="Career" parameterType="String">
         SELECT
-               A.CAR_EMP_DATE,
-               A.CAR_RTR_DATE,
-               A.CAR_NAME,
-               A.CAR_NOTE
-          FROM TB_CAREER A
-          JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
-         WHERE A.MEM_ID = #{ memberId }
+               a.car_emp_date,
+               a.car_rtr_date,
+               a.car_name,
+               a.car_note
+          FROM tb_career a
+          JOIN tb_member b ON(a.mem_id = b.mem_id)
+         WHERE a.mem_id = #{ memberId }
     </select>
 </mapper>

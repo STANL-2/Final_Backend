@@ -22,7 +22,7 @@ public class AuthQueryServiceImpl implements AuthQueryService {
     @Override
     @Transactional
     public String selectMemberIdByLoginId(String loginId){
-
+        
         String id = authMapper.selectIdByMemberName(loginId);
 
         if(id == null){

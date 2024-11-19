@@ -6,8 +6,8 @@
 
     <select id="selectIdByMemberName" resultType="String" parameterType="String">
         SELECT
-               A.MEM_ID
-          FROM TB_MEMBER A
-         WHERE A.MEM_LOGIN_ID = #{ loginId }
+               a.mem_id
+          FROM tb_member a
+         WHERE a.mem_login_id = #{ loginId }
     </select>
 </mapper>
