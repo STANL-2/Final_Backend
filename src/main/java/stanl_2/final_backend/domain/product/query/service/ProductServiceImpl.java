@@ -41,8 +41,6 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public ProductSelectIdDTO selectByProductId(String id) {
-
-        /* 설명. 상세 조회 시, Mapper에서 product와 productOption join해서 보여줄 것 */
         ProductSelectIdDTO productSelectIdDTO = productMapper.findProductById(id);
 
         return productSelectIdDTO;
