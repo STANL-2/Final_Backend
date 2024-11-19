@@ -3,7 +3,6 @@ package stanl_2.final_backend.domain.customer.query.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
-import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 
 import java.util.List;
 import java.util.Map;
