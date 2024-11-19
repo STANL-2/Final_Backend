@@ -2,8 +2,11 @@ package stanl_2.final_backend.domain.notices.command.domain.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.notices.command.application.dto.NoticeDeleteDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModifyDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 import stanl_2.final_backend.domain.notices.command.application.service.NoticeCommandService;
@@ -11,6 +14,10 @@ import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Noti
 import stanl_2.final_backend.domain.notices.command.domain.repository.NoticeRepository;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
+import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -21,12 +28,15 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     private final NoticeRepository noticeRepository;
 
+    private final AuthQueryService authQueryService;
+
     private final ModelMapper modelMapper;
 
     @Autowired
-    public NoticeCommandServiceImpl(NoticeRepository noticeRepository, ModelMapper modelMapper) {
+    public NoticeCommandServiceImpl(NoticeRepository noticeRepository, ModelMapper modelMapper, AuthQueryService authQueryService) {
         this.noticeRepository = noticeRepository;
         this.modelMapper = modelMapper;
+        this.authQueryService =authQueryService;
     }
 
     private String getCurrentTimestamp() {
@@ -37,39 +47,83 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Override
     @Transactional
     public void registerNotice(NoticeRegistDTO noticeRegistDTO) {
-        Notice notice =modelMapper.map(noticeRegistDTO,Notice.class);
-        noticeRepository.save(notice);
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeRegistDTO.getMemberLoginId());
+        noticeRegistDTO.setMemberId(memberId);
+
+        try {
+            Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
+
+            noticeRepository.save(notice);
+
+        } catch (DataIntegrityViolationException e){
+            // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
+            throw new NoticeCommonException(NoticeErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new NoticeCommonException(NoticeErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     @Transactional
     public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO) {
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeModifyDTO.getMemberLoginId());
+        noticeModifyDTO.setMemberId(memberId);
+
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
+        if(!noticeModifyDTO.getMemberId().equals(notice.getMemberId())){
+            // 권한 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
+        }
+        try {
+            Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
+            updateNotice.setNoticeId(notice.getNoticeId());
+            updateNotice.setMemberId(notice.getMemberId());
+            updateNotice.setCreatedAt(notice.getCreatedAt());
+            updateNotice.setActive(notice.getActive());
 
-        Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
-        updateNotice.setNoticeId(notice.getNoticeId());
-        updateNotice.setMemberId(notice.getMemberId());
-        updateNotice.setCreatedAt(notice.getCreatedAt());
-        updateNotice.setActive(notice.getActive());
+            noticeRepository.save(updateNotice);
 
-        noticeRepository.save(updateNotice);
+            NoticeModifyDTO noticeModify = modelMapper.map(updateNotice,NoticeModifyDTO.class);
 
-        NoticeModifyDTO noticeModify = modelMapper.map(updateNotice,NoticeModifyDTO.class);
-
-        return noticeModify;
+            return noticeModify;
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 위반 예외 처리
+            throw new NoticeCommonException(NoticeErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new NoticeCommonException(NoticeErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     @Override
     @Transactional
-    public void deleteNotice(String id) {
-        Notice notice = noticeRepository.findById(id)
-                .orElseThrow(()-> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
+    public void deleteNotice(NoticeDeleteDTO noticeDeleteDTO) {
+
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeDeleteDTO.getMemberLoginId());
+
+        Notice notice = noticeRepository.findByNoticeId(noticeDeleteDTO.getNoticeId())
+                .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
+
+        if(!memberId.equals(notice.getMemberId())){
+            // 권한 오류
+            throw new NoticeCommonException(NoticeErrorCode.AUTHORIZATION_VIOLATION);
+        }
 
         notice.setActive(false);
         notice.setDeletedAt(getCurrentTimestamp());
 
-        noticeRepository.save(notice);
+        try {
+            noticeRepository.save(notice);
+        } catch (DataIntegrityViolationException e) {
+        // 데이터 무결성 위반 예외 처리
+            throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+        // 서버 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }
