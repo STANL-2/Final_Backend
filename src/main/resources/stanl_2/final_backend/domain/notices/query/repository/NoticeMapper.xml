@@ -25,106 +25,104 @@
     </resultMap>
 
     <!-- 공지 전체 조회 페이지 네이션 -->
-    <select id="findAllNotices" resultMap="Notice" >
+    <select id="findAllNotices" resultMap="Notice">
         SELECT
-            A.NOT_ID,
-            A.NOT_TTL,
-            A.NOT_TAG,
-            A.NOT_CLA,
-            A.NOT_CONT,
-            A.CREATED_AT,
-            A.UPDATED_AT,
-            A.DELETED_AT,
-            A.ACTIVE,
-            A.MEM_ID
-        FROM TB_NOTICE A
-        WHERE A.ACTIVE != 'false'
-        ORDER BY A.CREATED_AT DESC
+        a.not_id,
+        a.not_ttl,
+        a.not_tag,
+        a.not_cla,
+        a.not_cont,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.active,
+        a.mem_id
+        FROM tb_notice a
+        WHERE a.active != 'false'
+        ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findNoticeCount" resultType="int">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_NOTICE A
-        WHERE A.ACTIVE != 'false';
+        COUNT(*) AS cnt
+        FROM tb_notice a
+        WHERE a.active != 'false';
     </select>
 
-
-    <select id="findNotices" resultMap="SearchNotice" parameterType="String" >
+    <select id="findNotices" resultMap="SearchNotice" parameterType="String">
         SELECT
-            A.NOT_ID,
-            A.NOT_TTL,
-            A.NOT_TAG,
-            A.NOT_CLA,
-            A.NOT_CONT,
-            A.CREATED_AT,
-            A.UPDATED_AT,
-            A.DELETED_AT,
-            A.ACTIVE,
-            A.MEM_ID
-        FROM TB_NOTICE A
+        a.not_id,
+        a.not_ttl,
+        a.not_tag,
+        a.not_cla,
+        a.not_cont,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.active,
+        a.mem_id
+        FROM tb_notice a
         <where>
-            A.ACTIVE != 'false'
+            a.active != 'false'
             <if test="searchDTO.tag != null">
-                AND A.NOT_TAG = #{searchDTO.tag}
+                AND a.not_tag = #{searchDTO.tag}
             </if>
             <if test="searchDTO.classification != null">
-                AND A.NOT_CLA = #{searchDTO.classification}
+                AND a.not_cla = #{searchDTO.classification}
             </if>
             <if test="searchDTO.memberId != null">
-                AND A.MEM_ID = #{searchDTO.memberId}
+                AND a.mem_id = #{searchDTO.memberId}
             </if>
             <if test="searchDTO.title != null">
-                AND A.NOT_TTL LIKE CONCAT('%', #{searchDTO.title}, '%')
+                AND a.not_ttl LIKE CONCAT('%', #{searchDTO.title}, '%')
             </if>
             <if test="searchDTO.startDate != null and searchDTO.endDate != null">
-                AND A.CREATED_AT BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
+                AND a.created_at BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
             </if>
         </where>
-        ORDER BY A.CREATED_AT DESC
+        ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-
     <select id="findNoticesCount" resultMap="SearchNotice" parameterType="String">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_NOTICE A
+        COUNT(*) AS cnt
+        FROM tb_notice a
         <where>
-            A.ACTIVE != 'false'
+            a.active != 'false'
             <if test="tag != null">
-                AND A.NOT_TAG = #{tag}
+                AND a.not_tag = #{tag}
             </if>
             <if test="classification != null">
-                AND A.NOT_CLA = #{classification}
+                AND a.not_cla = #{classification}
             </if>
             <if test="memberId != null">
-                AND A.MEM_ID = #{memberId}
+                AND a.mem_id = #{memberId}
             </if>
             <if test="title != null">
-                AND A.NOT_TTL = #{title}
+                AND a.not_ttl = #{title}
             </if>
             <if test="startDate != null and endDate != null">
-                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+                AND a.created_at BETWEEN #{startDate} AND #{endDate}
             </if>
         </where>
     </select>
 
     <select id="findNotice" resultMap="Notice" parameterType="string">
         SELECT
-        A.NOT_ID,
-        A.NOT_TTL,
-        A.NOT_TAG,
-        A.NOT_CLA,
-        A.NOT_CONT,
-        A.CREATED_AT,
-        A.UPDATED_AT,
-        A.DELETED_AT,
-        A.ACTIVE,
-        A.MEM_ID
-        FROM TB_NOTICE A
-        WHERE NOT_ID = #{noticeId};
+        a.not_id,
+        a.not_ttl,
+        a.not_tag,
+        a.not_cla,
+        a.not_cont,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.active,
+        a.mem_id
+        FROM tb_notice a
+        WHERE not_id = #{noticeId};
     </select>
 
 </mapper>

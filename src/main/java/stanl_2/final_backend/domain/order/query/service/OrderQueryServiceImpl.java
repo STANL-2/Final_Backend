@@ -48,7 +48,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
         OrderSelectIdDTO order = orderMapper.findOrderByIdAndMemberId(orderSelectIdDTO.getOrderId(), orderSelectIdDTO.getMemberId());
 
-        if(order == null) {
+        if (order == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 

@@ -1,0 +1,87 @@
+package stanl_2.final_backend.domain.sales_history.command.domain.service;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
+import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
+import stanl_2.final_backend.domain.sales_history.command.application.dto.SalesHistoryRegistDTO;
+import stanl_2.final_backend.domain.sales_history.command.application.service.SalesHistoryCommandService;
+import stanl_2.final_backend.domain.sales_history.command.domain.aggregate.entity.SalesHistory;
+import stanl_2.final_backend.domain.sales_history.command.domain.repository.SalesHistoryRepository;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryCommonException;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryErrorCode;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Service
+@Transactional(readOnly = true)
+public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandService {
+
+    private final SalesHistoryRepository salesHistoryRepository;
+    private final ModelMapper modelMapper;
+    private final ContractQueryService contractQueryService;
+
+    @Autowired
+    public SalesHistoryCommandServiceImpl(SalesHistoryRepository salesHistoryRepository, ModelMapper modelMapper, ContractQueryService contractQueryService) {
+        this.salesHistoryRepository = salesHistoryRepository;
+        this.modelMapper = modelMapper;
+        this.contractQueryService = contractQueryService;
+    }
+
+    private String getCurrentTime() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    @Override
+    @Transactional
+    public void registerSalesHistory(String contractId) {
+        /* 설명. 넘어오는 값은 계약서 승인 후 - 계약서 id */
+        ContractSeletIdDTO salesHistoryDTO = new ContractSeletIdDTO();
+        /* 설명. 값 주입 dto */
+        SalesHistoryRegistDTO salesHistoryRegistDTO = new SalesHistoryRegistDTO();
+
+        salesHistoryDTO.setContractId(contractId);
+
+        ContractSeletIdDTO responseContract = contractQueryService.selectDetailContract(salesHistoryDTO);
+
+        if (responseContract == null) {
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        salesHistoryRegistDTO.setContractId(contractId);
+        /* 설명. contract 자료형 변환 후 주석 풀 예정 */
+//        salesHistoryRegistDTO.setTotalSales(responseContract.getTotalSales());
+//        salesHistoryRegistDTO.setNumberOfVehicles(responseContract.getNumberOfVehicles());
+        salesHistoryRegistDTO.setCustomerInfoId(responseContract.getCustomerId());
+        salesHistoryRegistDTO.setProductId(responseContract.getProductId());
+        salesHistoryRegistDTO.setCenterId(responseContract.getCenterId());
+        salesHistoryRegistDTO.setMemberId(responseContract.getMemberId());
+
+        String customerPurchaseCondition = responseContract.getCustomerPurchaseCondition();
+
+//        if(customerPurchaseCondition.equals("CASH")){
+//            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.035);
+//        }else if(customerPurchaseCondition.equals("INSTALLMENT")){
+//            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.04);
+//        }else if(customerPurchaseCondition.equals("LEASE")){
+//            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.045);
+//        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteSalesHistory(String id) {
+        SalesHistory salesHistory = salesHistoryRepository.findById(id)
+                .orElseThrow(() -> new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND));
+
+        salesHistory.setActive(false);
+        salesHistory.setDeletedAt(getCurrentTime());
+
+        salesHistoryRepository.save(salesHistory);
+    }
+}
