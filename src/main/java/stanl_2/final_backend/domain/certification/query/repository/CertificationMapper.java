@@ -8,5 +8,5 @@ import java.util.List;
 
 @Mapper
 public interface CertificationMapper {
-    List<CertificationDTO> selectCertificationInfo(@Param("loginId") String loginId);
+    List<CertificationDTO> selectCertificationInfo(@Param("memberId") String memberId);
 }

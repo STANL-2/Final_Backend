@@ -8,5 +8,5 @@ import java.util.List;
 
 @Mapper
 public interface CareerMapper {
-    List<CareerDTO> selectCareerInfo(@Param("loginId") String loginId);
+    List<CareerDTO> selectCareerInfo(@Param("memberId") String memberId);
 }

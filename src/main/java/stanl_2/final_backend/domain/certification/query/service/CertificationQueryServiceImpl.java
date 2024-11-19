@@ -24,11 +24,11 @@ public class CertificationQueryServiceImpl implements CertificationQueryService 
 
     @Override
     @Transactional
-    public List<CertificationDTO> selectCertificationList(String id) {
+    public List<CertificationDTO> selectCertificationList(String loginId) {
 
-        String loginId = authQueryService.selectMemberIdByLoginId(id);
+        String memberId = authQueryService.selectMemberIdByLoginId(loginId);
 
-        List<CertificationDTO> certificationList = certificationMapper.selectCertificationInfo(loginId);
+        List<CertificationDTO> certificationList = certificationMapper.selectCertificationInfo(memberId);
 
         return certificationList;
     }
