@@ -21,4 +21,14 @@ public interface OrderMapper {
     int findOrderSearchCountByMemberId(Map<String, Object> map);
 
     List<OrderSelectSearchDTO> findSearchOrderByMemberId(Map<String, Object> map);
+
+    List<OrderSelectAllDTO> findAllOrder(int offset, int pageSize);
+
+    int findOrderCount();
+
+    OrderSelectIdDTO findOrderByOrderId(String orderId);
+
+    List<OrderSelectSearchDTO> findSearchOrder(Map<String, Object> map);
+
+    int findOrderSearchCount(Map<String, Object> map);
 }

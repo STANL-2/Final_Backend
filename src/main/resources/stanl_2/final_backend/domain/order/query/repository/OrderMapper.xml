@@ -8,7 +8,7 @@
         <result property="orderId" column="ORD_ID"/>
         <result property="title" column="ORD_TTL"/>
         <result property="status" column="ORD_STAT"/>
-        <result property="contractName" column="CONR_NAME"/>
+        <result property="contractTitle" column="CONR_TTL"/>
         <result property="adminName" column="ADMIN_NAME"/>
         <result property="memberName" column="MEM_NAME"/>
         <result property="productName" column="PROD_NAME"/>
@@ -30,26 +30,26 @@
 
     <select id="findAllOrderByMemberId" resultMap="orderResultMap">
         SELECT
-        a.ord_id,
-        a.ord_ttl,
-        a.ord_stat,
-        b.conr_name,
-        d.mem_name AS admin_name,
-        c.mem_name AS mem_name,
-        e.prod_name
-        FROM tb_order a
-        LEFT JOIN tb_contract b
-        ON a.conr_id = b.conr_id
-        LEFT JOIN tb_member c
-        ON a.mem_id = c.mem_id
-        LEFT JOIN tb_member d
-        ON a.admin_id = d.mem_id
-        LEFT JOIN tb_product e
-        ON b.prod_id = e.prod_id
-        WHERE a.mem_id = #{memberId}
-        AND a.active = TRUE
-        ORDER BY a.created_at DESC
-        LIMIT #{pageSize} OFFSET #{offset};
+               a.ord_id,
+               a.ord_ttl,
+               a.ord_stat,
+               b.conr_ttl,
+               d.mem_name AS admin_name,
+               c.mem_name AS mem_name,
+               e.prod_name
+          FROM tb_order a
+          LEFT JOIN tb_contract b
+            ON a.conr_id = b.conr_id
+          LEFT JOIN tb_member c
+            ON a.mem_id = c.mem_id
+          LEFT JOIN tb_member d
+            ON a.admin_id = d.mem_id
+          LEFT JOIN tb_product e
+            ON b.prod_id = e.prod_id
+         WHERE a.mem_id = #{memberId}
+           AND a.active = TRUE
+         ORDER BY a.created_at DESC
+         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
     <select id="findOrderCountByMemberId" resultType="int">
@@ -74,6 +74,14 @@
         a.admin_id,
         a.mem_id
         FROM tb_order a
+        LEFT JOIN tb_contract b
+        ON a.conr_id = b.conr_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_product e
+        ON b.prod_id = e.prod_id
         WHERE a.mem_id = #{memberId}
         AND a.active = TRUE
         AND a.ord_id = #{orderId};
@@ -84,7 +92,7 @@
         a.ord_id,
         a.ord_ttl,
         a.ord_stat,
-        b.conr_name,
+        b.conr_ttl,
         d.mem_name AS admin_name,
         c.mem_name AS mem_name,
         e.prod_name
@@ -98,7 +106,7 @@
         LEFT JOIN tb_product e
         ON b.prod_id = e.prod_id
         <where>
-            a.mem_id = #{memId}
+            a.mem_id = #{memberId}
             AND a.active = TRUE
             <if test="title != null">
                 AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
@@ -109,8 +117,8 @@
             <if test="adminId != null">
                 AND a.admin_id = #{adminId}
             </if>
-            <if test="memberId != null">
-                AND a.mem_id = #{memberId}
+            <if test="searchMemberId != null">
+                AND a.mem_id = #{searchMemberId}
             </if>
             <if test="startDate != null and endDate != null">
                 AND a.created_at BETWEEN #{startDate} AND #{endDate}
@@ -125,7 +133,7 @@
         COUNT(*) AS cnt
         FROM tb_order a
         <where>
-            a.mem_id = #{memId}
+            a.mem_id = #{memberId}
             AND a.active = TRUE
             <if test="title != null">
                 AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
@@ -136,8 +144,8 @@
             <if test="adminId != null">
                 AND a.admin_id = #{adminId}
             </if>
-            <if test="memberId != null">
-                AND a.mem_id = #{memberId}
+            <if test="searchMemberId != null">
+                AND a.mem_id = #{searchMemberId}
             </if>
             <if test="startDate != null and endDate != null">
                 AND a.created_at BETWEEN #{startDate} AND #{endDate}
@@ -145,5 +153,126 @@
         </where>
     </select>
 
+
+
+    <select id="findAllOrder" resultMap="orderResultMap">
+        SELECT
+        a.ord_id,
+        a.ord_ttl,
+        a.ord_stat,
+        b.conr_ttl,
+        d.mem_name AS admin_name,
+        c.mem_name AS mem_name,
+        e.prod_name
+        FROM tb_order a
+        LEFT JOIN tb_contract b
+        ON a.conr_id = b.conr_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_product e
+        ON b.prod_id = e.prod_id
+        WHERE AND a.active = TRUE
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
+    </select>
+
+    <select id="findOrderCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_order a
+        WHERE a.active = TRUE;
+    </select>
+
+    <select id="findOrderByOrderId" resultMap="orderDetailResultMap" parameterType="map">
+        SELECT
+        a.ord_id,
+        a.ord_ttl,
+        a.ord_cont,
+        a.active,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.ord_stat,
+        a.conr_id,
+        a.admin_id,
+        a.mem_id
+        FROM tb_order a
+        LEFT JOIN tb_contract b
+        ON a.conr_id = b.conr_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_product e
+        ON b.prod_id = e.prod_id
+        WHERE a.active = TRUE
+        AND a.ord_id = #{orderId};
+    </select>
+
+    <select id="findSearchOrder" resultMap="orderResultMap" parameterType="map">
+        SELECT
+        a.ord_id,
+        a.ord_ttl,
+        a.ord_stat,
+        b.conr_ttl,
+        d.mem_name AS admin_name,
+        c.mem_name AS mem_name,
+        e.prod_name
+        FROM tb_order a
+        LEFT JOIN tb_contract b
+        ON a.conr_id = b.conr_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_product e
+        ON b.prod_id = e.prod_id
+        <where>
+            a.active = TRUE
+            <if test="title != null">
+                AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="status != null">
+                AND a.ord_stat = #{status}
+            </if>
+            <if test="adminId != null">
+                AND a.admin_id = #{adminId}
+            </if>
+            <if test="searchMemberId != null">
+                AND a.mem_id = #{searchMemberId}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
+    </select>
+
+    <select id="findOrderSearchCount" resultType="int" parameterType="map">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_order a
+        <where>
+            a.active = TRUE
+            <if test="title != null">
+                AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="status != null">
+                AND a.ord_stat = #{status}
+            </if>
+            <if test="adminId != null">
+                AND a.admin_id = #{adminId}
+            </if>
+            <if test="searchMemberId != null">
+                AND a.mem_id = #{searchMemberId}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+    </select>
 
 </mapper>

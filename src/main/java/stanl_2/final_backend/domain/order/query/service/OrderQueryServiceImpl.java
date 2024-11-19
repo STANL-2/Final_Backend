@@ -1,11 +1,14 @@
 package stanl_2.final_backend.domain.order.query.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectAllDTO;
@@ -18,35 +21,60 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional(readOnly = true)
 public class OrderQueryServiceImpl implements OrderQueryService {
 
     private final OrderMapper orderMapper;
+    private final AuthQueryService authQueryService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public OrderQueryServiceImpl(OrderMapper orderMapper) {
+    public OrderQueryServiceImpl(OrderMapper orderMapper, AuthQueryService authQueryService, RedisTemplate redisTemplate) {
         this.orderMapper = orderMapper;
+        this.authQueryService = authQueryService;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
-    public Page<OrderSelectAllDTO> selectAll(String memberId, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<OrderSelectAllDTO> selectAllEmployee(String loginId, Pageable pageable) {
+        String memberId = authQueryService.selectMemberIdByLoginId(loginId);
+
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<OrderSelectAllDTO> orders = orderMapper.findAllOrderByMemberId(offset, pageSize, memberId);
 
-        if (orders == null || orders.isEmpty()) {
-            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        String cacheKey = "myCache::orders::offset=" + offset + "::size=" + pageSize;
+
+        // 캐시 조회
+        List<OrderSelectAllDTO> orders = (List<OrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
+
+        if (orders == null) {
+            System.out.println("데이터베이스에서 데이터 조회 중...");
+            orders = orderMapper.findAllOrderByMemberId(offset, pageSize, memberId);
+
+            // 결과가 null이거나 빈 리스트인지 확인
+            if (orders == null || orders.isEmpty()) {
+                throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+            }
+
+            // 캐시에 데이터 저장 (빈 리스트는 저장하지 않음)
+            redisTemplate.opsForValue().set(cacheKey, orders);
+        } else {
+            System.out.println("캐시에서 데이터 조회 중...");
         }
 
+        // 전체 개수 조회
         int totalElements = orderMapper.findOrderCountByMemberId(memberId);
 
         return new PageImpl<>(orders, pageable, totalElements);
     }
 
-    @Override
-    public OrderSelectIdDTO selectDetailOrder(OrderSelectIdDTO orderSelectIdDTO) {
 
-        OrderSelectIdDTO order = orderMapper.findOrderByIdAndMemberId(orderSelectIdDTO.getOrderId(), orderSelectIdDTO.getMemberId());
+    @Override
+    @Transactional(readOnly = true)
+    public OrderSelectIdDTO selectDetailOrderEmployee(OrderSelectIdDTO orderSelectIdDTO) {
+        String memberId = authQueryService.selectMemberIdByLoginId(orderSelectIdDTO.getMemberId());
+
+        OrderSelectIdDTO order = orderMapper.findOrderByIdAndMemberId(orderSelectIdDTO.getOrderId(), memberId);
 
         if (order == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
@@ -56,14 +84,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     @Override
-    public Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<OrderSelectSearchDTO> selectSearchOrdersEmployee(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) {
+
+        String memberId = authQueryService.selectMemberIdByLoginId(orderSelectSearchDTO.getMemberId());
 
         Map<String, Object> map = new HashMap<>();
-        map.put("memId", orderSelectSearchDTO.getMemId());
+        map.put("memberId", memberId);
         map.put("title", orderSelectSearchDTO.getTitle());
         map.put("status", orderSelectSearchDTO.getStatus());
         map.put("adminId", orderSelectSearchDTO.getAdminId());
-        map.put("memberId", orderSelectSearchDTO.getMemberId());
+        map.put("searchMemberId", orderSelectSearchDTO.getSearchMemberId());
         map.put("startDate", orderSelectSearchDTO.getStartDate());
         map.put("endDate", orderSelectSearchDTO.getEndDate());
         map.put("pageSize", pageable.getPageSize());
@@ -76,6 +107,78 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         }
 
         int totalElements = orderMapper.findOrderSearchCountByMemberId(map);
+
+        return new PageImpl<>(orders, pageable, totalElements);
+    }
+
+    // 영업담당자, 영업관리자 조회
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrderSelectAllDTO> selectAll(Pageable pageable) {
+
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+
+        String cacheKey = "myCache::orders::offset=" + offset + "::size=" + pageSize;
+
+        // 캐시 조회
+        List<OrderSelectAllDTO> orders = (List<OrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
+
+        if (orders == null) {
+            System.out.println("데이터베이스에서 데이터 조회 중...");
+            orders = orderMapper.findAllOrder(offset, pageSize);
+
+            // 결과가 null이거나 빈 리스트인지 확인
+            if (orders == null || orders.isEmpty()) {
+                throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+            }
+
+            // 캐시에 데이터 저장 (빈 리스트는 저장하지 않음)
+            redisTemplate.opsForValue().set(cacheKey, orders);
+        } else {
+            System.out.println("캐시에서 데이터 조회 중...");
+        }
+
+        // 전체 개수 조회
+        int totalElements = orderMapper.findOrderCount();
+
+        return new PageImpl<>(orders, pageable, totalElements);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderSelectIdDTO selectDetailOrder(OrderSelectIdDTO orderSelectIdDTO) {
+
+        OrderSelectIdDTO order = orderMapper.findOrderByOrderId(orderSelectIdDTO.getOrderId());
+
+        if (order == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        return order;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", orderSelectSearchDTO.getTitle());
+        map.put("status", orderSelectSearchDTO.getStatus());
+        map.put("adminId", orderSelectSearchDTO.getAdminId());
+        map.put("searchMemberId", orderSelectSearchDTO.getSearchMemberId());
+        map.put("startDate", orderSelectSearchDTO.getStartDate());
+        map.put("endDate", orderSelectSearchDTO.getEndDate());
+        map.put("pageSize", pageable.getPageSize());
+        map.put("offset", pageable.getOffset());
+
+        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrder(map);
+
+        if (orders == null || orders.isEmpty()) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        int totalElements = orderMapper.findOrderSearchCount(map);
 
         return new PageImpl<>(orders, pageable, totalElements);
     }

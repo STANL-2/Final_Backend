@@ -8,5 +8,5 @@ public interface OrderCommandService {
 
     OrderModifyDTO modifyOrder(OrderModifyDTO orderModifyDTO);
 
-    void deleteOrder(String id);
+    void deleteOrder(String orderId, String loginId);
 }

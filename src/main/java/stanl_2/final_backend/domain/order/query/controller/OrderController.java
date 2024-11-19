@@ -17,6 +17,8 @@ import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import stanl_2.final_backend.domain.order.query.service.OrderQueryService;
 
+import java.security.Principal;
+
 @RestController("queryOrderController")
 @RequestMapping("/api/v1/order")
 public class OrderController {
@@ -28,18 +30,18 @@ public class OrderController {
         this.orderQueryService = orderQueryService;
     }
 
-    @Operation(summary = "수주서 전제 조회")
+    @Operation(summary = "수주서 전체 조회(영업사원)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "수주서 전제 조회 성공",
+            @ApiResponse(responseCode = "200", description = "수주서 전체 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @GetMapping("{memberId}")
-    public ResponseEntity<OrderResponseMessage> getAllOrder(@PathVariable("memberId") String memberId,
+    @GetMapping("/employee")
+    public ResponseEntity<OrderResponseMessage> getAllOrderEmployee(Principal principal,
                                                             @PageableDefault(size = 10)Pageable pageable) {
 
-        // 회원 아이디 받아 오는건 나중에 수정할 예정
+        String loginId = principal.getName();
 
-        Page<OrderSelectAllDTO> responseOrders = orderQueryService.selectAll(memberId, pageable);
+        Page<OrderSelectAllDTO> responseOrders = orderQueryService.selectAllEmployee(loginId, pageable);
 
         return ResponseEntity.ok(OrderResponseMessage.builder()
                                                    .httpStatus(200)
@@ -48,20 +50,21 @@ public class OrderController {
                                                     .build());
     }
 
-    @Operation(summary = "수주서 상세 조회")
+    @Operation(summary = "수주서 상세 조회(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 상세 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @GetMapping("{id}/{memberId}")
-    public ResponseEntity<OrderResponseMessage> getDetailOrder(@PathVariable("id") String orderId,
-                                                               @PathVariable("memberId") String memberId) {
+    @GetMapping("/employee/{orderId}")
+    public ResponseEntity<OrderResponseMessage> getDetailOrderEmployee(@PathVariable("orderId") String orderId,
+                                                               Principal principal) {
 
+        String memberId = principal.getName();
         OrderSelectIdDTO orderSelectIdDTO = new OrderSelectIdDTO();
         orderSelectIdDTO.setOrderId(orderId);
         orderSelectIdDTO.setMemberId(memberId);
 
-        OrderSelectIdDTO responseOrder = orderQueryService.selectDetailOrder(orderSelectIdDTO);
+        OrderSelectIdDTO responseOrder = orderQueryService.selectDetailOrderEmployee(orderSelectIdDTO);
 
         return ResponseEntity.ok(OrderResponseMessage.builder()
                                                    .httpStatus(200)
@@ -70,21 +73,98 @@ public class OrderController {
                                                     .build());
     }
 
-    @Operation(summary = "수주서 검색 조회")
+    @Operation(summary = "수주서 검색 조회(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 검색 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @GetMapping("/search/{memId}")
+    @GetMapping("/employee/search")
+    public ResponseEntity<OrderResponseMessage> getSearchOrderEmployee(@RequestParam(required = false) String title,
+                                                               @RequestParam(required = false) String status,
+                                                               @RequestParam(required = false) String adminId,
+                                                               @RequestParam(required = false) String searchMemberId,
+                                                               @RequestParam(required = false) String startDate,
+                                                               @RequestParam(required = false) String endDate,
+                                                               Principal principal,
+                                                               @PageableDefault(size = 10) Pageable pageable) {
+
+        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
+        orderSelectSearchDTO.setTitle(title);
+        orderSelectSearchDTO.setStatus(status);
+        orderSelectSearchDTO.setAdminId(adminId);
+        orderSelectSearchDTO.setSearchMemberId(searchMemberId);
+        orderSelectSearchDTO.setStartDate(startDate);
+        orderSelectSearchDTO.setEndDate(endDate);
+        orderSelectSearchDTO.setMemberId(principal.getName());
+
+        Page<OrderSelectSearchDTO> responseOrders = orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("수주서 검색 조회 성공")
+                .result(responseOrders)
+                .build());
+    }
+
+    // 영업관리자, 영업담당자 조회
+    @Operation(summary = "수주서 전체 조회(영업관리자, 영업담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 전체 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("")
+    public ResponseEntity<OrderResponseMessage> getAllOrder(@PageableDefault(size = 10)Pageable pageable) {
+
+        Page<OrderSelectAllDTO> responseOrders = orderQueryService.selectAll(pageable);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("수주서 전체 조회 성공")
+                .result(responseOrders)
+                .build());
+    }
+
+    @Operation(summary = "수주서 상세 조회(영업관리자, 영업담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 상세 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("{orderId}")
+    public ResponseEntity<OrderResponseMessage> getDetailOrder(@PathVariable("orderId") String orderId) {
+
+        OrderSelectIdDTO orderSelectIdDTO = new OrderSelectIdDTO();
+        orderSelectIdDTO.setOrderId(orderId);
+
+        OrderSelectIdDTO responseOrder = orderQueryService.selectDetailOrder(orderSelectIdDTO);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("수주서 상세 조회 성공")
+                .result(responseOrder)
+                .build());
+    }
+
+    @Operation(summary = "수주서 검색 조회(영업관리자, 영업담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 검색 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("/search")
     public ResponseEntity<OrderResponseMessage> getSearchOrder(@RequestParam(required = false) String title,
                                                                @RequestParam(required = false) String status,
                                                                @RequestParam(required = false) String adminId,
-                                                               @RequestParam(required = false) String memberId,
+                                                               @RequestParam(required = false) String searchMemberId,
                                                                @RequestParam(required = false) String startDate,
                                                                @RequestParam(required = false) String endDate,
-                                                               @RequestParam(required = false) String memId,
                                                                @PageableDefault(size = 10) Pageable pageable) {
-        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO(title, status, adminId, memberId, memId, startDate, endDate);
+
+        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
+        orderSelectSearchDTO.setTitle(title);
+        orderSelectSearchDTO.setStatus(status);
+        orderSelectSearchDTO.setAdminId(adminId);
+        orderSelectSearchDTO.setSearchMemberId(searchMemberId);
+        orderSelectSearchDTO.setStartDate(startDate);
+        orderSelectSearchDTO.setEndDate(endDate);
 
         Page<OrderSelectSearchDTO> responseOrders = orderQueryService.selectSearchOrders(orderSelectSearchDTO, pageable);
 
