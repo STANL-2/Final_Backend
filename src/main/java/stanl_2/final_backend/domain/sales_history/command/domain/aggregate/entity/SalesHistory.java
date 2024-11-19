@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.evaluation.command.domain.aggregate.entity;
+package stanl_2.final_backend.domain.sales_history.command.domain.aggregate.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,28 +17,28 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 @Entity
-@Table(name = "TB_EVALUATION")
-public class Evaluation {
+@Table(name = "TB_SALES_HISTORY")
+public class SalesHistory {
     @Id
     @GeneratedValue(generator = "PrefixGeneratorConfig")
     @GenericGenerator(name = "PrefixGeneratorConfig",
             type = PrefixGeneratorConfig.class,
-            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "EVAL")
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "SAL")
     )
-    @Column(name = "EVAL_ID")
-    private String evaluationId;
+    @Column(name = "SAL_HIST_ID")
+    private String salesHistoryId;
 
-    @Column(name = "EVAL_TTL", nullable = false)
-    private String title;
+    @Column(name = "SAL_HIST_NO_OF_VEH", nullable = false)
+    private Integer numberOfVehicles;
 
-    @Column(name = "EVAL_CONT", nullable = false)
-    private String content;
+    @Column(name = "SAL_HIST_TOTA_SALE", nullable = false)
+    private Integer totalSales;
 
-    @Column(name = "CREATED_AT", nullable = false, updatable = false)
+    @Column(name = "SAL_HIST_INCE", nullable = false)
+    private Integer incentive;
+
+    @Column(name = "CREATED_AT", nullable = false)
     private String createdAt;
-
-    @Column(name = "UPDATED_AT", nullable = false)
-    private String updatedAt;
 
     @Column(name = "DELETED_AT")
     private String deletedAt;
@@ -46,27 +46,24 @@ public class Evaluation {
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
 
-    @Column(name = "CENT_ID", nullable = false)
-    private String centerId;
+    @Column(name = "CONR_ID", nullable = false)
+    private String contractId;
+
+    @Column(name = "CUST_ID", nullable = false)
+    private String customerInfoId;
+
+    @Column(name = "PROD_ID", nullable = false)
+    private String productId;
 
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
-    @Column(name = "WRI_ID", nullable = false)
-    private String writerId;
+    @Column(name = "CENT_ID", nullable = false)
+    private String centerId;
 
-    /* 설명. updatedAt 자동화 */
-    // Insert 되기 전에 실행
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();
-        this.updatedAt = this.createdAt;
-    }
-
-    // Update 되기 전에 실행
-    @PreUpdate
-    private void preUpdate() {
-        this.updatedAt = getCurrentTime();
     }
 
     private String getCurrentTime() {
@@ -74,5 +71,3 @@ public class Evaluation {
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }
-
-
