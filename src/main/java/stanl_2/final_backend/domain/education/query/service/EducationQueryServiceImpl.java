@@ -24,7 +24,7 @@ public class EducationQueryServiceImpl implements EducationQueryService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EducationDTO> selectEducationList(String loginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(loginId);

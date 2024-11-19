@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.alarm.common.exception;
+package stanl_2.final_backend.domain.organization.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum AlarmErrorCode {
+public enum OrganizationErrorCode {
 
     /**
      * 400(Bad Request)
@@ -30,6 +30,7 @@ public enum AlarmErrorCode {
      */
 
 
+
     /**
      * 404(Not Found)
      * 서버는 요청받은 리소스를 찾을 수 없습니다. 브라우저에서는 알려지지 않은 URL을 의미합니다.
@@ -37,14 +38,12 @@ public enum AlarmErrorCode {
      * 서버들은 인증받지 않은 클라이언트로부터 리소스를 숨기기 위하여 이 응답을 403 대신에 전송할 수도 있습니다.
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
-
-
+    SAMPLE_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "sample 데이터를 찾지 못했습니다"),
+    CENTER_NOT_FOUND(404002, HttpStatus.NOT_FOUND, "center 데이터를 찾지 못했습니다."),
     /**
-     * 500(Internal Server Error)
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
     INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
-
 
 
     private final Integer code;

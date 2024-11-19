@@ -32,7 +32,7 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public CustomerDTO selectCustomerInfo(String customerId) throws GeneralSecurityException {
 
         CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoById(customerId);
@@ -45,7 +45,7 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<CustomerDTO> selectCustomerList(Pageable pageable) throws GeneralSecurityException {
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
@@ -64,7 +64,7 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException {
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();

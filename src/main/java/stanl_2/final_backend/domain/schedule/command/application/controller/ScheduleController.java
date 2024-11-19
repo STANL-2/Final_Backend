@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.alarm.service.AlarmService;
+//import stanl_2.final_backend.domain.alarm.service.AlarmService;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleModifyDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleRegistDTO;
@@ -24,7 +24,9 @@ public class ScheduleController {
     private final ScheduleCommandService scheduleCommandService;
 
     @Autowired
-    public ScheduleController(ScheduleCommandService scheduleCommandService, AlarmService alarmService) {
+    public ScheduleController(ScheduleCommandService scheduleCommandService
+//            , AlarmService alarmService
+    ) {
         this.scheduleCommandService = scheduleCommandService;
     }
 
