@@ -39,8 +39,11 @@ public class NoticeController {
     @PostMapping("")
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestBody NoticeRegistDTO noticeRegistDTO, Principal principal){
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
+        System.out.println("memberId"+memberId);
         noticeRegistDTO.setMemberId(memberId);
-        noticeCommandService.registerNotice(noticeRegistDTO);
+        System.out.println("1.=========================");
+        noticeCommandService.registerNotice(noticeRegistDTO, principal);
+        System.out.println("2.=========================");
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
@@ -61,7 +64,7 @@ public class NoticeController {
         noticeModifyRequestDTO.setMemberLoginId(memberLoginId);
         noticeModifyRequestDTO.setNoticeId(noticeId);
 
-        NoticeModifyDTO noticeModifyDTO = noticeCommandService.modifyNotice(noticeId,noticeModifyRequestDTO);
+        NoticeModifyDTO noticeModifyDTO = noticeCommandService.modifyNotice(noticeId,noticeModifyRequestDTO,principal);
 
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                         .httpStatus(200)
@@ -84,7 +87,7 @@ public class NoticeController {
         noticeDeleteDTO.setMemberLoginId(memberLoginId);
         noticeDeleteDTO.setNoticeId(noticeId);
 
-        noticeCommandService.deleteNotice(noticeDeleteDTO);
+        noticeCommandService.deleteNotice(noticeDeleteDTO,principal);
 
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                 .httpStatus(200)

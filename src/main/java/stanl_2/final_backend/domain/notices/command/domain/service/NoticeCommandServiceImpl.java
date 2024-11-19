@@ -19,6 +19,7 @@ import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Sch
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
+import java.security.Principal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,13 +47,13 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     @Override
     @Transactional
-    public void registerNotice(NoticeRegistDTO noticeRegistDTO) {
-        String memberId = authQueryService.selectMemberIdByLoginId(noticeRegistDTO.getMemberLoginId());
+    public void registerNotice(NoticeRegistDTO noticeRegistDTO,
+                               Principal principal) {
+        String memberId= principal.getName();
         noticeRegistDTO.setMemberId(memberId);
 
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
-
             noticeRepository.save(notice);
 
         } catch (DataIntegrityViolationException e){
@@ -66,16 +67,16 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     @Override
     @Transactional
-    public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO) {
-        String memberId = authQueryService.selectMemberIdByLoginId(noticeModifyDTO.getMemberLoginId());
+    public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
+        String memberId= principal.getName();
         noticeModifyDTO.setMemberId(memberId);
 
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
-        if(!noticeModifyDTO.getMemberId().equals(notice.getMemberId())){
+        if(!noticeModifyDTO.getMemberId().equals(memberId)){
             // 권한 오류
-            throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
+            throw new NoticeCommonException(NoticeErrorCode.AUTHORIZATION_VIOLATION);
         }
         try {
             Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
@@ -101,14 +102,14 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     @Override
     @Transactional
-    public void deleteNotice(NoticeDeleteDTO noticeDeleteDTO) {
+    public void deleteNotice(NoticeDeleteDTO noticeDeleteDTO, Principal principal) {
 
-        String memberId = authQueryService.selectMemberIdByLoginId(noticeDeleteDTO.getMemberLoginId());
+        String memberId = principal.getName();
 
         Notice notice = noticeRepository.findByNoticeId(noticeDeleteDTO.getNoticeId())
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
-        if(!memberId.equals(notice.getMemberId())){
+        if(!memberId.equals(memberId)){
             // 권한 오류
             throw new NoticeCommonException(NoticeErrorCode.AUTHORIZATION_VIOLATION);
         }

@@ -5,10 +5,12 @@ import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModify
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
 
+import java.security.Principal;
+
 public interface NoticeCommandService {
-    void registerNotice(NoticeRegistDTO noticeRegistDTO);
+    void registerNotice(NoticeRegistDTO noticeRegistDTO, Principal principal);
 
-    NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO);
+    NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal);
 
-    void deleteNotice(NoticeDeleteDTO noticeDeleteDTO);
+    void deleteNotice(NoticeDeleteDTO noticeDeleteDTO,Principal principal);
 }
