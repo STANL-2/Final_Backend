@@ -1,6 +1,7 @@
 server:
   forward-headers-strategy: native
 
+
 spring:
   application:
     name: finalbackend
