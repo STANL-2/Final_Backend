@@ -52,7 +52,7 @@ services:
     networks:
       - app-network
     restart: always
-    entrypoint: ["sh", "-c", "sleep 15 && nginx -g 'daemon off;'"]
+    entrypoint: ["sh", "-c", "sleep 30 && nginx -g 'daemon off;'"]
 
 networks:
   app-network:
