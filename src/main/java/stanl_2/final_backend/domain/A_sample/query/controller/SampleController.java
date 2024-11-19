@@ -42,7 +42,6 @@ public class SampleController {
                                                          Principal principal){
 
         log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
-        log.info(principal.getName());
 
         SampleDTO sampleDTO = sampleQueryService.selectSampleInfo(id);
 
