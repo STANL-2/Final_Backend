@@ -38,11 +38,9 @@ public class SampleController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("{id}")
-    public ResponseEntity<SampleResponseMessage> getTest(@PathVariable String id,
-                                                         Principal principal){
+    public ResponseEntity<SampleResponseMessage> getTest(@PathVariable String id){
 
         log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
-        log.info(principal.getName());
 
         SampleDTO sampleDTO = sampleQueryService.selectSampleInfo(id);
 
