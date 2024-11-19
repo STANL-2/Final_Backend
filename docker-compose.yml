@@ -10,7 +10,8 @@ services:
       - SPRING_PROFILES_ACTIVE=prod
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - ALGORITHM=AES/GCM/NoPadding
+      - ALGORITHM=AES
+      - TRANSFORMATION=AES/GCM/NoPadding
     expose:
       - "8080"
     depends_on:
