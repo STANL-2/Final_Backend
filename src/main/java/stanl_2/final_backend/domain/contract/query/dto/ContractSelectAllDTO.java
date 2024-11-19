@@ -1,6 +1,9 @@
 package stanl_2.final_backend.domain.contract.query.dto;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -10,7 +13,7 @@ import lombok.*;
 public class ContractSelectAllDTO {
 
     private String contractId;
-    private String name;
+    private String title;
     private String customerName;
     private String companyName;
     private String status;
@@ -21,5 +24,6 @@ public class ContractSelectAllDTO {
     private String centerId;
     private String customerId;
     private String productId;
-    private String productName;
+    private String carName;
+    private Collection<? extends GrantedAuthority> roles;
 }

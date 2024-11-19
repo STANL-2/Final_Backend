@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class FamilyRegistDTO {
     private String name;
     private String relation;
