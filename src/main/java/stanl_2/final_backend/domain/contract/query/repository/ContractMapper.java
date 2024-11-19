@@ -12,11 +12,21 @@ import java.util.Map;
 public interface ContractMapper {
     ContractSeletIdDTO findContractByIdAndMemId(ContractSeletIdDTO contractDTO);
 
-    List<ContractSearchDTO> findContractBySearch(Map<String, Object> map);
+    List<ContractSearchDTO> findContractBySearchAndMemberId(Map<String, Object> map);
 
-    int findContractBySearchCount(Map<String, Object> map);
+    int findContractBySearchAndMemberIdCount(Map<String, Object> map);
 
     List<ContractSelectAllDTO> findContractAllByMemId(Map<String, Object> map);
 
     int findContractCountByMemId(String memId);
+
+    List<ContractSelectAllDTO> findContractAll(Map<String, Object> params);
+
+    int findContractCount();
+
+    ContractSeletIdDTO findContractById(String contractId);
+
+    List<ContractSearchDTO> findContractBySearch(Map<String, Object> map);
+
+    int findContractBySearchCount(Map<String, Object> map);
 }

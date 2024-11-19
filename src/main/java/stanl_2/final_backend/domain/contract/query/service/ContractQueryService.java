@@ -13,5 +13,5 @@ public interface ContractQueryService {
 
     Page<ContractSearchDTO> selectBySearch(ContractSearchDTO contractSearchDTO, Pageable pageable);
 
-    Page<ContractSelectAllDTO> selectAll(String memId, Pageable pageable);
+    Page<ContractSelectAllDTO> selectAll(ContractSelectAllDTO contractSelectAllDTO, Pageable pageable);
 }

@@ -13,13 +13,13 @@
 
     <select id="selectCertificationInfo" resultMap="Certification" parameterType="String">
         SELECT
-               A.CER_NAME,
-               A.CER_INST,
-               A.CER_DATE,
-               A.CER_SCO,
-               A.CER_NOTE
-          FROM TB_CERTIFICATION A
-          JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
-         WHERE A.MEM_ID = #{ memberId }
+               a.cer_name,
+               a.cer_inst,
+               a.cer_date,
+               a.cer_sco,
+               a.cer_note
+          FROM tb_certification a
+          JOIN tb_member b ON(a.mem_id = b.mem_id)
+         WHERE a.mem_id = #{ memberId }
     </select>
 </mapper>

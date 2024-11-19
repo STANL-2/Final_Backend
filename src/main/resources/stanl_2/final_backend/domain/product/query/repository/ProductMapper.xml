@@ -45,99 +45,109 @@
         <result property="sound" column="OPT_SOND"/>
     </resultMap>
 
-
     <select id="findProductById" resultMap="productIdResultMap" parameterType="String">
         SELECT
-              A.PROD_ID
-            , A.PROD_NAME
-            , A.PROD_SER_NO
-            , A.PROD_COST
-            , A.PROD_STCK
-            , B.OPT_CNTY
-            , B.OPT_MNFR
-            , B.OPT_VHC_TYPE
-            , B.OPT_CHSS
-            , B.OPT_DTIL_TYPE
-            , B.OPT_BODY_TYPE
-            , B.OPT_SFTY_DVCE
-            , B.OPT_ENGN_CPCT
-            , B.OPT_SCRT_CODE
-            , B.OPT_PRDC_YEAR
-            , B.OPT_PRDC_PLNT
-            , B.OPT_ENGN
-            , B.OPT_MSSN
-            , B.OPT_TRIM
-            , B.OPT_XTNL_COLR
-            , B.OPT_ITNL_COLR
-            , B.OPT_HUD
-            , B.OPT_NAVI
-            , B.OPT_DRVE_WISE
-            , B.OPT_SMRT_CNCT
-            , B.OPT_STYL
-            , B.OPT_MY_CFRT_PCKG
-            , B.OPT_OTDR_PCKG
-            , B.OPT_SUN_ROOF
-            , B.OPT_SOND
-          FROM TB_PRODUCT A
-          JOIN TB_PRODUCT_OPTION B on A.PROD_ID = B.PROD_ID
-         WHERE A.PROD_ID = #{id} AND A.ACTIVE = TRUE
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck,
+        b.opt_cnty,
+        b.opt_mnfr,
+        b.opt_vhc_type,
+        b.opt_chss,
+        b.opt_dtil_type,
+        b.opt_body_type,
+        b.opt_sfty_dvce,
+        b.opt_engn_cpct,
+        b.opt_scrt_code,
+        b.opt_prdc_year,
+        b.opt_prdc_plnt,
+        b.opt_engn,
+        b.opt_mssn,
+        b.opt_trim,
+        b.opt_xtnl_colr,
+        b.opt_itnl_colr,
+        b.opt_hud,
+        b.opt_navi,
+        b.opt_drve_wise,
+        b.opt_smrt_cnct,
+        b.opt_styl,
+        b.opt_my_cfrt_pckg,
+        b.opt_otdr_pckg,
+        b.opt_sun_roof,
+        b.opt_sond
+        FROM tb_product a
+        JOIN tb_product_option b ON a.prod_id = b.prod_id
+        WHERE a.prod_id = #{id} AND a.active = TRUE
+    </select>
+
+    <select id="findProductBySerialNumber" resultMap="productIdResultMap" parameterType="String">
+        SELECT
+        A.PROD_ID
+        , A.PROD_NAME
+        , A.PROD_SER_NO
+        , A.PROD_COST
+        , A.PROD_STCK
+        FROM TB_PRODUCT A
+        WHERE A.PROD_SER_NO = #{serialNumber} AND A.ACTIVE = TRUE
     </select>
 
     <select id="findProductAll" resultMap="productAllResultMap" parameterType="stanl_2.final_backend.domain.product.common.util.RequestList">
         SELECT
-              A.PROD_ID
-            , A.PROD_NAME
-            , A.PROD_SER_NO
-            , A.PROD_COST
-            , A.PROD_STCK
-        FROM TB_PRODUCT A
-        WHERE A.ACTIVE = TRUE
-        ORDER BY CREATED_AT DESC
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
     </select>
 
     <select id="findProductBySearch" resultMap="productAllResultMap" parameterType="java.util.Map">
         SELECT
-              A.PROD_ID
-            , A.PROD_NAME
-            , A.PROD_SER_NO
-            , A.PROD_COST
-            , A.PROD_STCK
-            FROM TB_PRODUCT A
-            WHERE A.ACTIVE = TRUE
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.active = TRUE
         <if test="productSearchRequestDTO.id != null">
-            AND A.PROD_ID LIKE #{productSearchRequestDTO.id}
+            AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND A.PROD_NAME LIKE #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE #{productSearchRequestDTO.name}
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND A.PROD_SER_NO LIKE #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
         </if>
-        ORDER BY A.CREATED_AT DESC
+        ORDER BY a.created_at DESC
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
     </select>
 
     <select id="findProductCount" resultType="int">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_PRODUCT A
-        WHERE A.ACTIVE = TRUE;
+        COUNT(*) AS cnt
+        FROM tb_product a
+        WHERE a.active = TRUE;
     </select>
 
     <select id="findProductBySearchCount" resultType="int" parameterType="java.util.Map">
         SELECT
-        COUNT(*) AS CNT
-        FROM TB_PRODUCT A
-        WHERE A.ACTIVE = TRUE
+        COUNT(*) AS cnt
+        FROM tb_product a
+        WHERE a.active = TRUE
         <if test="productSearchRequestDTO.id != null">
-            AND A.PROD_ID like #{productSearchRequestDTO.id}
+            AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND A.PROD_NAME like #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE #{productSearchRequestDTO.name}
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND A.PROD_SER_NO like #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
         </if>
     </select>
 
