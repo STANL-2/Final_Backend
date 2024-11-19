@@ -27,7 +27,7 @@ public class FamilyQueryServiceImpl implements FamilyQueryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<FamilyDTO> selectFamilyList(String loginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(loginId);

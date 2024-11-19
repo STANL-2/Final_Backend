@@ -8,7 +8,7 @@
         <result property="role" column="MEM_ROL_NAME"/>
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
-    <select id="findMembersbyRole" resultMap="detailSchedule" parameterType="string">
+    <select id="findMembersbyRole" resultMap="detailMemberRole" parameterType="string">
         SELECT
                a.mem_id
           FROM tb_mem_role a
