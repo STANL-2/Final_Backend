@@ -19,6 +19,13 @@
         <result property="deletedAt" column="DELETED_AT"/>
     </resultMap>
 
+    <resultMap id="SearchCustomer" type="stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO">
+        <id property="customerId" column="CUST_ID"/>
+        <result property="name" column="CUST_NAME"/>
+        <result property="sex" column="CUST_SEX"/>
+        <result property="phone" column="CUST_PHO"/>
+    </resultMap>
+
     <select id="selectCustomerInfoById" resultMap="Customer" parameterType="String">
         SELECT
                A.CUST_ID,
@@ -61,4 +68,47 @@
           FROM TB_CUSTOMER_INFO A
          WHERE A.ACTIVE != 'false';
     </select>
+
+    <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="map">
+        SELECT
+               A.CUST_ID,
+               A.CUST_NAME,
+               A.CUST_SEX,
+               A.CUST_PHO
+          FROM TB_CUSTOMER_INFO A
+        <where>
+            A.ACTIVE != 'false'
+            <if test="name != null">
+                AND A.CUST_NAME LIKE CONCAT('%', #{ name }, '%')
+            </if>
+            <if test="sex != null">
+                AND A.CUST_SEX = #{ sex }
+            </if>
+            <if test="phone != null">
+                AND A.CUST_PHO = #{ phone }
+            </if>
+        </where>
+        ORDER BY A.CREATED_AT DESC
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+
+    <select id="findCustomerCnt" resultType="_int" parameterType="map">
+        SELECT
+        COUNT(*) AS CNT
+          FROM TB_CUSTOMER_INFO A
+        <where>
+            A.ACTIVE != 'false'
+            <if test="name != null">
+                AND A.CUST_NAME = #{name}
+            </if>
+            <if test="sex != null">
+                AND A.CUST_SEX = #{sex}
+            </if>
+            <if test="phone != null">
+                AND A.CUST_PHO = #{phone}
+            </if>
+        </where>
+    </select>
+
 </mapper>

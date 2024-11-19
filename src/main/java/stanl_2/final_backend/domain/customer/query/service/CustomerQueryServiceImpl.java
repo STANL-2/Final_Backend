@@ -8,11 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
+import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 import stanl_2.final_backend.domain.customer.query.repository.CustomerMapper;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service("queryCustomerService")
@@ -50,5 +53,26 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         int totalElements = customerMapper.selectCustomerCount();
 
         return new PageImpl<>(customerList, pageable, totalElements);
+    }
+
+    @Override
+    @Transactional
+    public Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) {
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+        int offset = page*size;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("offset", offset);
+        params.put("size", size);
+        params.put("name", customerSearchDTO.getName());
+        params.put("sex", customerSearchDTO.getSex());
+        params.put("phone", customerSearchDTO.getPhone());
+
+        List<CustomerDTO> customerList = customerMapper.findCustomerByConditions(params);
+
+        Integer count = customerMapper.findCustomerCnt(params);
+
+        return new PageImpl<>(customerList, pageable, count);
     }
 }
