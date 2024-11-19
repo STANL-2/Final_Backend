@@ -21,12 +21,12 @@ public class AuthQueryServiceImpl implements AuthQueryService {
 
     @Override
     @Transactional
-    public String selectMemberLoginId(String loginId){
+    public String selectMemberIdByLoginId(String loginId){
 
         String id = authMapper.selectIdByMemberName(loginId);
 
         if(id == null){
-            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+            throw new MemberCommonException(MemberErrorCode.MEMBER_ID_NOT_FOUND);
         }
 
         return id;

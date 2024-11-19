@@ -105,15 +105,12 @@ public class Member {
     private List<MemberRole> roles = new ArrayList<>();
 
 
-    /* 설명. updatedAt 자동화 */
-    // Insert 되기 전에 실행
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();
         this.updatedAt = this.createdAt;
     }
 
-    // Update 되기 전에 실행
     @PreUpdate
     private void preUpdate() {
         this.updatedAt = getCurrentTime();

@@ -26,4 +26,5 @@ public class MemberDTO {
     private String military;
     private String bankName;
     private String account;
+    private String centerId;
 }

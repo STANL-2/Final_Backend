@@ -21,27 +21,6 @@ public class MemberController {
         this.memberCommandService = memberCommandService;
     }
 
-//    @GetMapping("/authorities")
-//    public ResponseEntity<MemberResponseMessage> check(Authentication authentication) {
-//        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body(MemberResponseMessage.builder()
-//                            .httpStatus(401)
-//                            .msg("Unauthorized")
-//                            .build());
-//        }
-//
-//        // 인증된 사용자 정보 출력
-//        log.info("인증된 사용자: {}", authentication.getName());
-//
-//        return ResponseEntity.ok(MemberResponseMessage.builder()
-//                .httpStatus(200)
-//                .msg("성공")
-//                .result("인증된 사용자: " + authentication.getName())
-//                .build());
-//    }
-
-
     @GetMapping("/authorities")
     public ResponseEntity<MemberResponseMessage> check(Principal principal) {
 
