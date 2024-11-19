@@ -55,16 +55,10 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 String username = claims.get("username", String.class);
                 String authorities = claims.get("authorities", String.class);
 
-                // 예외 처리: authorities가 null인 경우
                 // 예외 처리: 토큰에 유효한 권한이 없을 경우
                 if (username == null || authorities == null || authorities.isEmpty()) {
                     throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
                 }
-//                if (authorities == null || authorities.isEmpty()) {
-//                    SecurityContextHolder.clearContext();
-//                    filterChain.doFilter(request, response);
-//                    return;
-//                }
 
                 List<GrantedAuthority> grantedAuthorities = Arrays.stream(authorities.split(","))
                         .map(SimpleGrantedAuthority::new)
@@ -77,10 +71,8 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (JwtException e) {
-                log.error("Invalid JWT token: {}", e.getMessage());
+                log.error("유효하지 않은 토큰입니다: {}", e.getMessage());
                 throw new GlobalCommonException(GlobalErrorCode.INVALID_TOKEN_ERROR);
-//                logger.error("Invalid JWT token", e);
-//                SecurityContextHolder.clearContext();
             }
         }else {
             // 토큰이 없을 경우 예외 처리

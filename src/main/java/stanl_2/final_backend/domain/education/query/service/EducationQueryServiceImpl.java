@@ -2,6 +2,7 @@ package stanl_2.final_backend.domain.education.query.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.certification.query.dto.CertificationDTO;
 import stanl_2.final_backend.domain.education.query.dto.EducationDTO;
 import stanl_2.final_backend.domain.education.query.repository.EducationMapper;
@@ -23,6 +24,7 @@ public class EducationQueryServiceImpl implements EducationQueryService{
     }
 
     @Override
+    @Transactional
     public List<EducationDTO> selectEducationList(String loginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(loginId);
