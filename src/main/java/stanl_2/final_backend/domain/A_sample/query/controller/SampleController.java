@@ -65,7 +65,7 @@ public class SampleController {
     @GetMapping("/detail/{id}")
     public ResponseEntity<SampleResponseMessage> getDetailTest(@PathVariable String id) {
 
-        String name = sampleQueryService.selectSampleName(id);
+        Object name = sampleQueryService.selectSampleName(id);
 
         return ResponseEntity.ok(SampleResponseMessage.builder()
                 .httpStatus(200)

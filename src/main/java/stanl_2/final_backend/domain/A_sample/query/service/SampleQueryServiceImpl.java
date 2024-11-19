@@ -27,11 +27,12 @@ public class SampleQueryServiceImpl implements SampleQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Object selectSampleName(String id) {
 
         String cacheKey = "myCache::" + id;
         Object cachedData = redisTemplate.opsForValue().get(cacheKey);
+        System.out.println("==================================");
 
         // 캐시에 데이터가 없다면 DB에서 조회하고 캐시에 저장
         if (cachedData == null) {
