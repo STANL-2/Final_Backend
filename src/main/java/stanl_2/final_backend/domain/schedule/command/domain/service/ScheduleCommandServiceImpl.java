@@ -44,7 +44,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
-
     @Override
     @Transactional
     public Boolean registSchedule(ScheduleRegistDTO scheduleRegistDTO) {

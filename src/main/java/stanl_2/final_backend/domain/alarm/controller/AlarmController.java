@@ -1,12 +1,16 @@
 package stanl_2.final_backend.domain.alarm.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import stanl_2.final_backend.domain.alarm.aggregate.dto.AlarmDTO;
 import stanl_2.final_backend.domain.alarm.service.AlarmService;
+
+import java.security.Principal;
 
 @RestController("queryAlarmController")
 @RequestMapping("/api/v1/alarm")
@@ -19,16 +23,19 @@ public class AlarmController {
         this.alarmService = alarmService;
     }
 
-    @GetMapping(value= "/connect/{memberId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> subscribe(@PathVariable String memberId,
-                                         @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "")
-                                         String lastEventId){
+    @GetMapping(value= "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> subscribe(Principal principal,
+                                                @RequestHeader(value = "Last-Event-ID", required = false,
+                                                              defaultValue = "") String lastEventId,
+                                                HttpServletResponse response){
+
+        String memberLoginId = principal.getName();
 
         AlarmDTO alarmDTO = new AlarmDTO();
-        alarmDTO.setMemberId(memberId);
+        alarmDTO.setMemberLoginId(memberLoginId);
         alarmDTO.setLastEventId(lastEventId);
 
-        return ResponseEntity.ok(alarmService.subscribe(alarmDTO));
+        return ResponseEntity.ok(alarmService.subscribe(alarmDTO, response));
     }
 
 }

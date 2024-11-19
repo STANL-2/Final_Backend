@@ -10,6 +10,7 @@ import lombok.*;
 public class AlarmDTO {
 
     private String memberId;
+    private String memberLoginId;
     private String lastEventId;
 
 }
