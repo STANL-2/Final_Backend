@@ -14,16 +14,16 @@
     </resultMap>
     <select id="findSchedulesByMemberIdAndStartAt" resultMap="AllSchedules" parameterType="hashmap">
         SELECT
-               a.sch_id,
-               a.sch_name,
-               a.sch_tag,
-               a.sch_srt_at,
-               a.sch_end_at,
-               a.mem_id
-          FROM tb_schedule a
-         WHERE mem_id = #{ memberId }
-           AND sch_srt_at LIKE CONCAT(#{ month },'%')
-           AND active = true
+        A.SCH_ID,
+        A.SCH_NAME,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        WHERE MEM_ID = #{ memberId }
+        AND SCH_SRT_AT LIKE CONCAT(#{ month },'%')
+        AND ACTIVE = TRUE
     </select>
 
     <resultMap id="yearMonthSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO">
@@ -37,16 +37,16 @@
     </resultMap>
     <select id="findSchedulesByMemberIdAndYearMonth" resultMap="yearMonthSchedules" parameterType="hashmap">
         SELECT
-               a.sch_id,
-               a.sch_name,
-               a.sch_tag,
-               a.sch_srt_at,
-               a.sch_end_at,
-               a.mem_id
-          FROM tb_schedule a
-         WHERE a.mem_id = #{ memberId }
-           AND a.sch_srt_at LIKE CONCAT(#{ yearMonth },'%')
-           AND a.active = true
+        A.SCH_ID,
+        A.SCH_NAME,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        WHERE A.MEM_ID = #{ memberId }
+        AND A.SCH_SRT_AT LIKE CONCAT(#{ yearMonth },'%')
+        AND A.ACTIVE = TRUE
     </select>
 
     <resultMap id="detailSchedule" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO">
@@ -61,17 +61,17 @@
     </resultMap>
     <select id="findScheduleByMemberIdAndScheduleId" resultMap="detailSchedule" parameterType="hashmap">
         SELECT
-               a.sch_id,
-               a.sch_name,
-               a.sch_cont,
-               a.sch_tag,
-               a.sch_srt_at,
-               a.sch_end_at,
-               a.mem_id
-          FROM tb_schedule a
-         WHERE a.mem_id = #{ memberId }
-           AND a.sch_id = #{ scheduleId }
-           AND a.active = true
+        A.SCH_ID,
+        A.SCH_NAME,
+        A.SCH_CONT,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        WHERE A.MEM_ID = #{ memberId }
+        AND A.SCH_ID = #{ scheduleId }
+        AND A.ACTIVE = TRUE
     </select>
 
     <resultMap id="AllSchedulesByDay" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO">
@@ -85,13 +85,14 @@
     </resultMap>
     <select id="findAllSchedulesByDay" resultMap="AllSchedulesByDay" parameterType="string">
         SELECT
-               a.sch_name,
-               a.sch_tag,
-               a.sch_srt_at,
-               a.sch_end_at,
-               a.mem_id
-          FROM tb_schedule a
-         WHERE sch_srt_at LIKE CONCAT(#{ currentDay },'%')
-           AND active = true
+        A.SCH_NAME,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        AND SCH_SRT_AT LIKE CONCAT(#{ currentDay },'%')
+        AND ACTIVE = TRUE
     </select>
 </mapper>
+

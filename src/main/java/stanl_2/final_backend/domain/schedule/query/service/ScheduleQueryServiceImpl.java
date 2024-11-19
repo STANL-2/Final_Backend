@@ -101,4 +101,13 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
         return responseDetailSchedule;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ScheduleDTO> findSchedulesByDate(String currentDay) {
+
+        List<ScheduleDTO> todaySchedules = scheduleMapper.findAllSchedulesByDay(currentDay);
+
+        return todaySchedules;
+    }
 }
