@@ -30,119 +30,117 @@
 
     <select id="findPurchaseOrderById" resultMap="purchaseOrderDetailResultMap" parameterType="string">
         SELECT
-               A.PUR_ORD_ID,
-               A.PUR_ORD_TTL,
-               A.PUR_ORD_CONT,
-               A.ACTIVE,
-               A.CREATED_AT,
-               A.UPDATED_AT,
-               A.DELETED_AT,
-               A.PUR_ORD_STAT,
-               A.ORD_ID,
-               A.ADMIN_ID,
-               A.MEM_ID
-          FROM TB_PURCHASE_ORDER A
-         WHERE A.ACTIVE = TRUE
-           AND A.PUR_ORD_ID = #{purchaseOrderId}
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_cont,
+        a.active,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.pur_ord_stat,
+        a.ord_id,
+        a.admin_id,
+        a.mem_id
+        FROM tb_purchase_order a
+        WHERE a.active = TRUE
+        AND a.pur_ord_id = #{purchaseOrderId};
     </select>
 
     <select id="findAllPurchaseOrder" resultMap="purchaseOrderResultMap">
         SELECT
-               A.PUR_ORD_ID,
-               A.PUR_ORD_TTL,
-               A.PUR_ORD_STAT,
-               B.ORD_TTL,
-               D.MEM_NAME AS ADMIN_NAME,
-               C.MEM_NAME AS MEM_NAME,
-               F.PROD_NAME
-          FROM TB_PURCHASE_ORDER A
-          LEFT JOIN TB_ORDER B
-            ON A.ORD_ID = B.ORD_ID
-          LEFT JOIN TB_MEMBER C
-            ON A.MEM_ID = C.MEM_ID
-          LEFT JOIN TB_MEMBER D
-            ON A.ADMIN_ID = D.MEM_ID
-          LEFT JOIN TB_CONTRACT E
-            ON B.CONR_ID = E.CONR_ID
-          LEFT JOIN TB_PRODUCT F
-            ON E.PROD_ID = F.PROD_ID
-         WHERE A.ACTIVE = TRUE
-         ORDER BY A.CREATED_AT DESC
-         LIMIT #{pageSize} OFFSET #{offset}
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        b.ord_ttl,
+        d.mem_name AS admin_name,
+        c.mem_name AS mem_name,
+        f.prod_name
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
     <select id="findAllPurchaseOrderCount" resultType="int">
         SELECT
-               COUNT(*) AS CNT
-          FROM TB_PURCHASE_ORDER A
-         WHERE A.ACTIVE = TRUE
+        COUNT(*) AS cnt
+        FROM tb_purchase_order a
+        WHERE a.active = TRUE;
     </select>
 
     <select id="findSearchPurchaseOrder" resultMap="purchaseOrderResultMap" parameterType="map">
         SELECT
-        A.PUR_ORD_ID,
-        A.PUR_ORD_TTL,
-        A.PUR_ORD_STAT,
-        B.ORD_TTL,
-        D.MEM_NAME AS ADMIN_NAME,
-        C.MEM_NAME AS MEM_NAME,
-        F.PROD_NAME
-        FROM TB_PURCHASE_ORDER A
-        LEFT JOIN TB_ORDER B
-        ON A.ORD_ID = B.ORD_ID
-        LEFT JOIN TB_MEMBER C
-        ON A.MEM_ID = C.MEM_ID
-        LEFT JOIN TB_MEMBER D
-        ON A.ADMIN_ID = D.MEM_ID
-        LEFT JOIN TB_CONTRACT E
-        ON B.CONR_ID = E.CONR_ID
-        LEFT JOIN TB_PRODUCT F
-        ON E.PROD_ID = F.PROD_ID
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        b.ord_ttl,
+        d.mem_name AS admin_name,
+        c.mem_name AS mem_name,
+        f.prod_name
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
         <where>
-            A.ACTIVE = TRUE
+            a.active = TRUE
             <if test="title != null">
-                AND A.PUR_ORD_TTL LIKE CONCAT('%', #{title}, '%')
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="status != null">
-                AND A.PUR_ORD_STAT = #{status}
+                AND a.pur_ord_stat = #{status}
             </if>
             <if test="adminId != null">
-                AND A.ADMIN_ID = #{adminId}
+                AND a.admin_id = #{adminId}
             </if>
             <if test="searchMemberId != null">
-                AND A.MEM_ID = #{searchMemberId}
+                AND a.mem_id = #{searchMemberId}
             </if>
             <if test="startDate != null and endDate != null">
-                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+                AND a.created_at BETWEEN #{startDate} AND #{endDate}
             </if>
         </where>
-        ORDER BY A.CREATED_AT DESC
-        LIMIT #{pageSize} OFFSET #{offset}
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
     <select id="findSearchPurchaseOrderCount" resultType="int" parameterType="map">
         SELECT
-               COUNT(*) AS CNT
-          FROM TB_PURCHASE_ORDER A
+        COUNT(*) AS cnt
+        FROM tb_purchase_order a
         <where>
-            A.ACTIVE = TRUE
+            a.active = TRUE
             <if test="title != null">
-                AND A.ORD_TTL LIKE CONCAT('%', #{title}, '%')
+                AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="status != null">
-                AND A.ORD_STAT = #{status}
+                AND a.ord_stat = #{status}
             </if>
             <if test="adminId != null">
-                AND A.ADMIN_ID = #{adminId}
+                AND a.admin_id = #{adminId}
             </if>
             <if test="searchMemberId != null">
-                AND A.MEM_ID = #{searchMemberId}
+                AND a.mem_id = #{searchMemberId}
             </if>
             <if test="startDate != null and endDate != null">
-                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+                AND a.created_at BETWEEN #{startDate} AND #{endDate}
             </if>
         </where>
     </select>
-
-
 </mapper>
