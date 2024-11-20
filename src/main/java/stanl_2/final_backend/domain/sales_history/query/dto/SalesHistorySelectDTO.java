@@ -14,9 +14,9 @@ import java.util.Collection;
 @Setter
 public class SalesHistorySelectDTO {
     private String salesHistoryId;
-    private String salesHistoryNumberOfVehicles;
-    private String salesHistoryTotalSales;
-    private String salesHistoryIncentive;
+    private Integer salesHistoryNumberOfVehicles;
+    private Integer salesHistoryTotalSales;
+    private Integer salesHistoryIncentive;
     private String createdAt;
     private String deletedAt;
     private String active;
@@ -25,6 +25,6 @@ public class SalesHistorySelectDTO {
     private String productId;
     private String memberId;
     private String centerId;
-    private Collection<? extends GrantedAuthority> roles;
     private String searcherName;
+
 }

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="stanl_2.final_backend.domain.evaluation.query.repository.EvaluationMapper">
+<mapper namespace="stanl_2.final_backend.domain.sales_history.query.repository.SalesHistoryMapper">
 
-    <resultMap id="salesHistoryAllResultMap" type="stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO">
+    <resultMap id="salesHistoryAllResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO">
         <id property="salesHistoryId" column="SAL_HIST_ID"/>
         <result property="salesHistoryNumberOfVehicles" column="SAL_HIST_NO_OF_VEH"/>
         <result property="salesHistoryTotalSales" column="SAL_HIST_TOTA_SALE"/>
@@ -17,176 +17,133 @@
         <result property="centerId" column="CENT_ID"/>
     </resultMap>
 
-    <select id="findAllSalesHistory" resultMap="salesHistoryAllResultMap">
+    <resultMap id="salesHistoryAggregatedDataResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsDTO">
+        <result property="incentive" column="INCENTIVE"/>
+        <result property="performance" column="PERFORMANCE"/>
+        <result property="totalSales" column="TOTAL_SALES"/>
+    </resultMap>
+
+    <select id="findSalesHistoryByEmployee" resultMap="salesHistoryAllResultMap">
         SELECT
-        a.eval_id,
-        a.eval_ttl,
+        a.sal_hist_id,
+        a.sal_hist_ince,
+        a.sal_hist_no_of_veh,
+        a.sal_hist_tota_sale,
         a.cent_id,
+        a.cust_id,
         a.mem_id,
-        a.wri_id,
+        a.prod_id,
+        a.conr_id,
         a.created_at
-        FROM tb_evaluation a
+        FROM tb_sales_history a
+        WHERE a.active = TRUE AND a.mem_id = #{searcherId}
+        ORDER BY a.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+ <select id="findAllSalesHistory" resultMap="salesHistoryAllResultMap">
+        SELECT
+        a.sal_hist_id,
+        a.sal_hist_ince,
+        a.sal_hist_no_of_veh,
+        a.sal_hist_tota_sale,
+        a.cent_id,
+        a.cust_id,
+        a.mem_id,
+        a.prod_id,
+        a.conr_id,
+        a.created_at
+        FROM tb_sales_history a
         WHERE a.active = TRUE
         ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findEvaluationByCenterId" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList">
+    <select id="findSalesHistoryDetail" resultMap="salesHistoryAllResultMap">
         SELECT
-        a.eval_id,
-        a.eval_ttl,
+        a.sal_hist_id,
+        a.sal_hist_ince,
+        a.sal_hist_no_of_veh,
+        a.sal_hist_tota_sale,
         a.cent_id,
+        a.cust_id,
         a.mem_id,
-        a.wri_id,
+        a.prod_id,
+        a.conr_id,
         a.created_at
-        FROM tb_evaluation a
-        WHERE a.cent_id = #{centerId} AND a.active = TRUE
+        FROM tb_sales_history a
+        WHERE a.sal_hist_id = #{salesHistorySelectDTO.salesHistoryId} AND a.active = TRUE
+    </select>
+
+    <select id="findStatisticsByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+        SELECT
+        SUM(a.sal_hist_ince) as INCENTIVE,
+        SUM(a.sal_hist_no_of_veh) as PERFORMANCE,
+        SUM(a.sal_hist_tota_sale) as TOTAL_SALES
+        FROM tb_sales_history a
+        WHERE a.mem_id = #{salesHistorySelectDTO.searcherName} AND a.active = TRUE;
+    </select>
+
+    <select id="findStatisticsSearchByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+        SELECT
+        SUM(a.sal_hist_ince) as INCENTIVE,
+        SUM(a.sal_hist_no_of_veh) as PERFORMANCE,
+        SUM(a.sal_hist_tota_sale) as TOTAL_SALES
+        FROM tb_sales_history a
+        <where>
+            a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+            AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="findSalesHistoryCountByEmployee" resultType="int" parameterType="String">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_sales_history a
+        WHERE a.active = TRUE AND a.mem_id = #{searcherId}
         ORDER BY a.created_at DESC
-        LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findEvaluationById" resultMap="evaluationAllResultMap" parameterType="String">
-        SELECT
-        a.eval_id,
-        a.eval_ttl,
-        a.eval_cont,
-        a.cent_id,
-        a.mem_id,
-        a.wri_id,
-        a.created_at,
-        a.updated_at
-        FROM tb_evaluation a
-        WHERE a.eval_id = #{id} AND a.active = TRUE
-    </select>
-
-    <select id="findEvaluationByCenterIdAndSearch" resultMap="evaluationAllResultMap" parameterType="String">
-        SELECT
-        a.eval_id,
-        a.eval_ttl,
-        a.cent_id,
-        a.mem_id,
-        a.wri_id,
-        a.created_at
-        FROM tb_evaluation a
-        <where>
-            a.active = TRUE AND a.cent_id = #{centerId}
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
-            </if>
-            <if test="evaluationSearchDTO.writerName != null">
-                AND a.wri_id = #{evaluationSearchDTO.writerName}
-            </if>
-            <if test="evaluationSearchDTO.memberName != null">
-                AND a.mem_id = #{evaluationSearchDTO.memberName}
-            </if>
-            <if test="evaluationSearchDTO.title != null">
-                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
-            </if>
-            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
-            </if>
-        </where>
-        ORDER BY a.created_at DESC
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findEvaluationBySearch" resultMap="evaluationAllResultMap" parameterType="String">
-        SELECT
-        a.eval_id,
-        a.eval_ttl,
-        a.cent_id,
-        a.mem_id,
-        a.wri_id,
-        a.created_at
-        FROM tb_evaluation a
-        <where>
-            a.active = TRUE
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
-            </if>
-            <if test="evaluationSearchDTO.writerName != null">
-                AND a.wri_id = #{evaluationSearchDTO.writerName}
-            </if>
-            <if test="evaluationSearchDTO.memberName != null">
-                AND a.mem_id = #{evaluationSearchDTO.memberName}
-            </if>
-            <if test="evaluationSearchDTO.centerId != null">
-                AND a.cent_id = #{evaluationSearchDTO.centerId}
-            </if>
-            <if test="evaluationSearchDTO.title != null">
-                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
-            </if>
-            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
-            </if>
-        </where>
-        ORDER BY a.created_at DESC
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findEvaluationCount" resultType="int">
+    <select id="findSalesHistoryCount" resultType="int">
         SELECT
         COUNT(*) AS cnt
-        FROM tb_evaluation a
-        WHERE a.active = TRUE
+        FROM tb_sales_history a
+        WHERE a.active = TRUE;
     </select>
 
-    <select id="findEvaluationCountByCenterId" resultType="int" parameterType="String">
+    <select id="findStatisticsSearchMonthByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
         SELECT
-        COUNT(*) AS cnt
-        FROM tb_evaluation a
-        WHERE a.cent_id = #{centerId} AND a.active = TRUE;
-    </select>
-
-    <select id="findEvaluationBySearchCount" resultType="int" parameterType="String">
-        SELECT
-        COUNT(*) AS cnt
-        FROM tb_evaluation a
+        LEFT(a.created_at, 7) AS MONTH,
+        SUM(a.sal_hist_ince) AS INCENTIVE,
+        SUM(a.sal_hist_no_of_veh) AS PERFORMANCE,
+        SUM(a.sal_hist_tota_sale) AS TOTAL_SALES
+        FROM tb_sales_history a
         <where>
-            a.active = TRUE
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
-            </if>
-            <if test="evaluationSearchDTO.writerName != null">
-                AND a.wri_id = #{evaluationSearchDTO.writerName}
-            </if>
-            <if test="evaluationSearchDTO.memberName != null">
-                AND a.mem_id = #{evaluationSearchDTO.memberName}
-            </if>
-            <if test="evaluationSearchDTO.centerId != null">
-                AND a.cent_id = #{evaluationSearchDTO.centerId}
-            </if>
-            <if test="evaluationSearchDTO.title != null">
-                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
-            </if>
-            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+            a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
         </where>
+        GROUP BY LEFT(a.created_at, 7)
+        ORDER BY MONTH ASC
     </select>
 
-    <select id="findEvaluationByCenterIdAndSearchCount" resultType="int" parameterType="String">
+    <select id="findStatisticsSearchMonthByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
         SELECT
-        COUNT(*) AS cnt
-        FROM tb_evaluation a
+        LEFT(a.created_at, 4) AS YEAR,
+        SUM(a.sal_hist_ince) AS INCENTIVE,
+        SUM(a.sal_hist_no_of_veh) AS PERFORMANCE,
+        SUM(a.sal_hist_tota_sale) AS TOTAL_SALES
+        FROM tb_sales_history a
         <where>
-            a.active = TRUE AND a.cent_id = #{centerId}
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
-            </if>
-            <if test="evaluationSearchDTO.writerName != null">
-                AND a.wri_id = #{evaluationSearchDTO.writerName}
-            </if>
-            <if test="evaluationSearchDTO.memberName != null">
-                AND a.mem_id = #{evaluationSearchDTO.memberName}
-            </if>
-            <if test="evaluationSearchDTO.title != null">
-                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
-            </if>
-            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+            a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
         </where>
+        GROUP BY LEFT(a.created_at, 4)
+        ORDER BY YEAR ASC
     </select>
-
 </mapper>
