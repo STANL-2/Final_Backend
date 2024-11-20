@@ -368,6 +368,7 @@
             <if test="productId != null">
                 AND b.prod_name LIKE CONCAT('%', #{productId}, '%')
             </if>
-        </where>;
+        </where>
     </select>
+
 </mapper>

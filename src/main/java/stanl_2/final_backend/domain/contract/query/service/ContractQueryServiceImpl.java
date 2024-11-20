@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.contract.common.exception.ContractCommonException;
 import stanl_2.final_backend.domain.contract.common.exception.ContractErrorCode;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
@@ -14,8 +15,6 @@ import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
 import stanl_2.final_backend.domain.contract.query.repository.ContractMapper;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
-import stanl_2.final_backend.domain.product.query.service.ProductService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
@@ -38,6 +37,7 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
     // 계약서 전체조회
     @Override
+    @Transactional(readOnly = true)
     public Page<ContractSelectAllDTO> selectAll(ContractSelectAllDTO contractSelectAllDTO, Pageable pageable) {
 
         if(contractSelectAllDTO.getRoles().stream()
@@ -83,6 +83,7 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
     // 계약서 상세조회
     @Override
+    @Transactional(readOnly = true)
     public ContractSeletIdDTO selectDetailContract(ContractSeletIdDTO contractSeletIdDTO) {
 
         if(contractSeletIdDTO.getRoles().stream()
@@ -124,6 +125,7 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ContractSearchDTO> selectBySearch(ContractSearchDTO contractSearchDTO, Pageable pageable) {
 
         if (contractSearchDTO.getRoles().stream()
@@ -187,5 +189,23 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         } else {
             throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
         }
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ContractSeletIdDTO selectContractByIdAndMemberId(String contractId, String memberId) {
+
+        ContractSeletIdDTO contractDTO = new ContractSeletIdDTO();
+        contractDTO.setContractId(contractId);
+        contractDTO.setMemberId(memberId);
+
+        ContractSeletIdDTO contractSelectDto = contractMapper.findContractByIdAndMemId(contractDTO);
+
+        if (contractSelectDto == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        return contractSelectDto;
     }
 }

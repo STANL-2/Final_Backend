@@ -9,7 +9,13 @@ import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import java.util.Map;
 
 public interface OrderQueryService {
-    Page<OrderSelectAllDTO> selectAll(String memberId, Pageable pageable);
+    Page<OrderSelectAllDTO> selectAllEmployee(String loginId, Pageable pageable);
+
+    OrderSelectIdDTO selectDetailOrderEmployee(OrderSelectIdDTO orderSelectIdDTO);
+
+    Page<OrderSelectSearchDTO> selectSearchOrdersEmployee(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable);
+
+    Page<OrderSelectAllDTO> selectAll(Pageable pageable);
 
     OrderSelectIdDTO selectDetailOrder(OrderSelectIdDTO orderSelectIdDTO);
 
