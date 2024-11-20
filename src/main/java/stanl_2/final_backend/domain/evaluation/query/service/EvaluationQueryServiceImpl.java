@@ -28,14 +28,12 @@ import java.util.Optional;
 public class EvaluationQueryServiceImpl implements EvaluationQueryService {
 
     private final EvaluationMapper evaluationMapper;
-    private final AESUtils aesUtils;
     private final MemberQueryService memberQueryService;
     private final AuthQueryService authQueryService;
 
     @Autowired
-    public EvaluationQueryServiceImpl(EvaluationMapper evaluationMapper, AESUtils aesUtils, MemberQueryService memberQueryService, AuthQueryService authQueryService) {
+    public EvaluationQueryServiceImpl(EvaluationMapper evaluationMapper, MemberQueryService memberQueryService, AuthQueryService authQueryService) {
         this.evaluationMapper = evaluationMapper;
-        this.aesUtils = aesUtils;
         this.memberQueryService = memberQueryService;
         this.authQueryService = authQueryService;
     }
@@ -47,10 +45,7 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
         int size = pageable.getPageSize();
 
         MemberDTO memberDTO = memberQueryService.selectMemberInfo(evaluationDTO.getMemberId());
-//        String centerId = aesUtils.decrypt(memberDTO.getCenterId());
         String centerId = memberDTO.getCenterId();
-
-        System.out.println("centerId: " + centerId);
 
         List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterId(size,offset, centerId);
 
