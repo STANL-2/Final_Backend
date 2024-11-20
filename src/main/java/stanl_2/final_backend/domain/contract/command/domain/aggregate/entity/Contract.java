@@ -31,8 +31,8 @@ public class Contract {
     @Column(name = "CONR_ID")
     private String contractId;
 
-    @Column(name = "CONR_NAME", nullable = false)
-    private String name;
+    @Column(name = "CONR_TTL", nullable = false)
+    private String title;
 
     @Column(name = "CONR_CUST_NAME", nullable = false)
     private String customerName;
@@ -84,6 +84,9 @@ public class Contract {
     @Column(name = "CONR_DELV_LOC")
     private String delveryLocation;
 
+    @Column(name = "CONR_CAR_NAME")
+    private String carName;
+
     @Column(name = "CONR_STAT", nullable = false)
     @ColumnDefault("'WAIT'")
     private String status;
@@ -91,6 +94,10 @@ public class Contract {
     @Column(name = "CONR_NO_OF_VEH", nullable = false)
     @ColumnDefault("1")
     private String numberOfVehicles;
+
+    @Column(name = "CONR_TOTA_SALE", nullable = false)
+    @ColumnDefault("0")
+    private String totalSales;
 
     @Lob
     @Column(name = "CREATED_URL", nullable = false, columnDefinition = "TEXT")
@@ -114,6 +121,9 @@ public class Contract {
 
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
+
+    @Column(name = "ADMI_ID")
+    private String adminId;
 
     @Column(name = "CENT_ID", nullable = false)
     private String centerId;

@@ -16,4 +16,5 @@ public class ScheduleDetailDTO {
     private String startAt;
     private String endAt;
     private String memberId;
+    private String memberLoginId;
 }

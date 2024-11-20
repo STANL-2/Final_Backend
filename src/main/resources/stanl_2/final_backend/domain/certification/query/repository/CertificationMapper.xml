@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.certification.query.repository.CertificationMapper">
+<resultMap id="Certification" type="stanl_2.final_backend.domain.certification.query.dto.CertificationDTO">
+    <result property="name" column="CER_NAME"/>
+    <result property="agency" column="CER_INST"/>
+    <result property="acquisitionDate" column="CER_DATE"/>
+    <result property="score" column="CER_SCO"/>
+    <result property="note" column="CER_NOTE"/>
+</resultMap>
+
+    <select id="selectCertificationInfo" resultMap="Certification" parameterType="String">
+        SELECT
+               a.cer_name,
+               a.cer_inst,
+               a.cer_date,
+               a.cer_sco,
+               a.cer_note
+          FROM tb_certification a
+          JOIN tb_member b ON(a.mem_id = b.mem_id)
+         WHERE a.mem_id = #{ memberId }
+    </select>
+</mapper>

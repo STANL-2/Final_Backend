@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.member.query.repository.MemberMapper">
+    <resultMap id="Member" type="stanl_2.final_backend.domain.member.query.dto.MemberDTO">
+        <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="name" column="MEM_NAME"/>
+        <result property="email" column="MEM_EMA"/>
+        <result property="age" column="MEM_AGE"/>
+        <result property="sex" column="MEM_SEX"/>
+        <result property="identNo" column="MEM_IDEN_NO"/>
+        <result property="phone" column="MEM_PHO"/>
+        <result property="emergePhone" column="MEM_EMER_PHO"/>
+        <result property="address" column="MEM_ADR"/>
+        <result property="note" column="MEM_NOTE"/>
+        <result property="position" column="MEM_POS"/>
+        <result property="grade" column="MEM_GRD"/>
+        <result property="jobType" column="MEM_JOB_TYPE"/>
+        <result property="military" column="MEM_MIL"/>
+        <result property="bankName" column="MEM_BANK_NAME"/>
+        <result property="account" column="MEM_ACC"/>
+        <result property="centerId" column="CENTER_ID"/>
+    </resultMap>
+
+    <select id="findMemberInfoById" resultMap="Member" parameterType="String">
+        SELECT
+               a.mem_login_id,
+               a.mem_name,
+               a.mem_ema,
+               a.mem_age,
+               a.mem_sex,
+               a.mem_iden_no,
+               a.mem_pho,
+               a.mem_emer_pho,
+               a.mem_adr,
+               a.mem_note,
+               a.mem_pos,
+               a.mem_grd,
+               a.mem_job_type,
+               a.mem_mil,
+               a.mem_bank_name,
+               a.mem_acc,
+               a.center_id
+          FROM tb_member a
+         WHERE a.mem_login_id = #{ loginId }
+    </select>
+
+    <select id="findNameById" resultType="String" parameterType="String">
+        SELECT
+               A.mem_name
+          FROM tb_member a
+         WHERE a.mem_id = #{ memberId }
+    </select>
+
+</mapper>
