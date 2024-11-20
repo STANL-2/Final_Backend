@@ -63,4 +63,12 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         return memberList;
     }
+
+    @Override
+    public String selectNameById(String memberId){
+
+        String name = memberMapper.findNameById(memberId);
+
+        return name;
+    }
 }

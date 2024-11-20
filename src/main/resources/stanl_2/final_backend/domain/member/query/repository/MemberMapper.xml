@@ -46,4 +46,11 @@
          WHERE a.mem_login_id = #{ loginId }
     </select>
 
+    <select id="findNameById" resultType="String" parameterType="String">
+        SELECT
+               A.mem_name
+          FROM tb_member a
+         WHERE a.mem_id = #{ memberId }
+    </select>
+
 </mapper>
