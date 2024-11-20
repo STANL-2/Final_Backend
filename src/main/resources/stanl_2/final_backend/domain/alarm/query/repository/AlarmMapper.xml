@@ -13,8 +13,9 @@
                SUM(CASE WHEN a.alr_type = 'SCHEDULE' THEN 1 ELSE 0 END) AS SCH_ALR_CNT,
                SUM(CASE WHEN a.alr_type = 'NOTICE' THEN 1 ELSE 0 END) AS NOT_ALR_CNT,
                SUM(CASE WHEN a.alr_type = 'CONTRACT' THEN 1 ELSE 0 END) AS CONR_ALR_CNT
-        FROM tb_alarm a
+         FROM tb_alarm a
         WHERE a.mem_id = #{memberId}
+          AND a.alr_read_stat = false
     </select>
 
     <resultMap id="alarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectUnreadDTO">

@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
-@Service
+@Service("AlarmSchdulerService")
 public class AlarmScheduler {
 
     private final AlarmCommandService alarmCommandService;
