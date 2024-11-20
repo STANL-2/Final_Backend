@@ -1,7 +1,14 @@
 package stanl_2.final_backend.domain.alarm.query.service;
 
-import stanl_2.final_backend.domain.alarm.query.dto.CursorDTO;
+import org.springframework.data.domain.Pageable;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectAllDetailDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDetailDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO;
+
+import java.util.List;
 
 public interface AlarmQueryService {
-    CursorDTO readMemberAlarms(CursorDTO cursorDTO, String memberLoginId);
+    AlarmSelectTypeDTO selectMemberByAlarmType(String memberLoginId);
+
+    AlarmSelectAllDetailDTO selectDetailAlarmByType(AlarmSelectDetailDTO alarmSelectDetailDTO, Pageable pageable);
 }

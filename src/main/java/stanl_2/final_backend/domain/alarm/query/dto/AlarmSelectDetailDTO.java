@@ -7,14 +7,12 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class AlarmQueryDTO {
+public class AlarmSelectDetailDTO {
 
-    private String alarmId;
     private String message;
-    private String redirectUrl;
     private String type;
+    private String redirectUrl;
     private Boolean readStatus;
-    private String createAt;
-    private String memberId;
 
+    private String memberLoginId;
 }

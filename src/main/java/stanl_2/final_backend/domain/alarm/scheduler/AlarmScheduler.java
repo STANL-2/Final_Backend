@@ -44,7 +44,7 @@ public class AlarmScheduler {
             String Minute = schedule.getStartAt().substring(14,16);
 
             String memberId = schedule.getMemberId();
-            String type = schedule.getTag();
+            String type = "SCHEDULE";
             String message = "[" + type + "] 금일 " + Hour + "시 " + Minute + "분에 '"
                                  + schedule.getName() + "' 일정이 있습니다";
             String redirectUrl = "/api/v1/schedule/" + schedule.getMemberId();

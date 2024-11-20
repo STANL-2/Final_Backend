@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class AlarmCommandDTO {
+public class AlarmRegistDTO {
 
     private String memberId;
     private String memberLoginId;

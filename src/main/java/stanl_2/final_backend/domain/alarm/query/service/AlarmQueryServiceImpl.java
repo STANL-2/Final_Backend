@@ -1,16 +1,24 @@
 package stanl_2.final_backend.domain.alarm.query.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import stanl_2.final_backend.domain.alarm.common.exception.AlarmCommonException;
-import stanl_2.final_backend.domain.alarm.common.exception.AlarmErrorCode;
-import stanl_2.final_backend.domain.alarm.query.dto.AlarmQueryDTO;
-import stanl_2.final_backend.domain.alarm.query.dto.CursorDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectAllDetailDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDetailDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO;
 import stanl_2.final_backend.domain.alarm.query.repository.AlarmMapper;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
+import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class AlarmQueryServiceImpl implements AlarmQueryService{
 
@@ -24,42 +32,41 @@ public class AlarmQueryServiceImpl implements AlarmQueryService{
     }
 
     @Override
-    public CursorDTO readMemberAlarms(CursorDTO cursorDTO, String memberLoginId) {
+    public AlarmSelectTypeDTO selectMemberByAlarmType(String memberLoginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(memberLoginId);
 
-        Integer fetchSize = cursorDTO.getSize();
-        List<AlarmQueryDTO> alarmList;
+        AlarmSelectTypeDTO alarmSelectTypeDTO = alarmMapper.findNumberOfAlarmsByType(memberId);
 
-        if (cursorDTO.getCursorId() == null) {
-            alarmList = alarmMapper.findAlarmsByMemberId(memberId, fetchSize);
-        } else {
-            alarmList = alarmMapper.findAlarmsByMemberIdAndCursorId(
-                    memberId, cursorDTO.getCursorId(), fetchSize
-            );
+        return alarmSelectTypeDTO;
+    }
+
+    @Override
+    public Page<AlarmSelectAllDetailDTO> selectDetailAlarmByType(AlarmSelectDetailDTO alarmSelectDetailDTO, Pageable pageable) {
+
+        Integer offset = Math.toIntExact(pageable.getOffset());
+        Integer pageSize = pageable.getPageSize();
+
+        String memberId = authQueryService.selectMemberIdByLoginId(alarmSelectDetailDTO.getMemberLoginId());
+
+        List<AlarmSelectDetailDTO> readAlarmList
+                = alarmMapper.findReadAlarmsByType(offset, pageSize, memberId, alarmSelectDetailDTO.getType());
+
+        List<AlarmSelectDetailDTO> notReadAlarmList
+                = alarmMapper.findNotReadAlarmsByType(offset, pageSize, memberId, alarmSelectDetailDTO.getType());
+
+        if (readAlarmList == null || readAlarmList.isEmpty()) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
-        if (alarmList.isEmpty()) {
-            throw new AlarmCommonException(AlarmErrorCode.ALARM_NOT_FOUND);
+        if (notReadAlarmList == null || notReadAlarmList.isEmpty()) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
-        // 실제 데이터 수가 요청한 size보다 큰 경우 다음 페이지가 있다고 판단
-        Boolean hasNext = alarmList.size() > cursorDTO.getSize();
+        AlarmSelectAllDetailDTO alarmSelectAllDetailDTO = new AlarmSelectAllDetailDTO();
+        alarmSelectAllDetailDTO.setReadAlarmList(readAlarmList);
+        alarmSelectAllDetailDTO.setNotReadAlarmList(notReadAlarmList);
 
-        // 데이터가 size + 1개로 조회되었으므로 마지막 데이터 제거
-        if (hasNext) {
-            alarmList.remove(alarmList.size() - 1);
-        }
-
-        // 마지막 알림 번호
-        Long lastCursorId = alarmList.isEmpty() ? null :
-                Long.parseLong(alarmList.get(alarmList.size() - 1).getAlarmId().replace("ALR_", ""));
-
-        CursorDTO cursorResponseDTO = new CursorDTO();
-        cursorResponseDTO.setCursorId(lastCursorId);
-        cursorResponseDTO.setHasNext(hasNext);
-        cursorResponseDTO.setComment(alarmList);
-
-        return cursorResponseDTO;
+        return new PageImpl<>(alarmSelectAllDetailDTO, pageable, 1);
     }
 }

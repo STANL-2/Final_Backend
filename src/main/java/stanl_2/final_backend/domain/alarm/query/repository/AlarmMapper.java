@@ -2,20 +2,23 @@ package stanl_2.final_backend.domain.alarm.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import stanl_2.final_backend.domain.alarm.command.domain.aggregate.entity.Alarm;
-import stanl_2.final_backend.domain.alarm.query.dto.AlarmQueryDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDetailDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface AlarmMapper {
-    List<AlarmQueryDTO> findAlarmsByMemberId(@Param("memberId") String memberId,
-                                             @Param("size") Integer size);
+    AlarmSelectTypeDTO findNumberOfAlarmsByType(String memberId);
 
-    List<AlarmQueryDTO> findAlarmsByMemberIdAndCursorId(@Param("memberId") String memberId,
-                                                @Param("cursorId") Long cursorId,
-                                                @Param("size") Integer size);
+    List<AlarmSelectDetailDTO> findReadAlarmsByType(@Param("offset") Integer offset,
+                                                    @Param("pageSize") Integer pageSize,
+                                                    @Param("memberId") String memberId,
+                                                    @Param("type") String type);
 
+    List<AlarmSelectDetailDTO> findNotReadAlarmsByType(@Param("offset") Integer offset,
+                                                       @Param("pageSize") Integer pageSize,
+                                                       @Param("memberId") String memberId,
+                                                       @Param("type") String type);
 }

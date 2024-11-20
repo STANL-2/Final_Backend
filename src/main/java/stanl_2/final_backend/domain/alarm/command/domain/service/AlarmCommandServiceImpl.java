@@ -3,17 +3,22 @@ package stanl_2.final_backend.domain.alarm.command.domain.service;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import stanl_2.final_backend.domain.alarm.command.application.dto.AlarmCommandDTO;
+import stanl_2.final_backend.domain.alarm.command.application.dto.AlarmRegistDTO;
 import stanl_2.final_backend.domain.alarm.command.domain.aggregate.entity.Alarm;
 import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.alarm.command.domain.repository.AlarmRepository;
 import stanl_2.final_backend.domain.alarm.command.domain.repository.EmitterRepository;
+import stanl_2.final_backend.domain.alarm.common.exception.AlarmCommonException;
+import stanl_2.final_backend.domain.alarm.common.exception.AlarmErrorCode;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -48,10 +53,10 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
     }
 
     @Override
-    public SseEmitter subscribe(AlarmCommandDTO alarmCommandDTO, HttpServletResponse response) {
+    public SseEmitter subscribe(AlarmRegistDTO alarmRegistDTO, HttpServletResponse response) {
 
-        String lastEventId = alarmCommandDTO.getLastEventId();
-        String memberId = authQueryService.selectMemberIdByLoginId(alarmCommandDTO.getMemberLoginId());
+        String lastEventId = alarmRegistDTO.getLastEventId();
+        String memberId = authQueryService.selectMemberIdByLoginId(alarmRegistDTO.getMemberLoginId());
         String emitterId = memberId + "_" + System.currentTimeMillis();
 
         // 클라이언트의 sse 연결 요청에 응답하기 위한 SseEmitter 객체 생성
@@ -138,4 +143,27 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
         });
     }
 
+    @Override
+    @Transactional
+    public Boolean updateReadStatus(String alarmId) {
+
+        Alarm alarm = alarmRepository.findByAlarmId(alarmId);
+
+        if(alarm == null){
+            throw new AlarmCommonException(AlarmErrorCode.ALARM_NOT_FOUND);
+        }
+
+        try {
+            alarm.setReadStatus(true);
+
+            alarmRepository.save(alarm);
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 위반 예외 처리
+            throw new AlarmCommonException(AlarmErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new AlarmCommonException(AlarmErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

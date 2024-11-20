@@ -6,17 +6,23 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.alarm.common.response.AlarmResponseMessage;
-import stanl_2.final_backend.domain.alarm.query.dto.CursorDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectAllDetailDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDetailDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO;
 import stanl_2.final_backend.domain.alarm.query.service.AlarmQueryService;
 import stanl_2.final_backend.domain.schedule.common.response.ScheduleResponseMessage;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController("queryAlarmController")
 @RequestMapping("/api/v1/alarm")
@@ -29,28 +35,47 @@ public class AlarmController {
         this.alarmQueryService = alarmQueryService;
     }
 
-    @Operation(summary = "고객 알림창 조회")
+    @Operation(summary = "회원 알림창 전체 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "고객 알림창 조회 성공",
+            @ApiResponse(responseCode = "200", description = "회원 알림창 전체 조회 완료",
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
     @GetMapping("")
-    public ResponseEntity<AlarmResponseMessage> readMemberAlarms(Principal principal,
-                                                     @RequestParam(value = "cursor", required = false) Long cursorId){
+    public ResponseEntity<AlarmResponseMessage> selectMemberAlarmType(Principal principal){
 
         String memberLoginId = principal.getName();
-        Integer size = 3;
 
-        CursorDTO cursorDTO = new CursorDTO();
-        cursorDTO.setCursorId(cursorId);
-        cursorDTO.setSize(size);
-
-        CursorDTO alarmResponseDTO = alarmQueryService.readMemberAlarms(cursorDTO, memberLoginId);
+        AlarmSelectTypeDTO AlarmSelectTypeDTO = alarmQueryService.selectMemberByAlarmType(memberLoginId);
 
         return ResponseEntity.ok(AlarmResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(alarmResponseDTO)
+                .result(AlarmSelectTypeDTO)
+                .build());
+    }
+
+    @Operation(summary = "회원 알림 상세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 알림 상세 조회 완료",
+                    content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
+    })
+    @GetMapping("/detail/{type}")
+    public ResponseEntity<AlarmResponseMessage> selectDetailAlarm(Principal principal,
+                                                                  @PathVariable String type,
+                                                                  @PageableDefault(size = 8) Pageable pageable){
+
+        String memberLoginId = principal.getName();
+        AlarmSelectDetailDTO alarmSelectDetailDTO = new AlarmSelectDetailDTO();
+        alarmSelectDetailDTO.setMemberLoginId(memberLoginId);
+        alarmSelectDetailDTO.setType(type);
+
+        Page<AlarmSelectAllDetailDTO> alarmSelectAllDetailDTO
+                = alarmQueryService.selectDetailAlarmByType(alarmSelectDetailDTO , pageable);
+
+        return ResponseEntity.ok(AlarmResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(alarmSelectAllDetailDTO)
                 .build());
     }
 }

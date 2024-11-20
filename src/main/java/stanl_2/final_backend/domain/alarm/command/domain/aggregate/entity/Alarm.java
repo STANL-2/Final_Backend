@@ -41,9 +41,6 @@ public class Alarm {
     @Column(name = "CREATED_AT", nullable = false)
     private String createdAt;
 
-//    @Column(name = "ALR_STAT", nullable = false)
-//    private String status = "PENDING";
-
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 

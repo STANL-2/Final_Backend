@@ -11,8 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import stanl_2.final_backend.domain.alarm.command.application.dto.AlarmCommandDTO;
+import stanl_2.final_backend.domain.alarm.command.application.dto.AlarmRegistDTO;
 import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
+import stanl_2.final_backend.domain.alarm.common.response.AlarmResponseMessage;
+import stanl_2.final_backend.domain.center.common.response.ResponseMessage;
 import stanl_2.final_backend.domain.schedule.common.response.ScheduleResponseMessage;
 
 import java.security.Principal;
@@ -41,10 +43,28 @@ public class AlarmController {
 
         String memberLoginId = principal.getName();
 
-        AlarmCommandDTO alarmCommandDTO = new AlarmCommandDTO();
-        alarmCommandDTO.setMemberLoginId(memberLoginId);
-        alarmCommandDTO.setLastEventId(lastEventId);
+        AlarmRegistDTO alarmRegistDTO = new AlarmRegistDTO();
+        alarmRegistDTO.setMemberLoginId(memberLoginId);
+        alarmRegistDTO.setLastEventId(lastEventId);
 
-        return ResponseEntity.ok(alarmCommandService.subscribe(alarmCommandDTO, response));
+        return ResponseEntity.ok(alarmCommandService.subscribe(alarmRegistDTO, response));
+    }
+
+
+    @Operation(summary = "회원 알림 읽음 처리")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 알림 읽음 처리 완료",
+                    content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
+    })
+    @PutMapping("{alarmId}")
+    public ResponseEntity<AlarmResponseMessage> updateReadStatus(@PathVariable String alarmId){
+
+        Boolean answer = alarmCommandService.updateReadStatus(alarmId);
+
+        return ResponseEntity.ok(AlarmResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(answer)
+                .build());
     }
 }
