@@ -17,4 +17,6 @@ public interface PromotionMapper {
             @Param("promotionDTO") PromotionSearchDTO promotionSearchDTO
     );
     Integer findPromotionsCount(@Param("promotionSearchDTO") PromotionSearchDTO promotionSearchDTO);
+
+    PromotionDTO findPromotion(@Param("promotionId") String promotionId);
 }

@@ -7,4 +7,6 @@ import stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO;
 
 public interface PromotionService {
     Page<PromotionDTO> findPromotions(Pageable pageable, PromotionSearchDTO PromotionSearchDTO);
+
+    PromotionDTO findPromotion(String promotion);
 }

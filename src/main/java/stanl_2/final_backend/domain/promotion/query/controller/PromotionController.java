@@ -10,10 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
+import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.promotion.common.response.PromotionResponseMessage;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO;
@@ -49,6 +48,17 @@ public class PromotionController {
         Page<PromotionDTO> promotionDTOPage = promotionService.findPromotions(pageable,promotionsearchDTO);
 
         return ResponseEntity.ok(promotionDTOPage);
+    }
+
+    @Operation(summary = "프로모션 Id로 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
+    })
+    @GetMapping("{promotionId}")
+    public ResponseEntity<PromotionDTO> getPromotion(@PathVariable String promotionId){
+        PromotionDTO promotionDTO = promotionService.findPromotion(promotionId);
+        return ResponseEntity.ok(promotionDTO);
     }
 }
 

@@ -31,4 +31,10 @@ public class PromotionServiceImpl implements PromotionService{
 
         return new PageImpl<>(promotions, pageable, totalCount);
     }
+
+    @Override
+    public PromotionDTO findPromotion(String promotionId) {
+        PromotionDTO promotionDTO = promotionMapper.findPromotion(promotionId);
+        return promotionDTO;
+    }
 }
