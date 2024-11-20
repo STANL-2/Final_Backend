@@ -66,9 +66,10 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public String selectNameById(String memberId){
+    public String selectNameById(String memberId) throws GeneralSecurityException {
 
         String name = memberMapper.findNameById(memberId);
+        name = aesUtils.decrypt(name);
 
         return name;
     }
