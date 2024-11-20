@@ -99,6 +99,10 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
         CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoByPhone(customerPhone);
 
+        if (customerInfoDTO == null) {
+            return customerInfoDTO;
+        }
+
         customerInfoDTO.setPhone(aesUtils.decrypt(customerInfoDTO.getPhone()));
         customerInfoDTO.setEmergePhone(aesUtils.decrypt(customerInfoDTO.getEmergePhone()));
         customerInfoDTO.setEmail(aesUtils.decrypt(customerInfoDTO.getEmail()));
