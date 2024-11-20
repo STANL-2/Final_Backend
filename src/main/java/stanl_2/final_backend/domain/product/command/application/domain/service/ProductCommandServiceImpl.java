@@ -25,4 +25,13 @@ public class ProductCommandServiceImpl implements ProductCommandService {
 
         productRepository.save(product);
     }
+
+    @Override
+    public void deleteProductStock(String productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductCommonException(ProductErrorCode.PRODUCT_NOT_FOUND));
+
+        product.setStock(product.getStock() + 1);
+        productRepository.save(product);
+    }
 }

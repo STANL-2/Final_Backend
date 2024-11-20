@@ -97,7 +97,11 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
     @Transactional(readOnly = true)
     public CustomerDTO selectCustomerInfoByPhone(String customerPhone) throws GeneralSecurityException {
 
-        CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoByPhone(customerPhone);
+        String encryptedPhone = aesUtils.encrypt(customerPhone);
+
+        CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoByPhone(encryptedPhone);
+
+        System.out.println("쿼리쪽 고객정보: " + customerInfoDTO);
 
         if (customerInfoDTO == null) {
             return customerInfoDTO;

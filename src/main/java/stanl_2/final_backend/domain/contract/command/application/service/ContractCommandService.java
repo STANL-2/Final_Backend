@@ -5,10 +5,12 @@ import stanl_2.final_backend.domain.contract.command.application.dto.ContractMod
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractRegistDTO;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractStatusModifyDTO;
 
-public interface ContractCommandService {
-    void registerContract(ContractRegistDTO contractRegistRequestDTO);
+import java.security.GeneralSecurityException;
 
-    ContractModifyDTO modifyContract(ContractModifyDTO contractModifyRequestDTO);
+public interface ContractCommandService {
+    void registerContract(ContractRegistDTO contractRegistRequestDTO) throws GeneralSecurityException;
+
+    ContractModifyDTO modifyContract(ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException;
 
     void deleteContract(ContractDeleteDTO contractDeleteDTO);
 

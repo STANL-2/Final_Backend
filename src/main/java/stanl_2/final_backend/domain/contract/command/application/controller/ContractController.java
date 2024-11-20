@@ -15,6 +15,7 @@ import stanl_2.final_backend.domain.contract.command.application.dto.ContractSta
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.common.response.ContractResponseMessage;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @RestController("contractController")
@@ -35,7 +36,7 @@ public class ContractController {
     })
     @PostMapping("")
     public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO,
-                                                            Principal principal) {
+                                                            Principal principal) throws GeneralSecurityException {
 
         contractRegistRequestDTO.setMemberId(principal.getName());
         contractCommandService.registerContract(contractRegistRequestDTO);
@@ -55,7 +56,7 @@ public class ContractController {
     @PutMapping("{contractId}")
     public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String contractId,
                                                                @RequestBody ContractModifyDTO contractModifyRequestDTO,
-                                                               Principal principal) {
+                                                               Principal principal) throws GeneralSecurityException {
 
         contractModifyRequestDTO.setContractId(contractId);
         contractModifyRequestDTO.setMemberId(principal.getName());
