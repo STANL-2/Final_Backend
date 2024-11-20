@@ -34,13 +34,21 @@ public class SalesHistoryController {
     /* 설명.
     *  - 사원 -> 일주일별, 월별, 연별(조회기간별)
 
-        본인 판매내역 조회 0
+        -> 사원 랭킹(윈도우 함수 이용)
 
-        본인 판매내역 상세 0
+*       default: 월별 판매내역 List
+*
+        1. (지역: 센터 검색 조회(NULL 혹은 '지역')
 
-        본인 실적,수당, 매출액 합 0
+        2. (매장명: NULL 혹은 1)
+        -1- NULL일 시 1번 결과를 다시 받는다. -> 그 행의 지역 검색결과(centerList)을 바탕으로 mem_id 조회
+        -2- 1일 시 selectCenterById를 통해서 반환 값을 member에 where =cent_id)인 값 반환
 
-        본인 검색
+        3. (이름:null 혹은 1)
+        - null 일 시-2-의 리스트를 다시 받는다. -> select윈도우 함수 이용해서 멤버 결과 뿌려주기
+        - 1 일시 하나의 멤버
+
+        4. 분류에 따라서 뿌려줌
     * */
 
     @Operation(summary = "사원 판매내역 조회")
@@ -207,7 +215,7 @@ public class SalesHistoryController {
         salesHistorySearchDTO.setStartDate(params.get("startDate"));
         salesHistorySearchDTO.setEndDate(params.get("endDate"));
 
-        SalesHistoryStatisticsDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchYearBb yEmployee(salesHistorySearchDTO);
+        SalesHistoryStatisticsDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchYearByEmployee(salesHistorySearchDTO);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
@@ -215,5 +223,34 @@ public class SalesHistoryController {
                 .result(responseSalesHistory)
                 .build());
     }
+
+    @Operation(summary = "사원 통계(실적,수당,매출액) 연도 별 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("employee/statistics/search/year")
+    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsSearchYearByEmployee(@RequestParam Map<String, String> params
+                                                                                        ,Principal principal,
+                                                                                          @PageableDefault(size = 20) Pageable pageable){
+
+        SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
+
+        /* 설명. 2024 식으로 와야함 !!!!! */
+        salesHistorySearchDTO.setSearcherName(principal.getName());
+        salesHistorySearchDTO.setStartDate(params.get("startDate"));
+        salesHistorySearchDTO.setEndDate(params.get("endDate"));
+
+        SalesHistoryStatisticsDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchYearByEmployee(salesHistorySearchDTO);
+
+        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
+                .httpStatus(200)
+                .msg("사원 통계(실적,수당,매출액) 월 별 검색 성공")
+                .result(responseSalesHistory)
+                .build());
+    }
+
 
 }

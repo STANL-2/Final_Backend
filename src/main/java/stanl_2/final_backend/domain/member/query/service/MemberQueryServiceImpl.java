@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.member.query.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
@@ -60,6 +61,22 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public List<String> selectMemberByRole(String role){
 
         List<String> memberList = memberRoleMapper.findMembersbyRole(role);
+
+        return memberList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberDTO> selectMemberByCenterId(String centerId){
+
+        List<MemberDTO> memberList = memberMapper.findMembersByCenterId(centerId);
+
+        return memberList;
+    }
+
+    @Override
+    public List<MemberDTO> selectMemberByCenterList(List<CenterSelectAllDTO> centerList) {
+        List<MemberDTO> memberList = memberMapper.findMembersByCenterList(centerList);
 
         return memberList;
     }

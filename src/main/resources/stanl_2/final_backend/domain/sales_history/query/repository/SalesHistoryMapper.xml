@@ -130,7 +130,7 @@
         ORDER BY MONTH ASC
     </select>
 
-    <select id="findStatisticsSearchMonthByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+    <select id="findStatisticsSearchYearByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
         SELECT
         LEFT(a.created_at, 4) AS YEAR,
         SUM(a.sal_hist_ince) AS INCENTIVE,
@@ -145,5 +145,35 @@
         </where>
         GROUP BY LEFT(a.created_at, 4)
         ORDER BY YEAR ASC
+    </select>
+
+    <with id="RankedData" >
+        SELECT
+        mem_id,
+        sal_hist_ince,
+        sal_hist_no_of_veh,
+        sal_hist_tota_sale,
+        created_at,
+        ROW_NUMBER() OVER (PARTITION BY mem_id ORDER BY sal_hist_ince DESC) AS rank_ince,
+        ROW_NUMBER() OVER (PARTITION BY mem_id ORDER BY sal_hist_no_of_veh DESC) AS rank_perf,
+        ROW_NUMBER() OVER (PARTITION BY mem_id ORDER BY sal_hist_tota_sale DESC) AS rank_sales
+        FROM tb_sales_history
+        WHERE active = TRUE
+        AND mem_id IN
+        <foreach collection="memIdList" item="memId" open="(" separator="," close=")">
+            #{memId}
+        </foreach>
+    </with>
+
+
+    <select id="findMaxSalesByMembers" resultType="YourResultType">
+        SELECT
+        mem_id,
+        sal_hist_ince AS MAX_INCENTIVE,
+        sal_hist_no_of_veh AS MAX_PERFORMANCE,
+        sal_hist_tota_sale AS MAX_TOTAL_SALES,
+        created_at
+        FROM RankedData
+        WHERE rank_ince = 1 OR rank_perf = 1 OR rank_sales = 1;
     </select>
 </mapper>

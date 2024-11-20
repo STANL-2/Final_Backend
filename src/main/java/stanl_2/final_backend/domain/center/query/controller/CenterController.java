@@ -8,10 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.center.common.response.ResponseMessage;
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
+import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 import stanl_2.final_backend.domain.center.query.service.CenterService;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController("queryCenterController")
@@ -28,7 +28,7 @@ public class CenterController {
     @GetMapping("")
     public ResponseEntity<?> getCenterAll(@PageableDefault(size = 20) Pageable pageable){
 
-        Page<Map<String, Object>> responseCenters = centerService.selectAll(pageable);
+        Page<CenterSelectAllDTO> responseCenters = centerService.selectAll(pageable);
 
         return ResponseEntity.ok(ResponseMessage.builder()
                 .httpStatus(200)
@@ -59,11 +59,7 @@ public class CenterController {
         centerSearchRequestDTO.setName(params.get("name"));
         centerSearchRequestDTO.setAddress(params.get("address"));
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("centerSearchRequestDTO", centerSearchRequestDTO);
-        paramMap.put("pageable", pageable);
-
-        Page<Map<String, Object>> responseCenters = centerService.selectBySearch(paramMap);
+        Page<CenterSelectAllDTO> responseCenters = centerService.selectBySearch(centerSearchRequestDTO, pageable);
 
         return ResponseEntity.ok(ResponseMessage.builder()
                 .httpStatus(200)
