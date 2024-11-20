@@ -23,7 +23,7 @@ public class CertificationQueryServiceImpl implements CertificationQueryService 
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CertificationDTO> selectCertificationList(String loginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(loginId);

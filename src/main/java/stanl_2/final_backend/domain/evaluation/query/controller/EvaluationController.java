@@ -20,6 +20,7 @@ import stanl_2.final_backend.domain.product.common.response.ProductResponseMessa
 import stanl_2.final_backend.domain.product.query.dto.ProductSearchRequestDTO;
 
 import java.security.GeneralSecurityException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,26 +38,51 @@ public class EvaluationController {
     /**
      * [GET] http://localhost:7777/api/v1/sample/SAM_000000001
      * */
-    @Operation(summary = "평가서 전체 조회")
+    @Operation(summary = "평가서 관리자 전체 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("")
-    public ResponseEntity<EvaluationResponseMessage> getAllEvaluations(Authentication authentication,
-                                                                           Pageable pageable) throws GeneralSecurityException {
+    @GetMapping("/manager")
+    public ResponseEntity<EvaluationResponseMessage> getAllEvaluationsByManager(Principal principal,
+                                                                                Pageable pageable) throws GeneralSecurityException {
         EvaluationDTO evaluationDTO = new EvaluationDTO();
 
-        evaluationDTO.setRoles(authentication.getAuthorities());
-        evaluationDTO.setMemberId(authentication.getName());
+        evaluationDTO.setMemberId(principal.getName());
 
-        Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectAllEvaluations(evaluationDTO, pageable);
+        Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectAllEvaluationsByManager(evaluationDTO, pageable);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("평가서 전체 조회 성공")
+                .msg("평가서 관리자 전체 조회 성공")
+                .result(responseEvaluations)
+                .build());
+    }
+
+    /**
+     * [GET] http://localhost:7777/api/v1/sample/SAM_000000001
+     * */
+    @Operation(summary = "평가서 담당자 전체 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/representative")
+    public ResponseEntity<EvaluationResponseMessage> getAllEvaluationsByRepresentative(Principal principal,
+                                                                           Pageable pageable) throws GeneralSecurityException {
+        EvaluationDTO evaluationDTO = new EvaluationDTO();
+
+        evaluationDTO.setMemberId(principal.getName());
+
+        Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectAllEvaluationsByRepresentative(evaluationDTO, pageable);
+
+        return ResponseEntity.ok(EvaluationResponseMessage.builder()
+                .httpStatus(200)
+                .msg("평가서 담당자 전체 조회 성공")
                 .result(responseEvaluations)
                 .build());
     }
@@ -71,7 +97,7 @@ public class EvaluationController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("/detail/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<EvaluationResponseMessage> getEvaluationDetail(@PathVariable String id) {
 
         EvaluationDTO evaluationDTO  = evaluationQueryService.selectEvaluationById(id);
@@ -83,16 +109,17 @@ public class EvaluationController {
                 .build());
     }
 
-    @Operation(summary = "평가서 검색 테스트")
+
+    @Operation(summary = "평가서 관리자 검색")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("/search")
-    public ResponseEntity<EvaluationResponseMessage> getEvaluationBySearch(@RequestParam Map<String, String> params
-                                                                           ,Authentication authentication
+    @GetMapping("/manager/search")
+    public ResponseEntity<EvaluationResponseMessage> getEvaluationBySearchByManager(@RequestParam Map<String, String> params
+                                                                           ,Principal principal
                                                                         , @PageableDefault(size = 20) Pageable pageable) throws GeneralSecurityException {
 
         EvaluationSearchDTO evaluationSearchDTO = new EvaluationSearchDTO();
@@ -103,14 +130,44 @@ public class EvaluationController {
         evaluationSearchDTO.setCenterId(params.get("centerId"));
         evaluationSearchDTO.setStartDate(params.get("startDate"));
         evaluationSearchDTO.setEndDate(params.get("endDate"));
-        evaluationSearchDTO.setRoles(authentication.getAuthorities());
-        evaluationSearchDTO.setSearcherName(authentication.getName());
+        evaluationSearchDTO.setSearcherName(principal.getName());
 
-        Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectEvaluationBySearch(pageable, evaluationSearchDTO);
+        Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectEvaluationBySearchByManager(pageable, evaluationSearchDTO);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("검색 조회 성공")
+                .msg("관리자 검색 조회 성공")
+                .result(responseEvaluations)
+                .build());
+    }
+
+    @Operation(summary = "평가서 관리자 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/representative/search")
+    public ResponseEntity<EvaluationResponseMessage> getEvaluationBySearchByRepresentative(@RequestParam Map<String, String> params
+                                                                           ,Principal principal
+                                                                        , @PageableDefault(size = 20) Pageable pageable) throws GeneralSecurityException {
+
+        EvaluationSearchDTO evaluationSearchDTO = new EvaluationSearchDTO();
+        evaluationSearchDTO.setEvalId(params.get("evalId"));
+        evaluationSearchDTO.setTitle(params.get("title"));
+        evaluationSearchDTO.setWriterName(params.get("writerName"));
+        evaluationSearchDTO.setMemberName(params.get("memberName"));
+        evaluationSearchDTO.setCenterId(params.get("centerId"));
+        evaluationSearchDTO.setStartDate(params.get("startDate"));
+        evaluationSearchDTO.setEndDate(params.get("endDate"));
+        evaluationSearchDTO.setSearcherName(principal.getName());
+
+        Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectEvaluationBySearchByRepresentative(pageable, evaluationSearchDTO);
+
+        return ResponseEntity.ok(EvaluationResponseMessage.builder()
+                .httpStatus(200)
+                .msg("담당자 검색 조회 성공")
                 .result(responseEvaluations)
                 .build());
     }

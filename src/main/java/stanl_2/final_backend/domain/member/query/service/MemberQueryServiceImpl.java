@@ -19,17 +19,21 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final MemberMapper memberMapper;
     private final AESUtils aesUtils;
     private final MemberRoleMapper memberRoleMapper;
+//    private final AlarmService alarmService;
 
     @Autowired
     public MemberQueryServiceImpl(MemberMapper memberMapper, AESUtils aesUtils,
-                                  MemberRoleMapper memberRoleMapper) {
+                                  MemberRoleMapper memberRoleMapper
+//            , AlarmService alarmService
+    ) {
         this.memberMapper = memberMapper;
         this.aesUtils = aesUtils;
         this.memberRoleMapper = memberRoleMapper;
+//        this.alarmService = alarmService;
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public MemberDTO selectMemberInfo(String name) throws GeneralSecurityException {
 
         MemberDTO memberInfo = memberMapper.findMemberInfoById(name);
@@ -58,5 +62,15 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         List<String> memberList = memberRoleMapper.findMembersbyRole(role);
 
         return memberList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String selectNameById(String memberId) throws GeneralSecurityException {
+
+        String name = memberMapper.findNameById(memberId);
+        name = aesUtils.decrypt(name);
+
+        return name;
     }
 }

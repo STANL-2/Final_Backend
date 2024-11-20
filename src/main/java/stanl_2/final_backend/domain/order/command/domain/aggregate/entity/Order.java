@@ -49,7 +49,7 @@ public class Order {
     private String deletedAt;
 
     @Column(name = "ORD_STAT", nullable = false)
-    private String status;
+    private String status = "WAIT";
 
     @Column(name = "CONR_ID", nullable = false)
     private String contractId;
