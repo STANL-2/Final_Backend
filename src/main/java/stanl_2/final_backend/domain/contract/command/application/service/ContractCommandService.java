@@ -10,7 +10,7 @@ import java.security.GeneralSecurityException;
 public interface ContractCommandService {
     void registerContract(ContractRegistDTO contractRegistRequestDTO) throws GeneralSecurityException;
 
-    ContractModifyDTO modifyContract(ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException;
+    ContractModifyDTO modifyContract(ContractModifyDTO contractModifyRequestDTO);
 
     void deleteContract(ContractDeleteDTO contractDeleteDTO);
 

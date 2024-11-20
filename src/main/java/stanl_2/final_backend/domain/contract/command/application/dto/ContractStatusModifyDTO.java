@@ -14,5 +14,4 @@ public class ContractStatusModifyDTO {
     private String contractId;
     private String status;
     private String adminId;
-    private List<String> roles;
 }

@@ -7,6 +7,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.customer.common.exception.CustomerCommonException;
+import stanl_2.final_backend.domain.customer.common.exception.CustomerErrorCode;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 import stanl_2.final_backend.domain.customer.query.repository.CustomerMapper;
@@ -89,5 +91,18 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
 
         return new PageImpl<>(customerList, pageable, count);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CustomerDTO selectCustomerInfoByPhone(String customerPhone) throws GeneralSecurityException {
+
+        CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoByPhone(customerPhone);
+
+        customerInfoDTO.setPhone(aesUtils.decrypt(customerInfoDTO.getPhone()));
+        customerInfoDTO.setEmergePhone(aesUtils.decrypt(customerInfoDTO.getEmergePhone()));
+        customerInfoDTO.setEmail(aesUtils.decrypt(customerInfoDTO.getEmail()));
+
+        return customerInfoDTO;
     }
 }

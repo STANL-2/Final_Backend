@@ -8,7 +8,9 @@
         <id property="contractId" column="CONR_ID"/>
         <result property="title" column="CONR_TTL"/>
         <result property="customerName" column="CONR_CUST_NAME"/>
+        <result property="customerSex" column="CONR_CUST_SEX"/>
         <result property="customerIdentifiNo" column="CONR_CUST_IDEN_NO"/>
+        <result property="customerAge" column="CONR_CUST_AGE"/>
         <result property="customerAddrress" column="CONR_CUST_ADR"/>
         <result property="customerEmail" column="CONR_CUST_EMA"/>
         <result property="customerPhone" column="CONR_CUST_PHO"/>
@@ -43,6 +45,7 @@
         <id property="contractId" column="CONR_ID"/>
         <result property="title" column="CONR_TTL"/>
         <result property="customerName" column="CONR_CUST_NAME"/>
+        <result property="customerSex" column="CONR_CUST_SEX"/>
         <result property="companyName" column="CONR_COMP_NAME"/>
         <result property="customerClassifcation" column="CONR_CUST_CLA"/>
         <result property="customerPurchaseCondition" column="CONR_CUST_PUR_COND"/>
@@ -82,7 +85,9 @@
         a.conr_id,
         a.conr_ttl,
         a.conr_cust_name,
+        a.conr_cust_sex,
         a.conr_cust_iden_no,
+        a.conr_cust_age,
         a.conr_cust_adr,
         a.conr_cust_ema,
         a.conr_cust_pho,
@@ -120,7 +125,9 @@
         a.conr_id,
         a.conr_ttl,
         a.conr_cust_name,
+        a.conr_cust_sex,
         a.conr_cust_iden_no,
+        a.conr_cust_age,
         a.conr_cust_adr,
         a.conr_cust_ema,
         a.conr_cust_pho,

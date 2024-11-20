@@ -16,11 +16,7 @@ import stanl_2.final_backend.domain.contract.command.application.dto.ContractSta
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.common.response.ContractResponseMessage;
 
-import org.springframework.security.core.GrantedAuthority;
-
-import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.security.Principal;
 
 @RestController("contractController")
 @RequestMapping("/api/v1/contract")
@@ -33,92 +29,37 @@ public class ContractController {
         this.contractCommandService = contractCommandService;
     }
 
-    /**
-     * [POST] http://localhost:8080/api/v1/contract
-     * Request
-     *  {
-     *   "name": "Sample Contract",
-     *   "custName": "John Doe",
-     *   "custIdenNo": "123456-7890123",
-     *   "custAddrress": "123 Main Street, City, Country",
-     *   "custEmail": "johndoe@example.com",
-     *   "custPhone": "+1-234-567-8901",
-     *   "compName": "Doe Industries",
-     *   "custCla": "Premium",
-     *   "custPurCond": "Full Payment",
-     *   "seriNum": "A1B2C3D4",
-     *   "seleOpti": "Extended Warranty",
-     *   "downPay": 10000,
-     *   "intePay": 500,
-     *   "remPay": 15000,
-     *   "consPay": 5000,
-     *   "delvDate": "2024-12-15",
-     *   "delvLoc": "Warehouse No. 3, Industrial Park",
-     *   "state": "WAIT",
-     *   "noOfVeh": "2",
-     *   "createdUrl": "<!DOCTYPE html>\n<html lang=\\\"ko\\\">\n<head>\n    <meta charset=\\\"UTF-8\\\">\n    <meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1.0\\\">\n    <title>자동차 매매 계약서</title>\n    <style>* {margin: 0; padding: 0; box-sizing: border-box;} body {font-family: 'Noto Sans KR', sans-serif; background-color: #f9f9f9; padding: 20px;} .container {max-width: 800px; margin: auto; background-color: white; border: 1px solid #ddd; padding: 20px; border-radius: 8px;} .header {text-align: center; margin-bottom: 20px;} .logo {width: 80px; margin-bottom: 10px;} h1 {font-size: 24px; margin-bottom: 10px;} .section {margin-top: 20px;} .section h2 {background-color: #333; color: #fff; padding: 10px; font-size: 18px;} table {width: 100%; border-collapse: collapse; margin-top: 10px;} th, td {border: 1px solid #ddd; padding: 8px; text-align: left;} th {background-color: #f0f0f0; font-weight: bold;} .masked {background-color: #eee; color: transparent; text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);} .signature {margin-top: 30px;} .sign-area {display: flex; justify-content: space-between; margin-top: 20px;} .info-table {width: 100%; border-collapse: collapse; margin-top: 10px; background-color: #f9f9f9; border: 1px solid #ddd;} .info-table th, .info-table td {border: 1px solid #ddd; padding: 10px; text-align: left;} .info-table th {background-color: #f0f0f0; font-weight: bold; width: 11%;} .info-table td {width: 13%;}</style>\n</head>\n<body>\n    <div class=\\\"container\\\">\n        <div class=\\\"header\\\">\n            <h1>기아 자동차 매매 계약서</h1>\n        </div>\n        <section class=\\\"section\\\">\n            <h2>계약 정보</h2>\n            <table class=\\\"info-table\\\">\n                <tr><th rowspan=\\\"2\\\">계약 번호</th><td rowspan=\\\"2\\\">KL-JS</td><th>계약일</th><td>2022-11-17</td><th>계약장소</th><td>서울 강남구</td></tr>\n                <tr><th>담당자</th><td>유혜진</td><th>전화번호</th><td>010-7158-8796</td></tr>\n            </table>\n        </section>\n        <section class=\\\"section\\\">\n            <h2>고객사항</h2>\n            <table><tr><th>성명</th><td>홍길동</td><th>상호</th><td></td></tr><tr><th>주민등록번호</th><td>****-*******</td><th>사업자등록번호</th><td></td></tr><tr><th>주소</th><td>**********</td><th>사업자등록주소</th><td>OOOOOOOO</td></tr><tr><th>전화(휴대폰)</th><td>010-****-****</td><th>구분</th><td>개인</td></tr><tr><th>E-mail</th><td>****@****.com</td><th>구매유형</th><td>현금</td></tr></table>\n        </section>\n        <section class=\\\"section\\\">\n            <h2>차량사항</h2>\n            <table><tr><th>차종</th><td>Q4 e-tron 40</td><th>일련번호</th><td>2Y2Y</td></tr><tr></tr><tr><th>선택옵션</th><td>AO</td><th>대수</th><td>1대</td></tr><tr><th>인도예정일</th><td>2023년 인도</td><th>인도장소</th><td>서울지점</td></tr><tr></tr><tr><th>특약사항</th><td colspan=\\\"3\\\">- 특약사항 내용이 여기에 표시됩니다.</td></tr></table>\n        </section>\n        <section class=\\\"section\\\">\n            <h2>금액사항</h2>\n            <table><tr><th>차량가격</th><td>66,700,000원</td></tr><tr><th>계약금</th><td>900,000원</td></tr><tr><th>중도금</th><td>100,000원</td></tr><tr><th>인도금</th><td>65,700,000원</td></tr><tr><th>탁송료</th><td>65,700,000원</td></tr></table>\n        </section>\n        <section class=\\\"section signature\\\">\n            <p>본 계약서 주요 내용을 확인하고 계약을 체결하였음을 확인합니다.</p>\n            <div class=\\\"sign-area\\\">\n                <div>매수인 (서명): ****</div>\n                <div>매도인 (서명): ****</div>\n            </div>\n        </section>\n    </div>\n</body>\n</html>",
-     *   "memId": "MEM_000000001"
-     * }
-     * */
-    @Operation(summary = "계약서 등록")
+    @Operation(summary = "계약서 등록(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 등록 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @PostMapping("")
     public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO,
-                                                            Authentication authentication) throws GeneralSecurityException {
+                                                            Principal principal) {
 
-        contractRegistRequestDTO.setMemberId(authentication.getName());
-        contractRegistRequestDTO.setRoles(authentication.getAuthorities());
+        contractRegistRequestDTO.setMemberId(principal.getName());
         contractCommandService.registerContract(contractRegistRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
-                .httpStatus(200)
-                .msg("계약서가 성공적으로 등록되었습니다.")
-                .result(null)
-                .build());
-    }
+                                                        .httpStatus(200)
+                                                        .msg("계약서가 성공적으로 등록되었습니다.")
+                                                        .result(null)
+                                                        .build());
+                                            }
 
-    /**
-     * [PUT] http://localhost:8080/api/v1/contract/CON_000000011
-     * Request
-     *  {
-     *   "name": "계약서 수정",
-     *   "custName": "John Doe",
-     *   "custIdenNo": "123456-7890123",
-     *   "custAddrress": "123 Main Street, City, Country",
-     *   "custEmail": "johndoe@example.com",
-     *   "custPhone": "+1-234-567-8901",
-     *   "compName": "Doe Industries",
-     *   "custCla": "Premium",
-     *   "custPurCond": "Full Payment",
-     *   "seriNum": "A1B2C3D4",
-     *   "seleOpti": "Extended Warranty",
-     *   "downPay": 10000,
-     *   "intePay": 500,
-     *   "remPay": 15000,
-     *   "consPay": 5000,
-     *   "delvDate": "2024-12-15",
-     *   "delvLoc": "Warehouse No. 3, Industrial Park",
-     *   "state": "WAIT",
-     *   "noOfVeh": "2",
-     *   "memId": "MEM_000000001"
-     * }
-     * */
-    @Operation(summary = "계약서 수정")
+    @Operation(summary = "계약서 수정(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 수정 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @PutMapping("{id}")
-    public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String id,
+    @PutMapping("{contractId}")
+    public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String contractId,
                                                                @RequestBody ContractModifyDTO contractModifyRequestDTO,
-                                                               Authentication authentication) throws GeneralSecurityException {
+                                                               Principal principal) {
 
-        contractModifyRequestDTO.setContractId(id);
-        contractModifyRequestDTO.setMemberId(authentication.getName());
-        contractModifyRequestDTO.setRoles(authentication.getAuthorities());
+        contractModifyRequestDTO.setContractId(contractId);
+        contractModifyRequestDTO.setMemberId(principal.getName());
         ContractModifyDTO contractModifyDTO = contractCommandService.modifyContract(contractModifyRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
@@ -128,22 +69,18 @@ public class ContractController {
                 .build());
     }
 
-    /**
-     * [DELETE] http://localhost:8080/api/v1/contract/CON_000000011
-     * */
-    @Operation(summary = "계약서 삭제")
+    @Operation(summary = "계약서 삭제(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @DeleteMapping("{id}")
-    public ResponseEntity<ContractResponseMessage> deleteContract(@PathVariable String id,
-                                                                  Authentication authentication) {
+    @DeleteMapping("{contractId}")
+    public ResponseEntity<ContractResponseMessage> deleteContract(@PathVariable String contractId,
+                                                                  Principal principal) {
 
         ContractDeleteDTO contractDeleteDTO = new ContractDeleteDTO();
-        contractDeleteDTO.setContractId(id);
-        contractDeleteDTO.setMemberId(authentication.getName());
-        contractDeleteDTO.setRoles(authentication.getAuthorities());
+        contractDeleteDTO.setContractId(contractId);
+        contractDeleteDTO.setMemberId(principal.getName());
         contractCommandService.deleteContract(contractDeleteDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
@@ -158,21 +95,14 @@ public class ContractController {
             @ApiResponse(responseCode = "200", description = "계약서 승인상태 수정 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @PutMapping("/status/{id}")
-    public ResponseEntity<ContractResponseMessage> putContractStatus(
-            @PathVariable String id,
-            @RequestBody ContractStatusModifyDTO contractStatusModifyDTO,
-            Authentication authentication) {
-
-        // 권한 정보를 String 리스트로 변환
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(role -> role.getAuthority())
-                .toList();
+    @PutMapping("/status/{contractId}")
+    public ResponseEntity<ContractResponseMessage> putContractStatus(@PathVariable String contractId,
+                                                                    @RequestBody ContractStatusModifyDTO contractStatusModifyDTO,
+                                                                    Principal principal) {
 
         // DTO에 설정
-        contractStatusModifyDTO.setRoles(roles);
-        contractStatusModifyDTO.setContractId(id);
-        contractStatusModifyDTO.setAdminId(authentication.getName());
+        contractStatusModifyDTO.setContractId(contractId);
+        contractStatusModifyDTO.setAdminId(principal.getName());
 
         // 서비스 호출
         contractCommandService.modifyContractStatus(contractStatusModifyDTO);
@@ -183,6 +113,5 @@ public class ContractController {
                 .result(null)
                 .build());
     }
-
 
 }

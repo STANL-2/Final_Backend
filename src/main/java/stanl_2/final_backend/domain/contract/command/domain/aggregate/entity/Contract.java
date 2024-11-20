@@ -37,8 +37,14 @@ public class Contract {
     @Column(name = "CONR_CUST_NAME", nullable = false)
     private String customerName;
 
+    @Column(name = "CONR_CUST_SEX", nullable = false)
+    private String customerSex;
+
     @Column(name = "CONR_CUST_IDEN_NO", nullable = false)
     private String customerIdentifiNo;
+
+    @Column(name = "CONR_CUST_AGE", nullable = false)
+    private String customerAge;
 
     @Column(name = "CONR_CUST_ADR", nullable = false)
     private String customerAddrress;
