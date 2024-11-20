@@ -122,7 +122,7 @@ public class Contract {
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
-    @Column(name = "ADMI_ID", nullable = false)
+    @Column(name = "ADMI_ID")
     private String adminId;
 
     @Column(name = "CENT_ID", nullable = false)

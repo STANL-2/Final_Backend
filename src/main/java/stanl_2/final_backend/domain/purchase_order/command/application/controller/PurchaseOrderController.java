@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderModifyDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderRegistDTO;
@@ -30,7 +29,7 @@ public class PurchaseOrderController {
         this.purchaseOrderCommandService = purchaseOrderCommandService;
     }
 
-    @Operation(summary = "발주서 등록")
+    @Operation(summary = "발주서 등록(영업관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "발주서 등록 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
@@ -49,16 +48,16 @@ public class PurchaseOrderController {
                                                    .build());
     }
 
-    @Operation(summary = "발주서 수정")
+    @Operation(summary = "발주서 수정(영업관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "발주서 수정 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
     })
-    @PutMapping("{id}")
-    public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrder(@PathVariable String id,
+    @PutMapping("{purchaseOrderId}")
+    public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrder(@PathVariable String purchaseOrderId,
                                                                          @RequestBody PurchaseOrderModifyDTO purchaseOrderModifyDTO,
                                                                          Principal principal) {
-        purchaseOrderModifyDTO.setPurchaseOrderId(id);
+        purchaseOrderModifyDTO.setPurchaseOrderId(purchaseOrderId);
         purchaseOrderModifyDTO.setMemberId(principal.getName());
         PurchaseOrderModifyDTO purchaseOrderModifyResponse = purchaseOrderCommandService.modifyPurchaseOrder(purchaseOrderModifyDTO);
 
@@ -69,16 +68,16 @@ public class PurchaseOrderController {
                                                             .build());
     }
 
-    @Operation(summary = "발주서 삭제")
+    @Operation(summary = "발주서 삭제(영업관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "발주서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
     })
-    @DeleteMapping("{id}")
-    public ResponseEntity<PurchaseOrderResponseMessage> deletePurchaseOrder(@PathVariable String id,
+    @DeleteMapping("{purchaseOrderId}")
+    public ResponseEntity<PurchaseOrderResponseMessage> deletePurchaseOrder(@PathVariable String purchaseOrderId,
                                                                             Principal principal) {
 
-        purchaseOrderCommandService.deletePurchaseOrder(id, principal.getName());
+        purchaseOrderCommandService.deletePurchaseOrder(purchaseOrderId, principal.getName());
 
         return ResponseEntity.ok(PurchaseOrderResponseMessage.builder()
                                                            .httpStatus(200)
@@ -87,19 +86,18 @@ public class PurchaseOrderController {
                                                            .build());
     }
 
-    @Operation(summary = "발주서 승인 상태 수정(담당자)")
+    @Operation(summary = "발주서 승인 상태 수정(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "발주서 승인 상태 수정 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
     })
-    @PutMapping("/stauts/{id}")
-    public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrderStatus(@PathVariable String id,
+    @PutMapping("stauts/{purchaseOrderId}")
+    public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrderStatus(@PathVariable String purchaseOrderId,
                                                                                PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO,
-                                                                               Authentication authentication) {
+                                                                               Principal principal) {
 
-        purchaseOrderStatusModifyDTO.setPurchaseOrderId(id);
-        purchaseOrderStatusModifyDTO.setRoles(authentication.getAuthorities());
-        purchaseOrderStatusModifyDTO.setAdminId(authentication.getName());
+        purchaseOrderStatusModifyDTO.setPurchaseOrderId(purchaseOrderId);
+        purchaseOrderStatusModifyDTO.setAdminId(principal.getName());
 
         purchaseOrderCommandService.modifyPurchaseOrderStatus(purchaseOrderStatusModifyDTO);
 
