@@ -58,9 +58,10 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         }
 
         // 전체 개수 조회
-        int totalElements = orderMapper.findOrderCountByMemberId(memberId);
+        Integer count = orderMapper.findOrderCountByMemberId(memberId);
+        int totalOrder = (count != null) ? count : 0;
 
-        return new PageImpl<>(orders, pageable, totalElements);
+        return new PageImpl<>(orders, pageable, totalOrder);
     }
 
 

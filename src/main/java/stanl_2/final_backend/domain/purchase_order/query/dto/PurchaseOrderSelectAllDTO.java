@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,5 +18,4 @@ public class PurchaseOrderSelectAllDTO {
     private String memberName;
     private String productName;
     private String memberId;
-    private Collection<? extends GrantedAuthority> roles;
 }
