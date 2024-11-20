@@ -46,4 +46,5 @@ public class NoticeDTO {
         this.active = notice.getActive();
         this.memberId = notice.getMemberId();
     }
+
 }
