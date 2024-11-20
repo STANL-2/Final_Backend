@@ -11,12 +11,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.problem.common.response.ProblemResponseMessage;
+import stanl_2.final_backend.domain.problem.query.dto.ProblemDTO;
+import stanl_2.final_backend.domain.problem.query.dto.ProblemSearchDTO;
 import stanl_2.final_backend.domain.problem.query.service.ProblemService;
-import stanl_2.final_backend.domain.promotion.common.response.PromotionResponseMessage;
-import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
-import stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO;
 
-@RestController("queryPromotionController")
+@RestController("queryProblemController")
 @RequestMapping("/api/v1/problem")
 public class ProblemController {
 
@@ -30,33 +30,35 @@ public class ProblemController {
     @Operation(summary = "문제사항 조건별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = ProblemResponseMessage.class))})
     })
     @GetMapping
-    public ResponseEntity<Page<PromotionDTO>> getPromotions(
+    public ResponseEntity<Page<ProblemDTO>> getProblems(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String memberId,
+            @RequestParam(required = false) String productId,
+            @RequestParam(required = false) String customerId,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate
     )
     {
         Pageable pageable = PageRequest.of(page, size);
-        PromotionSearchDTO promotionsearchDTO = new PromotionSearchDTO(title, memberId, startDate, endDate);
-        Page<PromotionDTO> promotionDTOPage = promotionService.findPromotions(pageable,promotionsearchDTO);
+        ProblemSearchDTO problemsearchDTO = new ProblemSearchDTO(title, memberId, productId, customerId, startDate, endDate);
+        Page<ProblemDTO> problemDTOPage = problemService.findProblems(pageable, problemsearchDTO);
 
-        return ResponseEntity.ok(promotionDTOPage);
+        return ResponseEntity.ok(problemDTOPage);
     }
 
-    @Operation(summary = "프로모션 Id로 조회")
+    @Operation(summary = "문제사항 Id로 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = ProblemResponseMessage.class))})
     })
-    @GetMapping("{promotionId}")
-    public ResponseEntity<PromotionDTO> getPromotion(@PathVariable String promotionId){
-        PromotionDTO promotionDTO = promotionService.findPromotion(promotionId);
-        return ResponseEntity.ok(promotionDTO);
+    @GetMapping("{problemId}")
+    public ResponseEntity<ProblemDTO> getProblem(@PathVariable String problemId){
+        ProblemDTO problemDTO = problemService.findProblem(problemId);
+        return ResponseEntity.ok(problemDTO);
     }
 }

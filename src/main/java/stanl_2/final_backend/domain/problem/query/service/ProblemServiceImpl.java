@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import stanl_2.final_backend.domain.problem.query.dto.ProblemDTO;
 import stanl_2.final_backend.domain.problem.query.dto.ProblemSearchDTO;
 import stanl_2.final_backend.domain.problem.query.repository.ProblemMapper;
-import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
 
 import java.util.List;
 

@@ -1,7 +1,15 @@
 package stanl_2.final_backend.domain.problem.query.dto;
 
-import jakarta.persistence.Column;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class ProblemDTO {
     private String problemId;
 

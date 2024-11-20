@@ -4,7 +4,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 import stanl_2.final_backend.domain.problem.query.dto.ProblemDTO;
 import stanl_2.final_backend.domain.problem.query.dto.ProblemSearchDTO;
-import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
 
 import java.util.List;
 
