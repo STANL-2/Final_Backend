@@ -10,9 +10,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-/* 설명. 테스트를 위한 어노테이션(나중에 삭제 예정)*/
-@ToString
-
 @Entity
 @Table(name="TB_CENTER")
 @AllArgsConstructor

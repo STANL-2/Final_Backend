@@ -35,7 +35,8 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+//    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // .env file
@@ -60,6 +61,14 @@ dependencies {
 
     //hibernate core
     implementation 'org.hibernate.orm:hibernate-core:6.5.2.Final'
+
+    // Logback and SLF4J Dependencies (Updated versions)
+//    implementation 'ch.qos.logback:logback-classic:1.4.11' // Updated Logback version
+//    implementation 'org.slf4j:slf4j-api:2.0.7' // Compatible SLF4J version for Logback 1.4.11
+//    implementation 'ch.qos.logback:logback-classic:1.2.11'
+//    implementation 'ch.qos.logback:logback-core:1.2.11'
+
+
 
 }
 
