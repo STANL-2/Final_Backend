@@ -17,7 +17,7 @@
         WHERE a.mem_id = #{memberId}
     </select>
 
-    <resultMap id="alarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDetailDTO">
+    <resultMap id="alarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectUnreadDTO">
         <result property="message" column="ALR_MSG"/>
         <result property="type" column="ALR_TYPE"/>
         <result property="redirectUrl" column="ALR_URL"/>
@@ -34,7 +34,7 @@
            AND a.alr_type = #{type}
            AND a.alr_read_stat = true
     </select>
-    <select id="findNotReadAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
+    <select id="findUnReadAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
         SELECT
         a.alr_msg,
         a.alr_type,
@@ -44,5 +44,21 @@
         WHERE a.mem_id = #{memberId}
         AND a.alr_type = #{type}
         AND a.alr_read_stat = false
+    </select>
+
+    <select id="findReadAlarmsCountByMemberId" resultType="int" parameterType="String">
+        SELECT
+               COUNT(*) AS cnt
+          FROM tb_alarm a
+        WHERE a.mem_id = #{memberId}
+          AND a.alr_read_stat = true
+    </select>
+
+    <select id="findUnreadAlarmsCountByMemberId" resultType="int" parameterType="String">
+        SELECT
+               COUNT(*) AS cnt
+          FROM tb_alarm a
+         WHERE a.mem_id = #{memberId}
+           AND a.alr_read_stat = false
     </select>
 </mapper>

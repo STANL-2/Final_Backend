@@ -6,17 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectAllDetailDTO;
-import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDetailDTO;
+import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.common.exception.AlarmCommonException;
+import stanl_2.final_backend.domain.alarm.common.exception.AlarmErrorCode;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectReadDTO;
 import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectUnreadDTO;
 import stanl_2.final_backend.domain.alarm.query.repository.AlarmMapper;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
-import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -32,6 +31,7 @@ public class AlarmQueryServiceImpl implements AlarmQueryService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public AlarmSelectTypeDTO selectMemberByAlarmType(String memberLoginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(memberLoginId);
@@ -42,31 +42,38 @@ public class AlarmQueryServiceImpl implements AlarmQueryService{
     }
 
     @Override
-    public Page<AlarmSelectAllDetailDTO> selectDetailAlarmByType(AlarmSelectDetailDTO alarmSelectDetailDTO, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<AlarmSelectReadDTO> selectReadAlarmByType(AlarmSelectReadDTO alarmSelectReadDTO, Pageable pageable) {
 
         Integer offset = Math.toIntExact(pageable.getOffset());
         Integer pageSize = pageable.getPageSize();
 
-        String memberId = authQueryService.selectMemberIdByLoginId(alarmSelectDetailDTO.getMemberLoginId());
+        String memberId = authQueryService.selectMemberIdByLoginId(alarmSelectReadDTO.getMemberLoginId());
 
-        List<AlarmSelectDetailDTO> readAlarmList
-                = alarmMapper.findReadAlarmsByType(offset, pageSize, memberId, alarmSelectDetailDTO.getType());
+        List<AlarmSelectReadDTO> readAlarmList
+                = alarmMapper.findReadAlarmsByType(offset, pageSize, memberId, alarmSelectReadDTO.getType());
 
-        List<AlarmSelectDetailDTO> notReadAlarmList
-                = alarmMapper.findNotReadAlarmsByType(offset, pageSize, memberId, alarmSelectDetailDTO.getType());
+        Integer count = alarmMapper.findReadAlarmsCountByMemberId(memberId);
+        int totalOrder = (count != null) ? count : 0;
 
-        if (readAlarmList == null || readAlarmList.isEmpty()) {
-            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
-        }
+        return new PageImpl<>(readAlarmList, pageable, totalOrder);
+    }
 
-        if (notReadAlarmList == null || notReadAlarmList.isEmpty()) {
-            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
-        }
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AlarmSelectUnreadDTO> selectUnreadAlarmByType(AlarmSelectUnreadDTO alarmSelectUnreadDTO, Pageable pageable) {
 
-        AlarmSelectAllDetailDTO alarmSelectAllDetailDTO = new AlarmSelectAllDetailDTO();
-        alarmSelectAllDetailDTO.setReadAlarmList(readAlarmList);
-        alarmSelectAllDetailDTO.setNotReadAlarmList(notReadAlarmList);
+        Integer offset = Math.toIntExact(pageable.getOffset());
+        Integer pageSize = pageable.getPageSize();
 
-        return new PageImpl<>(alarmSelectAllDetailDTO, pageable, 1);
+        String memberId = authQueryService.selectMemberIdByLoginId(alarmSelectUnreadDTO.getMemberLoginId());
+
+        List<AlarmSelectUnreadDTO> unReadAlarmList
+                = alarmMapper.findUnReadAlarmsByType(offset, pageSize, memberId, alarmSelectUnreadDTO.getType());
+
+        Integer count = alarmMapper.findUnreadAlarmsCountByMemberId(memberId);
+        int totalOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(unReadAlarmList, pageable, totalOrder);
     }
 }

@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class AlarmSelectDetailDTO {
+public class AlarmSelectUnreadDTO {
 
     private String message;
     private String type;

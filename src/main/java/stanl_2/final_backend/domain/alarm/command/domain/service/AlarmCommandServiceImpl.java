@@ -113,6 +113,7 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
     }
 
     @Override
+    @Transactional
     public Alarm createAlarm(String memberId, String message, String redirectUrl, String type, String createdAt) {
 
         Alarm alarm = new Alarm();
@@ -127,6 +128,7 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
     }
 
     @Override
+    @Transactional
     public void sendNoticeAlarm(NoticeAlarmDTO noticeAlarmDTO){
 
         List<String> memberIdList = memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag());
