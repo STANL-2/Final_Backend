@@ -1,16 +1,13 @@
 package stanl_2.final_backend.domain.A_sample.query.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@ToString
+@Setter
 public class SampleDTO {
     private String id;
     private String name;

@@ -6,7 +6,6 @@ import lombok.*;
 @AllArgsConstructor
 @Setter
 @Getter
-@ToString
 public class CertificationDTO {
     private String name;
     private String agency;

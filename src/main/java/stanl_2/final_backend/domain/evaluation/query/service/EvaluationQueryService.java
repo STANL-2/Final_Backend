@@ -13,7 +13,9 @@ public interface EvaluationQueryService {
 
     EvaluationDTO selectEvaluationById(String id);
 
-    Page<EvaluationDTO> selectAllEvaluations(EvaluationDTO evaluationDTO, Pageable pageable) throws GeneralSecurityException;
+    Page<EvaluationDTO> selectAllEvaluationsByManager(EvaluationDTO evaluationDTO, Pageable pageable) throws GeneralSecurityException;
+    Page<EvaluationDTO> selectAllEvaluationsByRepresentative(EvaluationDTO evaluationDTO, Pageable pageable) throws GeneralSecurityException;
 
-    Page<EvaluationDTO> selectEvaluationBySearch(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException;
+    Page<EvaluationDTO> selectEvaluationBySearchByManager(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException;
+    Page<EvaluationDTO> selectEvaluationBySearchByRepresentative(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException;
 }

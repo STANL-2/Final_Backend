@@ -44,7 +44,7 @@ public class Career {
     private String  createdAt;
 
     @Column(name = "MEM_ID", nullable = false)
-    private String memId;
+    private String memberId;
 
 
     @PrePersist

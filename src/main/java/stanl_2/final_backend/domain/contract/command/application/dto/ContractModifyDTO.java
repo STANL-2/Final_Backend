@@ -1,22 +1,25 @@
 package stanl_2.final_backend.domain.contract.command.application.dto;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class ContractModifyDTO {
 
     private String contractId;
-    private String name;
+    private String title;
     private String customerName;
     private String customerIdentifiNo;
     private String customerAddrress;
     private String customerEmail;
     private String customerPhone;
     private String companyName;
+    private String carName;
     private String customerClassifcation;
     private String customerPurchaseCondition;
     private String serialNum;
@@ -25,6 +28,7 @@ public class ContractModifyDTO {
     private Integer intermediatePayment;
     private Integer remainderPayment;
     private Integer consignmentPayment;
+    private Integer totalSales;
     private String delveryDate;
     private String delveryLocation;
     private String status;
@@ -37,4 +41,5 @@ public class ContractModifyDTO {
     private String centerId;
     private String customerId;
     private String productId;
+    private Collection<? extends GrantedAuthority> roles;
 }
