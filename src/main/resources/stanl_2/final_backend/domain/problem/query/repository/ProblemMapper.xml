@@ -28,17 +28,17 @@
 
     <select id="findNotices" resultMap="Problem" parameterType="String" >
         SELECT
-        A.PROB_ID,
-        A.PROB_TTL,
-        A.NOT_TAG,
-        A.NOT_CLA,
-        A.NOT_CONT,
-        A.CREATED_AT,
+        A.prob_id,
+        A.prob_ttl,
+        A.prob_cont,
+        A.createdAt,
         A.UPDATED_AT,
         A.DELETED_AT,
         A.ACTIVE,
-        A.MEM_ID
-        FROM TB_NOTICE A
+        A.CUST_ID,
+        A.MEM_ID,
+        A.PROD_ID
+        FROM tb_problem A
         <where>
             A.ACTIVE != 'false'
             <if test="searchDTO.tag != null">
