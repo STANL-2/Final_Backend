@@ -10,6 +10,7 @@ import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
+import stanl_2.final_backend.domain.order.command.application.dto.OrderStatusModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.service.OrderCommandService;
 import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.order.command.domain.repository.OrderRepository;
@@ -91,6 +92,22 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         order.setActive(false);
         order.setDeletedAt(getCurrentTime());
+
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void modifyOrderStatus(OrderStatusModifyDTO orderStatusModifyDTO) {
+
+        String adminId = authQueryService.selectMemberIdByLoginId(orderStatusModifyDTO.getAdminId());
+        Order order = orderRepository.findByOrderId(orderStatusModifyDTO.getOrderId());
+        if (order == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        order.setStatus(orderStatusModifyDTO.getStatus());
+        order.setAdminId(adminId);
 
         orderRepository.save(order);
     }

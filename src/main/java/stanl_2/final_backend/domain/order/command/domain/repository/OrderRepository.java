@@ -7,4 +7,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     Order findByOrderIdAndMemberId(String orderId, String memberId);
 
     Order findByOrderIdAndStatus(String orderId, String approved);
+
+    Order findByOrderId(String orderId);
 }

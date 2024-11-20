@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
+import stanl_2.final_backend.domain.order.command.application.dto.OrderStatusModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.service.OrderCommandService;
 import stanl_2.final_backend.domain.order.common.response.OrderResponseMessage;
 
@@ -26,7 +27,7 @@ public class OrderController {
         this.orderCommandService = orderCommandService;
     }
 
-    @Operation(summary = "수주서 등록")
+    @Operation(summary = "수주서 등록(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 등록 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -45,7 +46,7 @@ public class OrderController {
                                                     .build());
     }
 
-    @Operation(summary = "수주서 수정")
+    @Operation(summary = "수주서 수정(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 수정 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -66,7 +67,7 @@ public class OrderController {
                                                     .build());
     }
 
-    @Operation(summary = "수주서 삭제")
+    @Operation(summary = "수주서 삭제(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -83,5 +84,30 @@ public class OrderController {
                                                     .msg("수주서를 성공적으로 삭제하였습니다.")
                                                     .result(null)
                                                     .build());
+    }
+
+    @Operation(summary = "수주서 승인상태 변경(영업관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 승인상태 변경 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @PutMapping("/status/{orderId}")
+    public ResponseEntity<OrderResponseMessage> putOrderStatus (@PathVariable String orderId,
+                                                                @RequestBody OrderStatusModifyDTO orderStatusModifyDTO,
+                                                                Principal principal) {
+
+        String adminLoginId = principal.getName();
+        orderStatusModifyDTO.setOrderId(orderId);
+        orderStatusModifyDTO.setAdminId(adminLoginId);
+
+        System.out.println("상태: " + orderStatusModifyDTO.getStatus());
+
+        orderCommandService.modifyOrderStatus(orderStatusModifyDTO);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("수주서 승인 상태가 성공적으로 변경되었습니다.")
+                .result(null)
+                .build());
     }
 }
