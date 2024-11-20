@@ -1,7 +1,6 @@
 package stanl_2.final_backend.domain.order.query.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +15,7 @@ import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import stanl_2.final_backend.domain.order.query.repository.OrderMapper;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrderQueryServiceImpl implements OrderQueryService {
@@ -49,7 +46,6 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         List<OrderSelectAllDTO> orders = (List<OrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
 
         if (orders == null) {
-            System.out.println("데이터베이스에서 데이터 조회 중...");
             orders = orderMapper.findAllOrderByMemberId(offset, pageSize, memberId);
 
             // 결과가 null이거나 빈 리스트인지 확인
@@ -59,8 +55,6 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
             // 캐시에 데이터 저장 (빈 리스트는 저장하지 않음)
             redisTemplate.opsForValue().set(cacheKey, orders);
-        } else {
-            System.out.println("캐시에서 데이터 조회 중...");
         }
 
         // 전체 개수 조회
@@ -119,7 +113,6 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         List<OrderSelectAllDTO> orders = (List<OrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
 
         if (orders == null) {
-            System.out.println("데이터베이스에서 데이터 조회 중...");
             orders = orderMapper.findAllOrder(offset, pageSize);
 
             // 결과가 null이거나 빈 리스트인지 확인
@@ -129,8 +122,6 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
             // 캐시에 데이터 저장 (빈 리스트는 저장하지 않음)
             redisTemplate.opsForValue().set(cacheKey, orders);
-        } else {
-            System.out.println("캐시에서 데이터 조회 중...");
         }
 
         // 전체 개수 조회

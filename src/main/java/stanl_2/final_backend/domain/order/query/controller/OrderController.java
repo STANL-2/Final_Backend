@@ -35,7 +35,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "수주서 전체 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @GetMapping("/employee")
+    @GetMapping("employee")
     public ResponseEntity<OrderResponseMessage> getAllOrderEmployee(Principal principal,
                                                             @PageableDefault(size = 10)Pageable pageable) {
 
@@ -55,7 +55,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "수주서 상세 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @GetMapping("/employee/{orderId}")
+    @GetMapping("employee/{orderId}")
     public ResponseEntity<OrderResponseMessage> getDetailOrderEmployee(@PathVariable("orderId") String orderId,
                                                                Principal principal) {
 
@@ -78,7 +78,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "수주서 검색 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @GetMapping("/employee/search")
+    @GetMapping("employee/search")
     public ResponseEntity<OrderResponseMessage> getSearchOrderEmployee(@RequestParam(required = false) String title,
                                                                @RequestParam(required = false) String status,
                                                                @RequestParam(required = false) String adminId,
@@ -149,7 +149,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "수주서 검색 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @GetMapping("/search")
+    @GetMapping("search")
     public ResponseEntity<OrderResponseMessage> getSearchOrder(@RequestParam(required = false) String title,
                                                                @RequestParam(required = false) String status,
                                                                @RequestParam(required = false) String adminId,

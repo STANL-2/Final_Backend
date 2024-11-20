@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class OrderStatusModifyDTO {
     private String orderId;
     private String status;

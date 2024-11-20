@@ -72,7 +72,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "수주서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("{orderId}")
     public ResponseEntity<OrderResponseMessage> deleteTest(@PathVariable("orderId") String orderId,
                                                            Principal principal) {
 
@@ -91,7 +91,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "수주서 승인상태 변경 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
     })
-    @PutMapping("/status/{orderId}")
+    @PutMapping("status/{orderId}")
     public ResponseEntity<OrderResponseMessage> putOrderStatus (@PathVariable String orderId,
                                                                 @RequestBody OrderStatusModifyDTO orderStatusModifyDTO,
                                                                 Principal principal) {
@@ -99,8 +99,6 @@ public class OrderController {
         String adminLoginId = principal.getName();
         orderStatusModifyDTO.setOrderId(orderId);
         orderStatusModifyDTO.setAdminId(adminLoginId);
-
-        System.out.println("상태: " + orderStatusModifyDTO.getStatus());
 
         orderCommandService.modifyOrderStatus(orderStatusModifyDTO);
 

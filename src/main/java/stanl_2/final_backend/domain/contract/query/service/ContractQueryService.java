@@ -16,6 +16,5 @@ public interface ContractQueryService {
 
     Page<ContractSelectAllDTO> selectAll(ContractSelectAllDTO contractSelectAllDTO, Pageable pageable);
 
-    @Transactional(readOnly = true)
     ContractSeletIdDTO selectContractByIdAndMemberId(String contractId, String memberId);
 }
