@@ -1,11 +1,14 @@
 package stanl_2.final_backend.domain.notices.command.domain.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeDeleteDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModifyDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
@@ -14,8 +17,6 @@ import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Noti
 import stanl_2.final_backend.domain.notices.command.domain.repository.NoticeRepository;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
-import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
-import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
@@ -24,6 +25,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Service("commandNoticeService")
 public class NoticeCommandServiceImpl implements NoticeCommandService {
 
@@ -32,12 +34,15 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     private final AuthQueryService authQueryService;
 
     private final ModelMapper modelMapper;
+    private final AlarmCommandService alarmCommandService;
 
     @Autowired
-    public NoticeCommandServiceImpl(NoticeRepository noticeRepository, ModelMapper modelMapper, AuthQueryService authQueryService) {
+    public NoticeCommandServiceImpl(NoticeRepository noticeRepository, ModelMapper modelMapper,
+                                    AuthQueryService authQueryService, AlarmCommandService alarmCommandService) {
         this.noticeRepository = noticeRepository;
         this.modelMapper = modelMapper;
         this.authQueryService =authQueryService;
+        this.alarmCommandService = alarmCommandService;
     }
 
     private String getCurrentTimestamp() {
@@ -54,7 +59,11 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
-            noticeRepository.save(notice);
+            Notice newNotice = noticeRepository.save(notice);
+
+            NoticeAlarmDTO noticeAlarmDTO = modelMapper.map(newNotice, NoticeAlarmDTO.class);
+
+            alarmCommandService.sendNoticeAlarm(noticeAlarmDTO);
 
         } catch (DataIntegrityViolationException e){
             // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
