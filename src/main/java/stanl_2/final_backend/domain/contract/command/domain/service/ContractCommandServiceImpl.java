@@ -19,8 +19,10 @@ import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
+import stanl_2.final_backend.domain.product.command.application.command.service.ProductCommandService;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.service.ProductService;
+import stanl_2.final_backend.domain.sales_history.command.application.service.SalesHistoryCommandService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
@@ -38,15 +40,19 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     private final MemberQueryService memberQueryService;
     private final CustomerCommandService customerCommandService;
     private final ProductService productService;
+    private final ProductCommandService productCommandService;
+    private final SalesHistoryCommandService salesHistoryCommandService;
     private final ModelMapper modelMapper;
 
-    public ContractCommandServiceImpl(ContractRepository contractRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductService productService, ModelMapper modelMapper) {
+    public ContractCommandServiceImpl(ContractRepository contractRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductService productService, ProductCommandService productCommandService, SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper) {
         this.contractRepository = contractRepository;
         this.authQueryService = authQueryService;
         this.customerQueryService = customerQueryService;
         this.memberQueryService = memberQueryService;
         this.customerCommandService = customerCommandService;
         this.productService = productService;
+        this.productCommandService = productCommandService;
+        this.salesHistoryCommandService = salesHistoryCommandService;
         this.modelMapper = modelMapper;
     }
 
@@ -78,7 +84,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
     @Override
     @Transactional
-    public void registerContract(ContractRegistDTO contractRegistRequestDTO) throws GeneralSecurityException {
+    public void registerContract(ContractRegistDTO contractRegistRequestDTO)  {
 
         // 영업사원 번호
         String memberId = authQueryService.selectMemberIdByLoginId(contractRegistRequestDTO.getMemberId());
@@ -87,16 +93,23 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         ProductSelectIdDTO productSelectIdDTO = productService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum());
         String productId = productSelectIdDTO.getId();
 
-        // 판매내역 업로드
-
-        // 제품 재고 수 줄이기
+        String customerId = null; // 고객 ID 변수 선언
+        String centerId = null;   // 매장 ID 변수 선언
 
         // 고객전화번호로 고객테이블 찾아서 고객이 있으면 넘어가고, 고객이 없으면 고객테이블에 고객 정보 넣기
-        String customerId = handleCustomerInfo(contractRegistRequestDTO, memberId);
+        try {
+            customerId = handleCustomerInfo(contractRegistRequestDTO, memberId);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException("고객 정보 처리 중 문제가 발생했습니다.", e);
+        }
 
         // 회원의 영업 매장번호
-        MemberDTO memberDTO = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId());
-        String centerId = memberDTO.getCenterId();
+        try {
+            MemberDTO memberDTO = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId());
+            centerId = memberDTO.getCenterId();
+        } catch (Exception e) {
+            throw new RuntimeException("회원 정보 조회 중 문제가 발생했습니다.", e);
+        }
 
         Contract contract = modelMapper.map(contractRegistRequestDTO, Contract.class);
 
@@ -175,5 +188,11 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         contract.setAdminId(adminId);
 
         contractRepository.save(contract);
+
+//        ProductSelectIdDTO productSelectIdDTO = productService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum());
+//        String productId = productSelectIdDTO.getId();
+//
+//        // 제품 재고 수 줄이기
+//        productCommandService.modifyProductStock(productId);
     }
 }
