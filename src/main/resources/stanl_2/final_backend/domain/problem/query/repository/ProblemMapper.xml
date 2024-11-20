@@ -31,17 +31,17 @@
         A.prob_id,
         A.prob_ttl,
         A.prob_cont,
-        A.createdAt,
-        A.UPDATED_AT,
-        A.DELETED_AT,
-        A.ACTIVE,
-        A.CUST_ID,
-        A.MEM_ID,
-        A.PROD_ID
+        A.created_at,
+        A.updated_at,
+        A.deleted_at,
+        A.active,
+        A.cust_id,
+        A.mem_id,
+        A.prod_id
         FROM tb_problem A
         <where>
-            A.ACTIVE != 'false'
-            <if test="searchDTO.tag != null">
+            a.active != 'false'
+            <if test="problemSearchDTO.tag != null">
                 AND A.NOT_TAG = #{searchDTO.tag}
             </if>
             <if test="searchDTO.classification != null">
