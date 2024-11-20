@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.purchase_order.common.response.PurchaseOrderResponseMessage;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO;
@@ -31,19 +30,93 @@ public class PurchaseOrderController {
         this.purchaseOrderQueryService = purchaseOrderQueryService;
     }
 
-    @Operation(summary = "발주서 상세조회")
+    // 영업관리자 조회
+    @Operation(summary = "발주서 상세조회(영업관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "발주서 상세조회 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
     })
-    @GetMapping("{id}")
-    public ResponseEntity<PurchaseOrderResponseMessage> getDetailPurchaseOrder(@PathVariable("id") String id,
-                                                                               Authentication authentication) {
+    @GetMapping("admin/{purchaseOrderId}")
+    public ResponseEntity<PurchaseOrderResponseMessage> getDetailPurchaseOrderAdmin(@PathVariable String purchaseOrderId,
+                                                                               Principal principal) {
 
         PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO = new PurchaseOrderSelectIdDTO();
-        purchaseOrderSelectIdDTO.setPurchaseOrderId(id);
-        purchaseOrderSelectIdDTO.setMemberId(authentication.getName());
-        purchaseOrderSelectIdDTO.setRoles(authentication.getAuthorities());
+        purchaseOrderSelectIdDTO.setPurchaseOrderId(purchaseOrderId);
+        purchaseOrderSelectIdDTO.setMemberId(principal.getName());
+
+        PurchaseOrderSelectIdDTO responsePurchaseOrder = purchaseOrderQueryService.selectDetailPurchaseOrderAdmin(purchaseOrderSelectIdDTO);
+
+        return ResponseEntity.ok(PurchaseOrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("발주서 상세 조회 성공")
+                .result(responsePurchaseOrder)
+                .build());
+    }
+
+    @Operation(summary = "발주서 전체조회(영업관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "발주서 전체조회 성공",
+                    content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
+    })
+    @GetMapping("admin")
+    public ResponseEntity<PurchaseOrderResponseMessage> getAllPurchaseOrdersAdmin(Principal principal,
+                                                                             @PageableDefault(size = 10) Pageable pageable) {
+        PurchaseOrderSelectAllDTO purchaseOrderSelectAllDTO = new PurchaseOrderSelectAllDTO();
+        purchaseOrderSelectAllDTO.setMemberId(principal.getName());
+
+        Page<PurchaseOrderSelectAllDTO> responsePurchaseOrders = purchaseOrderQueryService.selectAllPurchaseOrderAdmin(pageable, purchaseOrderSelectAllDTO);
+
+        return ResponseEntity.ok(PurchaseOrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("발주서 전체 조회 성공")
+                .result(responsePurchaseOrders)
+                .build());
+    }
+
+    @Operation(summary = "발주서 검색조회(영업관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "발주서 검색조회 성공",
+                    content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
+    })
+    @GetMapping("admin/search")
+    public ResponseEntity<PurchaseOrderResponseMessage> getSearchPurchaseOrdersAdmin(@RequestParam(required = false) String title,
+                                                                                @RequestParam(required = false) String status,
+                                                                                @RequestParam(required = false) String adminId,
+                                                                                @RequestParam(required = false) String searchMemberId,
+                                                                                @RequestParam(required = false) String startDate,
+                                                                                @RequestParam(required = false) String endDate,
+                                                                                Principal principal,
+                                                                                @PageableDefault(size = 10) Pageable pageable) {
+
+        PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
+        purchaseOrderSelectSearchDTO.setTitle(title);
+        purchaseOrderSelectSearchDTO.setStatus(status);
+        purchaseOrderSelectSearchDTO.setAdminId(adminId);
+        purchaseOrderSelectSearchDTO.setStartDate(startDate);
+        purchaseOrderSelectSearchDTO.setEndDate(endDate);
+        purchaseOrderSelectSearchDTO.setSearchMemberId(searchMemberId);
+        purchaseOrderSelectSearchDTO.setMemberId(principal.getName());
+
+        Page<PurchaseOrderSelectSearchDTO> responsePurchaseOrder = purchaseOrderQueryService.selectSearchPurchaseOrderAdmin(purchaseOrderSelectSearchDTO, pageable);
+
+        return ResponseEntity.ok(PurchaseOrderResponseMessage.builder()
+                                                            .httpStatus(200)
+                                                            .msg("발주서 검색 조회 성공")
+                                                            .result(responsePurchaseOrder)
+                                                            .build());
+    }
+
+    // 영업담당자 조회
+    @Operation(summary = "발주서 상세조회(영업담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "발주서 상세조회 성공",
+                    content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
+    })
+    @GetMapping("{purchaseOrderId}")
+    public ResponseEntity<PurchaseOrderResponseMessage> getDetailPurchaseOrder(@PathVariable String purchaseOrderId) {
+
+        PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO = new PurchaseOrderSelectIdDTO();
+        purchaseOrderSelectIdDTO.setPurchaseOrderId(purchaseOrderId);
 
         PurchaseOrderSelectIdDTO responsePurchaseOrder = purchaseOrderQueryService.selectDetailPurchaseOrder(purchaseOrderSelectIdDTO);
 
@@ -54,16 +127,14 @@ public class PurchaseOrderController {
                 .build());
     }
 
-    @Operation(summary = "발주서 전체조회")
+    @Operation(summary = "발주서 전체조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "발주서 전체조회 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
     })
     @GetMapping("")
-    public ResponseEntity<PurchaseOrderResponseMessage> getAllPurchaseOrders(Authentication authentication,
-                                                                             @PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<PurchaseOrderResponseMessage> getAllPurchaseOrders(@PageableDefault(size = 10) Pageable pageable) {
         PurchaseOrderSelectAllDTO purchaseOrderSelectAllDTO = new PurchaseOrderSelectAllDTO();
-        purchaseOrderSelectAllDTO.setRoles(authentication.getAuthorities());
 
         Page<PurchaseOrderSelectAllDTO> responsePurchaseOrders = purchaseOrderQueryService.selectAllPurchaseOrder(pageable, purchaseOrderSelectAllDTO);
 
@@ -74,31 +145,35 @@ public class PurchaseOrderController {
                 .build());
     }
 
-    @Operation(summary = "발주서 검색조회")
+    @Operation(summary = "발주서 검색조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "발주서 검색조회 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
     })
-    @GetMapping("/search")
+    @GetMapping("search")
     public ResponseEntity<PurchaseOrderResponseMessage> getSearchPurchaseOrders(@RequestParam(required = false) String title,
-                                                                                @RequestParam(required = false) String status,
-                                                                                @RequestParam(required = false) String adminId,
-                                                                                @RequestParam(required = false) String searchMemberId,
-                                                                                @RequestParam(required = false) String startDate,
-                                                                                @RequestParam(required = false) String endDate,
-                                                                                Authentication authentication,
-                                                                                @PageableDefault(size = 10) Pageable pageable) {
+                                                                                     @RequestParam(required = false) String status,
+                                                                                     @RequestParam(required = false) String adminId,
+                                                                                     @RequestParam(required = false) String searchMemberId,
+                                                                                     @RequestParam(required = false) String startDate,
+                                                                                     @RequestParam(required = false) String endDate,
+                                                                                     @PageableDefault(size = 10) Pageable pageable) {
 
-        PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO(title, status,
-                adminId, searchMemberId, startDate, endDate, authentication.getAuthorities());
+        PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
+        purchaseOrderSelectSearchDTO.setTitle(title);
+        purchaseOrderSelectSearchDTO.setStatus(status);
+        purchaseOrderSelectSearchDTO.setAdminId(adminId);
+        purchaseOrderSelectSearchDTO.setStartDate(startDate);
+        purchaseOrderSelectSearchDTO.setEndDate(endDate);
+        purchaseOrderSelectSearchDTO.setSearchMemberId(searchMemberId);
 
         Page<PurchaseOrderSelectSearchDTO> responsePurchaseOrder = purchaseOrderQueryService.selectSearchPurchaseOrder(purchaseOrderSelectSearchDTO, pageable);
 
         return ResponseEntity.ok(PurchaseOrderResponseMessage.builder()
-                                                            .httpStatus(200)
-                                                            .msg("발주서 검색 조회 성공")
-                                                            .result(responsePurchaseOrder)
-                                                            .build());
+                .httpStatus(200)
+                .msg("발주서 검색 조회 성공")
+                .result(responsePurchaseOrder)
+                .build());
     }
 }
 
