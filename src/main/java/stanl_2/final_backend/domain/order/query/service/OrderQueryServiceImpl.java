@@ -34,6 +34,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         this.redisTemplate = redisTemplate;
     }
 
+    // 영업사원 조회
     @Override
     @Transactional(readOnly = true)
     public Page<OrderSelectAllDTO> selectAllEmployee(String loginId, Pageable pageable) {
@@ -88,27 +89,20 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     public Page<OrderSelectSearchDTO> selectSearchOrdersEmployee(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(orderSelectSearchDTO.getMemberId());
+        orderSelectSearchDTO.setMemberId(memberId);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("memberId", memberId);
-        map.put("title", orderSelectSearchDTO.getTitle());
-        map.put("status", orderSelectSearchDTO.getStatus());
-        map.put("adminId", orderSelectSearchDTO.getAdminId());
-        map.put("searchMemberId", orderSelectSearchDTO.getSearchMemberId());
-        map.put("startDate", orderSelectSearchDTO.getStartDate());
-        map.put("endDate", orderSelectSearchDTO.getEndDate());
-        map.put("pageSize", pageable.getPageSize());
-        map.put("offset", pageable.getOffset());
-
-        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrderByMemberId(map);
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrderByMemberId(offset, pageSize, orderSelectSearchDTO);
 
         if (orders == null || orders.isEmpty()) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
-        int totalElements = orderMapper.findOrderSearchCountByMemberId(map);
+        Integer count = orderMapper.findOrderSearchCountByMemberId(orderSelectSearchDTO);
+        int totalOrder = (count != null) ? count : 0;
 
-        return new PageImpl<>(orders, pageable, totalElements);
+        return new PageImpl<>(orders, pageable, totalOrder);
     }
 
     // 영업담당자, 영업관리자 조회
@@ -140,9 +134,10 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         }
 
         // 전체 개수 조회
-        int totalElements = orderMapper.findOrderCount();
+        Integer count = orderMapper.findOrderCount();
+        int totalOrder = (count != null) ? count : 0;
 
-        return new PageImpl<>(orders, pageable, totalElements);
+        return new PageImpl<>(orders, pageable, totalOrder);
     }
 
     @Override
@@ -162,24 +157,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     @Transactional(readOnly = true)
     public Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) {
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("title", orderSelectSearchDTO.getTitle());
-        map.put("status", orderSelectSearchDTO.getStatus());
-        map.put("adminId", orderSelectSearchDTO.getAdminId());
-        map.put("searchMemberId", orderSelectSearchDTO.getSearchMemberId());
-        map.put("startDate", orderSelectSearchDTO.getStartDate());
-        map.put("endDate", orderSelectSearchDTO.getEndDate());
-        map.put("pageSize", pageable.getPageSize());
-        map.put("offset", pageable.getOffset());
-
-        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrder(map);
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrder(offset, pageSize, orderSelectSearchDTO);
 
         if (orders == null || orders.isEmpty()) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
-        int totalElements = orderMapper.findOrderSearchCount(map);
+        Integer count = orderMapper.findOrderSearchCount(orderSelectSearchDTO);
+        int totalOrder = (count != null) ? count : 0;
 
-        return new PageImpl<>(orders, pageable, totalElements);
+        return new PageImpl<>(orders, pageable, totalOrder);
     }
 }

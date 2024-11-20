@@ -87,7 +87,7 @@
         AND a.ord_id = #{orderId};
     </select>
 
-    <select id="findSearchOrderByMemberId" resultMap="orderResultMap" parameterType="map">
+    <select id="findSearchOrderByMemberId" resultMap="orderResultMap" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         a.ord_id,
         a.ord_ttl,
@@ -106,29 +106,29 @@
         LEFT JOIN tb_product e
         ON b.prod_id = e.prod_id
         <where>
-            a.mem_id = #{memberId}
+            a.mem_id = #{orderSelectSearchDTO.memberId}
             AND a.active = TRUE
-            <if test="title != null">
-                AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
+            <if test="orderSelectSearchDTO.title != null">
+                AND a.ord_ttl LIKE CONCAT('%', #{orderSelectSearchDTO.title}, '%')
             </if>
-            <if test="status != null">
-                AND a.ord_stat = #{status}
+            <if test="orderSelectSearchDTO.status != null">
+                AND a.ord_stat = #{orderSelectSearchDTO.status}
             </if>
-            <if test="adminId != null">
-                AND a.admin_id = #{adminId}
+            <if test="orderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{orderSelectSearchDTO.adminId}
             </if>
-            <if test="searchMemberId != null">
+            <if test="orderSelectSearchDTO.searchMemberId != null">
                 AND a.mem_id = #{searchMemberId}
             </if>
-            <if test="startDate != null and endDate != null">
-                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+            <if test="orderSelectSearchDTO.startDate != null and orderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate} AND #{orderSelectSearchDTO.endDate}
             </if>
         </where>
         ORDER BY a.created_at DESC
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
-    <select id="findOrderSearchCountByMemberId" resultType="int" parameterType="map">
+    <select id="findOrderSearchCountByMemberId" resultType="Integer" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
@@ -178,14 +178,14 @@
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
-    <select id="findOrderCount" resultType="int">
+    <select id="findOrderCount" resultType="Integer">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
         WHERE a.active = TRUE;
     </select>
 
-    <select id="findOrderByOrderId" resultMap="orderDetailResultMap" parameterType="map">
+    <select id="findOrderByOrderId" resultMap="orderDetailResultMap" parameterType="string">
         SELECT
         a.ord_id,
         a.ord_ttl,
@@ -211,7 +211,7 @@
         AND a.ord_id = #{orderId};
     </select>
 
-    <select id="findSearchOrder" resultMap="orderResultMap" parameterType="map">
+    <select id="findSearchOrder" resultMap="orderResultMap" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         a.ord_id,
         a.ord_ttl,
@@ -231,27 +231,27 @@
         ON b.prod_id = e.prod_id
         <where>
             a.active = TRUE
-            <if test="title != null">
-                AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
+            <if test="orderSelectSearchDTO.title != null">
+                AND a.ord_ttl LIKE CONCAT('%', #{orderSelectSearchDTO.title}, '%')
             </if>
-            <if test="status != null">
-                AND a.ord_stat = #{status}
+            <if test="orderSelectSearchDTO.status != null">
+                AND a.ord_stat = #{orderSelectSearchDTO.status}
             </if>
-            <if test="adminId != null">
-                AND a.admin_id = #{adminId}
+            <if test="orderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{orderSelectSearchDTO.adminId}
             </if>
-            <if test="searchMemberId != null">
+            <if test="orderSelectSearchDTO.searchMemberId != null">
                 AND a.mem_id = #{searchMemberId}
             </if>
-            <if test="startDate != null and endDate != null">
-                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+            <if test="orderSelectSearchDTO.startDate != null and orderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate} AND #{orderSelectSearchDTO.endDate}
             </if>
         </where>
         ORDER BY a.created_at DESC
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
-    <select id="findOrderSearchCount" resultType="int" parameterType="map">
+    <select id="findOrderSearchCount" resultType="Integer" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
