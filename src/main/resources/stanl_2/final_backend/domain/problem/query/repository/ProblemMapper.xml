@@ -26,7 +26,7 @@
     </resultMap>
 
 
-    <select id="findNotices" resultMap="Problem" parameterType="String" >
+    <select id="findProblems" resultMap="SearchProblem" parameterType="String" >
         SELECT
         A.prob_id,
         A.prob_ttl,
@@ -41,19 +41,19 @@
         FROM tb_problem A
         <where>
             a.active != 'false'
-            <if test="problemSearchDTO.tag != null">
-                AND A.NOT_TAG = #{searchDTO.tag}
-            </if>
-            <if test="searchDTO.classification != null">
-                AND A.NOT_CLA = #{searchDTO.classification}
-            </if>
-            <if test="searchDTO.memberId != null">
-                AND A.MEM_ID = #{searchDTO.memberId}
-            </if>
-            <if test="searchDTO.title != null">
+            <if test="problemSearchDTO.title != null">
                 AND A.NOT_TTL LIKE CONCAT('%', #{searchDTO.title}, '%')
             </if>
-            <if test="searchDTO.startDate != null and searchDTO.endDate != null">
+            <if test="problemSearchDTO.memberId != null">
+                AND A.MEM_ID = #{searchDTO.memberId}
+            </if>
+            <if test="problemSearchDTO.productId != null">
+                AND A.PROD_ID = #{searchDTO.productId}
+            </if>
+            <if test="problemSearchDTO.customerId != null">
+                AND A.CUST_ID = #{searchDTO.customerId}
+            </if>
+            <if test="problemSearchDTO.startDate != null and searchDTO.endDate != null">
                 AND A.CREATED_AT BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
             </if>
         </where>
@@ -65,41 +65,65 @@
     <select id="findNoticesCount" resultMap="SearchNotice" parameterType="String">
         SELECT
         COUNT(*) AS CNT
-        FROM TB_NOTICE A
+        FROM tb_problem a
         <where>
-            A.ACTIVE != 'false'
-            <if test="tag != null">
-                AND A.NOT_TAG = #{tag}
+            a.active != 'false'
+            <if test="problemSearchDTO.title != null">
+                AND A.NOT_TTL LIKE CONCAT('%', #{searchDTO.title}, '%')
             </if>
-            <if test="classification != null">
-                AND A.NOT_CLA = #{classification}
+            <if test="problemSearchDTO.memberId != null">
+                AND A.MEM_ID = #{searchDTO.memberId}
             </if>
-            <if test="memberId != null">
-                AND A.MEM_ID = #{memberId}
+            <if test="problemSearchDTO.productId != null">
+                AND A.PROD_ID = #{searchDTO.productId}
             </if>
-            <if test="title != null">
-                AND A.NOT_TTL = #{title}
+            <if test="problemSearchDTO.customerId != null">
+                AND A.CUST_ID = #{searchDTO.customerId}
             </if>
-            <if test="startDate != null and endDate != null">
-                AND A.CREATED_AT BETWEEN #{startDate} AND #{endDate}
+            <if test="problemSearchDTO.startDate != null and searchDTO.endDate != null">
+                AND A.CREATED_AT BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
             </if>
         </where>
     </select>
 
-    <select id="findNotice" resultMap="Notice" parameterType="string">
+    <select id="findProblem" resultMap="Problem" parameterType="string">
         SELECT
-        A.NOT_ID,
-        A.NOT_TTL,
-        A.NOT_TAG,
-        A.NOT_CLA,
-        A.NOT_CONT,
-        A.CREATED_AT,
-        A.UPDATED_AT,
-        A.DELETED_AT,
-        A.ACTIVE,
-        A.MEM_ID
-        FROM TB_NOTICE A
-        WHERE NOT_ID = #{noticeId};
+            A.prob_id,
+            A.prob_ttl,
+            A.prob_cont,
+            A.created_at,
+            A.updated_at,
+            A.deleted_at,
+            A.active,
+            A.cust_id,
+            A.mem_id,
+            A.prod_id
+        FROM tb_problem A
+        WHERE prob_id = #{problemId};
+    </select>
+
+    <select id="findPromotionsCount" resultMap="SearchPromotion" parameterType="String">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_problem a
+        <where>
+            a.active != 'false'
+            <if test="problemSearchDTO.title != null">
+                AND A.NOT_TTL LIKE CONCAT('%', #{searchDTO.title}, '%')
+            </if>
+            <if test="problemSearchDTO.memberId != null">
+                AND A.MEM_ID = #{searchDTO.memberId}
+            </if>
+            <if test="problemSearchDTO.productId != null">
+                AND A.PROD_ID = #{searchDTO.productId}
+            </if>
+            <if test="problemSearchDTO.customerId != null">
+                AND A.CUST_ID = #{searchDTO.customerId}
+            </if>
+            <if test="problemSearchDTO.startDate != null and searchDTO.endDate != null">
+                AND A.CREATED_AT BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
+            </if>
+        </where>
     </select>
 
 </mapper>
