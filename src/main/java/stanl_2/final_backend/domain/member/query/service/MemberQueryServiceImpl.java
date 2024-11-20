@@ -65,6 +65,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String selectNameById(String memberId){
 
         String name = memberMapper.findNameById(memberId);
