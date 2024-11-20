@@ -19,6 +19,9 @@
         <id property="promotionId" column="PRM_ID"/>
         <result property="title" column="PRM_TTL"/>
         <result property="memberId" column="MEM_ID"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
     </resultMap>
 
 
@@ -59,7 +62,7 @@
                 AND a.mem_id = #{memberId}
             </if>
             <if test="title != null">
-                AND a.not_ttl LIKE CONCAT('%', #{title}, '%')
+                AND a.prm_ttl LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="startDate != null and endDate != null">
                 AND a.created_at BETWEEN #{startDate} AND #{endDate}
