@@ -25,7 +25,7 @@ public class CareerQueryServiceImpl implements CareerQueryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CareerDTO> selectCareerList(String loginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(loginId);

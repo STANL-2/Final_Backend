@@ -31,7 +31,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public MemberDTO selectMemberInfo(String name) throws GeneralSecurityException {
 
         MemberDTO memberInfo = memberMapper.findMemberInfoById(name);
@@ -58,8 +58,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public List<String> selectMemberByRole(String role){
 
         List<String> memberList = memberRoleMapper.findMembersbyRole(role);
-
-        log.info("값 출력: {}", memberList.toArray());
 
         return memberList;
     }
