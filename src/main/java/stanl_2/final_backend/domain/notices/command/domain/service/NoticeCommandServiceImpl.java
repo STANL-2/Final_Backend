@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.alarm.service.AlarmService;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeDeleteDTO;
@@ -34,15 +34,15 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     private final AuthQueryService authQueryService;
 
     private final ModelMapper modelMapper;
-    private final AlarmService alarmService;
+    private final AlarmCommandService alarmCommandService;
 
     @Autowired
     public NoticeCommandServiceImpl(NoticeRepository noticeRepository, ModelMapper modelMapper,
-                                    AuthQueryService authQueryService, AlarmService alarmService) {
+                                    AuthQueryService authQueryService, AlarmCommandService alarmCommandService) {
         this.noticeRepository = noticeRepository;
         this.modelMapper = modelMapper;
         this.authQueryService =authQueryService;
-        this.alarmService = alarmService;
+        this.alarmCommandService = alarmCommandService;
     }
 
     private String getCurrentTimestamp() {
@@ -63,7 +63,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
             NoticeAlarmDTO noticeAlarmDTO = modelMapper.map(newNotice, NoticeAlarmDTO.class);
 
-            alarmService.sendNoticeAlarm(noticeAlarmDTO);
+            alarmCommandService.sendNoticeAlarm(noticeAlarmDTO);
 
         } catch (DataIntegrityViolationException e){
             // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반

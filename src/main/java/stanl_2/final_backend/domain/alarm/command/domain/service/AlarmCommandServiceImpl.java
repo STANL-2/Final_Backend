@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.alarm.service;
+package stanl_2.final_backend.domain.alarm.command.domain.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import stanl_2.final_backend.domain.alarm.aggregate.dto.AlarmDTO;
-import stanl_2.final_backend.domain.alarm.aggregate.entity.Alarm;
-import stanl_2.final_backend.domain.alarm.repository.AlarmRepository;
-import stanl_2.final_backend.domain.alarm.repository.EmitterRepository;
+import stanl_2.final_backend.domain.alarm.command.application.dto.AlarmCommandDTO;
+import stanl_2.final_backend.domain.alarm.command.domain.aggregate.entity.Alarm;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
+import stanl_2.final_backend.domain.alarm.command.domain.repository.AlarmRepository;
+import stanl_2.final_backend.domain.alarm.command.domain.repository.EmitterRepository;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class AlarmServiceImpl implements AlarmService {
+public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     private final EmitterRepository emitterRepository;
     private final AlarmRepository alarmRepository;
@@ -38,8 +39,8 @@ public class AlarmServiceImpl implements AlarmService {
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
     @Autowired
-    public AlarmServiceImpl(AlarmRepository alarmRepository, EmitterRepository emitterRepository,
-                            AuthQueryService authQueryService, MemberQueryService memberQueryService){
+    public AlarmCommandServiceImpl(AlarmRepository alarmRepository, EmitterRepository emitterRepository,
+                                   AuthQueryService authQueryService, MemberQueryService memberQueryService){
         this.alarmRepository = alarmRepository;
         this.emitterRepository = emitterRepository;
         this.authQueryService = authQueryService;
@@ -47,10 +48,10 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public SseEmitter subscribe(AlarmDTO alarmDTO, HttpServletResponse response) {
+    public SseEmitter subscribe(AlarmCommandDTO alarmCommandDTO, HttpServletResponse response) {
 
-        String lastEventId = alarmDTO.getLastEventId();
-        String memberId = authQueryService.selectMemberIdByLoginId(alarmDTO.getMemberLoginId());
+        String lastEventId = alarmCommandDTO.getLastEventId();
+        String memberId = authQueryService.selectMemberIdByLoginId(alarmCommandDTO.getMemberLoginId());
         String emitterId = memberId + "_" + System.currentTimeMillis();
 
         // 클라이언트의 sse 연결 요청에 응답하기 위한 SseEmitter 객체 생성
@@ -130,7 +131,7 @@ public class AlarmServiceImpl implements AlarmService {
             String type = "NOTICE";
             String tag = noticeAlarmDTO.getClassification();
             String message = "[" + tag + "] 영업 관리자 대상 공지사항이 등록되었습니다.";
-            String redirectUrl = "/api/v1/notice" + noticeAlarmDTO.getNoticeId();
+            String redirectUrl = "/api/v1/notice/" + noticeAlarmDTO.getNoticeId();
             String createdAt = getCurrentTime();
 
             send(memberId, message, redirectUrl, type, createdAt);

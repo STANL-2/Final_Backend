@@ -1,14 +1,13 @@
-package stanl_2.final_backend.domain.alarm.service;
+package stanl_2.final_backend.domain.alarm.command.application.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import stanl_2.final_backend.domain.alarm.aggregate.dto.AlarmDTO;
-import stanl_2.final_backend.domain.alarm.aggregate.entity.Alarm;
+import stanl_2.final_backend.domain.alarm.command.application.dto.AlarmCommandDTO;
+import stanl_2.final_backend.domain.alarm.command.domain.aggregate.entity.Alarm;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
-import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 
-public interface AlarmService {
-    SseEmitter subscribe(AlarmDTO alarmDTO, HttpServletResponse response);
+public interface AlarmCommandService {
+    SseEmitter subscribe(AlarmCommandDTO alarmCommandDTO, HttpServletResponse response);
 
     void sendToClient(SseEmitter emitter, String emitterId, Object data);
 
