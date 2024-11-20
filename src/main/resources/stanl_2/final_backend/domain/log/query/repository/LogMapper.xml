@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.log.query.repository.LogMapper">
+    <resultMap id="Log" type="stanl_2.final_backend.domain.log.query.dto.LogDTO">
+        <id property="logId" column="EVAL_ID"/>
+        <result property="sessionId" column="EVAL_TTL"/>
+        <result property="userAgent" column="EVAL_TTL"/>
+        <result property="ipAddress" column="EVAL_TTL"/>
+        <result property="hostName" column="EVAL_TTL"/>
+        <result property="remotePort" column="EVAL_TTL"/>
+        <result property="uri" column="EVAL_TTL"/>
+        <result property="method" column="EVAL_TTL"/>
+        <result property="queryString" column="EVAL_TTL"/>
+        <result property="requestTime" column="EVAL_TTL"/>
+        <result property="transactionId" column="EVAL_TTL"/>
+    </resultMap>
+
+    <select id="findLog" resultMap="Log">
+        SELECT
+               a.logId,
+
+          FROM tb_log a
+    </select>
+</mapper>

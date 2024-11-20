@@ -1,5 +1,6 @@
 package stanl_2.final_backend.global.security.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import stanl_2.final_backend.domain.log.command.repository.LogRepository;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
 
 import java.util.Arrays;
@@ -33,6 +35,13 @@ public class DevSecurityConfig {
 
     @Value("${jwt.header}")
     private String jwtHeader;
+
+    private final LogRepository logRepository;
+
+    @Autowired
+    public DevSecurityConfig(LogRepository logRepository) {
+        this.logRepository = logRepository;
+    }
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -54,7 +63,7 @@ public class DevSecurityConfig {
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), BasicAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
