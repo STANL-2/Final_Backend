@@ -12,7 +12,7 @@ import stanl_2.final_backend.domain.promotion.query.repository.PromotionMapper;
 
 import java.util.List;
 
-@Service("queryPromotionServiceImpl")
+@Service("queryPromoteServiceImpl")
 public class PromotionServiceImpl implements PromotionService{
     private final PromotionMapper promotionMapper;
     @Autowired
