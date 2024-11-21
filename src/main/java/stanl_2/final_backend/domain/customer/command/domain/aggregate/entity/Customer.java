@@ -40,7 +40,7 @@ public class Customer {
     @Column(name = "CUST_PHO", nullable = false)
     private String phone;
 
-    @Column(name = "CUST_EMER_PHO", nullable = false)
+    @Column(name = "CUST_EMER_PHO")
     private String emergePhone;
 
     @Column(name = "CUST_EMA", nullable = false)

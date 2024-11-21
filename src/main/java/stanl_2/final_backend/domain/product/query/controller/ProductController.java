@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.product.common.response.ProductResponseMessage;
 import stanl_2.final_backend.domain.product.query.dto.ProductSearchRequestDTO;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
-import stanl_2.final_backend.domain.product.query.service.ProductService;
+import stanl_2.final_backend.domain.product.query.service.ProductQueryService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,17 +18,17 @@ import java.util.Map;
 @RequestMapping("/api/v1/product")
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductQueryService productQueryService;
 
     @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    public ProductController(ProductQueryService productQueryService) {
+        this.productQueryService = productQueryService;
     }
 
     @GetMapping("")
     public ResponseEntity<ProductResponseMessage> getProductAll(@PageableDefault(size = 20) Pageable pageable){
 
-        Page<Map<String, Object>> responseProducts = productService.selectAll(pageable);
+        Page<Map<String, Object>> responseProducts = productQueryService.selectAll(pageable);
 
         return ResponseEntity.ok(ProductResponseMessage.builder()
                 .httpStatus(200)
@@ -40,7 +40,7 @@ public class ProductController {
     @GetMapping("{id}")
     public ResponseEntity<ProductResponseMessage> getProductById(@PathVariable("id") String id){
 
-        ProductSelectIdDTO productSelectIdDTO  = productService.selectByProductId(id);
+        ProductSelectIdDTO productSelectIdDTO  = productQueryService.selectByProductId(id);
 
         return ResponseEntity.ok(ProductResponseMessage.builder()
                 .httpStatus(200)
@@ -62,7 +62,7 @@ public class ProductController {
         paramMap.put("productSearchRequestDTO", productSearchRequestDTO);
         paramMap.put("pageable", pageable);
 
-        Page<Map<String, Object>> responseProducts = productService.selectProductBySearch(paramMap);
+        Page<Map<String, Object>> responseProducts = productQueryService.selectProductBySearch(paramMap);
 
         return ResponseEntity.ok(ProductResponseMessage.builder()
                 .httpStatus(200)
