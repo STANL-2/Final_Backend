@@ -54,7 +54,7 @@
         WHERE a.active = true and a.centerId = #{centerId}
     </select>
 
-    <select id="findMembersByCenterId" resultMap="Member" parameterType="java.util.List">
+    <select id="findMembersByCenterList" resultMap="Member" parameterType="java.util.List">
         SELECT
         a.mem_id,
         a.login_id

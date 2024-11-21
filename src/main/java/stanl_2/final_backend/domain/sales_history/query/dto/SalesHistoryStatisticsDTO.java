@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class SalesHistoryStatisticsDTO {
     private int incentive;
     private int performance;

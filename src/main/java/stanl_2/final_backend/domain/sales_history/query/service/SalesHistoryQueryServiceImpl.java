@@ -127,6 +127,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SalesHistoryStatisticsDTO selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO) {
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
 
