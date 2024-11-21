@@ -1,5 +1,6 @@
 package stanl_2.final_backend.global.security.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,11 +15,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
 
 import java.util.Arrays;
@@ -26,6 +30,7 @@ import java.util.Collections;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+@Slf4j
 @Configuration
 @Profile("dev")
 public class DevSecurityConfig {
@@ -63,8 +68,18 @@ public class DevSecurityConfig {
                         // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
                         .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), BasicAuthenticationFilter.class)
-                .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), UsernamePasswordAuthenticationFilter.class)
+                .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            log.error("Authentication error: {}", authException.getMessage());
+                            throw new GlobalCommonException(GlobalErrorCode.LOGIN_FAILURE);
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            log.error("Access denied: {}", accessDeniedException.getMessage());
+                            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+                        }));
+
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
         return http.build();

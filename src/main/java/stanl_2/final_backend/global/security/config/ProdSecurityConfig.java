@@ -1,16 +1,12 @@
 package stanl_2.final_backend.global.security.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
@@ -19,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
@@ -28,7 +23,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
-import stanl_2.final_backend.global.log.LoggingFilter;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
 
 import java.util.Arrays;
@@ -44,8 +38,12 @@ public class ProdSecurityConfig {
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
+    private LogRepository logRepository;
+
     @Autowired
-    private LogRepository logRepository;  // logRepository 주입
+    public ProdSecurityConfig(LogRepository logRepository) {
+        this.logRepository = logRepository;
+    }
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
@@ -120,14 +118,5 @@ public class ProdSecurityConfig {
 
         providerManager.setEraseCredentialsAfterAuthentication(false);
         return providerManager;
-    }
-
-    @Bean(name = "prodLoggingFilter")
-    public FilterRegistrationBean<LoggingFilter> loggingFilter(){
-        FilterRegistrationBean<LoggingFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new LoggingFilter(logRepository));
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);  // 필터 체인의 가장 마지막에 위치시킵니다.
-        return registrationBean;
     }
 }

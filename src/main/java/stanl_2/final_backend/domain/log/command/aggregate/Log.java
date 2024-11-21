@@ -21,14 +21,12 @@ public class Log {
     @Column(name = "LOG_ID", nullable = false)
     private String logId;
 
-    // User Information
     @Column(name = "SESSION_ID")
     private String sessionId;
 
     @Column(name = "USER_AGENT")
     private String userAgent;
 
-    // Network Information
     @Column(name = "IP_ADDRESS")
     private String ipAddress;
 
@@ -38,7 +36,6 @@ public class Log {
     @Column(name = "REMOTE_PORT")
     private Integer remotePort;
 
-    // Request Information
     @Column(name = "URI")
     private String uri;
 
@@ -48,11 +45,9 @@ public class Log {
     @Column(name = "QUERY_STRING")
     private String queryString;
 
-    // Time Information
     @Column(name = "REQUEST_TIME")
     private LocalDateTime requestTime;
 
-    // Additional Information
     @Column(name = "TRANSACTION_ID")
     private String transactionId;
 
