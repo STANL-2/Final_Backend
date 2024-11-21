@@ -9,6 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SalesHistorySelectAllDTO {
-    private String temp1;
+public class SalesHistorySearchDTO {
+    private String searcherName;
+    private String startDate;
+    private String endDate;
 }

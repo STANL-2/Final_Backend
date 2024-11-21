@@ -1,22 +1,22 @@
-package stanl_2.final_backend.domain.center.common.exception;
+package stanl_2.final_backend.domain.product.common.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class ExceptionResponse {
+public class ProductExceptionResponse {
     private final Integer code;
     private final String msg;
     private final HttpStatus httpStatus;
 
-    public ExceptionResponse(ErrorCode errorCode) {
+    public ProductExceptionResponse(ProductErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.msg = errorCode.getMsg();
         this.httpStatus = errorCode.getHttpStatus();
     }
 
-    public static ExceptionResponse of(ErrorCode errorCode) {
-        return new ExceptionResponse(errorCode);
+    public static ProductExceptionResponse of(ProductErrorCode errorCode) {
+        return new ProductExceptionResponse(errorCode);
     }
 
 }

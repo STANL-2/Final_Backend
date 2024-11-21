@@ -30,7 +30,8 @@ public interface PurchaseOrderMapper {
 
     PurchaseOrderSelectIdDTO findPurchaseOrderByPurchaseOrderId(String purchaseOrderId);
 
-    List<PurchaseOrderSelectAllDTO> findAllPurchaseOrder(int offset, int pageSize);
+    List<PurchaseOrderSelectAllDTO> findAllPurchaseOrder(@Param("pageSize") int offset,
+                                                         @Param("pageSize") int pageSize);
 
     Integer findAllPurchaseOrderCount();
 
