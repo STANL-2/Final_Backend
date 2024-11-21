@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import stanl_2.final_backend.domain.alarm.command.application.dto.AlarmRegistDTO;
 import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.alarm.common.response.AlarmResponseMessage;
-import stanl_2.final_backend.domain.center.common.response.ResponseMessage;
 import stanl_2.final_backend.domain.schedule.common.response.ScheduleResponseMessage;
 
 import java.security.Principal;

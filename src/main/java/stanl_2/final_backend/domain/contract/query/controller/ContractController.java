@@ -10,13 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.contract.common.response.ContractResponseMessage;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
 import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
+
+import java.security.Principal;
 
 @Slf4j
 @RestController("queryContractController")
@@ -29,23 +30,20 @@ public class ContractController {
         this.contractQueryService = contractQueryService;
     }
 
-    /**
-     * [GET] http://localhost:8080/api/v1/contract/MEM_000000001?page=0&size=10
-     * */
-    @Operation(summary = "계약서 전체 조회")
+    // 영업사원 조회
+    @Operation(summary = "계약서 전체 조회(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 전체 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @GetMapping("")
-    public ResponseEntity<ContractResponseMessage> getAllContract(@PageableDefault(size = 10) Pageable pageable,
-                                                                  Authentication authentication) {
+    @GetMapping("employee")
+    public ResponseEntity<ContractResponseMessage> getAllContractEmployee(@PageableDefault(size = 10) Pageable pageable,
+                                                                  Principal principal) {
 
         ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
-        contractSelectAllDTO.setMemberId(authentication.getName());
-        contractSelectAllDTO.setRoles(authentication.getAuthorities());
+        contractSelectAllDTO.setMemberId(principal.getName());
 
-        Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAll(contractSelectAllDTO, pageable);
+        Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContractEmployee(contractSelectAllDTO, pageable);
 
          return ResponseEntity.ok(ContractResponseMessage.builder()
                  .httpStatus(200)
@@ -54,24 +52,20 @@ public class ContractController {
                  .build());
     }
 
-    /**
-     * [GET] http://localhost:8080/api/v1/contract/CON_000000001/MEM_000000001
-     * */
-    @Operation(summary = "계약서 상세 조회")
+    @Operation(summary = "계약서 상세 조회(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 상세 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @GetMapping("{id}")
-    public ResponseEntity<ContractResponseMessage> getDetailContract(@PathVariable("id") String id,
-                                                                     Authentication authentication) {
+    @GetMapping("employee/{contractId}")
+    public ResponseEntity<ContractResponseMessage> getDetailContractEmployee(@PathVariable String contractId,
+                                                                     Principal principal) {
 
         ContractSeletIdDTO contractSeletIdDTO = new ContractSeletIdDTO();
-        contractSeletIdDTO.setContractId(id);
-        contractSeletIdDTO.setMemberId(authentication.getName());
-        contractSeletIdDTO.setRoles(authentication.getAuthorities());
+        contractSeletIdDTO.setContractId(contractId);
+        contractSeletIdDTO.setMemberId(principal.getName());
 
-        ContractSeletIdDTO responseContract = contractQueryService.selectDetailContract(contractSeletIdDTO);
+        ContractSeletIdDTO responseContract = contractQueryService.selectDetailContractEmployee(contractSeletIdDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
@@ -80,16 +74,13 @@ public class ContractController {
                 .build());
     }
 
-    /** 수정예정
-     * [GET] http://localhost:8080/api/v1/contract/search?memId=MEM_000000001
-     * */
-    @Operation(summary = "계약서 검색 조회")
+    @Operation(summary = "계약서 검색 조회(영업사원)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 검색 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
-    @GetMapping("/search")
-    public ResponseEntity<ContractResponseMessage> getContractBySearch(Authentication authentication,
+    @GetMapping("employee/search")
+    public ResponseEntity<ContractResponseMessage> getContractBySearchEmployee(Principal principal,
                                                                        @RequestParam(required = false) String searchMemberId,
                                                                        @RequestParam(required = false) String centerId,
                                                                        @RequestParam(required = false) String title,
@@ -103,10 +94,21 @@ public class ContractController {
                                                                        @RequestParam(required = false) String customerPurchaseCondition,
                                                                @PageableDefault(size = 10) Pageable pageable) {
 
-        String memberId = authentication.getName();
-        ContractSearchDTO contractSearchDTO = new ContractSearchDTO(memberId, searchMemberId, centerId, title, startAt, endAt,
-                customerName, customerClassifcation, productId, status, companyName, customerPurchaseCondition, authentication.getAuthorities());
-        Page<ContractSearchDTO> responseContracts = contractQueryService.selectBySearch(contractSearchDTO, pageable);
+        ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
+        contractSearchDTO.setMemberId(principal.getName());
+        contractSearchDTO.setSearchMemberId(searchMemberId);
+        contractSearchDTO.setCenterId(centerId);
+        contractSearchDTO.setTitle(title);
+        contractSearchDTO.setStartAt(startAt);
+        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setCustomerName(customerName);
+        contractSearchDTO.setCustomerClassifcation(customerClassifcation);
+        contractSearchDTO.setProductId(productId);
+        contractSearchDTO.setStatus(status);
+        contractSearchDTO.setCompanyName(companyName);
+        contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
+
+        Page<ContractSearchDTO> responseContracts = contractQueryService.selectBySearchEmployee(contractSearchDTO, pageable);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
@@ -115,5 +117,84 @@ public class ContractController {
                 .build());
     }
 
+    // 영업담당자, 관리자 조회
+    @Operation(summary = "계약서 전체 조회(영업관리자, 담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 전체 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("")
+    public ResponseEntity<ContractResponseMessage> getAllContract(@PageableDefault(size = 10) Pageable pageable) {
 
+        ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
+
+        Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContract(contractSelectAllDTO, pageable);
+
+        return ResponseEntity.ok(ContractResponseMessage.builder()
+                .httpStatus(200)
+                .msg("계약서 전체 조회 성공")
+                .result(responseContracts)
+                .build());
+    }
+
+    @Operation(summary = "계약서 상세 조회(영업사원)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 상세 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("{contractId}")
+    public ResponseEntity<ContractResponseMessage> getDetailContract(@PathVariable String contractId) {
+
+        ContractSeletIdDTO contractSeletIdDTO = new ContractSeletIdDTO();
+        contractSeletIdDTO.setContractId(contractId);
+
+        ContractSeletIdDTO responseContract = contractQueryService.selectDetailContract(contractSeletIdDTO);
+
+        return ResponseEntity.ok(ContractResponseMessage.builder()
+                .httpStatus(200)
+                .msg("계약서 상세조회 성공")
+                .result(responseContract)
+                .build());
+    }
+
+    @Operation(summary = "계약서 검색 조회(영업사원)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 검색 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("search")
+    public ResponseEntity<ContractResponseMessage> getContractBySearch(@RequestParam(required = false) String searchMemberId,
+                                                                               @RequestParam(required = false) String centerId,
+                                                                               @RequestParam(required = false) String title,
+                                                                               @RequestParam(required = false) String startAt,
+                                                                               @RequestParam(required = false) String endAt,
+                                                                               @RequestParam(required = false) String customerName,
+                                                                               @RequestParam(required = false) String customerClassifcation,
+                                                                               @RequestParam(required = false) String productId,
+                                                                               @RequestParam(required = false) String status,
+                                                                               @RequestParam(required = false) String companyName,
+                                                                               @RequestParam(required = false) String customerPurchaseCondition,
+                                                                               @PageableDefault(size = 10) Pageable pageable) {
+
+        ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
+        contractSearchDTO.setSearchMemberId(searchMemberId);
+        contractSearchDTO.setCenterId(centerId);
+        contractSearchDTO.setTitle(title);
+        contractSearchDTO.setStartAt(startAt);
+        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setCustomerName(customerName);
+        contractSearchDTO.setCustomerClassifcation(customerClassifcation);
+        contractSearchDTO.setProductId(productId);
+        contractSearchDTO.setStatus(status);
+        contractSearchDTO.setCompanyName(companyName);
+        contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
+
+        Page<ContractSearchDTO> responseContracts = contractQueryService.selectBySearch(contractSearchDTO, pageable);
+
+        return ResponseEntity.ok(ContractResponseMessage.builder()
+                .httpStatus(200)
+                .msg("계약서 검색 조회 성공")
+                .result(responseContracts)
+                .build());
+    }
 }

@@ -1,6 +1,5 @@
 package stanl_2.final_backend.domain.promotion.query.dto;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 @AllArgsConstructor
@@ -10,6 +9,7 @@ import lombok.*;
 public class PromotionSearchDTO {
     private String promotionId;
     private String title;
+    private String content;
     private String memberId;
     private String createdAt;
     private String updatedAt;

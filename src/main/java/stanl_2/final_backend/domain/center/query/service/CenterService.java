@@ -14,7 +14,7 @@ import java.util.Map;
 public interface CenterService {
     CenterSelectIdDTO selectByCenterId(String id);
 
-    Page<Map<String, Object>> selectAll(Pageable pageable);
+    Page<CenterSelectAllDTO> selectAll(Pageable pageable);
 
-    Page<Map<String, Object>> selectBySearch(Map<String, Object> params);
+    Page<CenterSelectAllDTO> selectBySearch(CenterSearchRequestDTO centerSearchRequestDTO, Pageable pageable);
 }

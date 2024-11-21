@@ -1,15 +1,11 @@
 package stanl_2.final_backend.domain.contract.query.dto;
 
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class ContractSearchDTO {
 
     private String contractId;
@@ -47,23 +43,4 @@ public class ContractSearchDTO {
     private String startAt;
     private String endAt;
     private String carName;
-    private Collection<? extends GrantedAuthority> roles;
-
-    public ContractSearchDTO(String memberId, String searchMemberId, String centerId, String title, String startAt, String endAt,
-                             String customerName, String customerClassifcation, String productId, String status,
-                             String companyName, String customerPurchaseCondition, Collection<? extends GrantedAuthority> roles) {
-        this.memberId = memberId;
-        this.searchMemberId = searchMemberId;
-        this.centerId = centerId;
-        this.title = title;
-        this.startAt = startAt;
-        this.endAt = endAt;
-        this.customerName = customerName;
-        this.customerClassifcation = customerClassifcation;
-        this.productId = productId;
-        this.status = status;
-        this.companyName = companyName;
-        this.customerPurchaseCondition = customerPurchaseCondition;
-        this.roles = roles;
-    }
 }
