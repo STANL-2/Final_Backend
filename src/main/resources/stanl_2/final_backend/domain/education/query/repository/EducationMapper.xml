@@ -13,14 +13,14 @@
     </resultMap>
     <select id="selectEducationInfo" resultMap="Education" parameterType="String">
         SELECT
-               A.EDU_ENTD,
-               A.EDU_GRAD,
-               A.EDU_NAME,
-               A.EDU_MJR,
-               A.EDU_SCO,
-               A.EDU_NOTE
-          FROM TB_EDUCATION A
-          JOIN TB_MEMBER B ON(A.MEM_ID = B.MEM_ID)
-         WHERE A.MEM_ID = #{ memberId }
+               a.edu_entd,
+               a.edu_grad,
+               a.edu_name,
+               a.edu_mjr,
+               a.edu_sco,
+               a.edu_note
+          FROM tb_education a
+          JOIN tb_member b ON(a.mem_id = b.mem_id)
+         WHERE a.mem_id = #{ memberId }
     </select>
 </mapper>

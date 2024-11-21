@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.schedule.query.repository.ScheduleMapper">
+    <resultMap id="AllSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
+        <id property="scheduleId" column="SCH_ID"/>
+        <result property="name" column="SCH_NAME"/>
+        <result property="tag" column="SCH_TAG"/>
+        <result property="startAt" column="SCH_SRT_AT"/>
+        <result property="endAt" column="SCH_END_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+    <select id="findSchedulesByMemberIdAndStartAt" resultMap="AllSchedules" parameterType="hashmap">
+        SELECT
+        A.SCH_ID,
+        A.SCH_NAME,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        WHERE MEM_ID = #{ memberId }
+        AND SCH_SRT_AT LIKE CONCAT(#{ month },'%')
+        AND ACTIVE = TRUE
+    </select>
+
+    <resultMap id="yearMonthSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO">
+        <id property="scheduleId" column="SCH_ID"/>
+        <result property="name" column="SCH_NAME"/>
+        <result property="tag" column="SCH_TAG"/>
+        <result property="startAt" column="SCH_SRT_AT"/>
+        <result property="endAt" column="SCH_END_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+    <select id="findSchedulesByMemberIdAndYearMonth" resultMap="yearMonthSchedules" parameterType="hashmap">
+        SELECT
+        A.SCH_ID,
+        A.SCH_NAME,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        WHERE A.MEM_ID = #{ memberId }
+        AND A.SCH_SRT_AT LIKE CONCAT(#{ yearMonth },'%')
+        AND A.ACTIVE = TRUE
+    </select>
+
+    <resultMap id="detailSchedule" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO">
+        <id property="scheduleId" column="SCH_ID"/>
+        <result property="name" column="SCH_NAME"/>
+        <result property="content" column="SCH_CONT"/>
+        <result property="tag" column="SCH_TAG"/>
+        <result property="startAt" column="SCH_SRT_AT"/>
+        <result property="endAt" column="SCH_END_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+    <select id="findScheduleByMemberIdAndScheduleId" resultMap="detailSchedule" parameterType="hashmap">
+        SELECT
+        A.SCH_ID,
+        A.SCH_NAME,
+        A.SCH_CONT,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        WHERE A.MEM_ID = #{ memberId }
+        AND A.SCH_ID = #{ scheduleId }
+        AND A.ACTIVE = TRUE
+    </select>
+
+    <resultMap id="AllSchedulesByDay" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO">
+        <id property="scheduleId" column="SCH_ID"/>
+        <result property="name" column="SCH_NAME"/>
+        <result property="tag" column="SCH_TAG"/>
+        <result property="startAt" column="SCH_SRT_AT"/>
+        <result property="endAt" column="SCH_END_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+    <select id="findAllSchedulesByDay" resultMap="AllSchedulesByDay" parameterType="string">
+        SELECT
+        A.SCH_NAME,
+        A.SCH_TAG,
+        A.SCH_SRT_AT,
+        A.SCH_END_AT,
+        A.MEM_ID
+        FROM TB_SCHEDULE A
+        AND SCH_SRT_AT LIKE CONCAT(#{ currentDay },'%')
+        AND ACTIVE = TRUE
+    </select>
+</mapper>
+

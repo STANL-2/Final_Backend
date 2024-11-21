@@ -30,89 +30,92 @@
         <result property="active" column="ACTIVE"/>
     </resultMap>
 
-
     <select id="findCenterById" resultMap="centerIdResultMap" parameterType="String">
         SELECT
-              A.CENT_ID
-            , A.CENT_NAME
-            , A.CENT_ADR
-            , A.CENT_PHO
-            , A.CENT_MEM_CNT
-            , A.CENT_OPR_AT
-            , A.CREATED_AT
-            , A.UPDATED_AT
-            , A.DELETED_AT
-            , A.ACTIVE
-          FROM TB_CENTER A
-         WHERE A.CENT_ID = #{id} AND A.ACTIVE = TRUE
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        , a.deleted_at
+        , a.active
+        FROM tb_center a
+        WHERE a.cent_id = #{id} AND a.active = TRUE
     </select>
 
-    <select id="findCenterAll" resultMap="centerAllResultMap" parameterType="stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO">
+    <select id="findCenterAll" resultMap="centerAllResultMap">
         SELECT
-               A.CENT_ID
-             , A.CENT_NAME
-             , A.CENT_ADR
-             , A.CENT_PHO
-             , A.CENT_MEM_CNT
-             , A.CENT_OPR_AT
-             , A.CREATED_AT
-             , A.UPDATED_AT
-             , A.DELETED_AT
-             , A.ACTIVE
-          FROM TB_CENTER A
-         WHERE A.ACTIVE = TRUE
-         ORDER BY CREATED_AT DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        , a.deleted_at
+        , a.active
+        FROM tb_center a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findCenterBySearch" resultMap="centerAllResultMap" parameterType="java.util.Map">
+    <select id="findCenterBySearch" resultMap="centerAllResultMap">
         SELECT
-        A.CENT_ID
-        , A.CENT_NAME
-        , A.CENT_ADR
-        , A.CENT_PHO
-        , A.CENT_MEM_CNT
-        , A.CENT_OPR_AT
-        , A.CREATED_AT
-        , A.UPDATED_AT
-        , A.DELETED_AT
-        , A.ACTIVE
-        FROM TB_CENTER A
-        WHERE A.ACTIVE = TRUE
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        , a.deleted_at
+        , a.active
+        FROM tb_center a
+        <where>
+            a.active = TRUE
         <if test="centerSearchRequestDTO.id != null">
-            AND A.CENT_ID LIKE #{centerSearchRequestDTO.id}
+            AND a.cent_id LIKE #{centerSearchRequestDTO.id}
         </if>
         <if test="centerSearchRequestDTO.name != null">
-            AND A.CENT_NAME LIKE #{centerSearchRequestDTO.name}
+            AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
         </if>
         <if test="centerSearchRequestDTO.address != null">
-            AND A.CENT_ADR LIKE #{centerSearchRequestDTO.address}
+            AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
         </if>
-        ORDER BY A.CREATED_AT DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        </where>
+        ORDER BY a.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findCenterCount" resultType="int">
         SELECT
-         COUNT(*) AS CNT
-          FROM TB_CENTER A
-        WHERE A.ACTIVE = TRUE;
+        COUNT(*) AS cnt
+        FROM tb_center a
+        WHERE a.active = TRUE;
     </select>
 
-    <select id="findCenterBySearchCount" resultType="int" parameterType="java.util.Map">
+    <select id="findCenterBySearchCount" resultType="int">
         SELECT
-              COUNT(*) AS CNT
-          FROM TB_CENTER A
-         WHERE A.ACTIVE = TRUE
-        <if test="centerSearchRequestDTO.id != null">
-            AND CENT_ID like #{centerSearchRequestDTO.id}
-        </if>
-        <if test="centerSearchRequestDTO.name != null">
-            AND CENT_NAME like #{centerSearchRequestDTO.name}
-        </if>
-        <if test="centerSearchRequestDTO.address != null">
-            AND CENT_ADR like #{centerSearchRequestDTO.address}
-        </if>
+        COUNT(*) AS cnt
+        FROM tb_center a
+        <where>
+            a.active = TRUE
+            <if test="centerSearchRequestDTO.id != null">
+                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            </if>
+            <if test="centerSearchRequestDTO.name != null">
+                AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.address != null">
+                AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+            </if>
+        </where>
     </select>
 
 </mapper>

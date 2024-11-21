@@ -20,28 +20,59 @@
         <result property="military" column="MEM_MIL"/>
         <result property="bankName" column="MEM_BANK_NAME"/>
         <result property="account" column="MEM_ACC"/>
+        <result property="centerId" column="CENTER_ID"/>
     </resultMap>
 
     <select id="findMemberInfoById" resultMap="Member" parameterType="String">
         SELECT
-               A.MEM_LOGIN_ID,
-               A.MEM_NAME,
-               A.MEM_EMA,
-               A.MEM_AGE,
-               A.MEM_SEX,
-               A.MEM_IDEN_NO,
-               A.MEM_PHO,
-               A.MEM_EMER_PHO,
-               A.MEM_ADR,
-               A.MEM_NOTE,
-               A.MEM_POS,
-               A.MEM_GRD,
-               A.MEM_JOB_TYPE,
-               A.MEM_MIL,
-               A.MEM_BANK_NAME,
-               A.MEM_ACC
-          FROM TB_MEMBER A
-         WHERE A.MEM_LOGIN_ID = #{ loginId }
+               a.mem_login_id,
+               a.mem_name,
+               a.mem_ema,
+               a.mem_age,
+               a.mem_sex,
+               a.mem_iden_no,
+               a.mem_pho,
+               a.mem_emer_pho,
+               a.mem_adr,
+               a.mem_note,
+               a.mem_pos,
+               a.mem_grd,
+               a.mem_job_type,
+               a.mem_mil,
+               a.mem_bank_name,
+               a.mem_acc,
+               a.center_id
+          FROM tb_member a
+         WHERE a.mem_login_id = #{ loginId }
+    </select>
+
+    <select id="findMembersByCenterId" resultMap="Member" parameterType="String">
+        SELECT
+        a.mem_id,
+        a.login_id
+        FROM tb_member a
+        WHERE a.active = true and a.centerId = #{centerId}
+    </select>
+
+    <select id="findMembersByCenterList" resultMap="Member" parameterType="java.util.List">
+        SELECT
+        a.mem_id,
+        a.login_id
+        FROM tb_member a
+        WHERE a.active = TRUE
+        AND a.center_id IN
+        <foreach collection="centerList" item="centerId" open="(" separator="," close=")">
+            #{centerId}
+        </foreach>
+    </select>
+
+
+
+    <select id="findNameById" resultType="String" parameterType="String">
+        SELECT
+               A.mem_name
+          FROM tb_member a
+         WHERE a.mem_id = #{ memberId }
     </select>
 
 </mapper>

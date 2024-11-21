@@ -1,0 +1,113 @@
+package stanl_2.final_backend.domain.promotion.command.domain.aggregate.service;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
+import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
+import stanl_2.final_backend.domain.problem.common.exception.ProblemCommonException;
+import stanl_2.final_backend.domain.problem.common.exception.ProblemErrorCode;
+import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionModifyDTO;
+import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionRegistDTO;
+import stanl_2.final_backend.domain.promotion.command.application.service.PromotionCommandService;
+import stanl_2.final_backend.domain.promotion.command.domain.aggregate.entity.Promotion;
+import stanl_2.final_backend.domain.promotion.command.domain.aggregate.repository.PromotionRepository;
+import stanl_2.final_backend.domain.promotion.common.exception.PromotionCommonException;
+import stanl_2.final_backend.domain.promotion.common.exception.PromotionErrorCode;
+
+import java.security.Principal;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Service("commandPromotionService")
+public class PromotionServiceImpl implements PromotionCommandService {
+
+    private final PromotionRepository promotionRepository;
+
+    private final ModelMapper modelMapper;
+
+    @Autowired
+    public PromotionServiceImpl(PromotionRepository promotionRepository, ModelMapper modelMapper) {
+        this.promotionRepository = promotionRepository;
+        this.modelMapper = modelMapper;
+    }
+    private String getCurrentTimestamp() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    @Transactional
+    @Override
+    public void registerPromotion(PromotionRegistDTO promotionRegistDTO, Principal principal) {
+        String memberId =principal.getName();
+        promotionRegistDTO.setMemberId(memberId);
+        try {
+            Promotion promotion =modelMapper.map(promotionRegistDTO,Promotion.class);
+            promotionRepository.save(promotion);
+        } catch (DataIntegrityViolationException e){
+            throw new PromotionCommonException(PromotionErrorCode.DATA_INTEGRITY_VIOLATION);
+        }catch (Exception e) {
+            // 서버 오류
+            throw new NoticeCommonException(NoticeErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    @Override
+    public PromotionModifyDTO modifyPromotion(String promotionId, PromotionModifyDTO promotionModifyDTO, Principal principal) {
+        String memberId= principal.getName();
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+        if(!promotion.getMemberId().equals(memberId)){
+            throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
+        }
+        try {
+            Promotion updatePromotion = modelMapper.map(promotionModifyDTO, Promotion.class);
+            updatePromotion.setPromotionId(promotion.getPromotionId());
+            updatePromotion.setMemberId(promotion.getMemberId());
+            updatePromotion.setCreatedAt(promotion.getCreatedAt());
+            updatePromotion.setActive(promotion.getActive());
+
+            promotionRepository.save(updatePromotion);
+
+            PromotionModifyDTO promotionModify = modelMapper.map(updatePromotion,PromotionModifyDTO.class);
+
+            return promotionModify;
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 위반 예외 처리
+            throw new PromotionCommonException(PromotionErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new PromotionCommonException(PromotionErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deletePromotion(String promotionId, Principal principal) {
+        String memberId= principal.getName();
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(()-> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+
+        if(!promotion.getMemberId().equals(memberId)){
+            // 권한 오류
+            throw new PromotionCommonException(PromotionErrorCode.AUTHORIZATION_VIOLATION);
+        }
+        promotion.setActive(false);
+        promotion.setDeletedAt(getCurrentTimestamp());
+
+        try {
+            promotionRepository.save(promotion);
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 위반 예외 처리
+            throw new PromotionCommonException(PromotionErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new PromotionCommonException(PromotionErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+}

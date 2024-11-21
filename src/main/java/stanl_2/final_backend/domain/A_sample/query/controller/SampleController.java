@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -74,4 +75,16 @@ public class SampleController {
                 .build());
     }
 
+    @Operation(summary = "샘플 엑셀 다운 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "샘플 엑설 다운 테스트 성공",
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/excel")
+    public void exportSample(HttpServletResponse response){
+
+        sampleQueryService.exportSamplesToExcel(response);
+    }
 }
