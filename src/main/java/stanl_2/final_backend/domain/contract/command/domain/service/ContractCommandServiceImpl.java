@@ -22,7 +22,7 @@ import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.product.command.application.command.service.ProductCommandService;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
-import stanl_2.final_backend.domain.product.query.service.ProductService;
+import stanl_2.final_backend.domain.product.query.service.ProductQueryService;
 import stanl_2.final_backend.domain.sales_history.command.application.service.SalesHistoryCommandService;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -39,13 +39,13 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     private final CustomerQueryService customerQueryService;
     private final MemberQueryService memberQueryService;
     private final CustomerCommandService customerCommandService;
-    private final ProductService productService;
+    private final ProductQueryService productService;
     private final ProductCommandService productCommandService;
     private final SalesHistoryCommandService salesHistoryCommandService;
     private final ModelMapper modelMapper;
     private final AESUtils aesUtils;
 
-    public ContractCommandServiceImpl(ContractRepository contractRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductService productService, ProductCommandService productCommandService, SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper, AESUtils aesUtils) {
+    public ContractCommandServiceImpl(ContractRepository contractRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductQueryService productService, ProductCommandService productCommandService, SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper, AESUtils aesUtils) {
         this.contractRepository = contractRepository;
         this.authQueryService = authQueryService;
         this.customerQueryService = customerQueryService;

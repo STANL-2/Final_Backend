@@ -9,7 +9,7 @@ import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import java.util.Map;
 
 @Service
-public interface ProductService {
+public interface ProductQueryService {
     Page<Map<String, Object>> selectAll(Pageable pageable);
 
     ProductSelectIdDTO selectByProductId(String id);
