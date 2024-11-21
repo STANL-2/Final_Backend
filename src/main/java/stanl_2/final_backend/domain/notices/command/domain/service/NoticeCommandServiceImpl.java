@@ -69,7 +69,6 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Transactional
     public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
         String memberId= principal.getName();
-        noticeModifyDTO.setMemberId(memberId);
 
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
@@ -121,10 +120,10 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
             noticeRepository.save(notice);
         } catch (DataIntegrityViolationException e) {
         // 데이터 무결성 위반 예외 처리
-            throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
+            throw new NoticeCommonException(NoticeErrorCode.DATA_INTEGRITY_VIOLATION);
         } catch (Exception e) {
         // 서버 오류
-            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
+            throw new NoticeCommonException(NoticeErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

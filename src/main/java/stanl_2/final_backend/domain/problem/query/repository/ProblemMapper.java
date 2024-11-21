@@ -10,8 +10,8 @@ import java.util.List;
 @Mapper
 public interface ProblemMapper {
     List<ProblemDTO> findProblems(
-            @Param("offset") int offset,
-            @Param("size") int size,
+            @Param("offset") Integer offset,
+            @Param("size") Integer size,
             @Param("problemDTO") ProblemSearchDTO problemSearchDTO
     );
     Integer findProblemsCount(@Param("problemSearchDTO") ProblemSearchDTO problemSearchDTO);

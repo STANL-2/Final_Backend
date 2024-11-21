@@ -21,11 +21,11 @@ public class ProblemServiceImpl implements ProblemService {
 
     @Override
     public Page<ProblemDTO> findProblems(Pageable pageable, ProblemSearchDTO problemSearchDTO) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
+        Integer offset = Math.toIntExact(pageable.getOffset());
+        Integer size = pageable.getPageSize();
         List<ProblemDTO> problems = problemMapper.findProblems(offset,size,problemSearchDTO);
         Integer count = problemMapper.findProblemsCount(problemSearchDTO);
-        int totalCount = (count != null) ?  problemMapper.findProblemsCount(problemSearchDTO) : 0;
+        Integer totalCount = (count != null) ?  problemMapper.findProblemsCount(problemSearchDTO) : 0;
 
         return new PageImpl<>(problems, pageable, totalCount);
     }
