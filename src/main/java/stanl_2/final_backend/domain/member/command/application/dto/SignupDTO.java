@@ -1,6 +1,5 @@
 package stanl_2.final_backend.domain.member.command.application.dto;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 @AllArgsConstructor
