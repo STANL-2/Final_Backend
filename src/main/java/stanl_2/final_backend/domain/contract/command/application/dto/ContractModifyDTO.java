@@ -14,7 +14,9 @@ public class ContractModifyDTO {
     private String contractId;
     private String title;
     private String customerName;
+    private String customerSex;
     private String customerIdentifiNo;
+    private Integer customerAge;
     private String customerAddrress;
     private String customerEmail;
     private String customerPhone;
@@ -41,5 +43,4 @@ public class ContractModifyDTO {
     private String centerId;
     private String customerId;
     private String productId;
-    private Collection<? extends GrantedAuthority> roles;
 }

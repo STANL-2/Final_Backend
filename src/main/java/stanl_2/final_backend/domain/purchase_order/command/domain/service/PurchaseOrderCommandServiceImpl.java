@@ -17,8 +17,6 @@ import stanl_2.final_backend.domain.purchase_order.command.domain.aggregate.enti
 import stanl_2.final_backend.domain.purchase_order.command.domain.repository.PurchaseOrderRepository;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
-import stanl_2.final_backend.global.exception.GlobalCommonException;
-import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -63,7 +61,6 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         }
 
         PurchaseOrder purchaseOrder = modelMapper.map(purchaseOrderRegistDTO, PurchaseOrder.class);
-        purchaseOrder.setStatus("WAIT");
 
         purchaseOrderRepository.save(purchaseOrder);
     }
@@ -92,7 +89,6 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         }
 
         PurchaseOrder updatePurchaseOrder = modelMapper.map(purchaseOrderModifyDTO, PurchaseOrder.class);
-
         updatePurchaseOrder.setCreatedAt(purchaseOrder.getCreatedAt());
         updatePurchaseOrder.setUpdatedAt(purchaseOrder.getUpdatedAt());
         updatePurchaseOrder.setStatus(purchaseOrder.getStatus());
@@ -107,12 +103,12 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
     @Override
     @Transactional
-    public void deletePurchaseOrder(String id, String loginId) {
+    public void deletePurchaseOrder(String purchaseOrderId, String loginId) {
 
         String memberId = authQueryService.selectMemberIdByLoginId(loginId);
 
         // 발주서가 해당 회원의 것인지 확인
-        PurchaseOrder purchaseOrder = (PurchaseOrder) purchaseOrderRepository.findByPurchaseOrderIdAndMemberId(id, memberId)
+        PurchaseOrder purchaseOrder = (PurchaseOrder) purchaseOrderRepository.findByPurchaseOrderIdAndMemberId(purchaseOrderId, memberId)
                 .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
 
         purchaseOrder.setActive(false);
@@ -127,16 +123,12 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
         String adminId = authQueryService.selectMemberIdByLoginId(purchaseOrderStatusModifyDTO.getAdminId());
 
-        if ("[ROLE_REPRESENTATIVE]".equals(purchaseOrderStatusModifyDTO.getRoles())) {
-            PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(purchaseOrderStatusModifyDTO.getPurchaseOrderId())
-                    .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(purchaseOrderStatusModifyDTO.getPurchaseOrderId())
+                .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
 
-            purchaseOrder.setStatus(purchaseOrderStatusModifyDTO.getStatus());
-            purchaseOrder.setAdminId(adminId);
+        purchaseOrder.setStatus(purchaseOrderStatusModifyDTO.getStatus());
+        purchaseOrder.setAdminId(adminId);
 
-            purchaseOrderRepository.save(purchaseOrder);
-        } else {
-            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
-        }
+        purchaseOrderRepository.save(purchaseOrder);
     }
 }

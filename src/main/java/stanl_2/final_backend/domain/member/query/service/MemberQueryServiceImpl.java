@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.member.query.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,23 +15,20 @@ import stanl_2.final_backend.global.utils.AESUtils;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+@Slf4j
 @Service(value = "queryMemberService")
 public class MemberQueryServiceImpl implements MemberQueryService {
 
     private final MemberMapper memberMapper;
     private final AESUtils aesUtils;
     private final MemberRoleMapper memberRoleMapper;
-//    private final AlarmService alarmService;
 
     @Autowired
     public MemberQueryServiceImpl(MemberMapper memberMapper, AESUtils aesUtils,
-                                  MemberRoleMapper memberRoleMapper
-//            , AlarmService alarmService
-    ) {
+                                  MemberRoleMapper memberRoleMapper) {
         this.memberMapper = memberMapper;
         this.aesUtils = aesUtils;
         this.memberRoleMapper = memberRoleMapper;
-//        this.alarmService = alarmService;
     }
 
     @Override
@@ -79,5 +77,15 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         List<MemberDTO> memberList = memberMapper.findMembersByCenterList(centerList);
 
         return memberList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String selectNameById(String memberId) throws GeneralSecurityException {
+
+        String name = memberMapper.findNameById(memberId);
+        name = aesUtils.decrypt(name);
+
+        return name;
     }
 }

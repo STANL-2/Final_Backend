@@ -37,8 +37,14 @@ public class Contract {
     @Column(name = "CONR_CUST_NAME", nullable = false)
     private String customerName;
 
+    @Column(name = "CONR_CUST_SEX", nullable = false)
+    private String customerSex;
+
     @Column(name = "CONR_CUST_IDEN_NO", nullable = false)
     private String customerIdentifiNo;
+
+    @Column(name = "CONR_CUST_AGE", nullable = false)
+    private String customerAge;
 
     @Column(name = "CONR_CUST_ADR", nullable = false)
     private String customerAddrress;
@@ -88,8 +94,7 @@ public class Contract {
     private String carName;
 
     @Column(name = "CONR_STAT", nullable = false)
-    @ColumnDefault("'WAIT'")
-    private String status;
+    private String status = "WAIT";
 
     @Column(name = "CONR_NO_OF_VEH", nullable = false)
     @ColumnDefault("1")
@@ -122,7 +127,7 @@ public class Contract {
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
-    @Column(name = "ADMI_ID", nullable = false)
+    @Column(name = "ADMI_ID")
     private String adminId;
 
     @Column(name = "CENT_ID", nullable = false)

@@ -13,7 +13,7 @@ public class OrderSelectAllDTO {
     private String orderId;
     private String title;
     private String status;
-    private String contractName;
+    private String contractTitle;
     private String adminName;
     private String memberName;
     private String productName;

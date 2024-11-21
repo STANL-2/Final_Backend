@@ -60,7 +60,6 @@ dependencies {
 
     //hibernate core
     implementation 'org.hibernate.orm:hibernate-core:6.5.2.Final'
-
 }
 
 tasks.named('test') {

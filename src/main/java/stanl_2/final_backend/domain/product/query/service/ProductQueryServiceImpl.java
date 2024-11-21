@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductQueryServiceImpl implements ProductQueryService {
 
     private final ProductMapper productMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductMapper productMapper) {
+    public ProductQueryServiceImpl(ProductMapper productMapper) {
         this.productMapper = productMapper;
     }
 
@@ -41,8 +41,6 @@ public class ProductServiceImpl implements ProductService{
     @Override
     @Transactional
     public ProductSelectIdDTO selectByProductId(String id) {
-
-        /* 설명. 상세 조회 시, Mapper에서 product와 productOption join해서 보여줄 것 */
         ProductSelectIdDTO productSelectIdDTO = productMapper.findProductById(id);
 
         return productSelectIdDTO;

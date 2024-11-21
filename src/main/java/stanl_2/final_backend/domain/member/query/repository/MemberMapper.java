@@ -11,6 +11,8 @@ import java.util.List;
 public interface MemberMapper {
     MemberDTO findMemberInfoById(@Param("loginId") String loginId);
 
+    String findNameById(@Param("memberId") String memberId);
+
     List<MemberDTO> findMembersByCenterId(@Param("centerId") String centerId);
 
     List<MemberDTO> findMembersByCenterList(@Param("centerList") List<CenterSelectAllDTO> centerList);

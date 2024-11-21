@@ -1,122 +1,161 @@
 package stanl_2.final_backend.domain.purchase_order.query.service;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectIdDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO;
 import stanl_2.final_backend.domain.purchase_order.query.repository.PurchaseOrderMapper;
-import stanl_2.final_backend.global.exception.GlobalCommonException;
-import stanl_2.final_backend.global.exception.GlobalErrorCode;
-import stanl_2.final_backend.global.utils.AESUtils;
-
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 @Service
-@Transactional(readOnly = true)
 public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService {
 
     private final PurchaseOrderMapper purchaseOrderMapper;
-    private final AESUtils aesUtils;
+    private final AuthQueryService authQueryService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public PurchaseOrderQueryServiceImpl(PurchaseOrderMapper purchaseOrderMapper, AESUtils aesUtils) {
+    public PurchaseOrderQueryServiceImpl(PurchaseOrderMapper purchaseOrderMapper, AuthQueryService authQueryService, RedisTemplate<String, Object> redisTemplate) {
         this.purchaseOrderMapper = purchaseOrderMapper;
-        this.aesUtils = aesUtils;
+        this.authQueryService = authQueryService;
+        this.redisTemplate = redisTemplate;
+    }
+
+    // 영업 관리자 조회
+    @Override
+    @Transactional(readOnly = true)
+    public PurchaseOrderSelectIdDTO selectDetailPurchaseOrderAdmin(PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO) {
+
+        String memberId = authQueryService.selectMemberIdByLoginId(purchaseOrderSelectIdDTO.getMemberId());
+
+        PurchaseOrderSelectIdDTO purchaseOrder = purchaseOrderMapper.findPurchaseOrderByPurchaseOrderIdAndMemberId(purchaseOrderSelectIdDTO.getPurchaseOrderId(), memberId);
+
+        if (purchaseOrder == null) {
+            throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
+        }
+
+        String unescapedUrl = StringEscapeUtils.unescapeJson(purchaseOrder.getContent());
+        purchaseOrder.setContent(unescapedUrl);
+
+        return purchaseOrder;
     }
 
     @Override
-    public PurchaseOrderSelectIdDTO selectDetailPurchaseOrder(PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO) {
-        if (purchaseOrderSelectIdDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()) || "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
+    @Transactional(readOnly = true)
+    public Page<PurchaseOrderSelectAllDTO> selectAllPurchaseOrderAdmin(Pageable pageable, PurchaseOrderSelectAllDTO purchaseOrderSelectAllDTO) {
 
-            PurchaseOrderSelectIdDTO purchaseOrder = purchaseOrderMapper.findPurchaseOrderById(purchaseOrderSelectIdDTO.getPurchaseOrderId());
+        String memberId = authQueryService.selectMemberIdByLoginId(purchaseOrderSelectAllDTO.getMemberId());
 
-            if (purchaseOrder == null) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+
+        String cacheKey = "myCache::purchaseOrders::offset=" + offset + "::pageSize=" + pageSize;
+
+        // 캐시 조회
+        List<PurchaseOrderSelectAllDTO> purchaseOrders = (List<PurchaseOrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
+
+        if (purchaseOrders == null) {
+            purchaseOrders = purchaseOrderMapper.findAllPurchaseOrderByMemberId(offset, pageSize, memberId);
+
+            if(purchaseOrders == null) {
                 throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
             }
-            return purchaseOrder;
-        } else {
-            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+
+            redisTemplate.opsForValue().set(cacheKey, purchaseOrders);
         }
+
+        Integer count = purchaseOrderMapper.findAllPurchaseOrderCountByMemberId(memberId);
+        int totalPurchaseOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(purchaseOrders, pageable, totalPurchaseOrder);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<PurchaseOrderSelectSearchDTO> selectSearchPurchaseOrderAdmin(PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO, Pageable pageable) {
+
+        String memberId = authQueryService.selectMemberIdByLoginId(purchaseOrderSelectSearchDTO.getMemberId());
+        purchaseOrderSelectSearchDTO.setMemberId(memberId);
+
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+        List<PurchaseOrderSelectSearchDTO> purchaseOrders = purchaseOrderMapper.findSearchPurchaseOrderMemberId(offset, pageSize, purchaseOrderSelectSearchDTO);
+
+        if (purchaseOrders == null) {
+            throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
+        }
+
+        Integer count = purchaseOrderMapper.findSearchPurchaseOrderCountMemberId(purchaseOrderSelectSearchDTO);
+        int totalPurchaseOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(purchaseOrders, pageable, totalPurchaseOrder);
+    }
+
+    // 영업 담장자 조회
+    @Override
+    @Transactional(readOnly = true)
+    public PurchaseOrderSelectIdDTO selectDetailPurchaseOrder(PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO) {
+
+        PurchaseOrderSelectIdDTO purchaseOrder = purchaseOrderMapper.findPurchaseOrderByPurchaseOrderId(purchaseOrderSelectIdDTO.getPurchaseOrderId());
+
+        if (purchaseOrder == null) {
+            throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
+        }
+        return purchaseOrder;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<PurchaseOrderSelectAllDTO> selectAllPurchaseOrder(Pageable pageable, PurchaseOrderSelectAllDTO purchaseOrderSelectAllDTO) {
 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
-        if (purchaseOrderSelectAllDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()) || "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
+        String cacheKey = "myCache::purchaseOrders::offset=" + offset + "::size=" + pageSize;
 
-            List<PurchaseOrderSelectAllDTO> purchaseOrders = purchaseOrderMapper.findAllPurchaseOrder(offset, pageSize);
+        // 캐시 조회
+        List<PurchaseOrderSelectAllDTO> purchaseOrders = (List<PurchaseOrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
 
-            if (purchaseOrders == null || purchaseOrders.isEmpty()) {
+        if (purchaseOrders == null) {
+            purchaseOrders = purchaseOrderMapper.findAllPurchaseOrder(offset, pageSize);
+
+            if(purchaseOrders == null) {
                 throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
             }
 
-            purchaseOrders.forEach(purchaseOrder -> {
-                try {
-                    purchaseOrder.setMemberName(aesUtils.decrypt(purchaseOrder.getMemberName()));
-                } catch (GeneralSecurityException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            int total = purchaseOrderMapper.findAllPurchaseOrderCount();
-
-            return new PageImpl<>(purchaseOrders, pageable, total);
-        } else {
-            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+            redisTemplate.opsForValue().set(cacheKey, purchaseOrders);
         }
+
+        Integer count = purchaseOrderMapper.findAllPurchaseOrderCount();
+        int totalPurchaseOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(purchaseOrders, pageable, totalPurchaseOrder);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<PurchaseOrderSelectSearchDTO> selectSearchPurchaseOrder(PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO, Pageable pageable) {
 
-        if (purchaseOrderSelectSearchDTO.getRoles().stream()
-                .anyMatch(role -> "ROLE_MANAGER".equals(role.getAuthority()) || "ROLE_REPRESENTATIVE".equals(role.getAuthority()))) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+        List<PurchaseOrderSelectSearchDTO> purchaseOrders = purchaseOrderMapper.findSearchPurchaseOrder(offset, pageSize, purchaseOrderSelectSearchDTO);
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("title", purchaseOrderSelectSearchDTO.getTitle());
-            map.put("status", purchaseOrderSelectSearchDTO.getStatus());
-            map.put("adminId", purchaseOrderSelectSearchDTO.getAdminId());
-            map.put("searchMemberId", purchaseOrderSelectSearchDTO.getSearchMemberId());
-            map.put("startDate", purchaseOrderSelectSearchDTO.getStartDate());
-            map.put("endDate", purchaseOrderSelectSearchDTO.getEndDate());
-            map.put("roles", purchaseOrderSelectSearchDTO.getRoles());
-            map.put("pageSize", pageable.getPageSize());
-            map.put("offset", pageable.getOffset());
-
-            List<PurchaseOrderSelectSearchDTO> purchaseOrders = purchaseOrderMapper.findSearchPurchaseOrder(map);
-
-            if (purchaseOrders == null || purchaseOrders.isEmpty()) {
-                throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
-            }
-
-            purchaseOrders.forEach(purchaseOrder -> {
-                try {
-                    purchaseOrder.setMemberName(aesUtils.decrypt(purchaseOrder.getMemberName()));
-                } catch (GeneralSecurityException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            int total = purchaseOrderMapper.findSearchPurchaseOrderCount();
-
-            return new PageImpl<>(purchaseOrders, pageable, total);
-        } else {
-            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+        if (purchaseOrders == null) {
+            throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
         }
+
+        Integer count = purchaseOrderMapper.findSearchPurchaseOrderCount(purchaseOrderSelectSearchDTO);
+        int totalPurchaseOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(purchaseOrders, pageable, totalPurchaseOrder);
     }
 }

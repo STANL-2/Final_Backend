@@ -3,9 +3,10 @@ package stanl_2.final_backend.domain.order.command.domain.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.contract.command.domain.repository.ContractRepository;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
+import stanl_2.final_backend.domain.order.command.application.dto.OrderStatusModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.service.OrderCommandService;
 import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.order.command.domain.repository.OrderRepository;
@@ -20,12 +21,12 @@ import java.time.format.DateTimeFormatter;
 public class OrderCommandServiceImpl implements OrderCommandService {
 
     private final OrderRepository orderRepository;
-    private final ContractRepository contractRepository;
+    private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
 
-    public OrderCommandServiceImpl(OrderRepository orderRepository, ContractRepository contractRepository, ModelMapper modelMapper) {
+    public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper) {
         this.orderRepository = orderRepository;
-        this.contractRepository = contractRepository;
+        this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
     }
 
@@ -37,14 +38,12 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     @Override
     @Transactional
     public void registerOrder(OrderRegistDTO orderRegistDTO) {
-        // 회원인지 확인여부
 
-        // 회원의 계약서가 맞는지 확인
-//        Contract contract = contractRepository.findById(orderRegistDTO.getConrId())
-//                .orElseThrow(() -> new Contrac)
+        String memberId = authQueryService.selectMemberIdByLoginId(orderRegistDTO.getMemberId());
+
+        orderRegistDTO.setMemberId(memberId);
 
         Order order = modelMapper.map(orderRegistDTO, Order.class);
-        order.setStatus("WAIT");
 
         orderRepository.save(order);
     }
@@ -52,10 +51,14 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     @Override
     @Transactional
     public OrderModifyDTO modifyOrder(OrderModifyDTO orderModifyDTO) {
-        // 회원인지 확인여부
 
-        Order order = orderRepository.findById(orderModifyDTO.getOrderId())
-                .orElseThrow(() -> new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND));
+        String memberId = authQueryService.selectMemberIdByLoginId(orderModifyDTO.getMemberId());
+
+        Order order = orderRepository.findByOrderIdAndMemberId(orderModifyDTO.getOrderId(), memberId);
+
+        if (order == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
 
         Order updateOrder = modelMapper.map(orderModifyDTO, Order.class);
         updateOrder.setCreatedAt(order.getCreatedAt());
@@ -73,15 +76,34 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
     @Override
     @Transactional
-    public void deleteOrder(String id) {
+    public void deleteOrder(String id, String loginId) {
 
-        // 회원 확인
+        String memberId = authQueryService.selectMemberIdByLoginId(loginId);
 
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository.findByOrderIdAndMemberId(id, memberId);
+
+        if (order == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
 
         order.setActive(false);
         order.setDeletedAt(getCurrentTime());
+
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void modifyOrderStatus(OrderStatusModifyDTO orderStatusModifyDTO) {
+
+        String adminId = authQueryService.selectMemberIdByLoginId(orderStatusModifyDTO.getAdminId());
+        Order order = orderRepository.findByOrderId(orderStatusModifyDTO.getOrderId());
+        if (order == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        order.setStatus(orderStatusModifyDTO.getStatus());
+        order.setAdminId(adminId);
 
         orderRepository.save(order);
     }

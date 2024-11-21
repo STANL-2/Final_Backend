@@ -46,7 +46,7 @@ public class Problem {
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
 
-    @Column(name = "CUST_ID", nullable = false)
+    @Column(name = "CST_ID", nullable = false)
     private String customerId;
 
     @Column(name = "MEM_ID", nullable = false)

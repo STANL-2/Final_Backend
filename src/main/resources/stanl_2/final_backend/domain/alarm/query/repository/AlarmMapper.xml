@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.alarm.query.repository.AlarmMapper">
+    <resultMap id="numberOfAlarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO">
+        <result property="scheduleAlarmCount" column="SCH_ALR_CNT"/>
+        <result property="noticeAlarmCount" column="NOT_ALR_CNT"/>
+        <result property="contractAlarmCount" column="CONR_ALR_CNT"/>
+    </resultMap>
+    <select id="findNumberOfAlarmsByType" resultMap="numberOfAlarmsByType" parameterType="string">
+        SELECT
+               SUM(CASE WHEN a.alr_type = 'SCHEDULE' THEN 1 ELSE 0 END) AS SCH_ALR_CNT,
+               SUM(CASE WHEN a.alr_type = 'NOTICE' THEN 1 ELSE 0 END) AS NOT_ALR_CNT,
+               SUM(CASE WHEN a.alr_type = 'CONTRACT' THEN 1 ELSE 0 END) AS CONR_ALR_CNT
+         FROM tb_alarm a
+        WHERE a.mem_id = #{memberId}
+          AND a.alr_read_stat = false
+    </select>
+
+    <resultMap id="alarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectUnreadDTO">
+        <result property="message" column="ALR_MSG"/>
+        <result property="type" column="ALR_TYPE"/>
+        <result property="redirectUrl" column="ALR_URL"/>
+        <result property="readStatus" column="ALR_READ_STAT"/>
+    </resultMap>
+    <select id="findReadAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
+        SELECT
+               a.alr_msg,
+               a.alr_type,
+               a.alr_url,
+               a.alr_read_stat
+          FROM tb_alarm a
+         WHERE a.mem_id = #{memberId}
+           AND a.alr_type = #{type}
+           AND a.alr_read_stat = true
+    </select>
+    <select id="findUnReadAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
+        SELECT
+        a.alr_msg,
+        a.alr_type,
+        a.alr_url,
+        a.alr_read_stat
+        FROM tb_alarm a
+        WHERE a.mem_id = #{memberId}
+        AND a.alr_type = #{type}
+        AND a.alr_read_stat = false
+    </select>
+
+    <select id="findReadAlarmsCountByMemberId" resultType="int" parameterType="String">
+        SELECT
+               COUNT(*) AS cnt
+          FROM tb_alarm a
+        WHERE a.mem_id = #{memberId}
+          AND a.alr_read_stat = true
+    </select>
+
+    <select id="findUnreadAlarmsCountByMemberId" resultType="int" parameterType="String">
+        SELECT
+               COUNT(*) AS cnt
+          FROM tb_alarm a
+         WHERE a.mem_id = #{memberId}
+           AND a.alr_read_stat = false
+    </select>
+</mapper>
