@@ -118,4 +118,31 @@
         </where>
     </select>
 
+    <select id="findCenterListBySearch" resultMap="centerAllResultMap">
+        SELECT
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        , a.deleted_at
+        , a.active
+        FROM tb_center a
+        <where>
+            a.active = TRUE
+            <if test="centerSearchRequestDTO.id != null">
+                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            </if>
+            <if test="centerSearchRequestDTO.name != null">
+                AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.address != null">
+                AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+    </select>
 </mapper>

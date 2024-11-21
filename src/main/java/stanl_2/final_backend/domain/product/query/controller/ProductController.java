@@ -1,11 +1,17 @@
 package stanl_2.final_backend.domain.product.query.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.center.common.response.CenterResponseMessage;
 import stanl_2.final_backend.domain.product.common.response.ProductResponseMessage;
 import stanl_2.final_backend.domain.product.query.dto.ProductSearchRequestDTO;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
@@ -25,6 +31,11 @@ public class ProductController {
         this.productQueryService = productQueryService;
     }
 
+    @Operation(summary = "제품 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = ProductResponseMessage.class))})
+    })
     @GetMapping("")
     public ResponseEntity<ProductResponseMessage> getProductAll(@PageableDefault(size = 20) Pageable pageable){
 
@@ -36,7 +47,11 @@ public class ProductController {
                 .result(responseProducts)
                 .build());
     }
-
+    @Operation(summary = "제품 상세조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = ProductResponseMessage.class))})
+    })
     @GetMapping("{id}")
     public ResponseEntity<ProductResponseMessage> getProductById(@PathVariable("id") String id){
 
@@ -48,7 +63,11 @@ public class ProductController {
                 .result(productSelectIdDTO)
                 .build());
     }
-
+    @Operation(summary = "제품 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = ProductResponseMessage.class))})
+    })
     @GetMapping("/search")
     public ResponseEntity<ProductResponseMessage> getProductBySearch(@RequestParam Map<String, String> params
             ,@PageableDefault(size = 20) Pageable pageable){

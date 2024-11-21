@@ -90,7 +90,7 @@ public class EvaluationController {
     /**
      * [GET] http://localhost:7777/api/v1/sample/detail/SAM_000000001
      * */
-    @Operation(summary = "평가서 상세 조회 테스트")
+    @Operation(summary = "평가서 상세 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
@@ -141,7 +141,7 @@ public class EvaluationController {
                 .build());
     }
 
-    @Operation(summary = "평가서 관리자 검색")
+    @Operation(summary = "평가서 담당자 검색")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),

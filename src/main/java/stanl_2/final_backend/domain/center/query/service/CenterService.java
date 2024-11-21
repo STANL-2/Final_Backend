@@ -17,4 +17,6 @@ public interface CenterService {
     Page<CenterSelectAllDTO> selectAll(Pageable pageable);
 
     Page<CenterSelectAllDTO> selectBySearch(CenterSearchRequestDTO centerSearchRequestDTO, Pageable pageable);
+
+    List<CenterSelectAllDTO> selectCenterListBySearch(CenterSearchRequestDTO centerSearchRequestDTO);
 }

@@ -76,5 +76,14 @@ public class CenterServiceImpl implements CenterService{
         return new PageImpl<>(centerList, pageable, total);
     }
 
+    @Override
+    @Transactional
+    public List<CenterSelectAllDTO> selectCenterListBySearch(CenterSearchRequestDTO centerSearchRequestDTO){
+
+        List<CenterSelectAllDTO> centerList = centerMapper.findCenterListBySearch(centerSearchRequestDTO);
+
+        return centerList;
+    }
+
 
 }

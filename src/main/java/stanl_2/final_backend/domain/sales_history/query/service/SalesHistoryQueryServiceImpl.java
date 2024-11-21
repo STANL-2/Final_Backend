@@ -11,6 +11,7 @@ import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryCommonException;
 import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryErrorCode;
+import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySearchDTO;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsDTO;
@@ -134,5 +135,60 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         SalesHistoryStatisticsDTO salesHistoryStatisticsDTO = salesHistoryMapper.findStatisticsSearchYearByEmployee(salesHistorySearchDTO);
 
         return salesHistoryStatisticsDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SalesHistoryRankedDataDTO> selectStatistics(Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllRank(size,offset);
+
+        int total = salesHistoryMapper.findRankCount();
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SalesHistoryRankedDataDTO> selectStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearch(size,offset, salesHistoryRankedDataDTO);
+
+        int total = salesHistoryMapper.findStatisticsBySearchCount(salesHistoryRankedDataDTO);
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+    }
+
+    @Override
+    public Page<SalesHistoryRankedDataDTO> selectStatisticsCenterBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        System.out.println("service check1");
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearch(size,offset, salesHistoryRankedDataDTO);
+        System.out.println("service check2");
+
+        int total = salesHistoryMapper.findStatisticsCenterBySearchCount(salesHistoryRankedDataDTO);
+        System.out.println("service check3");
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+
     }
 }

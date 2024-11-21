@@ -17,21 +17,21 @@ public class ProductCommandServiceImpl implements ProductCommandService {
     }
 
     @Override
-    public void modifyProductStock(String productId) {
+    public void modifyProductStock(String productId, int numberOfVehicles) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductCommonException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
-        product.setStock(product.getStock() - 1);
+        product.setStock(product.getStock() - numberOfVehicles);
 
         productRepository.save(product);
     }
 
     @Override
-    public void deleteProductStock(String productId) {
+    public void deleteProductStock(String productId, int numberOfVehicles) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductCommonException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
-        product.setStock(product.getStock() + 1);
+        product.setStock(product.getStock() + numberOfVehicles);
         productRepository.save(product);
     }
 }

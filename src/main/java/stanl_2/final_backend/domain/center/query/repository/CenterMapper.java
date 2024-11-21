@@ -27,4 +27,5 @@ public interface CenterMapper {
                                                 , @Param("offset") int offset
                                                 , @Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO);
 
+    List<CenterSelectAllDTO> findCenterListBySearch(@Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO);
 }
