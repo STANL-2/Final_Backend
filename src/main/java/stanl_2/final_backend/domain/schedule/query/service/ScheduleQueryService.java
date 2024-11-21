@@ -1,6 +1,7 @@
 package stanl_2.final_backend.domain.schedule.query.service;
 
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
+import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO;
 
@@ -13,5 +14,5 @@ public interface ScheduleQueryService {
 
     ScheduleDetailDTO selectDetailSchedule(ScheduleDetailDTO scheduleDetailDTO);
 
-    List<ScheduleDTO> findSchedulesByDate(String currentDay);
+    List<ScheduleDayDTO> findSchedulesByDate(String currentDay);
 }

@@ -11,6 +11,7 @@ import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
+import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO;
 import stanl_2.final_backend.domain.schedule.query.repository.ScheduleMapper;
@@ -104,9 +105,9 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ScheduleDTO> findSchedulesByDate(String currentDay) {
+    public List<ScheduleDayDTO> findSchedulesByDate(String currentDay) {
 
-        List<ScheduleDTO> todaySchedules = scheduleMapper.findAllSchedulesByDay(currentDay);
+        List<ScheduleDayDTO> todaySchedules = scheduleMapper.findAllSchedulesByDay(currentDay);
 
         return todaySchedules;
     }

@@ -11,8 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
-import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.promotion.common.response.PromotionResponseMessage;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO;
