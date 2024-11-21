@@ -34,4 +34,20 @@
          WHERE A.SAM_ID = #{ id }
     </select>
 
+    <resultMap id="SampleExcel" type="stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload">
+        <result property="name" column="SAM_NAME"/>
+        <result property="num" column="SAM_NUM"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+
+    <select id="findSamplesForExcel" resultMap="SampleExcel">
+        SELECT
+               a.sam_name,
+               a.sam_num,
+               a.active,
+               a.created_at
+          FROM sample a
+    </select>
+
 </mapper>

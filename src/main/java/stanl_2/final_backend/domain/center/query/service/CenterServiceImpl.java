@@ -5,13 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.A_sample.common.exception.SampleCommonException;
+import stanl_2.final_backend.domain.A_sample.common.exception.SampleErrorCode;
 import stanl_2.final_backend.domain.center.common.util.RequestList;
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 import stanl_2.final_backend.domain.center.query.repository.CenterMapper;
+import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -21,10 +25,12 @@ import java.util.Map;
 public class CenterServiceImpl implements CenterService{
 
     private final CenterMapper centerMapper;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public CenterServiceImpl(CenterMapper centerMapper) {
+    public CenterServiceImpl(CenterMapper centerMapper, RedisTemplate<String, Object> redisTemplate) {
         this.centerMapper = centerMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -38,13 +44,11 @@ public class CenterServiceImpl implements CenterService{
 
     @Override
     @Transactional
-    public Page<Map<String, Object>> selectAll(Pageable pageable) {
+    public Page<CenterSelectAllDTO> selectAll(Pageable pageable) {
 
-        RequestList<?> requestList = RequestList.builder()
-                .pageable(pageable)
-                .build();
-
-        List<Map<String, Object>> centerList = centerMapper.findCenterAll(requestList);
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+        List<CenterSelectAllDTO> centerList = centerMapper.findCenterAll(size, offset);
 
         int total = centerMapper.findCenterCount();
 
@@ -53,13 +57,21 @@ public class CenterServiceImpl implements CenterService{
 
     @Override
     @Transactional
-    public Page<Map<String, Object>> selectBySearch(Map<String, Object> params){
+    public Page<CenterSelectAllDTO> selectBySearch(CenterSearchRequestDTO centerSearchRequestDTO, Pageable pageable){
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
 
-        Pageable pageable = (Pageable) params.get("pageable");
+//        String cacheKey = "myCache::center::offset=" + offset + "::size=" + size;
+//
+//        List<CenterSelectAllDTO> centerList = (List<CenterSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
+//        if (centerList == null) {
+//            System.out.println("여기까진 들어가나?");
+//            centerList = centerMapper.findCenterBySearch(size, offset, centerSearchRequestDTO);
+//            redisTemplate.opsForValue().set(cacheKey, centerList);
+//        }
 
-        List<Map<String, Object>> centerList = centerMapper.findCenterBySearch(params);
-
-        int total = centerMapper.findCenterBySearchCount(params);
+        List<CenterSelectAllDTO> centerList = centerMapper.findCenterBySearch(size, offset, centerSearchRequestDTO);
+        int total = centerMapper.findCenterBySearchCount(centerSearchRequestDTO);
 
         return new PageImpl<>(centerList, pageable, total);
     }

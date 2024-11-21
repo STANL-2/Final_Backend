@@ -22,7 +22,7 @@ public class Center {
     @GeneratedValue(generator = "PrefixGeneratorConfig")
     @GenericGenerator(name = "PrefixGeneratorConfig",
             type = PrefixGeneratorConfig.class,
-            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CENT")
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CEN")
     )
     @Column(name ="CENT_ID")
     private String id;
