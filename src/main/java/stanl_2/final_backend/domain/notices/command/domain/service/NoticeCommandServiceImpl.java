@@ -82,7 +82,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
 
-        if(!noticeModifyDTO.getMemberId().equals(memberId)){
+        if(!notice.getMemberId().equals(memberId)){
             // 권한 오류
             throw new NoticeCommonException(NoticeErrorCode.AUTHORIZATION_VIOLATION);
         }
