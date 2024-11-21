@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductQueryServiceImpl implements ProductQueryService {
 
     private final ProductMapper productMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductMapper productMapper) {
+    public ProductQueryServiceImpl(ProductMapper productMapper) {
         this.productMapper = productMapper;
     }
 

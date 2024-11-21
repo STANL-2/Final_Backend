@@ -103,22 +103,22 @@
         LEFT JOIN tb_product f
         ON e.prod_id = f.prod_id
         <where>
-            a.mem_id = #{purchaseOrderSelectSearchDTOtitle.memberId}
+            a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
             a.active = TRUE
-            <if test="purchaseOrderSelectSearchDTOtitle != null">
-                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTOtitle}, '%')
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
             </if>
-            <if test="purchaseOrderSelectSearchDTOstatus != null">
-                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTOstatus}
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTO.status}
             </if>
-            <if test="purchaseOrderSelectSearchDTOadminId != null">
-                AND a.admin_id = #{purchaseOrderSelectSearchDTOadminId}
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
             </if>
-            <if test="purchaseOrderSelectSearchDTOsearchMemberId != null">
-                AND a.mem_id = #{purchaseOrderSelectSearchDTOsearchMemberId}
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
-            <if test="purchaseOrderSelectSearchDTOstartDate != null and purchaseOrderSelectSearchDTOendDate != null">
-                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTOstartDate} AND #{purchaseOrderSelectSearchDTOendDate}
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
             </if>
         </where>
         ORDER BY a.created_at DESC
@@ -130,22 +130,22 @@
         COUNT(*) AS cnt
         FROM tb_purchase_order a
         <where>
-            a.mem_id = #{purchaseOrderSelectSearchDTOtitle.memberId}
+            a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
             AND a.active = TRUE
-            <if test="title != null">
-                AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
             </if>
-            <if test="status != null">
-                AND a.ord_stat = #{status}
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.ord_stat = #{purchaseOrderSelectSearchDTO.status}
             </if>
-            <if test="adminId != null">
-                AND a.admin_id = #{adminId}
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
             </if>
-            <if test="searchMemberId != null">
-                AND a.mem_id = #{searchMemberId}
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
-            <if test="startDate != null and endDate != null">
-                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
             </if>
         </where>
     </select>
@@ -223,20 +223,20 @@
         ON e.prod_id = f.prod_id
         <where>
             a.active = TRUE
-            <if test="purchaseOrderSelectSearchDTOtitle != null">
-                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTOtitle}, '%')
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
             </if>
-            <if test="purchaseOrderSelectSearchDTOstatus != null">
-                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTOstatus}
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTO.status}
             </if>
-            <if test="purchaseOrderSelectSearchDTOadminId != null">
-                AND a.admin_id = #{purchaseOrderSelectSearchDTOadminId}
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
             </if>
-            <if test="purchaseOrderSelectSearchDTOsearchMemberId != null">
-                AND a.mem_id = #{purchaseOrderSelectSearchDTOsearchMemberId}
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
-            <if test="purchaseOrderSelectSearchDTOstartDate != null and purchaseOrderSelectSearchDTOendDate != null">
-                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTOstartDate} AND #{purchaseOrderSelectSearchDTOendDate}
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
             </if>
         </where>
         ORDER BY a.created_at DESC
