@@ -12,7 +12,7 @@ public enum S3ErrorCode {
      * 400(Bad Request)
      * 이 응답은 잘못된 문법으로 인하여 서버가 요청을 이해할 수 없음을 의미합니다.
      */
-
+    FILE_UPLOAD_BAD_REQUEST(400001, HttpStatus.BAD_REQUEST, "업로드에 실패했습니다."),
 
 
     /**

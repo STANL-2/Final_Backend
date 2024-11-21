@@ -9,6 +9,8 @@ public interface S3FileService {
 
     // 파일 업로드(다중)
 
+    // html 업로드
+    String uploadHtml(String htmlContent, String fileName);
 
     // 파일 삭제
     void deleteFile(String fileName);

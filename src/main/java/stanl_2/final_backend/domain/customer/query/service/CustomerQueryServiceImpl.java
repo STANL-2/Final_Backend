@@ -97,6 +97,8 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
     @Transactional(readOnly = true)
     public CustomerDTO selectCustomerInfoByPhone(String customerPhone) throws GeneralSecurityException {
 
+        System.out.println("핸드폰 번호: " + customerPhone);
+
         String encryptedPhone = aesUtils.encrypt(customerPhone);
 
         CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoByPhone(encryptedPhone);

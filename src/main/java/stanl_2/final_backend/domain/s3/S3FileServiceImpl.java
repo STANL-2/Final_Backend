@@ -15,8 +15,10 @@ import stanl_2.final_backend.domain.s3.common.exception.S3CommonException;
 import stanl_2.final_backend.domain.s3.common.exception.S3ErrorCode;
 import stanl_2.final_backend.global.config.S3Config;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -51,7 +53,24 @@ public class S3FileServiceImpl implements S3FileService {
 
             return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new S3CommonException(S3ErrorCode.FILE_UPLOAD_BAD_REQUEST);
+        }
+    }
+
+    public String uploadHtml(String htmlContent, String fileName) {
+
+        String fileKey = createFileName(fileName + ".html"); // 파일 이름 생성 (UUID로 고유화 가능)
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("text/html; charset=UTF-8");
+        metadata.setContentLength(htmlContent.getBytes(StandardCharsets.UTF_8).length);
+
+        try (InputStream inputStream = new ByteArrayInputStream(htmlContent.getBytes(StandardCharsets.UTF_8))) {
+            amazonS3Client.putObject(bucket, fileKey, inputStream, metadata);
+
+            return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileKey;
+        } catch (IOException e) {
+            throw new S3CommonException(S3ErrorCode.FILE_UPLOAD_BAD_REQUEST);
         }
     }
 
@@ -106,6 +125,7 @@ public class S3FileServiceImpl implements S3FileService {
         fileValidate.add(".JPG");
         fileValidate.add(".JPEG");
         fileValidate.add(".PNG");
+        fileValidate.add(".html");
         String idxFileName = fileName.substring(fileName.lastIndexOf("."));
         if(!fileValidate.contains(idxFileName)) {
             throw new S3CommonException(S3ErrorCode.FILE_NOT_FOUND);
