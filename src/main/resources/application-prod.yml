@@ -11,7 +11,7 @@ spring:
       timeout: 5000ms
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 
 logging:

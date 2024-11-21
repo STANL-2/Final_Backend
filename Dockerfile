@@ -10,7 +10,8 @@ COPY build.gradle settings.gradle ./
 # gradlew 실행 권한 추가 및 의존성 설치
 RUN chmod +x gradlew
 RUN ./gradlew dependencies --no-daemon
-
+# libfreetype6 설치
+RUN apk update && apk add --no-cache libfreetype libfreetype6 fontconfig ttf-dejavu
 # 소스 코드 복사 및 빌드
 COPY . .
 RUN ./gradlew clean build -x test --no-daemon
