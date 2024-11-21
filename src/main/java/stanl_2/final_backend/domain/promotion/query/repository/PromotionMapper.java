@@ -2,8 +2,6 @@ package stanl_2.final_backend.domain.promotion.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
-import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
-import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO;
 
