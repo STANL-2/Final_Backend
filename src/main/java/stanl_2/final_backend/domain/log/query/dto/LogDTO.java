@@ -12,26 +12,17 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class LogDTO {
-
-    private Long logId;
-
-    // User Information
+    private String logId;
     private String sessionId;
     private String userAgent;
-
-    // Network Information
     private String ipAddress;
     private String hostName;
     private Integer remotePort;
-
-    // Request Information
     private String uri;
     private String method;
     private String queryString;
-
-    // Time Information
-    private LocalDateTime requestTime;
-
-    // Additional Information
+    private String requestTime;
     private String transactionId;
+    private String status;
+    private String errorMessage;
 }

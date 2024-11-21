@@ -17,7 +17,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -109,7 +108,6 @@ public class GlobalExceptionHandler {
             logEntry.setUri(safeValue(request.getRequestURI()));
             logEntry.setMethod(safeValue(request.getMethod()));
             logEntry.setQueryString(safeValue(request.getQueryString()));
-            logEntry.setRequestTime(LocalDateTime.now());
 
             // 유저 정보
             logEntry.setSessionId(safeValue(request.getRequestedSessionId()));

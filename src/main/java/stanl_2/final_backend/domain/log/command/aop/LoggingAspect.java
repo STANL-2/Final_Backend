@@ -60,10 +60,6 @@ public class LoggingAspect {
         requestData.put("query_string", safeValue(request.getQueryString()));
         logData.put("request", requestData);
 
-        // 시간 정보
-        Map<String, Object> timeData = new HashMap<>();
-        timeData.put("request_time", LocalDateTime.now().toString());
-        logData.put("time", timeData);
 
         // 추가 정보
         String transactionId = UUID.randomUUID().toString();
@@ -87,9 +83,6 @@ public class LoggingAspect {
             logEntry.setUri(safeValue(request.getRequestURI()));
             logEntry.setMethod(safeValue(request.getMethod()));
             logEntry.setQueryString(safeValue(request.getQueryString()));
-
-            // 시간 정보
-            logEntry.setRequestTime(LocalDateTime.now());
 
             // 추가적인 정보
             logEntry.setTransactionId(transactionId);

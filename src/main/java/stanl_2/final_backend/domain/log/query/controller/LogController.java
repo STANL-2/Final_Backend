@@ -28,7 +28,7 @@ public class LogController {
         this.logQueryService = logQueryService;
     }
 
-    @Operation(summary = "로그 조회(관리자)")
+    @Operation(summary = "로그 조회(시스템 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),

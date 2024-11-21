@@ -18,11 +18,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -91,12 +92,20 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     private void handleInvalidToken(HttpServletResponse response, String message, Exception e, HttpServletRequest request) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"" + message + "\"}");
+        response.setContentType("application/json;charset=UTF-8");
+
+        String jsonResponse = String.format(
+                "{\"code\": 40100, \"msg\": \"%s\", \"httpStatus\": \"UNAUTHORIZED\"}",
+                message
+        );
+
+        response.getWriter().write(jsonResponse);
+
         log.error("요청 거부됨: {}. Error: {}. Request URI: {}, Method: {}, Client IP: {}",
                 message, e.getMessage(), request.getRequestURI(), request.getMethod(), getClientIp(request));
 
-        saveErrorLog(message, e, request); // Save detailed error log
+
+        saveErrorLog(message, e, request);
     }
 
 
@@ -112,7 +121,6 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
             logEntry.setUri(safeValue(request.getRequestURI()));
             logEntry.setMethod(safeValue(request.getMethod()));
             logEntry.setQueryString(safeValue(request.getQueryString()));
-            logEntry.setRequestTime(LocalDateTime.now());
 
             // 유저 정보
             logEntry.setSessionId(safeValue(request.getRequestedSessionId()));
@@ -131,6 +139,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
         } catch (Exception ex) {
             log.error("로그 저장 실패: {}", ex.getMessage());
+            throw new GlobalCommonException(GlobalErrorCode.FAIL_LOG_SAVE);
         }
     }
 
