@@ -17,10 +17,13 @@ public class SalesHistoryRankedDataDTO {
     private BigDecimal totalIncentive;
     private BigDecimal totalPerformance;
     private BigDecimal totalSales;
+    private String centerId;
 
     private List<String> memberList;
     private List<String> centerList;
     private String startDate;
     private String endDate;
     private String createdAt;
+    private String month;
+    private String year;
 }

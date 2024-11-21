@@ -15,5 +15,5 @@ public interface MemberMapper {
 
     List<MemberDTO> findMembersByCenterId(@Param("centerId") String centerId);
 
-    List<MemberDTO> findMembersByCenterList(@Param("centerList") List<CenterSelectAllDTO> centerList);
+    List<MemberDTO> findMembersByCenterList(@Param("centerList") List<String> centerList);
 }

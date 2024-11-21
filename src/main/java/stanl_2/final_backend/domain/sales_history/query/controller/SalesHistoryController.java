@@ -53,6 +53,11 @@ public class SalesHistoryController {
         4. 분류에 따라서 뿌려줌
     * */
 
+
+    /* 설명. todo
+     *  1. 각 실적, 수당, 매출액 별로 인자를 통해 동적 쿼리로 처리 가능한지 여부(내림차순)
+     *  2. 판매내역 날짜별로
+    * */
     @Operation(summary = "사원 판매내역 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
@@ -251,7 +256,7 @@ public class SalesHistoryController {
                 .build());
     }
 
-    @Operation(summary = "사원 별 통계(실적,수당,매출액) 검색")
+    @Operation(summary = "사원 별 통계(실적,수당,매출액) 조회기간별 검색")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
@@ -271,7 +276,47 @@ public class SalesHistoryController {
                 .build());
     }
 
-    @Operation(summary = "매장 별 통계(실적,수당,매출액) 검색")
+    @Operation(summary = "사원 별 통계(실적,수당,매출액) 월별 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("statistics/search/month")
+    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsBySearchMonth(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
+                                                                             @PageableDefault(size = 20) Pageable pageable){
+
+        Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsBySearchMonth(salesHistoryRankedDataDTO,pageable);
+
+        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
+                .httpStatus(200)
+                .msg("사원 별 통계(실적,수당,매출액) 월별 검색 성공")
+                .result(responseSalesHistory)
+                .build());
+    }
+
+    @Operation(summary = "사원 별 통계(실적,수당,매출액) 연도별 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("statistics/search/year")
+    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsBySearchYear(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
+                                                                             @PageableDefault(size = 20) Pageable pageable){
+
+        Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsBySearchYear(salesHistoryRankedDataDTO,pageable);
+
+        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
+                .httpStatus(200)
+                .msg("사원 별 통계(실적,수당,매출액) 연도별 검색 성공")
+                .result(responseSalesHistory)
+                .build());
+    }
+
+    @Operation(summary = "매장 별 통계(실적,수당,매출액) 조회기간별 검색")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
@@ -282,14 +327,51 @@ public class SalesHistoryController {
     public ResponseEntity<SalesHistoryResponseMessage> getStatisticsCenterBySearch(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
                                                               @PageableDefault(size = 20) Pageable pageable){
 
-        System.out.println(salesHistoryRankedDataDTO.toString());
-        System.out.println(salesHistoryRankedDataDTO.getCenterList().toString());
-
         Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsCenterBySearch(salesHistoryRankedDataDTO,pageable);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
                 .msg("매장 별 통계(실적,수당,매출액) 검색 성공")
+                .result(responseSalesHistory)
+                .build());
+    }
+
+@Operation(summary = "매장 별 통계(실적,수당,매출액) 월별 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("statistics/center/search/month")
+    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsCenterBySearchMonth(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
+                                                              @PageableDefault(size = 20) Pageable pageable){
+
+        Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsCenterBySearchMonth(salesHistoryRankedDataDTO,pageable);
+
+        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
+                .httpStatus(200)
+                .msg("매장 별 통계(실적,수당,매출액) 월별 검색 성공")
+                .result(responseSalesHistory)
+                .build());
+    }
+
+@Operation(summary = "매장 별 통계(실적,수당,매출액) 연도별 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("statistics/center/search/year")
+    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsCenterBySearchYear(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
+                                                              @PageableDefault(size = 20) Pageable pageable){
+
+        Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsCenterBySearchYear(salesHistoryRankedDataDTO,pageable);
+
+        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
+                .httpStatus(200)
+                .msg("매장 별 통계(실적,수당,매출액) 연도별 검색 성공")
                 .result(responseSalesHistory)
                 .build());
     }

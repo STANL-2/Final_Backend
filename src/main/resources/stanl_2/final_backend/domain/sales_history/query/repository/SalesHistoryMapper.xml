@@ -29,6 +29,19 @@
         <result property="totalIncentive" column="TOTAL_INCENTIVE"/>
         <result property="totalPerformance" column="TOTAL_PERFORMANCE"/>
         <result property="totalSales" column="TOTAL_SALES"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="year" column="YEAR"/>
+        <result property="month" column="MONTH"/>
+    </resultMap>
+
+    <resultMap id="SalesHistoryRankedDataCenterResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO">
+        <result property="centerId" column="CENT_ID"/>
+        <result property="totalIncentive" column="TOTAL_INCENTIVE"/>
+        <result property="totalPerformance" column="TOTAL_PERFORMANCE"/>
+        <result property="totalSales" column="TOTAL_SALES"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="year" column="YEAR"/>
+        <result property="month" column="MONTH"/>
     </resultMap>
 
     <select id="findSalesHistoryByEmployee" resultMap="salesHistoryAllResultMap">
@@ -229,7 +242,102 @@
         GROUP BY a.mem_id) AS A
     </select>
 
-    <select id="findStatisticsCenterBySearch" resultMap="SalesHistoryRankedDataResultMap">
+    <select id="findStatisticsBySearchMonth" resultMap="SalesHistoryRankedDataResultMap">
+        SELECT
+        a.mem_id,
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales,
+        LEFT(a.created_at, 7) AS MONTH
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
+                a.mem_id IN
+                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.mem_id, LEFT(a.created_at, 7)
+        ORDER BY MONTH ASC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findStatisticsBySearchCountMonth" resultType="int">
+        SELECT
+        COUNT(*) AS rank_count
+        FROM(
+        SELECT
+        COUNT(*)
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
+                a.mem_id IN
+                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.mem_id, LEFT(a.created_at, 7)) AS A
+    </select>
+
+    <select id="findStatisticsBySearchYear" resultMap="SalesHistoryRankedDataResultMap">
+        SELECT
+        LEFT(a.created_at, 4) AS YEAR,
+        a.mem_id,
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
+                a.mem_id IN
+                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.mem_id, LEFT(a.created_at, 4)
+        ORDER BY YEAR ASC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findStatisticsBySearchCountYear" resultType="int">
+        SELECT
+        COUNT(*) AS rank_count
+        FROM(
+        SELECT
+        COUNT(*)
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
+                a.mem_id IN
+                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.mem_id, LEFT(a.created_at, 4)) AS A
+    </select>
+
+
+    <select id="findStatisticsCenterBySearch" resultMap="SalesHistoryRankedDataCenterResultMap">
         SELECT
         a.cent_id,
         SUM(a.sal_hist_ince) AS total_incentive,
@@ -273,5 +381,100 @@
         </where>
         GROUP BY a.cent_id) AS A
     </select>
+
+<select id="findStatisticsCenterBySearchMonth" resultMap="SalesHistoryRankedDataCenterResultMap">
+        SELECT
+        a.cent_id,
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales,
+        LEFT(a.created_at, 7) AS MONTH
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
+                a.cent_id IN
+                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.cent_id, LEFT(a.created_at, 7)
+        ORDER BY MONTH ASC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findStatisticsCenterBySearchCountMonth" resultType="int">
+        SELECT
+        COUNT(*) AS rank_count
+        FROM(
+        SELECT
+        COUNT(*)
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
+                a.cent_id IN
+                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.cent_id, LEFT(a.created_at, 7)) AS A
+    </select>
+
+    <select id="findStatisticsCenterBySearchYear" resultMap="SalesHistoryRankedDataCenterResultMap">
+        SELECT
+        LEFT(a.created_at, 4) AS YEAR,
+        a.cent_id,
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
+                a.cent_id IN
+                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.cent_id, LEFT(a.created_at, 4)
+        ORDER BY YEAR ASC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findStatisticsCenterBySearchCountYear" resultType="int">
+        SELECT
+        COUNT(*) AS rank_count
+        FROM(
+        SELECT
+        COUNT(*)
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
+                a.mem_id IN
+                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY a.mem_id, LEFT(a.created_at, 4)) AS A
+    </select>
+
 
 </mapper>

@@ -49,15 +49,15 @@
     <select id="findMembersByCenterId" resultMap="Member" parameterType="String">
         SELECT
         a.mem_id,
-        a.login_id
+        a.mem_login_id
         FROM tb_member a
-        WHERE a.active = true and a.centerId = #{centerId}
+        WHERE a.active = true and a.center_id = #{centerId}
     </select>
 
     <select id="findMembersByCenterList" resultMap="Member" parameterType="java.util.List">
         SELECT
         a.mem_id,
-        a.login_id
+        a.mem_login_id
         FROM tb_member a
         WHERE a.active = TRUE
         AND a.center_id IN
