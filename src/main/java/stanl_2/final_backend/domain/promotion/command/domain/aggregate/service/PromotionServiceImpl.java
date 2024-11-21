@@ -61,7 +61,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
         String memberId= principal.getName();
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
-        if(!promotionModifyDTO.getMemberId().equals(memberId)){
+        if(!promotion.getMemberId().equals(memberId)){
             throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
         }
         try {
@@ -92,7 +92,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(()-> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
 
-        if(!memberId.equals(memberId)){
+        if(!promotion.getMemberId().equals(memberId)){
             // 권한 오류
             throw new PromotionCommonException(PromotionErrorCode.AUTHORIZATION_VIOLATION);
         }

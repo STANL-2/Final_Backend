@@ -63,7 +63,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
         String memberId= principal.getName();
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
-        if(!problemModifyDTO.getMemberId().equals(memberId)){
+        if(!problem.getMemberId().equals(memberId)){
             throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
         }
         try {
@@ -96,7 +96,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(()-> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
 
-        if(!memberId.equals(memberId)){
+        if(!problem.getMemberId().equals(memberId)){
             // 권한 오류
             throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
         }
