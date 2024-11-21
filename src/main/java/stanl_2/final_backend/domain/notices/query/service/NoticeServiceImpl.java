@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 import stanl_2.final_backend.domain.notices.query.repository.NoticeMapper;
+import stanl_2.final_backend.global.redis.RedisService;
 
 import java.util.List;
 
@@ -18,11 +19,12 @@ import java.util.List;
 public class NoticeServiceImpl implements NoticeService{
     private final NoticeMapper noticeMapper;
     private final RedisTemplate<String, Object> redisTemplate;
-
+    private final RedisService redisService;
     @Autowired
-    public NoticeServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate) {
+    public NoticeServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService) {
         this.noticeMapper = noticeMapper;
         this.redisTemplate = redisTemplate;
+        this.redisService =redisService;
     }
 
     @Transactional
@@ -39,6 +41,10 @@ public class NoticeServiceImpl implements NoticeService{
             System.out.println("데이터베이스에서 데이터 조회 중...");
             notices = noticeMapper.findAllNotices(offset, size);
             redisTemplate.opsForValue().set(cacheKey, notices);
+            String key = "NoticePage"+offset;
+            Object value = notices;
+            long ttlInSeconds = 30*60;
+            redisService.setKeyWithTTL(key, value, ttlInSeconds);
         } else {
             System.out.println("캐시에서 데이터 조회 중...");
         }
