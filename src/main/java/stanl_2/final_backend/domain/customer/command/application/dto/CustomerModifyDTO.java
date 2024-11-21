@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class CustomerModifyDTO {
     private String memberId;
     private String customerId;
