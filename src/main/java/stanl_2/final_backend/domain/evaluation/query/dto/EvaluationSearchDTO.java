@@ -20,6 +20,5 @@ public class EvaluationSearchDTO {
     private String centerId;
     private String startDate;
     private String endDate;
-    private Collection<? extends GrantedAuthority> roles;
     private String searcherName;
 }
