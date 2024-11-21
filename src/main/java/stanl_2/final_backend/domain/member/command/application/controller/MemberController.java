@@ -1,5 +1,10 @@
 package stanl_2.final_backend.domain.member.command.application.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +26,12 @@ public class MemberController {
         this.memberCommandService = memberCommandService;
     }
 
+
+    @Operation(summary = "본인정보(Principal) 출력 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
+    })
     @GetMapping("/authorities")
     public ResponseEntity<MemberResponseMessage> check(Principal principal) {
 

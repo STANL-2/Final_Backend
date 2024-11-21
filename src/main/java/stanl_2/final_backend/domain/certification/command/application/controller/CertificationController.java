@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.career.common.response.CareerResponseMessage;
 import stanl_2.final_backend.domain.certification.command.application.dto.CertificationRegisterDTO;
 import stanl_2.final_backend.domain.certification.command.application.service.CertificationCommandService;
@@ -36,7 +35,7 @@ public class CertificationController {
     @Operation(summary = "자격증/외국어 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = CareerResponseMessage.class))})
     })
     @PostMapping("")
     public ResponseEntity<CareerResponseMessage> postCertification(@RequestBody CertificationRegisterDTO certificationRegisterDTO,
