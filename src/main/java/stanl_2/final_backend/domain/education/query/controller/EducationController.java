@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
-import stanl_2.final_backend.domain.career.common.response.CareerResponseMessage;
-import stanl_2.final_backend.domain.certification.query.dto.CertificationDTO;
 import stanl_2.final_backend.domain.education.common.response.EducationResponseMessage;
 import stanl_2.final_backend.domain.education.query.dto.EducationDTO;
 import stanl_2.final_backend.domain.education.query.service.EducationQueryService;
@@ -35,7 +32,7 @@ public class EducationController {
     @Operation(summary = "학력 조회(with 사번)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+                    content = {@Content(schema = @Schema(implementation = EducationResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
@@ -54,7 +51,7 @@ public class EducationController {
     @Operation(summary = "학력 조회(접속중인 사용자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+                    content = {@Content(schema = @Schema(implementation = EducationResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
