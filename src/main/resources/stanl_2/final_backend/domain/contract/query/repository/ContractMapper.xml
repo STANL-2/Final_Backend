@@ -8,7 +8,9 @@
         <id property="contractId" column="CONR_ID"/>
         <result property="title" column="CONR_TTL"/>
         <result property="customerName" column="CONR_CUST_NAME"/>
+        <result property="customerSex" column="CONR_CUST_SEX"/>
         <result property="customerIdentifiNo" column="CONR_CUST_IDEN_NO"/>
+        <result property="customerAge" column="CONR_CUST_AGE"/>
         <result property="customerAddrress" column="CONR_CUST_ADR"/>
         <result property="customerEmail" column="CONR_CUST_EMA"/>
         <result property="customerPhone" column="CONR_CUST_PHO"/>
@@ -43,6 +45,7 @@
         <id property="contractId" column="CONR_ID"/>
         <result property="title" column="CONR_TTL"/>
         <result property="customerName" column="CONR_CUST_NAME"/>
+        <result property="customerSex" column="CONR_CUST_SEX"/>
         <result property="companyName" column="CONR_COMP_NAME"/>
         <result property="customerClassifcation" column="CONR_CUST_CLA"/>
         <result property="customerPurchaseCondition" column="CONR_CUST_PUR_COND"/>
@@ -77,12 +80,14 @@
         <result property="carName" column="CONR_CAR_NAME"/>
     </resultMap>
 
-    <select id="findContractByIdAndMemId" resultMap="contractResultMap" parameterType="hashmap">
+    <select id="findContractByIdAndMemId" resultMap="contractResultMap">
         SELECT
         a.conr_id,
         a.conr_ttl,
         a.conr_cust_name,
+        a.conr_cust_sex,
         a.conr_cust_iden_no,
+        a.conr_cust_age,
         a.conr_cust_adr,
         a.conr_cust_ema,
         a.conr_cust_pho,
@@ -120,7 +125,9 @@
         a.conr_id,
         a.conr_ttl,
         a.conr_cust_name,
+        a.conr_cust_sex,
         a.conr_cust_iden_no,
+        a.conr_cust_age,
         a.conr_cust_adr,
         a.conr_cust_ema,
         a.conr_cust_pho,
@@ -152,7 +159,7 @@
         AND a.active = TRUE;
     </select>
 
-    <select id="findContractAllByMemId" resultMap="contractAllResultMap" parameterType="map">
+    <select id="findContractAllByMemId" resultMap="contractAllResultMap">
         SELECT
         a.conr_id,
         a.conr_ttl,
@@ -169,7 +176,7 @@
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
-    <select id="findContractAll" resultMap="contractAllResultMap" parameterType="map">
+    <select id="findContractAll" resultMap="contractAllResultMap">
         SELECT
         a.conr_id,
         a.conr_cust_name,
@@ -187,7 +194,7 @@
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
-    <select id="findContractBySearchAndMemberId" resultMap="contractSearchResultMap" parameterType="map">
+    <select id="findContractBySearchAndMemberId" resultMap="contractSearchResultMap" parameterType="stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO">
         SELECT
         a.conr_id,
         a.conr_cust_name,
@@ -201,6 +208,107 @@
         a.updated_at,
         a.deleted_at,
         a.active
+        FROM tb_contract a
+        <where>
+            a.mem_id = #{contractSearchDTO.memberId}
+            AND a.active = TRUE
+            <if test="contractSearchDTO.centerId != null">
+                AND a.cent_id = #{contractSearchDTO.centerId}
+            </if>
+            <if test="contractSearchDTO.title != null">
+                AND a.conr_name LIKE CONCAT('%', #{contractSearchDTO.title}, '%')
+            </if>
+            <if test="contractSearchDTO.customerName != null">
+                AND a.conr_cust_name LIKE CONCAT('%', #{contractSearchDTO.customerName}, '%')
+            </if>
+            <if test="contractSearchDTO.customerClassifcation != null">
+                AND a.conr_cust_cla LIKE CONCAT('%', #{contractSearchDTO.customerClassifcation}, '%')
+            </if>
+            <if test="contractSearchDTO.status != null">
+                AND a.conr_stat = #{contractSearchDTO.status}
+            </if>
+            <if test="contractSearchDTO.companyName != null">
+                AND a.conr_comp_name LIKE CONCAT('%', #{contractSearchDTO.companyName}, '%')
+            </if>
+            <if test="contractSearchDTO.customerPurchaseCondition != null">
+                AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
+            </if>
+            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null">
+                AND a.created_at BETWEEN #{contractSearchDTO.startAt} AND #{contractSearchDTO.endAt}
+            </if>
+            <if test="contractSearchDTO.productId != null">
+                AND b.prod_name LIKE CONCAT('%', #{contractSearchDTO.productId}, '%')
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
+    </select>
+    <select id="findContractBySearch" resultMap="contractSearchResultMap" parameterType="stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO">
+        SELECT
+        a.conr_id,
+        a.conr_cust_name,
+        a.conr_ttl,
+        a.conr_comp_name,
+        a.conr_stat,
+        a.created_url,
+        a.conr_cust_pur_cond,
+        a.conr_car_name,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.active
+        FROM tb_contract a
+        <where>
+            a.active = TRUE
+            <if test="contractSearchDTO.centerId != null">
+                AND a.cent_id = #{contractSearchDTO.centerId}
+            </if>
+            <if test="contractSearchDTO.title != null">
+                AND a.conr_name LIKE CONCAT('%', #{contractSearchDTO.title}, '%')
+            </if>
+            <if test="contractSearchDTO.customerName != null">
+                AND a.conr_cust_name LIKE CONCAT('%', #{contractSearchDTO.customerName}, '%')
+            </if>
+            <if test="contractSearchDTO.customerClassifcation != null">
+                AND a.conr_cust_cla LIKE CONCAT('%', #{contractSearchDTO.customerClassifcation}, '%')
+            </if>
+            <if test="contractSearchDTO.status != null">
+                AND a.conr_stat = #{contractSearchDTO.status}
+            </if>
+            <if test="contractSearchDTO.companyName != null">
+                AND a.conr_comp_name LIKE CONCAT('%', #{contractSearchDTO.companyName}, '%')
+            </if>
+            <if test="contractSearchDTO.customerPurchaseCondition != null">
+                AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
+            </if>
+            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null">
+                AND a.created_at BETWEEN #{contractSearchDTO.startAt} AND #{contractSearchDTO.endAt}
+            </if>
+            <if test="contractSearchDTO.productId != null">
+                AND b.prod_name LIKE CONCAT('%', #{contractSearchDTO.productId}, '%')
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
+    </select>
+
+    <select id="findContractCountByMemId" resultType="int" parameterType="string">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_contract a
+        WHERE a.mem_id = #{ memberId }
+        AND a.active = TRUE;
+    </select>
+
+    <select id="findContractCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_contract a
+        WHERE a.active = TRUE;
+    </select>
+
+    <select id="findContractBySearchAndMemberIdCount" resultType="Integer" parameterType="stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO">
+        SELECT COUNT(*)
         FROM tb_contract a
         <where>
             a.mem_id = #{memberId}
@@ -232,111 +340,10 @@
             <if test="productId != null">
                 AND b.prod_name LIKE CONCAT('%', #{productId}, '%')
             </if>
-        </where>
-        ORDER BY a.created_at DESC
-        LIMIT #{pageSize} OFFSET #{offset};
-    </select>
-    <select id="findContractBySearch" resultMap="contractSearchResultMap" parameterType="map">
-        SELECT
-        a.conr_id,
-        a.conr_cust_name,
-        a.conr_ttl,
-        a.conr_comp_name,
-        a.conr_stat,
-        a.created_url,
-        a.conr_cust_pur_cond,
-        a.conr_car_name,
-        a.created_at,
-        a.updated_at,
-        a.deleted_at,
-        a.active
-        FROM tb_contract a
-        <where>
-            a.active = TRUE
-            <if test="centerId != null">
-                AND a.cent_id = #{centerId}
-            </if>
-            <if test="title != null">
-                AND a.conr_name LIKE CONCAT('%', #{title}, '%')
-            </if>
-            <if test="customerName != null">
-                AND a.conr_cust_name LIKE CONCAT('%', #{customerName}, '%')
-            </if>
-            <if test="customerClassifcation != null">
-                AND a.conr_cust_cla LIKE CONCAT('%', #{customerClassifcation}, '%')
-            </if>
-            <if test="status != null">
-                AND a.conr_stat = #{status}
-            </if>
-            <if test="companyName != null">
-                AND a.conr_comp_name LIKE CONCAT('%', #{companyName}, '%')
-            </if>
-            <if test="customerPurchaseCondition != null">
-                AND a.conr_cust_pur_cond LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
-            </if>
-            <if test="startAt != null and endAt != null">
-                AND a.created_at BETWEEN #{startAt} AND #{endAt}
-            </if>
-            <if test="productId != null">
-                AND b.prod_name LIKE CONCAT('%', #{productId}, '%')
-            </if>
-        </where>
-        ORDER BY a.created_at DESC
-        LIMIT #{pageSize} OFFSET #{offset};
-    </select>
-
-    <select id="findContractCountByMemId" resultType="int">
-        SELECT
-        COUNT(*) AS cnt
-        FROM tb_contract a
-        WHERE a.mem_id = #{ memberId }
-        AND a.active = TRUE;
-    </select>
-
-    <select id="findContractCount" resultType="int">
-        SELECT
-        COUNT(*) AS cnt
-        FROM tb_contract a
-        WHERE a.active = TRUE;
-    </select>
-
-    <select id="findContractBySearchAndMemberIdCount" resultType="int" parameterType="map">
-        SELECT COUNT(*)
-        FROM tb_contract a
-        <where>
-            a.mem_id = #{memId}
-            AND a.active = TRUE
-            <if test="centerId != null">
-                AND a.cent_id = #{centerId}
-            </if>
-            <if test="title != null">
-                AND a.conr_name LIKE CONCAT('%', #{title}, '%')
-            </if>
-            <if test="customerName != null">
-                AND a.conr_cust_name LIKE CONCAT('%', #{customerName}, '%')
-            </if>
-            <if test="customerClassifcation != null">
-                AND a.conr_cust_cla LIKE CONCAT('%', #{customerClassifcation}, '%')
-            </if>
-            <if test="status != null">
-                AND a.conr_stat = #{status}
-            </if>
-            <if test="companyName != null">
-                AND a.conr_comp_name LIKE CONCAT('%', #{companyName}, '%')
-            </if>
-            <if test="customerPurchaseCondition != null">
-                AND a.conr_cust_pur_cond LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
-            </if>
-            <if test="startAt != null and endAt != null">
-                AND a.created_at BETWEEN #{startAt} AND #{endAt}
-            </if>
-            <if test="productId != null">
-                AND b.prod_name LIKE CONCAT('%', #{productId}, '%')
-            </if>
         </where>;
     </select>
 
-    <select id="findContractBySearchCount" resultType="int" parameterType="map">
+    <select id="findContractBySearchCount" resultType="Integer" parameterType="stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO">
         SELECT COUNT(*)
         FROM tb_contract a
         <where>

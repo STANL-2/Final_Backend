@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class CommonException extends RuntimeException {
-    private final ErrorCode errorCode;
+public class CenterCommonException extends RuntimeException {
+    private final CenterErrorCode centerErrorCode;
 
     // 에러 발생시 ErroCode 별 메시지
     @Override
     public String getMessage() {
-        return this.errorCode.getMsg();
+        return this.centerErrorCode.getMsg();
     }
 }

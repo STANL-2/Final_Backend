@@ -7,7 +7,6 @@ import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
@@ -22,8 +21,6 @@ public interface OrderMapper {
     List<OrderSelectAllDTO> findAllOrderByMemberId(int offset, int pageSize, String memberId);
 
     int findOrderSearchCountByMemberId(OrderSelectSearchDTO orderSelectSearchDTO);
-
-    List<OrderSelectSearchDTO> findSearchOrderByMemberId(Map<String, Object> map);
 
     List<OrderSelectAllDTO> findAllOrder(int offset, int pageSize);
 

@@ -13,7 +13,9 @@ public class ContractRegistDTO {
 
     private String title;
     private String customerName;
+    private String customerSex;
     private String customerIdentifiNo;
+    private Integer customerAge;
     private String customerAddrress;
     private String customerEmail;
     private String customerPhone;
@@ -34,5 +36,4 @@ public class ContractRegistDTO {
     private String numberOfVehicles;
     private String createdUrl;
     private String memberId;
-    private Collection<? extends GrantedAuthority> roles;
 }

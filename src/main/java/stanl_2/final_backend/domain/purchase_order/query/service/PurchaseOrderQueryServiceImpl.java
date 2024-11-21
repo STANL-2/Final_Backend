@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.purchase_order.query.service;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -41,6 +42,10 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
         if (purchaseOrder == null) {
             throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
         }
+
+        String unescapedUrl = StringEscapeUtils.unescapeJson(purchaseOrder.getContent());
+        purchaseOrder.setContent(unescapedUrl);
+
         return purchaseOrder;
     }
 
@@ -53,7 +58,7 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
-        String cacheKey = "myCache::purchaseOrders::offset=" + offset + "::size=" + pageSize;
+        String cacheKey = "myCache::purchaseOrders::offset=" + offset + "::pageSize=" + pageSize;
 
         // 캐시 조회
         List<PurchaseOrderSelectAllDTO> purchaseOrders = (List<PurchaseOrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
