@@ -24,7 +24,7 @@ WORKDIR /app
 
 # libfreetype6 설치
 RUN apt-get update && apt-get install -y \
-    libfreetype6 fontconfig ttf-dejavu --no-install-recommends \
+    libfreetype6 fontconfig fonts-dejavu-core --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
