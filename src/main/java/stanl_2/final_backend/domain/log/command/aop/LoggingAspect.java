@@ -1,17 +1,16 @@
-package stanl_2.final_backend.global.log;
+package stanl_2.final_backend.domain.log.command.aop;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import stanl_2.final_backend.global.log.repository.LogRepository;
-import stanl_2.final_backend.global.log.aggregate.Log;
+import stanl_2.final_backend.domain.log.command.aggregate.Log;
+import stanl_2.final_backend.domain.log.command.repository.LogRepository;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -23,17 +22,17 @@ import java.util.UUID;
 @Component
 public class LoggingAspect {
 
-    private final ObjectMapper objectMapper;
     private final LogRepository logRepository;
+    private static final ThreadLocal<String> currentTransactionId = new ThreadLocal<>();
 
     @Autowired
     public LoggingAspect(LogRepository logRepository) {
-        this.objectMapper = new ObjectMapper();
         this.logRepository = logRepository;
     }
 
-    @Before("within(@org.springframework.web.bind.annotation.RestController *)")
-    public void logRequestInfo(JoinPoint joinPoint) {
+    @AfterReturning("within(@org.springframework.web.bind.annotation.RestController *)")
+    public void logRequestSuccess(JoinPoint joinPoint) {
+
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) return;
 
@@ -59,31 +58,38 @@ public class LoggingAspect {
         requestData.put("uri", safeValue(request.getRequestURI()));
         requestData.put("method", safeValue(request.getMethod()));
         requestData.put("query_string", safeValue(request.getQueryString()));
-        requestData.put("headers", getHeaders(request));
         logData.put("request", requestData);
 
-        // 시간 정보
-        Map<String, Object> timeData = new HashMap<>();
-        timeData.put("request_time", LocalDateTime.now().toString());
-        logData.put("time", timeData);
 
         // 추가 정보
-        logData.put("transaction_id", UUID.randomUUID().toString());
+        String transactionId = UUID.randomUUID().toString();
+        currentTransactionId.set(transactionId);
+        logData.put("transaction_id", transactionId);
 
         try {
-            log.info("Request Info: {}", objectMapper.writeValueAsString(logData));
-
             // 로그 엔티티 저장
             Log logEntry = new Log();
+
+            // 유저 정보
             logEntry.setSessionId(safeValue(request.getRequestedSessionId()));
             logEntry.setUserAgent(safeValue(request.getHeader("User-Agent")));
+
+            // 네트워크 정보
             logEntry.setIpAddress(safeValue(getClientIp(request)));
+            logEntry.setHostName(safeValue(request.getRemoteHost()));
+            logEntry.setRemotePort(request.getRemotePort());
+
+            // 요청 정보
             logEntry.setUri(safeValue(request.getRequestURI()));
             logEntry.setMethod(safeValue(request.getMethod()));
             logEntry.setQueryString(safeValue(request.getQueryString()));
-            logEntry.setRequestTime(LocalDateTime.now());
 
+            // 추가적인 정보
+            logEntry.setTransactionId(transactionId);
+
+            logEntry.setStatus("SUCCESS");
             logRepository.save(logEntry);
+
         } catch (Exception e) {
             log.error("Failed to log request info", e);
         }
@@ -105,14 +111,6 @@ public class LoggingAspect {
             }
         }
         return request.getRemoteAddr();
-    }
-
-    private Map<String, String> getHeaders(HttpServletRequest request) {
-        Map<String, String> headers = new HashMap<>();
-        request.getHeaderNames().asIterator().forEachRemaining(headerName ->
-                headers.put(headerName, safeValue(request.getHeader(headerName)))
-        );
-        return headers;
     }
 
     private String safeValue(String value) {

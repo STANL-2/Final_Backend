@@ -37,7 +37,7 @@ public class PromotionController {
     public ResponseEntity<PromotionResponseMessage> postNotice(@RequestBody PromotionRegistDTO prmotionRegistDTO, Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
         prmotionRegistDTO.setMemberId(memberId);
-        promotionCommandService.registerPromotion(prmotionRegistDTO);
+        promotionCommandService.registerPromotion(prmotionRegistDTO,principal);
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
@@ -52,9 +52,9 @@ public class PromotionController {
     })
     @PutMapping("{promotionId}")
     public ResponseEntity<PromotionResponseMessage> modifyNotice(@PathVariable String promotionId,
-                                                              @RequestBody PromotionModifyDTO promotionModifyRequestDTO){
+                                                              @RequestBody PromotionModifyDTO promotionModifyRequestDTO, Principal principal){
 
-        PromotionModifyDTO promotionModifyDTO = promotionCommandService.modifyPromotion(promotionId,promotionModifyRequestDTO);
+        PromotionModifyDTO promotionModifyDTO = promotionCommandService.modifyPromotion(promotionId,promotionModifyRequestDTO,principal);
 
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)
@@ -69,9 +69,9 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @DeleteMapping("{promotionId}")
-    public ResponseEntity<PromotionResponseMessage> deleteNotice(@PathVariable String promotionId) {
+    public ResponseEntity<PromotionResponseMessage> deleteNotice(@PathVariable String promotionId, Principal principal) {
 
-        promotionCommandService.deletePromotion(promotionId);
+        promotionCommandService.deletePromotion(promotionId,principal);
 
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)

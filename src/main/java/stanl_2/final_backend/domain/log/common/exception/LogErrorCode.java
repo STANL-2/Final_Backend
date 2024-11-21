@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.notices.common.exception;
+package stanl_2.final_backend.domain.log.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum NoticeErrorCode {
+public enum LogErrorCode {
 
     /**
      * 400(Bad Request)
@@ -38,13 +38,10 @@ public enum NoticeErrorCode {
      * 서버들은 인증받지 않은 클라이언트로부터 리소스를 숨기기 위하여 이 응답을 403 대신에 전송할 수도 있습니다.
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
-    NOTICE_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "notice 데이터를 찾지 못했습니다"),
 
-    DATA_INTEGRITY_VIOLATION(40402, HttpStatus.BAD_REQUEST, "데이터 무결 위반하였습니다."),
-
-    AUTHORIZATION_VIOLATION(40403, HttpStatus.BAD_REQUEST, "접근 권한이 없습니다."),
 
     /**
+     * 500(Internal Server Error)
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
     INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
