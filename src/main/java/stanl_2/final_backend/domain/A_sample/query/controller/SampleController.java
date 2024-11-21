@@ -12,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.A_sample.query.dto.SampleDTO;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
 import stanl_2.final_backend.domain.A_sample.query.service.SampleQueryService;
-import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 
 import java.security.Principal;
 
@@ -24,12 +22,10 @@ import java.security.Principal;
 public class SampleController {
 
     private final SampleQueryService sampleQueryService;
-    private final ExcelUtilsV1 excelUtilsV1;
 
     @Autowired
-    public SampleController(SampleQueryService sampleQueryService, ExcelUtilsV1 excelUtilsV1) {
+    public SampleController(SampleQueryService sampleQueryService) {
         this.sampleQueryService = sampleQueryService;
-        this.excelUtilsV1 = excelUtilsV1;
     }
 
     /**

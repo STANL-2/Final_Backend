@@ -69,8 +69,8 @@ public class ExcelUtilsV1 implements ExcelSupportV1{
 
         Sheet sheet = ObjectUtils.isEmpty(workbook.getSheet(sheetName))
                 ? workbook.createSheet(sheetName) : workbook.getSheet(sheetName);
-        sheet.setDefaultColumnWidth((short) 300);    // 디폴트 너비 설정
-        sheet.setDefaultRowHeight((short) 500);      // 디폴트 높이 설정
+        sheet.setDefaultColumnWidth(10);    // 디폴트 너비 설정
+//        sheet.setDefaultRowHeight((short) 500);      // 디폴트 높이 설정
 
         Row row = null;
         Cell cell = null;
