@@ -62,7 +62,7 @@ public class CenterController {
                 .build());
     }
 
-    @Operation(summary = "샘플 삭제 테스트")
+    @Operation(summary = "매장 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})

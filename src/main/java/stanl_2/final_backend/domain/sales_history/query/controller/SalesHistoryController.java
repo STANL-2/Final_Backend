@@ -224,33 +224,33 @@ public class SalesHistoryController {
                 .build());
     }
 
-    @Operation(summary = "사원 통계(실적,수당,매출액) 연도 별 검색")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
-            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
-                    content = @Content(mediaType = "application/json"))
-    })
-    @GetMapping("employee/statistics/search/year")
-    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsSearchYearByEmployee(@RequestParam Map<String, String> params
-                                                                                        ,Principal principal,
-                                                                                          @PageableDefault(size = 20) Pageable pageable){
-
-        SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
-
-        /* 설명. 2024 식으로 와야함 !!!!! */
-        salesHistorySearchDTO.setSearcherName(principal.getName());
-        salesHistorySearchDTO.setStartDate(params.get("startDate"));
-        salesHistorySearchDTO.setEndDate(params.get("endDate"));
-
-        SalesHistoryStatisticsDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchYearByEmployee(salesHistorySearchDTO);
-
-        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
-                .httpStatus(200)
-                .msg("사원 통계(실적,수당,매출액) 월 별 검색 성공")
-                .result(responseSalesHistory)
-                .build());
-    }
+//    @Operation(summary = "사원 통계(실적,수당,매출액) 연도 별 검색")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "성공",
+//                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+//            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+//                    content = @Content(mediaType = "application/json"))
+//    })
+//    @GetMapping("employee/statistics/search/year")
+//    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsSearchYearByEmployee(@RequestParam Map<String, String> params
+//                                                                                        ,Principal principal,
+//                                                                                          @PageableDefault(size = 20) Pageable pageable){
+//
+//        SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
+//
+//        /* 설명. 2024 식으로 와야함 !!!!! */
+//        salesHistorySearchDTO.setSearcherName(principal.getName());
+//        salesHistorySearchDTO.setStartDate(params.get("startDate"));
+//        salesHistorySearchDTO.setEndDate(params.get("endDate"));
+//
+//        SalesHistoryStatisticsDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchYearByEmployee(salesHistorySearchDTO);
+//
+//        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
+//                .httpStatus(200)
+//                .msg("사원 통계(실적,수당,매출액) 월 별 검색 성공")
+//                .result(responseSalesHistory)
+//                .build());
+//    }
 
 
 }
