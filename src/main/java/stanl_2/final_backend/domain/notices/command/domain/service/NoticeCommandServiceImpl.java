@@ -14,8 +14,6 @@ import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Noti
 import stanl_2.final_backend.domain.notices.command.domain.repository.NoticeRepository;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
-import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
-import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
