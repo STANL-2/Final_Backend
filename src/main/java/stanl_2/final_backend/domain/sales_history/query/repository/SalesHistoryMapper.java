@@ -33,7 +33,8 @@ public interface SalesHistoryMapper {
 
     SalesHistoryStatisticsDTO findStatisticsSearchYearByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
-    List<SalesHistoryRankedDataDTO> findAllRank(@Param("size") int size
+    List<SalesHistoryRankedDataDTO> findAllRank(@Param("salesHistoryRankedDataDTO")SalesHistoryRankedDataDTO salesHistoryRankedDataDTO
+            , @Param("size") int size
             , @Param("offset") int offset);
 
     int findRankCount();

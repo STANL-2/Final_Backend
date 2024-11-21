@@ -55,7 +55,7 @@ public class SalesHistoryController {
 
 
     /* 설명. todo
-     *  1. 각 실적, 수당, 매출액 별로 인자를 통해 동적 쿼리로 처리 가능한지 여부(내림차순)
+     *  1. (사원별, 매장별 순위) 각 실적, 수당, 매출액 별로 인자를 통해 동적 쿼리로 처리 가능한지 여부(내림차순)
      *  2. 판매내역 날짜별로
     * */
     @Operation(summary = "사원 판매내역 조회")
@@ -239,15 +239,11 @@ public class SalesHistoryController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("statistics")
-    public ResponseEntity<SalesHistoryResponseMessage> getStatistics(@RequestParam Map<String, String> params,
+    public ResponseEntity<SalesHistoryResponseMessage> getStatistics(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
                                                               @PageableDefault(size = 20) Pageable pageable){
 
-//        SalesHistoryRankedDataDTO salesHistoryRankedDataDTO = new SalesHistoryRankedDataDTO();
-//
-//        salesHistoryRankedDataDTO.setStartDate(params.get("startDate"));
-//        salesHistoryRankedDataDTO.setEndDate(params.get("endDate"));
 
-        Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectStatistics(pageable);
+        Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectStatistics(salesHistoryRankedDataDTO, pageable);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)

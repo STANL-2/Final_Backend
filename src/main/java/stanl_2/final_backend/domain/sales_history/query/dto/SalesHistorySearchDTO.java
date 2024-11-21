@@ -13,4 +13,5 @@ public class SalesHistorySearchDTO {
     private String searcherName;
     private String startDate;
     private String endDate;
+    private String orderBy;
 }

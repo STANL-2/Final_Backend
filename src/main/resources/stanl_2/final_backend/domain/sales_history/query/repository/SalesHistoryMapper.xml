@@ -148,7 +148,20 @@
             </if>
         </where>
         GROUP BY LEFT(a.created_at, 7)
-        ORDER BY MONTH ASC
+        <choose>
+            <when test="salesHistorySearchDTO.orderBy == 'totalIncentive'">
+                ORDER BY INCENTIVE DESC
+            </when>
+            <when test="salesHistorySearchDTO.orderBy == 'totalPerformance'">
+                ORDER BY PERFORMANCE DESC
+            </when>
+            <when test="salesHistorySearchDTO.orderBy == 'totalSales'">
+                ORDER BY TOTAL_SALES DESC
+            </when>
+            <otherwise>
+                ORDER BY MONTH ASC
+            </otherwise>
+        </choose>
     </select>
 
     <select id="findStatisticsSearchYearByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
@@ -165,7 +178,20 @@
             </if>
         </where>
         GROUP BY LEFT(a.created_at, 4)
-        ORDER BY YEAR ASC
+        <choose>
+            <when test="salesHistorySearchDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistorySearchDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistorySearchDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY YEAR ASC
+            </otherwise>
+        </choose>
     </select>
 
 <!--    group by center도 추가하면 좋을 것 -->
@@ -179,10 +205,21 @@
         created_at
         FROM tb_sales_history
         WHERE active = TRUE
-<!--        <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">-->
-<!--            AND created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}-->
-<!--        </if>-->
         GROUP BY mem_id
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY created_at desc
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -217,6 +254,20 @@
             AND a.active = TRUE
         </where>
         GROUP BY a.mem_id
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY a.created_at desc
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -263,7 +314,20 @@
             AND a.active = TRUE
         </where>
         GROUP BY a.mem_id, LEFT(a.created_at, 7)
-        ORDER BY MONTH ASC
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY MONTH ASC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -310,7 +374,20 @@
             AND a.active = TRUE
         </where>
         GROUP BY a.mem_id, LEFT(a.created_at, 4)
-        ORDER BY YEAR ASC
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY YEAR ASC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -357,6 +434,20 @@
             AND a.active = TRUE
         </where>
         GROUP BY a.cent_id
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -403,7 +494,20 @@
             AND a.active = TRUE
         </where>
         GROUP BY a.cent_id, LEFT(a.created_at, 7)
-        ORDER BY MONTH ASC
+    <choose>
+        <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+            ORDER BY total_incentive DESC
+        </when>
+        <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+            ORDER BY total_performance DESC
+        </when>
+        <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+            ORDER BY total_sales DESC
+        </when>
+        <otherwise>
+            ORDER BY MONTH ASC
+        </otherwise>
+    </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -450,7 +554,20 @@
             AND a.active = TRUE
         </where>
         GROUP BY a.cent_id, LEFT(a.created_at, 4)
-        ORDER BY YEAR ASC
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY YEAR ASC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 

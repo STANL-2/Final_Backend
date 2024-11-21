@@ -26,4 +26,5 @@ public class SalesHistoryRankedDataDTO {
     private String createdAt;
     private String month;
     private String year;
+    private String orderBy;
 }

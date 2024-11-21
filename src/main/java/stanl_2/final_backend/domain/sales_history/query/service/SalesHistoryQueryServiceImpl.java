@@ -1,7 +1,6 @@
 package stanl_2.final_backend.domain.sales_history.query.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -139,11 +138,11 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<SalesHistoryRankedDataDTO> selectStatistics(Pageable pageable) {
+    public Page<SalesHistoryRankedDataDTO> selectStatistics(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllRank(size,offset);
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllRank(salesHistoryRankedDataDTO, size,offset);
 
         int total = salesHistoryMapper.findRankCount();
 

@@ -7,9 +7,6 @@ import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySearchDT
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsDTO;
 
-import java.security.GeneralSecurityException;
-import java.util.List;
-
 public interface SalesHistoryQueryService {
     Page<SalesHistorySelectDTO> selectAllSalesHistoryByEmployee(SalesHistorySelectDTO salesHistorySelectDTO, Pageable pageable);
 
@@ -25,7 +22,7 @@ public interface SalesHistoryQueryService {
 
     SalesHistoryStatisticsDTO selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
 
-    Page<SalesHistoryRankedDataDTO> selectStatistics(Pageable pageable);
+    Page<SalesHistoryRankedDataDTO> selectStatistics(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 
     Page<SalesHistoryRankedDataDTO> selectStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 
