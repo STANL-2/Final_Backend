@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
@@ -45,7 +46,8 @@ public class SampleController {
     @PostMapping("")
     public ResponseEntity<SampleResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO,
                                                           Principal principal,
-                                                          Authentication authentication) {
+                                                          Authentication authentication,
+                                                          @RequestPart("file") MultipartFile imageUrl) {
 
         log.info("현재 접속한 회원의 권한");
         log.info("{}", authentication.getAuthorities());
@@ -54,7 +56,7 @@ public class SampleController {
         log.info(principal.getName());
         log.info(authentication.getName());
 
-        sampleCommandService.registerSample(sampleRegistRequestDTO);
+        sampleCommandService.registerSample(sampleRegistRequestDTO, imageUrl);
 
         return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
