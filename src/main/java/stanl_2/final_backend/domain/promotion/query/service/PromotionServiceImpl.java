@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.promotion.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -8,9 +9,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.problem.query.dto.ProblemDTO;
+import stanl_2.final_backend.domain.problem.query.dto.ProblemExcelDownload;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
+import stanl_2.final_backend.domain.promotion.query.dto.PromotionExcelDownload;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO;
 import stanl_2.final_backend.domain.promotion.query.repository.PromotionMapper;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import stanl_2.final_backend.global.redis.RedisService;
 
 import java.util.List;
@@ -20,11 +24,13 @@ public class PromotionServiceImpl implements PromotionService{
     private final PromotionMapper promotionMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisService redisService;
+    private final ExcelUtilsV1 excelUtilsV1;
     @Autowired
-    public PromotionServiceImpl(PromotionMapper promotionMapper, RedisTemplate<String, Object> redisTemplate, RedisService redisService) {
+    public PromotionServiceImpl(PromotionMapper promotionMapper, RedisTemplate<String, Object> redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1) {
         this.promotionMapper = promotionMapper;
         this.redisTemplate = redisTemplate;
         this.redisService = redisService;
+        this.excelUtilsV1 =excelUtilsV1;
     }
 
     @Transactional
@@ -46,9 +52,18 @@ public class PromotionServiceImpl implements PromotionService{
         return new PageImpl<>(promotions, pageable, totalElements);
     }
 
+    @Transactional
     @Override
     public PromotionDTO findPromotion(String promotionId) {
         PromotionDTO promotionDTO = promotionMapper.findPromotion(promotionId);
         return promotionDTO;
+    }
+
+    @Transactional
+    @Override
+    public void exportPromotionToExcel(HttpServletResponse response) {
+        List<PromotionExcelDownload> promotionList = promotionMapper.findPromotionsForExcel();
+
+        excelUtilsV1.download(PromotionExcelDownload.class, promotionList, "promotionExcel", response);
     }
 }

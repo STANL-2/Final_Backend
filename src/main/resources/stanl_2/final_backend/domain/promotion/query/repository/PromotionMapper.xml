@@ -25,7 +25,6 @@
         <result property="deletedAt" column="DELETED_AT"/>
     </resultMap>
 
-
     <select id="findPromotions" resultMap="SearchPromotion" parameterType="String">
         SELECT
         a.prm_id,
@@ -82,5 +81,25 @@
             a.mem_id
         FROM tb_promotion a
         WHERE prm_id = #{promotionId};
+    </select>
+
+    <resultMap id="ExcelPromotion" type="stanl_2.final_backend.domain.promotion.query.dto.PromotionExcelDownload">
+        <result property="title" column="PRM_TTL"/>
+        <result property="content" column="PRM_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+    <select id="findPromotionsForExcel" resultMap="ExcelPromotion">
+        SELECT
+            a.prm_ttl,
+            a.prm_cont,
+            a.mem_id,
+            a.created_at,
+            a.updated_at,
+            a.active
+        FROM tb_promotion a
+        WHERE a.active != 'false';
     </select>
 </mapper>
