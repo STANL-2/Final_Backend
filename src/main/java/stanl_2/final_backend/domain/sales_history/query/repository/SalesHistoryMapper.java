@@ -2,10 +2,7 @@ package stanl_2.final_backend.domain.sales_history.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySearchDTO;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsDTO;
+import stanl_2.final_backend.domain.sales_history.query.dto.*;
 
 import java.util.List;
 
@@ -74,6 +71,20 @@ public interface SalesHistoryMapper {
                                                                      @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     int findStatisticsCenterBySearchCountYear(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
+
+    List<SalesHistorySelectDTO> findSalesHistorySearchByEmployee(@Param("size") int size
+                                                                , @Param("offset") int offset,
+                                                                 @Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+
+    int findSalesHistorySearchCountByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+
+    List<SalesHistorySelectDTO> findSalesHistoryBySearch(@Param("size") int size
+                                                        , @Param("offset") int offset,
+                                                         @Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+
+    int findSalesHistoryCountBySearch(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+
+    SalesHistoryStatisticsAverageDTO findStatisticsAverageBySearch(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 }
 
 

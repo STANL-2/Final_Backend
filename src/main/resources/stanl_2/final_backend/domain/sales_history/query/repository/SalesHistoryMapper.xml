@@ -44,6 +44,13 @@
         <result property="month" column="MONTH"/>
     </resultMap>
 
+    <resultMap id="SalesHistoryAverageResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsAverageDTO">
+        <result property="averageTotalSales" column="average_total_sales"/>
+        <result property="averageTotalIncentive" column="average_total_incentive"/>
+        <result property="averageTotalPerformance" column="average_total_performance"/>
+    </resultMap>
+
+
     <select id="findSalesHistoryByEmployee" resultMap="salesHistoryAllResultMap">
         SELECT
         a.sal_hist_id,
@@ -60,6 +67,101 @@
         WHERE a.active = TRUE AND a.mem_id = #{searcherId}
         ORDER BY a.created_at DESC
         LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findSalesHistorySearchByEmployee" resultMap="salesHistoryAllResultMap">
+        SELECT
+        a.sal_hist_id,
+        a.sal_hist_ince,
+        a.sal_hist_no_of_veh,
+        a.sal_hist_tota_sale,
+        a.cent_id,
+        a.cust_id,
+        a.mem_id,
+        a.prod_id,
+        a.conr_id,
+        a.created_at
+        FROM tb_sales_history a
+        <where>
+            a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findSalesHistorySearchCountByEmployee" resultType="int" parameterType="String">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_sales_history a
+        <where>
+            a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+    </select>
+
+    <select id="findSalesHistoryBySearch" resultMap="salesHistoryAllResultMap">
+        SELECT
+        a.sal_hist_id,
+        a.sal_hist_ince,
+        a.sal_hist_no_of_veh,
+        a.sal_hist_tota_sale,
+        a.cent_id,
+        a.cust_id,
+        a.mem_id,
+        a.prod_id,
+        a.conr_id,
+        a.created_at
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
+                a.mem_id IN
+                <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
+                a.cent_id IN
+                <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        ORDER BY a.created_at desc
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findSalesHistoryCountBySearch" resultType="int" parameterType="String">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
+                a.mem_id IN
+                <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
+                a.cent_id IN
+                <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
     </select>
 
  <select id="findAllSalesHistory" resultMap="salesHistoryAllResultMap">
@@ -194,8 +296,6 @@
         </choose>
     </select>
 
-<!--    group by center도 추가하면 좋을 것 -->
-
     <select id="findAllRank" resultMap="SalesHistoryRankedDataResultMap">
         SELECT
         mem_id,
@@ -240,6 +340,9 @@
         SUM(a.sal_hist_ince) AS total_incentive,
         SUM(a.sal_hist_no_of_veh) AS total_performance,
         SUM(a.sal_hist_tota_sale) AS total_sales
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales
         FROM tb_sales_history a
         <where>
             <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
@@ -269,6 +372,34 @@
             </otherwise>
         </choose>
         LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findStatisticsAverageBySearch" resultMap="SalesHistoryAverageResultMap">
+        SELECT
+        AVG(total_incentive) AS average_total_incentive,
+        AVG(total_performance) AS average_total_performance,
+        AVG(total_sales) AS average_total_sales
+        FROM (
+        SELECT
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        <choose>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                GROUP BY a.mem_id
+            </when>
+            <otherwise>
+                GROUP BY a.cent_id
+            </otherwise>
+        </choose>
+        ) AS summary
     </select>
 
     <select id="findStatisticsBySearchCount" resultType="int">

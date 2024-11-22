@@ -2,10 +2,7 @@ package stanl_2.final_backend.domain.sales_history.query.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySearchDTO;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsDTO;
+import stanl_2.final_backend.domain.sales_history.query.dto.*;
 
 public interface SalesHistoryQueryService {
     Page<SalesHistorySelectDTO> selectAllSalesHistoryByEmployee(SalesHistorySelectDTO salesHistorySelectDTO, Pageable pageable);
@@ -35,4 +32,10 @@ public interface SalesHistoryQueryService {
     Page<SalesHistoryRankedDataDTO> selectStatisticsCenterBySearchMonth(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 
     Page<SalesHistoryRankedDataDTO> selectStatisticsCenterBySearchYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
+    Page<SalesHistorySelectDTO> selectSalesHistorySearchByEmployee(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable);
+
+    Page<SalesHistorySelectDTO> selectSalesHistoryBySearch(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable);
+
+    SalesHistoryStatisticsAverageDTO selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 }

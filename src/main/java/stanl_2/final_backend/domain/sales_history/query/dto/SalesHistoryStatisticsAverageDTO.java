@@ -5,16 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class SalesHistorySearchDTO {
-    private String searcherName;
-    private String startDate;
-    private String endDate;
-    private List<String> memberList;
-    private List<String> centerList;
+public class SalesHistoryStatisticsAverageDTO {
+    private Double averageTotalSales;
+    private Double averageTotalIncentive;
+    private Double averageTotalPerformance;
 }
