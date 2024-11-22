@@ -39,13 +39,20 @@ public class SampleCommandServiceImpl implements SampleCommandService {
 
     @Override
     @Transactional
-    public void registerSample(SampleRegistDTO sampleRegistRequestDTO, MultipartFile file) {
+    public void registerSample(SampleRegistDTO sampleRegistRequestDTO) {
 
         Sample newSample = modelMapper.map(sampleRegistRequestDTO, Sample.class);
 
+        sampleRepository.save(newSample);
+    }
+
+    @Override
+    public void registerSampleFile(SampleRegistDTO sampleRegistRequestDTO, MultipartFile imageUrl) {
+        Sample newSample = modelMapper.map(sampleRegistRequestDTO, Sample.class);
+
+
         // s3 사용
-        String imageUrl = s3FileService.uploadOneFile(file);
-//        newSample.setImageUrl(imageUrl);
+        newSample.setImageUrl(s3FileService.uploadOneFile(imageUrl));
 
         sampleRepository.save(newSample);
     }
@@ -81,4 +88,5 @@ public class SampleCommandServiceImpl implements SampleCommandService {
 
         sampleRepository.save(sample);
     }
+
 }
