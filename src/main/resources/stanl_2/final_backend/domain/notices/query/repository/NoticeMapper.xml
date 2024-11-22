@@ -124,5 +124,26 @@
         FROM tb_notice a
         WHERE not_id = #{noticeId};
     </select>
+    <resultMap id="NoticeExcel" type="stanl_2.final_backend.domain.notices.query.dto.NoticeExcelDownload">
+        <result property="title" column="NOT_TTL"/>
+        <result property="tag" column="NOT_TAG"/>
+        <result property="classification" column="NOT_CLA"/>
+        <result property="content" column="NOT_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+    <select id="findNoticesForExcel" resultMap="NoticeExcel">
+        SELECT
+            a.not_ttl,
+            a.not_tag,
+            a.not_cla,
+            a.not_cont,
+            a.created_at,
+            a.updated_at,
+            a.mem_id
+        FROM tb_notice a
+    </select>
 
 </mapper>
