@@ -340,9 +340,6 @@
         SUM(a.sal_hist_ince) AS total_incentive,
         SUM(a.sal_hist_no_of_veh) AS total_performance,
         SUM(a.sal_hist_tota_sale) AS total_sales
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales
         FROM tb_sales_history a
         <where>
             <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
