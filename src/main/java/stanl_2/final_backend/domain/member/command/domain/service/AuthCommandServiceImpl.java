@@ -24,6 +24,7 @@ import stanl_2.final_backend.domain.member.command.domain.repository.MemberRoleR
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
+import stanl_2.final_backend.global.security.service.MemberDetails;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import javax.crypto.SecretKey;
@@ -67,11 +68,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         this.aesUtils = aesUtils;
     }
 
-    private String getCurrentTimestamp() {
-        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
-
     @Override
     @Transactional
     public void signup(SignupDTO signupDTO) throws GeneralSecurityException {
@@ -94,7 +90,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public SigninResponseDTO signin(SigninRequestDTO signinRequestDTO) {
+    public SigninResponseDTO signin(SigninRequestDTO signinRequestDTO) throws GeneralSecurityException {
         // 사용자 인증
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 signinRequestDTO.getLoginId(), signinRequestDTO.getPassword());
@@ -117,7 +113,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         String accessToken = generateAccessToken(authenticationResponse.getName(), authorities, secretKey);
         String refreshToken = generateRefreshToken(authenticationResponse.getName(), authorities,secretKey);
 
-        return new SigninResponseDTO(accessToken, refreshToken);
+        MemberDetails memberDetails = (MemberDetails) authenticationResponse.getPrincipal();
+
+        return new SigninResponseDTO(
+                accessToken, refreshToken,
+                aesUtils.decrypt(memberDetails.getMember().getName()),
+                memberDetails.getMember().getPosition()
+        );
     }
 
     private String generateAccessToken(String username, String authorities, SecretKey secretKey) {

@@ -11,5 +11,5 @@ public interface AuthCommandService {
 
     void grantAuthority(GrantDTO grantDTO);
 
-    SigninResponseDTO signin(SigninRequestDTO signinRequestDTO);
+    SigninResponseDTO signin(SigninRequestDTO signinRequestDTO) throws GeneralSecurityException;
 }
