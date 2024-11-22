@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-public class OrderResponseMessage {
+public class S3ResponseMessage {
     private int httpStatus;
     private String msg;
     private Object result;
