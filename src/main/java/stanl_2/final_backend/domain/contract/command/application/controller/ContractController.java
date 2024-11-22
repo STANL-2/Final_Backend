@@ -35,7 +35,7 @@ public class ContractController {
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO,
+    public ResponseEntity<ContractResponseMessage> postContract(@RequestBody ContractRegistDTO contractRegistRequestDTO,
                                                             Principal principal) throws GeneralSecurityException {
 
         contractRegistRequestDTO.setMemberId(principal.getName());
@@ -60,12 +60,12 @@ public class ContractController {
 
         contractModifyRequestDTO.setContractId(contractId);
         contractModifyRequestDTO.setMemberId(principal.getName());
-        ContractModifyDTO contractModifyDTO = contractCommandService.modifyContract(contractModifyRequestDTO);
+        contractCommandService.modifyContract(contractModifyRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
                 .msg("계약서가 성공적으로 수정되었습니다.")
-                .result(contractModifyDTO)
+                .result(null)
                 .build());
     }
 

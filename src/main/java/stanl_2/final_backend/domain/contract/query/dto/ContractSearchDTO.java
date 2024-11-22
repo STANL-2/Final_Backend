@@ -12,7 +12,7 @@ public class ContractSearchDTO {
     private String title;
     private String customerName;
     private String customerIdentifiNo;
-    private String customerAddrress;
+    private String customerAddress;
     private String customerEmail;
     private String customerPhone;
     private String companyName;
@@ -24,8 +24,8 @@ public class ContractSearchDTO {
     private Integer intermediatePayment;
     private Integer remainderPayment;
     private Integer consignmentPayment;
-    private String delveryDate;
-    private String delveryLocationLoc;
+    private String deliveryDate;
+    private String deliveryLocationLoc;
     private String status;
     private String numberOfVehicles;
     private String totalSales;

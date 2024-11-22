@@ -50,7 +50,6 @@ public class CustomerCommandServiceImpl implements CustomerCommandService {
     @Transactional
     public void modifyCustomerInfo(CustomerModifyDTO customerModifyDTO) throws GeneralSecurityException {
 
-        System.out.println("아아아: " + customerModifyDTO.getCustomerId());
         Customer customer = customerRepository.findById(customerModifyDTO.getCustomerId())
                 .orElseThrow(() -> new CustomerCommonException(CustomerErrorCode.CUSTOMER_NOT_FOUND));
 
