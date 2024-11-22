@@ -12,7 +12,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package stanl_2.final_backend.global.config;
+package stanl_2.final_backend.global.redis;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;

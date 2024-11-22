@@ -1,15 +1,17 @@
 package stanl_2.final_backend.domain.contract.command.domain.service;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.contract.command.application.dto.ContractDeleteDTO;
-import stanl_2.final_backend.domain.contract.command.application.dto.ContractModifyDTO;
-import stanl_2.final_backend.domain.contract.command.application.dto.ContractRegistDTO;
-import stanl_2.final_backend.domain.contract.command.application.dto.ContractStatusModifyDTO;
+import stanl_2.final_backend.domain.contract.command.application.dto.*;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
+import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.UpdateHistory;
 import stanl_2.final_backend.domain.contract.command.domain.repository.ContractRepository;
+import stanl_2.final_backend.domain.contract.command.domain.repository.UpdateHistoryRepository;
 import stanl_2.final_backend.domain.contract.common.exception.ContractCommonException;
 import stanl_2.final_backend.domain.contract.common.exception.ContractErrorCode;
 import stanl_2.final_backend.domain.customer.command.application.dto.CustomerModifyDTO;
@@ -17,12 +19,12 @@ import stanl_2.final_backend.domain.customer.command.application.dto.CustomerReg
 import stanl_2.final_backend.domain.customer.command.application.service.CustomerCommandService;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
-import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.product.command.application.command.service.ProductCommandService;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.service.ProductQueryService;
+import stanl_2.final_backend.domain.s3.S3FileService;
 import stanl_2.final_backend.domain.sales_history.command.application.service.SalesHistoryCommandService;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -31,31 +33,37 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Service("contractServiceImpl")
 public class ContractCommandServiceImpl implements ContractCommandService {
 
     private final ContractRepository contractRepository;
+    private final UpdateHistoryRepository updateHistoryRepository;
     private final AuthQueryService authQueryService;
     private final CustomerQueryService customerQueryService;
     private final MemberQueryService memberQueryService;
     private final CustomerCommandService customerCommandService;
-    private final ProductQueryService productService;
+    private final ProductQueryService productQueryService;
     private final ProductCommandService productCommandService;
     private final SalesHistoryCommandService salesHistoryCommandService;
     private final ModelMapper modelMapper;
     private final AESUtils aesUtils;
+    private final S3FileService s3FileService;
 
-    public ContractCommandServiceImpl(ContractRepository contractRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductQueryService productService, ProductCommandService productCommandService, SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper, AESUtils aesUtils) {
+    @Autowired
+    public ContractCommandServiceImpl(ContractRepository contractRepository, UpdateHistoryRepository updateHistoryRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductQueryService productQueryService, ProductCommandService productCommandService, SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper, AESUtils aesUtils, S3FileService s3FileService) {
         this.contractRepository = contractRepository;
+        this.updateHistoryRepository = updateHistoryRepository;
         this.authQueryService = authQueryService;
         this.customerQueryService = customerQueryService;
         this.memberQueryService = memberQueryService;
         this.customerCommandService = customerCommandService;
-        this.productService = productService;
+        this.productQueryService = productQueryService;
         this.productCommandService = productCommandService;
         this.salesHistoryCommandService = salesHistoryCommandService;
         this.modelMapper = modelMapper;
         this.aesUtils = aesUtils;
+        this.s3FileService = s3FileService;
     }
 
     private String  getCurrentTime() {
@@ -76,92 +84,87 @@ public class ContractCommandServiceImpl implements ContractCommandService {
             customerRegistDTO.setEmail(contractRegistRequestDTO.getCustomerEmail());
             customerRegistDTO.setMemberId(memberId);
 
+            // 고객 등록
             customerCommandService.registerCustomerInfo(customerRegistDTO);
 
-            // 등록 후 고객 정보 재조회
+            // 등록 후 재조회
             customerDTO = customerQueryService.selectCustomerInfoByPhone(contractRegistRequestDTO.getCustomerPhone());
         }
+
+        // 고객 ID 반환
         return customerDTO.getCustomerId();
     }
 
     @Override
     @Transactional
     public void registerContract(ContractRegistDTO contractRegistRequestDTO) throws GeneralSecurityException {
-
-        // 영업사원 번호
         String memberId = authQueryService.selectMemberIdByLoginId(contractRegistRequestDTO.getMemberId());
+        String productId = productQueryService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum()).getId();
+        String customerId = handleCustomerInfo(contractRegistRequestDTO, memberId);
+        String centerId = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId()).getCenterId();
 
-        // 일련번호로 제품테이블의 총식별번호 찾아서 제품 가져오기
-        ProductSelectIdDTO productSelectIdDTO = productService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum());
-        String productId = productSelectIdDTO.getId();
-
-        String customerId = null; // 고객 ID 변수 선언
-        String centerId = null;   // 매장 ID 변수 선언
-
-        // 고객전화번호로 고객테이블 찾아서 고객이 있으면 넘어가고, 고객이 없으면 고객테이블에 고객 정보 넣기
-        customerId = handleCustomerInfo(contractRegistRequestDTO, memberId);
-
-        // 회원의 영업 매장번호
-        MemberDTO memberDTO = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId());
-        centerId = memberDTO.getCenterId();
-
-        Contract contract = modelMapper.map(contractRegistRequestDTO, Contract.class);
-
+        // 계약 생성
+        Contract contract = new Contract();
         contract.setMemberId(memberId);
-        contract.setCenterId(centerId);    // 회원의 매장번호 넣기
-        contract.setProductId(productId);    // 제품 번호 넣기
+        contract.setCenterId(centerId);
+        contract.setProductId(productId);
         contract.setCustomerId(customerId);
         contract.setStatus("WAIT");
 
+        // 고객 정보 암호화 후 설정
         contract.setCustomerPhone(aesUtils.encrypt(contractRegistRequestDTO.getCustomerPhone()));
         contract.setCustomerEmail(aesUtils.encrypt(contractRegistRequestDTO.getCustomerEmail()));
-        contract.setCustomerAddrress(aesUtils.encrypt(contractRegistRequestDTO.getCustomerAddrress()));
+        contract.setCustomerAddress(aesUtils.encrypt(contractRegistRequestDTO.getCustomerAddress()));
         contract.setCustomerIdentifiNo(aesUtils.encrypt(contractRegistRequestDTO.getCustomerIdentifiNo()));
 
+        // 계약 저장
         contractRepository.save(contract);
     }
 
     @Override
     @Transactional
-    public ContractModifyDTO modifyContract(ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException {
-
+    public void modifyContract(ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException {
         String memberId = authQueryService.selectMemberIdByLoginId(contractModifyRequestDTO.getMemberId());
 
-        // 가져온 고객 정보에 수정된 값 넣기
+        // 계약 조회
+        Contract contract = (Contract)contractRepository.findByContractIdAndMemberId(contractModifyRequestDTO.getContractId(), memberId)
+                .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
+
+        // 고객 정보 수정
         CustomerModifyDTO customerModifyDTO = new CustomerModifyDTO();
+        customerModifyDTO.setCustomerId(contractModifyRequestDTO.getCustomerId());
         customerModifyDTO.setName(contractModifyRequestDTO.getCustomerName());
         customerModifyDTO.setAge(contractModifyRequestDTO.getCustomerAge());
         customerModifyDTO.setSex(contractModifyRequestDTO.getCustomerSex());
         customerModifyDTO.setPhone(contractModifyRequestDTO.getCustomerPhone());
         customerModifyDTO.setEmail(contractModifyRequestDTO.getCustomerEmail());
-        customerModifyDTO.setCustomerId(contractModifyRequestDTO.getCustomerId());
         customerModifyDTO.setMemberId(memberId);
 
+        // 고객 정보 업데이트
         customerCommandService.modifyCustomerInfo(customerModifyDTO);
 
-        Contract contract = (Contract) contractRepository.findByContractIdAndMemberId(contractModifyRequestDTO.getContractId(), memberId)
-                .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
-
-        // 계약서 업데이트
-        Contract updateContract = modelMapper.map(contractModifyRequestDTO, Contract.class);
-        updateContract.setCreatedAt(contract.getCreatedAt());
-        updateContract.setUpdatedAt(contract.getUpdatedAt());
-        updateContract.setActive(contract.isActive());
-        updateContract.setCenterId(contract.getCenterId());
-        updateContract.setCreatedUrl(contract.getCreatedUrl());
-        updateContract.setCustomerSex(contract.getCustomerSex());
-        updateContract.setStatus("WAIT");
-
+        // 고객 정보가 수정된 경우 계약서의 고객 정보도 업데이트
         contract.setCustomerPhone(aesUtils.encrypt(contractModifyRequestDTO.getCustomerPhone()));
         contract.setCustomerEmail(aesUtils.encrypt(contractModifyRequestDTO.getCustomerEmail()));
-        contract.setCustomerAddrress(aesUtils.encrypt(contractModifyRequestDTO.getCustomerAddrress()));
+        contract.setCustomerAddress(aesUtils.encrypt(contractModifyRequestDTO.getCustomerAddress()));
         contract.setCustomerIdentifiNo(aesUtils.encrypt(contractModifyRequestDTO.getCustomerIdentifiNo()));
 
-        contractRepository.save(updateContract);
+        // 계약 상태 업데이트
+        contract.setStatus("WAIT");
 
-        ContractModifyDTO contractModifyDTO = modelMapper.map(updateContract, ContractModifyDTO.class);
+        // 수정된 계약 정보 저장
+        contractRepository.save(contract);
 
-        return contractModifyDTO;
+        // 수정 이력 저장
+        String unescapedHtml = StringEscapeUtils.unescapeJson(contractModifyRequestDTO.getCreatedUrl());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, contractModifyRequestDTO.getTitle());
+
+        UpdateHistoryRegistDTO updateHistoryRegistDTO = new UpdateHistoryRegistDTO();
+        updateHistoryRegistDTO.setContent(updatedS3Url);
+        updateHistoryRegistDTO.setMemberId(memberId);
+        updateHistoryRegistDTO.setContractId(contractModifyRequestDTO.getContractId());
+
+        updateHistoryRepository.save(modelMapper.map(updateHistoryRegistDTO, UpdateHistory.class));
     }
 
     @Override
@@ -202,13 +205,13 @@ public class ContractCommandServiceImpl implements ContractCommandService {
             salesHistoryCommandService.registerSalesHistory(contract.getContractId());
 
             // 제품 재고 수 줄이기
-            ProductSelectIdDTO productSelectIdDTO = productService.selectByProductSerialNumber(contract.getSerialNum());
+            ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
             String productId = productSelectIdDTO.getId();
             productCommandService.modifyProductStock(productId, 1);
         } else if (contractStatusModifyDTO.getStatus().equals("CANCLED")) {
             salesHistoryCommandService.deleteSalesHistory(contract.getContractId());
 
-            ProductSelectIdDTO productSelectIdDTO = productService.selectByProductSerialNumber(contract.getSerialNum());
+            ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
             String productId = productSelectIdDTO.getId();
             productCommandService.deleteProductStock(productId, 1);
         }

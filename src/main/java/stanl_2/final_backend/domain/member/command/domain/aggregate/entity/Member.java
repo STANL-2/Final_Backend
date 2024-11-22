@@ -31,7 +31,7 @@ public class Member {
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
-    @Column(name = "MEM_LOGIN_ID", nullable = false)
+    @Column(name = "MEM_LOGIN_ID", nullable = false, unique = true)
     private String loginId;
 
     @Column(name = "MEM_PWD", nullable = false)

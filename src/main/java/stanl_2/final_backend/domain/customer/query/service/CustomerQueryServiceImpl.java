@@ -7,8 +7,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.customer.common.exception.CustomerCommonException;
-import stanl_2.final_backend.domain.customer.common.exception.CustomerErrorCode;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 import stanl_2.final_backend.domain.customer.query.repository.CustomerMapper;
@@ -100,8 +98,6 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         String encryptedPhone = aesUtils.encrypt(customerPhone);
 
         CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoByPhone(encryptedPhone);
-
-        System.out.println("쿼리쪽 고객정보: " + customerInfoDTO);
 
         if (customerInfoDTO == null) {
             return customerInfoDTO;

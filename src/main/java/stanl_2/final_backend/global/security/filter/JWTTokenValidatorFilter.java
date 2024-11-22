@@ -104,7 +104,6 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
         log.error("요청 거부됨: {}. Error: {}. Request URI: {}, Method: {}, Client IP: {}",
                 message, e.getMessage(), request.getRequestURI(), request.getMethod(), getClientIp(request));
 
-
         saveErrorLog(message, e, request);
     }
 
