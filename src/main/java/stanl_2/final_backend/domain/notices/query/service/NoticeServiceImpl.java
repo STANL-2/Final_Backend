@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.notices.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -8,8 +9,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
+import stanl_2.final_backend.domain.notices.query.dto.NoticeExcelDownload;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 import stanl_2.final_backend.domain.notices.query.repository.NoticeMapper;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import stanl_2.final_backend.global.redis.RedisService;
 
 import java.util.List;
@@ -20,11 +23,13 @@ public class NoticeServiceImpl implements NoticeService{
     private final NoticeMapper noticeMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisService redisService;
+    private final ExcelUtilsV1 excelUtilsV1;
     @Autowired
-    public NoticeServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService) {
+    public NoticeServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1) {
         this.noticeMapper = noticeMapper;
         this.redisTemplate = redisTemplate;
         this.redisService =redisService;
+        this.excelUtilsV1 =excelUtilsV1;
     }
 
     @Transactional
@@ -45,14 +50,20 @@ public class NoticeServiceImpl implements NoticeService{
             System.out.println("캐시에서 데이터 조회 중...");
         }
         int totalElements = noticeMapper.findNoticeCount(); // 총 개수 조회
-        System.out.println(totalElements);
         return new PageImpl<>(notices, pageable, totalElements);
     }
-
+    @Transactional
     @Override
     public NoticeDTO findNotice(String noticeId) {
         NoticeDTO notice = noticeMapper.findNotice(noticeId);
         return notice;
+    }
+    @Transactional
+    @Override
+    public void exportNoticesToExcel(HttpServletResponse response) {
+        List<NoticeExcelDownload> noticeList = noticeMapper.findNoticesForExcel();
+
+        excelUtilsV1.download(NoticeExcelDownload.class, noticeList, "noticeExcel", response);
     }
 
 }
