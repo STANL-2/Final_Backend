@@ -64,7 +64,7 @@ public class SampleController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
-    @PostMapping("")
+    @PostMapping("/file")
     public ResponseEntity<SampleResponseMessage> postTestFile(@RequestPart("dto") SampleRegistDTO sampleRegistRequestDTO,
                                                               Principal principal,
                                                               @RequestPart("file") MultipartFile imageUrl) {

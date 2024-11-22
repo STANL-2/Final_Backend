@@ -10,4 +10,5 @@ public class SampleRegistDTO {
     private String id;
     private String name;
     private Integer num;
+    private String imageUrl;
 }

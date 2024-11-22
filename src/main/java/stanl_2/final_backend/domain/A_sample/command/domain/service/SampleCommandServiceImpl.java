@@ -47,13 +47,12 @@ public class SampleCommandServiceImpl implements SampleCommandService {
     }
 
     @Override
-    public void registerSampleFile(SampleRegistDTO sampleRegistRequestDTO, MultipartFile file) {
+    public void registerSampleFile(SampleRegistDTO sampleRegistRequestDTO, MultipartFile imageUrl) {
         Sample newSample = modelMapper.map(sampleRegistRequestDTO, Sample.class);
 
 
         // s3 사용
-        String imageUrl = s3FileService.uploadOneFile(file);
-//        newSample.setImageUrl(imageUrl);
+        newSample.setImageUrl(s3FileService.uploadOneFile(imageUrl));
 
         sampleRepository.save(newSample);
     }
