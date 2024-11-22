@@ -32,20 +32,20 @@ public class NoticeServiceImpl implements NoticeService{
     public Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO) {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
-        String cacheKey = "NoticeCache::notices::offset=" + offset + "::size=" + size;
+        String cacheKey = "myCache::notices::offset=" + offset + "::size=" + size;
 
         List<NoticeDTO> notices = (List<NoticeDTO>) redisTemplate.opsForValue().get(cacheKey);
         if (notices == null) {
             System.out.println("데이터베이스에서 데이터 조회 중...");
-            notices = noticeMapper.findNotices(offset, size, searchDTO);
-            if (notices != null && !notices.isEmpty()) { // 데이터가 있을 때만 캐싱
-                redisService.setKeyWithTTL(cacheKey, notices, 30 * 60); // 캐싱 시 동일 키 사용
-            }
+            notices = noticeMapper.findAllNotices(offset, size);
+            String key = "NoticePage"+offset;
+            Object value = notices;
+            long ttlInSeconds = 30*60;
+            redisService.setKeyWithTTL(key, value, ttlInSeconds);
         } else {
             System.out.println("캐시에서 데이터 조회 중...");
         }
         int totalElements = noticeMapper.findNoticeCount(); // 총 개수 조회
-        System.out.println(totalElements);
         return new PageImpl<>(notices, pageable, totalElements);
     }
 
