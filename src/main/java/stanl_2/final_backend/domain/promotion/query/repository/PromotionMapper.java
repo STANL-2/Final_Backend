@@ -14,7 +14,7 @@ public interface PromotionMapper {
             @Param("size") int size,
             @Param("promotionDTO") PromotionSearchDTO promotionSearchDTO
     );
-    Integer findPromotionsCount(@Param("promotionSearchDTO") PromotionSearchDTO promotionSearchDTO);
+    int findPromotionsCount(@Param("promotionSearchDTO") PromotionSearchDTO promotionSearchDTO);
 
     PromotionDTO findPromotion(@Param("promotionId") String promotionId);
 }
