@@ -52,16 +52,16 @@
 
     <select id="findNotices" resultMap="SearchNotice" parameterType="String">
         SELECT
-        a.not_id,
-        a.not_ttl,
-        a.not_tag,
-        a.not_cla,
-        a.not_cont,
-        a.created_at,
-        a.updated_at,
-        a.deleted_at,
-        a.active,
-        a.mem_id
+            a.not_id,
+            a.not_ttl,
+            a.not_tag,
+            a.not_cla,
+            a.not_cont,
+            a.created_at,
+            a.updated_at,
+            a.deleted_at,
+            a.active,
+            a.mem_id
         FROM tb_notice a
         <where>
             a.active != 'false'
@@ -85,7 +85,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findNoticesCount" resultMap="SearchNotice" parameterType="String">
+    <select id="findNoticesCount" resultType="int" parameterType="stanl_2.final_backend.domain.notices.query.dto.SearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_notice a
@@ -101,7 +101,7 @@
                 AND a.mem_id = #{memberId}
             </if>
             <if test="title != null">
-                AND a.not_ttl = #{title}
+                AND a.not_ttl LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="startDate != null and endDate != null">
                 AND a.created_at BETWEEN #{startDate} AND #{endDate}
@@ -111,16 +111,16 @@
 
     <select id="findNotice" resultMap="Notice" parameterType="string">
         SELECT
-        a.not_id,
-        a.not_ttl,
-        a.not_tag,
-        a.not_cla,
-        a.not_cont,
-        a.created_at,
-        a.updated_at,
-        a.deleted_at,
-        a.active,
-        a.mem_id
+            a.not_id,
+            a.not_ttl,
+            a.not_tag,
+            a.not_cla,
+            a.not_cont,
+            a.created_at,
+            a.updated_at,
+            a.deleted_at,
+            a.active,
+            a.mem_id
         FROM tb_notice a
         WHERE not_id = #{noticeId};
     </select>

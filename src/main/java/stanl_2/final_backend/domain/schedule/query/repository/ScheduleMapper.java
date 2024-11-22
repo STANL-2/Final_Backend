@@ -2,6 +2,7 @@ package stanl_2.final_backend.domain.schedule.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO;
+import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDetailDTO;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO;
 
@@ -17,5 +18,5 @@ public interface ScheduleMapper {
 
     List<ScheduleDTO> findSchedulesByMemberIdAndStartAt(Map<String, String> arg);
 
-    List<ScheduleDTO> findAllSchedulesByDay(String currentDay);
+    List<ScheduleDayDTO> findAllSchedulesByDay(String currentDay);
 }

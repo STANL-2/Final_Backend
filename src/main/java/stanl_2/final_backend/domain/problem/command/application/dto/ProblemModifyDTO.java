@@ -12,7 +12,7 @@ import lombok.Setter;
 public class ProblemModifyDTO {
 
     private String title;
-
     private String content;
+    private String memberId;
 
 }

@@ -20,13 +20,6 @@ spring:
     restart:
       enabled: false
 
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate.format_sql: true
-
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   header: ${JWT_HEADER}
@@ -44,3 +37,15 @@ logging:
     org:
       springframework:
         security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESSKEY}
+      secret-key: ${S3_SECRETKEY}
+    s3:
+      bucket: ${S3_BUCKETNAME}
+    region:
+      static: ${S3_REGION}
+    stack:
+      auto: false

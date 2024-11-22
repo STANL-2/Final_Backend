@@ -5,12 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.customer.command.application.dto.CustomerModifyDTO;
 import stanl_2.final_backend.domain.customer.command.application.dto.CustomerRegistDTO;
 import stanl_2.final_backend.domain.customer.command.application.service.CustomerCommandService;
@@ -38,7 +36,7 @@ public class CustomerController {
     @Operation(summary = "고객정보 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
     })
     @PostMapping("")
     public ResponseEntity<CustomerResponseMessage> postCustomer(@RequestBody CustomerRegistDTO customerRegistDTO,
@@ -60,7 +58,7 @@ public class CustomerController {
     @Operation(summary = "고객정보 수정(자기 고객만)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
     })
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerResponseMessage> postCustomer(@PathVariable String customerId,
@@ -84,7 +82,7 @@ public class CustomerController {
     @Operation(summary = "고객정보 삭제(자기 고객만)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
     })
     @DeleteMapping("/{customerId}")
     public ResponseEntity<CustomerResponseMessage> deleteCustomer(@PathVariable String customerId) {

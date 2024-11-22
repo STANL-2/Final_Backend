@@ -1,10 +1,7 @@
 package stanl_2.final_backend.domain.contract.command.domain.aggregate.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
@@ -37,11 +34,17 @@ public class Contract {
     @Column(name = "CONR_CUST_NAME", nullable = false)
     private String customerName;
 
+    @Column(name = "CONR_CUST_SEX", nullable = false)
+    private String customerSex;
+
     @Column(name = "CONR_CUST_IDEN_NO", nullable = false)
     private String customerIdentifiNo;
 
+    @Column(name = "CONR_CUST_AGE", nullable = false)
+    private String customerAge;
+
     @Column(name = "CONR_CUST_ADR", nullable = false)
-    private String customerAddrress;
+    private String customerAddress;
 
     @Column(name = "CONR_CUST_EMA", nullable = false)
     private String customerEmail;
@@ -79,17 +82,16 @@ public class Contract {
     private Integer consignmentPayment;
 
     @Column(name = "CONR_DELV_DATE")
-    private String delveryDate;
+    private String deliveryDate;
 
     @Column(name = "CONR_DELV_LOC")
-    private String delveryLocation;
+    private String deliveryLocation;
 
     @Column(name = "CONR_CAR_NAME")
     private String carName;
 
     @Column(name = "CONR_STAT", nullable = false)
-    @ColumnDefault("'WAIT'")
-    private String status;
+    private String status = "WAIT";
 
     @Column(name = "CONR_NO_OF_VEH", nullable = false)
     @ColumnDefault("1")
@@ -122,7 +124,7 @@ public class Contract {
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
-    @Column(name = "ADMI_ID", nullable = false)
+    @Column(name = "ADMI_ID")
     private String adminId;
 
     @Column(name = "CENT_ID", nullable = false)

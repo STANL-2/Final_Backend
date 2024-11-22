@@ -1,10 +1,7 @@
 package stanl_2.final_backend.domain.customer.command.domain.aggregate.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
@@ -40,7 +37,7 @@ public class Customer {
     @Column(name = "CUST_PHO", nullable = false)
     private String phone;
 
-    @Column(name = "CUST_EMER_PHO", nullable = false)
+    @Column(name = "CUST_EMER_PHO")
     private String emergePhone;
 
     @Column(name = "CUST_EMA", nullable = false)

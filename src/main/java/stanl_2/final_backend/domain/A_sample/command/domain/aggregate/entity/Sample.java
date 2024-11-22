@@ -48,6 +48,9 @@ public class Sample {
     @Column(name = "ACTIVE")
     private Boolean active = true;
 
+    @Column(name = "IMAGE_URL")
+    private String imageUrl;
+
 
     /* 설명. updatedAt 자동화 */
     // Insert 되기 전에 실행

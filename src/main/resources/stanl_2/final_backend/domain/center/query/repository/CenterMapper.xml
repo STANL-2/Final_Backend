@@ -46,7 +46,7 @@
         WHERE a.cent_id = #{id} AND a.active = TRUE
     </select>
 
-    <select id="findCenterAll" resultMap="centerAllResultMap" parameterType="stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO">
+    <select id="findCenterAll" resultMap="centerAllResultMap">
         SELECT
         a.cent_id
         , a.cent_name
@@ -61,10 +61,10 @@
         FROM tb_center a
         WHERE a.active = TRUE
         ORDER BY a.created_at DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findCenterBySearch" resultMap="centerAllResultMap" parameterType="java.util.Map">
+    <select id="findCenterBySearch" resultMap="centerAllResultMap">
         SELECT
         a.cent_id
         , a.cent_name
@@ -77,18 +77,20 @@
         , a.deleted_at
         , a.active
         FROM tb_center a
-        WHERE a.active = TRUE
+        <where>
+            a.active = TRUE
         <if test="centerSearchRequestDTO.id != null">
             AND a.cent_id LIKE #{centerSearchRequestDTO.id}
         </if>
         <if test="centerSearchRequestDTO.name != null">
-            AND a.cent_name LIKE #{centerSearchRequestDTO.name}
+            AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
         </if>
         <if test="centerSearchRequestDTO.address != null">
-            AND a.cent_adr LIKE #{centerSearchRequestDTO.address}
+            AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
         </if>
+        </where>
         ORDER BY a.created_at DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findCenterCount" resultType="int">
@@ -98,20 +100,49 @@
         WHERE a.active = TRUE;
     </select>
 
-    <select id="findCenterBySearchCount" resultType="int" parameterType="java.util.Map">
+    <select id="findCenterBySearchCount" resultType="int">
         SELECT
         COUNT(*) AS cnt
         FROM tb_center a
-        WHERE a.active = TRUE
-        <if test="centerSearchRequestDTO.id != null">
-            AND a.cent_id like #{centerSearchRequestDTO.id}
-        </if>
-        <if test="centerSearchRequestDTO.name != null">
-            AND a.cent_name like #{centerSearchRequestDTO.name}
-        </if>
-        <if test="centerSearchRequestDTO.address != null">
-            AND a.cent_adr like #{centerSearchRequestDTO.address}
-        </if>
+        <where>
+            a.active = TRUE
+            <if test="centerSearchRequestDTO.id != null">
+                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            </if>
+            <if test="centerSearchRequestDTO.name != null">
+                AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.address != null">
+                AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+            </if>
+        </where>
     </select>
 
+    <select id="findCenterListBySearch" resultMap="centerAllResultMap">
+        SELECT
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        , a.deleted_at
+        , a.active
+        FROM tb_center a
+        <where>
+            a.active = TRUE
+            <if test="centerSearchRequestDTO.id != null">
+                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            </if>
+            <if test="centerSearchRequestDTO.name != null">
+                AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.address != null">
+                AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+    </select>
 </mapper>
