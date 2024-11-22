@@ -53,7 +53,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findPromotionsCount" resultMap="SearchPromotion" parameterType="String">
+    <select id="findPromotionsCount" resultType="int" parameterType="stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_promotion a

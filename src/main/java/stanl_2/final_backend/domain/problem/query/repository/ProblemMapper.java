@@ -12,9 +12,9 @@ public interface ProblemMapper {
     List<ProblemDTO> findProblems(
             @Param("offset") Integer offset,
             @Param("size") Integer size,
-            @Param("problemDTO") ProblemSearchDTO problemSearchDTO
+            @Param("problemSearchDTO") ProblemSearchDTO problemSearchDTO
     );
-    Integer findProblemsCount(@Param("problemSearchDTO") ProblemSearchDTO problemSearchDTO);
+    int findProblemsCount(@Param("problemSearchDTO") ProblemSearchDTO problemSearchDTO);
 
     ProblemDTO findProblem(@Param("problemId") String problemId);
 }
