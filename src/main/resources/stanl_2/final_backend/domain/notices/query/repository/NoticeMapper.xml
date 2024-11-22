@@ -85,7 +85,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findNoticesCount" resultMap="SearchNotice" parameterType="String">
+    <select id="findNoticesCount" resultType="int" parameterType="stanl_2.final_backend.domain.notices.query.dto.SearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_notice a
@@ -101,7 +101,7 @@
                 AND a.mem_id = #{memberId}
             </if>
             <if test="title != null">
-                AND a.not_ttl = #{title}
+                AND a.not_ttl LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="startDate != null and endDate != null">
                 AND a.created_at BETWEEN #{startDate} AND #{endDate}

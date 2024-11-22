@@ -20,7 +20,7 @@ public interface NoticeMapper {
             @Param("searchDTO") SearchDTO searchDTO
     );
 
-    Integer findNoticesCount(@Param("searchDTO") SearchDTO searchDTO);
+    int findNoticesCount(@Param("searchDTO") SearchDTO searchDTO);
     NoticeDTO findNotice(@Param("noticeId") String noticeId);
 }
 

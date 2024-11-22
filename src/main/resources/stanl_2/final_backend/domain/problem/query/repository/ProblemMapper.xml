@@ -64,7 +64,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findProblemsCount" resultMap="SearchProblem" parameterType="stanl_2.final_backend.domain.problem.query.dto.ProblemSearchDTO">
+    <select id="findProblemsCount" resultType="int" parameterType="stanl_2.final_backend.domain.problem.query.dto.ProblemSearchDTO">
         SELECT
         COUNT(*) AS CNT
         FROM tb_problem a
