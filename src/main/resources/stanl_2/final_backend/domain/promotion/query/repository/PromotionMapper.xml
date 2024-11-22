@@ -69,6 +69,7 @@
             </if>
         </where>
     </select>
+
     <select id="findPromotion" resultMap="Promotion" parameterType="string">
         SELECT
             a.prm_id,

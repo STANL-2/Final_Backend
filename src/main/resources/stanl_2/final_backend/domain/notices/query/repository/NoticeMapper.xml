@@ -124,6 +124,7 @@
         FROM tb_notice a
         WHERE not_id = #{noticeId};
     </select>
+
     <resultMap id="NoticeExcel" type="stanl_2.final_backend.domain.notices.query.dto.NoticeExcelDownload">
         <result property="title" column="NOT_TTL"/>
         <result property="tag" column="NOT_TAG"/>

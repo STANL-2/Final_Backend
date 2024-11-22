@@ -52,13 +52,13 @@ public class NoticeServiceImpl implements NoticeService{
         int totalElements = noticeMapper.findNoticeCount(); // 총 개수 조회
         return new PageImpl<>(notices, pageable, totalElements);
     }
-
+    @Transactional
     @Override
     public NoticeDTO findNotice(String noticeId) {
         NoticeDTO notice = noticeMapper.findNotice(noticeId);
         return notice;
     }
-
+    @Transactional
     @Override
     public void exportNoticesToExcel(HttpServletResponse response) {
         List<NoticeExcelDownload> noticeList = noticeMapper.findNoticesForExcel();
