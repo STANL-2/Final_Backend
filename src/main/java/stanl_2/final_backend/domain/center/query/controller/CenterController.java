@@ -15,19 +15,20 @@ import stanl_2.final_backend.domain.center.common.response.CenterResponseMessage
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
-import stanl_2.final_backend.domain.center.query.service.CenterService;
+import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController("queryCenterController")
 @RequestMapping("/api/v1/center")
 public class CenterController {
 
-    private final CenterService centerService;
+    private final CenterQueryService centerQueryService;
 
     @Autowired
-    public CenterController(CenterService centerService) {
-        this.centerService = centerService;
+    public CenterController(CenterQueryService centerQueryService) {
+        this.centerQueryService = centerQueryService;
     }
 
     @Operation(summary = "영업매장 조회")
@@ -40,7 +41,7 @@ public class CenterController {
     @GetMapping("")
     public ResponseEntity<CenterResponseMessage> getCenterAll(@PageableDefault(size = 20) Pageable pageable){
 
-        Page<CenterSelectAllDTO> responseCenters = centerService.selectAll(pageable);
+        Page<CenterSelectAllDTO> responseCenters = centerQueryService.selectAll(pageable);
 
         return ResponseEntity.ok(CenterResponseMessage.builder()
                 .httpStatus(200)
@@ -56,10 +57,10 @@ public class CenterController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("{id}")
-    public ResponseEntity<CenterResponseMessage> getCenterById(@PathVariable("id") String id){
+    @GetMapping("{centerId}")
+    public ResponseEntity<CenterResponseMessage> getCenterById(@PathVariable("centerId") String centerId){
 
-        CenterSelectIdDTO centerSelectIdDTO = centerService.selectByCenterId(id);
+        CenterSelectIdDTO centerSelectIdDTO = centerQueryService.selectByCenterId(centerId);
 
         return ResponseEntity.ok(CenterResponseMessage.builder()
                 .httpStatus(200)
@@ -84,11 +85,35 @@ public class CenterController {
         centerSearchRequestDTO.setName(params.get("name"));
         centerSearchRequestDTO.setAddress(params.get("address"));
 
-        Page<CenterSelectAllDTO> responseCenters = centerService.selectBySearch(centerSearchRequestDTO, pageable);
+        Page<CenterSelectAllDTO> responseCenters = centerQueryService.selectBySearch(centerSearchRequestDTO, pageable);
 
         return ResponseEntity.ok(CenterResponseMessage.builder()
                 .httpStatus(200)
-                .msg("검색 조회 성공")
+                .msg("영업매장 검색 성공")
+                .result(responseCenters)
+                .build());
+    }
+
+    @Operation(summary = "영업매장리스트 검색(통계용)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = CenterResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/searchList")
+    public ResponseEntity<CenterResponseMessage> getCenterListBySearch(@RequestParam Map<String, String> params){
+
+        CenterSearchRequestDTO centerSearchRequestDTO = new CenterSearchRequestDTO();
+        centerSearchRequestDTO.setId(params.get("id"));
+        centerSearchRequestDTO.setName(params.get("name"));
+        centerSearchRequestDTO.setAddress(params.get("address"));
+
+        List<CenterSelectAllDTO> responseCenters = centerQueryService.selectCenterListBySearch(centerSearchRequestDTO);
+
+        return ResponseEntity.ok(CenterResponseMessage.builder()
+                .httpStatus(200)
+                .msg("영업매장리스트 검색(통계용) 성공")
                 .result(responseCenters)
                 .build());
     }

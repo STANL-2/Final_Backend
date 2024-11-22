@@ -14,7 +14,7 @@ public interface MemberQueryService {
 
     List<MemberDTO> selectMemberByCenterId(String centerId);
 
-    List<MemberDTO> selectMemberByCenterList(List<CenterSelectAllDTO> centerList);
+    List<MemberDTO> selectMemberByCenterList(List<String> centerList);
     String selectNameById(String memberId) throws GeneralSecurityException;
 
 //    MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException;

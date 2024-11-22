@@ -7,15 +7,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
+import stanl_2.final_backend.domain.member.query.dto.MemberCenterListDTO;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 
 import java.security.GeneralSecurityException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController(value = "queryMemberController")
 @RequestMapping("/api/v1/member")
@@ -45,6 +45,44 @@ public class MemberController {
                                                         .msg("성공")
                                                         .result(memberInfo)
                                                         .build());
+    }
+
+    @Operation(summary = "회원 정보 조건(매장) 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("{centerId}")
+    public ResponseEntity<MemberResponseMessage> getMemberByCenterId(@PathVariable("centerId") String centerId) throws GeneralSecurityException {
+
+        List<MemberDTO> memberList = memberQueryService.selectMemberByCenterId(centerId);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(memberList)
+                .build());
+    }
+
+    @Operation(summary = "회원 정보 조건(매장리스트) 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("centerList")
+    public ResponseEntity<MemberResponseMessage> getMemberByCenterList(@RequestBody MemberCenterListDTO memberCenterListDTO) throws GeneralSecurityException {
+
+        List<MemberDTO> memberList = memberQueryService.selectMemberByCenterList(memberCenterListDTO.getCenterList());
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(memberList)
+                .build());
     }
 
 

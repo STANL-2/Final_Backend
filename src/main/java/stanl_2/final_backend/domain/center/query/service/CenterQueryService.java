@@ -8,13 +8,14 @@ import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
-public interface CenterService {
+public interface CenterQueryService {
     CenterSelectIdDTO selectByCenterId(String id);
 
     Page<CenterSelectAllDTO> selectAll(Pageable pageable);
 
     Page<CenterSelectAllDTO> selectBySearch(CenterSearchRequestDTO centerSearchRequestDTO, Pageable pageable);
+
+    List<CenterSelectAllDTO> selectCenterListBySearch(CenterSearchRequestDTO centerSearchRequestDTO);
 }

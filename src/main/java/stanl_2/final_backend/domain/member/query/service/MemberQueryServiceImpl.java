@@ -74,7 +74,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MemberDTO> selectMemberByCenterList(List<CenterSelectAllDTO> centerList) {
+    public List<MemberDTO> selectMemberByCenterList(List<String> centerList) {
         List<MemberDTO> memberList = memberMapper.findMembersByCenterList(centerList);
 
         return memberList;

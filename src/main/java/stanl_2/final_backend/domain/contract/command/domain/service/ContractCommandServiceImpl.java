@@ -207,13 +207,13 @@ public class ContractCommandServiceImpl implements ContractCommandService {
             // 제품 재고 수 줄이기
             ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
             String productId = productSelectIdDTO.getId();
-            productCommandService.modifyProductStock(productId);
+            productCommandService.modifyProductStock(productId, 1);
         } else if (contractStatusModifyDTO.getStatus().equals("CANCLED")) {
             salesHistoryCommandService.deleteSalesHistory(contract.getContractId());
 
             ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
             String productId = productSelectIdDTO.getId();
-            productCommandService.deleteProductStock(productId);
+            productCommandService.deleteProductStock(productId, 1);
         }
     }
 }
