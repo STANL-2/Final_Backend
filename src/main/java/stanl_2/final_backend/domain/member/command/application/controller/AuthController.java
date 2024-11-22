@@ -14,6 +14,7 @@ import stanl_2.final_backend.domain.member.command.application.service.AuthComma
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
 import java.security.GeneralSecurityException;
+import java.security.Principal;
 
 @Slf4j
 @RestController("commandAuthController")
@@ -107,7 +108,7 @@ public class AuthController {
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     @PostMapping("signin")
-    public ResponseEntity<MemberResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO) {
+    public ResponseEntity<MemberResponseMessage> signin(@RequestBody SigninRequestDTO signinRequestDTO) throws GeneralSecurityException {
 
         SigninResponseDTO responseDTO = authCommandService.signin(signinRequestDTO);
 
