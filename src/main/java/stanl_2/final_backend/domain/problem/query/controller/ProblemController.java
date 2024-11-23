@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -60,5 +61,15 @@ public class ProblemController {
     public ResponseEntity<ProblemDTO> getProblem(@PathVariable String problemId){
         ProblemDTO problemDTO = problemService.findProblem(problemId);
         return ResponseEntity.ok(problemDTO);
+    }
+    @Operation(summary = "문제사항 엑셀 다운 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문제사항 엑셀 다운 테스트 성공",
+                    content = {@Content(schema = @Schema(implementation = ProblemResponseMessage.class))}),
+    })
+    @GetMapping("/excel")
+    public void exportNotice(HttpServletResponse response){
+
+        problemService.exportProblemsToExcel(response);
     }
 }

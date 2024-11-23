@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,6 +58,16 @@ public class PromotionController {
     public ResponseEntity<PromotionDTO> getPromotion(@PathVariable String promotionId){
         PromotionDTO promotionDTO = promotionService.findPromotion(promotionId);
         return ResponseEntity.ok(promotionDTO);
+    }
+    @Operation(summary = "프로모션 엑셀 다운")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
+    })
+    @GetMapping("/excel")
+    public void exportNotice(HttpServletResponse response){
+
+        promotionService.exportPromotionToExcel(response);
     }
 }
 
