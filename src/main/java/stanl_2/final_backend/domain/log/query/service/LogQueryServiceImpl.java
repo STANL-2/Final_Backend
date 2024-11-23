@@ -32,8 +32,6 @@ public class LogQueryServiceImpl implements LogQueryService {
 
         List<LogDTO> logs = logMapper.findLogs(offset, size, searchLogDTO);
 
-        log.info("####");
-        log.info("{}", logs);
         int totalElements = logMapper.findLogsCnt();
         return new PageImpl<>(logs, pageable, totalElements);
     }

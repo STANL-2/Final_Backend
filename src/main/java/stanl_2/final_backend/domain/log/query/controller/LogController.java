@@ -19,8 +19,6 @@ import stanl_2.final_backend.domain.log.query.dto.LogDTO;
 import stanl_2.final_backend.domain.log.query.dto.LogSearchDTO;
 import stanl_2.final_backend.domain.log.query.service.LogQueryService;
 
-import java.util.List;
-
 @RestController(value = "queryLogController")
 @RequestMapping("/api/v1/log")
 public class LogController {
@@ -54,30 +52,9 @@ public class LogController {
         LogSearchDTO searchLogDTO = new LogSearchDTO(ipAddress, requestTime, status, method, uri);
         Page<LogDTO> logDTOPage = logQueryService.selectLogs(pageable, searchLogDTO);
 
-
-//        List<LogDTO> log = logQueryService.selectLog();
-
         return ResponseEntity.ok(LogResponseMessage.builder()
                                                     .httpStatus(200)
                                                     .result(logDTOPage)
                                                     .build());
-    }
-
-    @Operation(summary = "로그 검색 조회(시스템 관리자)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = LogResponseMessage.class))}),
-            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
-                    content = @Content(mediaType = "application/json"))
-    })
-    @GetMapping("list")
-    public ResponseEntity<LogResponseMessage> getLogSearch(){
-
-
-
-        return ResponseEntity.ok(LogResponseMessage.builder()
-                                                   .httpStatus(200)
-                                                   .result(null)
-                                                   .build());
     }
 }
