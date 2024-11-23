@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
-public class LogDTO {
-    private String logId;
+@Setter
+public class LogSearchDTO {
     private String sessionId;
     private String userAgent;
     private String ipAddress;
@@ -23,4 +22,16 @@ public class LogDTO {
     private String transactionId;
     private String status;
     private String errorMessage;
+
+    public LogSearchDTO(String ipAddress,
+                        String requestTime,
+                        String status,
+                        String method,
+                        String uri){
+        this.ipAddress = ipAddress;
+        this.requestTime = requestTime;
+        this.status = status;
+        this.method = method;
+        this.uri = uri;
+    }
 }

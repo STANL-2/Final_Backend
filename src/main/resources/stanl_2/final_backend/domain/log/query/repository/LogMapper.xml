@@ -20,7 +20,13 @@
 
     </resultMap>
 
-    <select id="findLog" resultMap="Log">
+    <select id="findLogsCnt" resultType="_int">
+        SELECT
+         COUNT(*) AS cnt
+          FROM tb_log a
+    </select>
+
+    <select id="findLogs" resultMap="Log" parameterType="String">
         SELECT
                a.log_id,
                a.error_message,
@@ -36,5 +42,24 @@
                a.uri,
                a.user_agent
           FROM tb_log a
+        <where>
+            <if test="searchLogDTO.ipAddress != null">
+                AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
+            </if>
+            <if test="searchLogDTO.requestTime != null">
+                AND a.request_time LIKE CONCAT('%', #{ searchLogDTO.requestTime }, '%')
+            </if>
+            <if test="searchLogDTO.status != null">
+                AND a.status LIKE CONCAT('%', #{ searchLogDTO.status }, '%')
+            </if>
+            <if test="searchLogDTO.method != null">
+                AND a.method LIKE CONCAT('%', #{ searchLogDTO.method }, '%')
+            </if>
+            <if test="searchLogDTO.uri != null">
+                AND a.uri LIKE CONCAT('%', #{ searchLogDTO.uri }, '%')
+            </if>
+        </where>
+        ORDER BY a.request_time DESC
+        LIMIT #{ size } OFFSET #{ offset }
     </select>
 </mapper>
