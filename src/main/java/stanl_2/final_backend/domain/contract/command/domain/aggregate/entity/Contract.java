@@ -94,12 +94,10 @@ public class Contract {
     private String status = "WAIT";
 
     @Column(name = "CONR_NO_OF_VEH", nullable = false)
-    @ColumnDefault("1")
-    private String numberOfVehicles;
+    private Integer numberOfVehicles = 1;
 
     @Column(name = "CONR_TOTA_SALE", nullable = false)
-    @ColumnDefault("0")
-    private String totalSales;
+    private Integer totalSales = 0;
 
     @Lob
     @Column(name = "CREATED_URL", nullable = false, columnDefinition = "TEXT")

@@ -44,8 +44,8 @@ public class EvaluationCommandServiceImpl implements EvaluationCommandService {
 
     @Override
     @Transactional
-    public void modifyEvaluation(String id, EvaluationModifyDTO evaluationModifyRequestDTO) {
-        Evaluation evaluation = evaluationRepository.findById(id)
+    public void modifyEvaluation(EvaluationModifyDTO evaluationModifyRequestDTO) {
+        Evaluation evaluation = evaluationRepository.findById(evaluationModifyRequestDTO.getEvaluationId())
                 .orElseThrow(() -> new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND));
 
         Evaluation updateEvaluation = modelMapper.map(evaluationModifyRequestDTO, Evaluation.class);

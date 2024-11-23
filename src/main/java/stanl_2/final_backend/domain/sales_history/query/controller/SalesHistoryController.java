@@ -5,19 +5,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.product.common.response.ProductResponseMessage;
 import stanl_2.final_backend.domain.sales_history.common.response.SalesHistoryResponseMessage;
 import stanl_2.final_backend.domain.sales_history.query.dto.*;
 import stanl_2.final_backend.domain.sales_history.query.service.SalesHistoryQueryService;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
 
 @RestController(value = "querySalesHistoryController")
@@ -30,31 +30,6 @@ public class SalesHistoryController {
         this.salesHistoryQueryService = salesHistoryQueryService;
     }
 
-    /* 설명.
-    *  - 사원 -> 일주일별, 월별, 연별(조회기간별)
-
-        -> 사원 랭킹(윈도우 함수 이용)
-
-*       default: 월별 판매내역 List
-*
-        1. (지역: 센터 검색 조회(NULL 혹은 '지역')
-
-        2. (매장명: NULL 혹은 1)
-        -1- NULL일 시 1번 결과를 다시 받는다. -> 그 행의 지역 검색결과(centerList)을 바탕으로 mem_id 조회
-        -2- 1일 시 selectCenterById를 통해서 반환 값을 member에 where =cent_id)인 값 반환
-
-        3. (이름:null 혹은 1)
-        - null 일 시-2-의 리스트를 다시 받는다. -> select윈도우 함수 이용해서 멤버 결과 뿌려주기
-        - 1 일시 하나의 멤버
-
-        4. 분류에 따라서 뿌려줌
-    * */
-
-
-    /* 설명. todo
-     *  1. (사원별, 매장별 순위) 각 실적, 수당, 매출액 별로 인자를 통해 동적 쿼리로 처리 가능한지 여부(내림차순)
-     *  2. 판매내역 날짜별로(조회기간만), 매장별, 사원별
-    * */
     @Operation(summary = "판매내역 조회(사원, 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
@@ -451,5 +426,17 @@ public class SalesHistoryController {
                 .build());
     }
 
+    @Operation(summary = "판매내역 엑셀 다운")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "판매내역 엑셀 다운 성공",
+                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/excel")
+    public void exporSalesHistory(HttpServletResponse response){
+
+        salesHistoryQueryService.exportSalesHistoryToExcel(response);
+    }
 
 }

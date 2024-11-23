@@ -6,9 +6,8 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class CenterModifyRequestDTO {
-    private String id;
+    private String centerId;
     private String name;
     private String address;
     private String phone;

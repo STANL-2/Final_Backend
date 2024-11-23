@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class CenterRegistRequestDTO {
     private String name;
     private String address;

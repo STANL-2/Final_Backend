@@ -5,12 +5,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.center.common.response.CenterResponseMessage;
 import stanl_2.final_backend.domain.product.common.response.ProductResponseMessage;
 import stanl_2.final_backend.domain.product.query.dto.ProductSearchRequestDTO;
@@ -94,5 +96,18 @@ public class ProductController {
                 .msg("제품 검색 성공")
                 .result(responseProducts)
                 .build());
+    }
+
+    @Operation(summary = "제품 엑셀 다운")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "제품 엑셀 다운 성공",
+                    content = {@Content(schema = @Schema(implementation = ProductResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/excel")
+    public void exportProduct(HttpServletResponse response){
+
+        productQueryService.exportProductsToExcel(response);
     }
 }
