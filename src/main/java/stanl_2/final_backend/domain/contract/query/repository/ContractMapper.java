@@ -37,4 +37,20 @@ public interface ContractMapper {
                                                  @Param("contractSearchDTO") ContractSearchDTO contractSearchDTO);
 
     int findContractBySearchCount(ContractSearchDTO contractSearchDTO);
+
+    List<ContractSelectAllDTO> findContractAllByCenterId(@Param("offset") int offset,
+                                                                 @Param("pageSize") int pageSize,
+                                                                 @Param("centerId") String centerId);
+
+    Integer findContractCountByCenterId(@Param("centerId") String centerId);
+
+    ContractSeletIdDTO findContractByIdAndCenterId(@Param("contractId")String contractId,
+                                                           @Param("centerId") String centerId);
+
+    List<ContractSearchDTO> findContractBySearchAndCenterId(@Param("offset") int offset,
+                                                            @Param("pageSize") int pageSize,
+                                                            @Param("contractSearchDTO") ContractSearchDTO contractSearchDTO,
+                                                            @Param("centerId") String centerId);
+
+    Integer findContractBySearchAndCenterCount(@Param("contractSearchDTO") ContractSearchDTO contractSearchDTO, @Param("centerId") String centerId);
 }

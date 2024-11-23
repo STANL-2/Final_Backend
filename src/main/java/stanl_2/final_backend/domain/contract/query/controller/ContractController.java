@@ -17,6 +17,7 @@ import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
 import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @Slf4j
@@ -117,8 +118,95 @@ public class ContractController {
                 .build());
     }
 
-    // 영업담당자, 관리자 조회
-    @Operation(summary = "계약서 전체 조회(영업관리자, 담당자)")
+    // 영업 관리자 조회
+    @Operation(summary = "계약서 전체 조회(영업관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 전체 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("center")
+    public ResponseEntity<ContractResponseMessage> getAllContractAdmin(@PageableDefault(size = 10) Pageable pageable,
+                                                                          Principal principal) throws GeneralSecurityException {
+
+        ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
+        contractSelectAllDTO.setMemberId(principal.getName());
+
+        Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContractAdmin(contractSelectAllDTO, pageable);
+
+        return ResponseEntity.ok(ContractResponseMessage.builder()
+                .httpStatus(200)
+                .msg("계약서 전체 조회 성공")
+                .result(responseContracts)
+                .build());
+    }
+
+    @Operation(summary = "계약서 상세 조회(영업관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 상세 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("center/{contractId}")
+    public ResponseEntity<ContractResponseMessage> getDetailContractAdmin(@PathVariable String contractId,
+                                                                             Principal principal) throws GeneralSecurityException {
+
+        ContractSeletIdDTO contractSeletIdDTO = new ContractSeletIdDTO();
+        contractSeletIdDTO.setContractId(contractId);
+        contractSeletIdDTO.setMemberId(principal.getName());
+
+        ContractSeletIdDTO responseContract = contractQueryService.selectDetailContractAdmin(contractSeletIdDTO);
+
+        return ResponseEntity.ok(ContractResponseMessage.builder()
+                .httpStatus(200)
+                .msg("계약서 상세조회 성공")
+                .result(responseContract)
+                .build());
+    }
+
+    @Operation(summary = "계약서 검색 조회(영업관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 검색 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("center/search")
+    public ResponseEntity<ContractResponseMessage> getContractBySearchAdmin(Principal principal,
+                                                                               @RequestParam(required = false) String searchMemberId,
+                                                                               @RequestParam(required = false) String centerId,
+                                                                               @RequestParam(required = false) String title,
+                                                                               @RequestParam(required = false) String startAt,
+                                                                               @RequestParam(required = false) String endAt,
+                                                                               @RequestParam(required = false) String customerName,
+                                                                               @RequestParam(required = false) String customerClassifcation,
+                                                                               @RequestParam(required = false) String productId,
+                                                                               @RequestParam(required = false) String status,
+                                                                               @RequestParam(required = false) String companyName,
+                                                                               @RequestParam(required = false) String customerPurchaseCondition,
+                                                                               @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
+
+        ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
+        contractSearchDTO.setMemberId(principal.getName());
+        contractSearchDTO.setSearchMemberId(searchMemberId);
+        contractSearchDTO.setCenterId(centerId);
+        contractSearchDTO.setTitle(title);
+        contractSearchDTO.setStartAt(startAt);
+        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setCustomerName(customerName);
+        contractSearchDTO.setCustomerClassifcation(customerClassifcation);
+        contractSearchDTO.setProductId(productId);
+        contractSearchDTO.setStatus(status);
+        contractSearchDTO.setCompanyName(companyName);
+        contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
+
+        Page<ContractSearchDTO> responseContracts = contractQueryService.selectBySearchAdmin(contractSearchDTO, pageable);
+
+        return ResponseEntity.ok(ContractResponseMessage.builder()
+                .httpStatus(200)
+                .msg("계약서 검색 조회 성공")
+                .result(responseContracts)
+                .build());
+    }
+
+    // 영업담당자 조회
+    @Operation(summary = "계약서 전체 조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 전체 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
@@ -137,7 +225,7 @@ public class ContractController {
                 .build());
     }
 
-    @Operation(summary = "계약서 상세 조회(영업사원)")
+    @Operation(summary = "계약서 상세 조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 상세 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
@@ -157,7 +245,7 @@ public class ContractController {
                 .build());
     }
 
-    @Operation(summary = "계약서 검색 조회(영업사원)")
+    @Operation(summary = "계약서 검색 조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 검색 조회 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
