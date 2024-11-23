@@ -29,7 +29,7 @@ public class ContractController {
         this.contractCommandService = contractCommandService;
     }
 
-    @Operation(summary = "계약서 등록(영업사원)")
+    @Operation(summary = "계약서 등록(영업사원, 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 등록 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
@@ -48,7 +48,7 @@ public class ContractController {
                                                         .build());
                                             }
 
-    @Operation(summary = "계약서 수정(영업사원)")
+    @Operation(summary = "계약서 수정(영업사원, 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 수정 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
@@ -69,7 +69,7 @@ public class ContractController {
                 .build());
     }
 
-    @Operation(summary = "계약서 삭제(영업사원)")
+    @Operation(summary = "계약서 삭제(영업사원, 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
