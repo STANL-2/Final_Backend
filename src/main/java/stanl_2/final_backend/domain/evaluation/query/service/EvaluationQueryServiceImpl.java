@@ -185,6 +185,7 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
     }
 
     @Override
+    @Transactional
     public void exportEvaluationToExcel(HttpServletResponse response) {
         List<EvaluationExcelDownload> evaluationList = evaluationMapper.findEvaluationForExcel();
 

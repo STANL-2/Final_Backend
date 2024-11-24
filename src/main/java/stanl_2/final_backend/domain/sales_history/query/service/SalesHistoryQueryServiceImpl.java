@@ -409,6 +409,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
     }
 
     @Override
+    @Transactional
     public void exportSalesHistoryToExcel(HttpServletResponse response) {
         List<SalesHistoryExcelDownload> salesHistoryList = salesHistoryMapper.findSalesHistoryForExcel();
 

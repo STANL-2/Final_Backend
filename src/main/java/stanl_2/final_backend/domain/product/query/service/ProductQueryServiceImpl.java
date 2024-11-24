@@ -92,6 +92,7 @@ public class ProductQueryServiceImpl implements ProductQueryService {
     }
 
     @Override
+    @Transactional
     public void exportProductsToExcel(HttpServletResponse response) {
         List<SampleExcelDownload> productList = productMapper.findProductsForExcel();
 

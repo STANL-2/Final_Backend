@@ -86,6 +86,7 @@ public class CenterQueryServiceImpl implements CenterQueryService {
     }
 
     @Override
+    @Transactional
     public void exportCenterToExcel(HttpServletResponse response) {
         List<CenterExcelDownload> centerList = centerMapper.findCentersForExcel();
 
