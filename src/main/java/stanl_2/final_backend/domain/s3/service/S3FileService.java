@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.s3;
+package stanl_2.final_backend.domain.s3.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,9 +20,5 @@ public interface S3FileService {
 
     // 파일 다운로드
     byte[] downloadFile(String fileName);
-
-    // 폴더 조회
-//    String getFileFolder(FileForder fileFolder);
-
 
 }
