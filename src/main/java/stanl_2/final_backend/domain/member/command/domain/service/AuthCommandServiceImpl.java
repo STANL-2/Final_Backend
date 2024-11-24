@@ -115,10 +115,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         MemberDetails memberDetails = (MemberDetails) authenticationResponse.getPrincipal();
 
+        String memberAuthorities = memberDetails.getAuthorities().toString();
+        memberAuthorities = memberAuthorities.substring(1, memberAuthorities.length() - 1);
+        String[] roleArray = memberAuthorities.split(",\\s*");
+        String firstRole = "";
+        if (roleArray.length > 0) {
+            firstRole = roleArray[0].replace("ROLE_", ""); // ROLE_ 제거
+        } else {
+            throw new GlobalCommonException(GlobalErrorCode.AUTHORITIES_NOT_FOUND);
+        }
         return new SigninResponseDTO(
                 accessToken, refreshToken,
                 aesUtils.decrypt(memberDetails.getMember().getName()),
-                memberDetails.getMember().getPosition()
+                memberDetails.getMember().getPosition(),
+                firstRole
         );
     }
 
