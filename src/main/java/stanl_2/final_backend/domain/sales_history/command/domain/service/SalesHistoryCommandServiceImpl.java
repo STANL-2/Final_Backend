@@ -22,13 +22,11 @@ import java.time.format.DateTimeFormatter;
 public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandService {
 
     private final SalesHistoryRepository salesHistoryRepository;
-    private final ModelMapper modelMapper;
     private final ContractQueryService contractQueryService;
 
     @Autowired
-    public SalesHistoryCommandServiceImpl(SalesHistoryRepository salesHistoryRepository, ModelMapper modelMapper, ContractQueryService contractQueryService) {
+    public SalesHistoryCommandServiceImpl(SalesHistoryRepository salesHistoryRepository,ContractQueryService contractQueryService) {
         this.salesHistoryRepository = salesHistoryRepository;
-        this.modelMapper = modelMapper;
         this.contractQueryService = contractQueryService;
     }
 
@@ -40,9 +38,7 @@ public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandServic
     @Override
     @Transactional
     public void registerSalesHistory(String contractId) {
-        /* 설명. 넘어오는 값은 계약서 승인 후 - 계약서 id */
         ContractSeletIdDTO salesHistoryDTO = new ContractSeletIdDTO();
-        /* 설명. 값 주입 dto */
         SalesHistoryRegistDTO salesHistoryRegistDTO = new SalesHistoryRegistDTO();
 
         salesHistoryDTO.setContractId(contractId);
@@ -54,9 +50,8 @@ public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandServic
         }
 
         salesHistoryRegistDTO.setContractId(contractId);
-        /* 설명. contract 자료형 변환 후 주석 풀 예정 */
-//        salesHistoryRegistDTO.setTotalSales(responseContract.getTotalSales());
-//        salesHistoryRegistDTO.setNumberOfVehicles(responseContract.getNumberOfVehicles());
+        salesHistoryRegistDTO.setTotalSales(responseContract.getTotalSales());
+        salesHistoryRegistDTO.setNumberOfVehicles(responseContract.getNumberOfVehicles());
         salesHistoryRegistDTO.setCustomerInfoId(responseContract.getCustomerId());
         salesHistoryRegistDTO.setProductId(responseContract.getProductId());
         salesHistoryRegistDTO.setCenterId(responseContract.getCenterId());
@@ -64,13 +59,13 @@ public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandServic
 
         String customerPurchaseCondition = responseContract.getCustomerPurchaseCondition();
 
-//        if(customerPurchaseCondition.equals("CASH")){
-//            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.035);
-//        }else if(customerPurchaseCondition.equals("INSTALLMENT")){
-//            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.04);
-//        }else if(customerPurchaseCondition.equals("LEASE")){
-//            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.045);
-//        }
+        if(customerPurchaseCondition.equals("CASH")){
+            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.035);
+        }else if(customerPurchaseCondition.equals("INSTALLMENT")){
+            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.04);
+        }else if(customerPurchaseCondition.equals("LEASE")){
+            salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.045);
+        }
     }
 
     @Override

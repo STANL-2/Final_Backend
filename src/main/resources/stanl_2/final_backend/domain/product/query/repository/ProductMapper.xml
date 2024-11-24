@@ -45,6 +45,14 @@
         <result property="sound" column="OPT_SOND"/>
     </resultMap>
 
+    <resultMap id="ProductExcel" type="stanl_2.final_backend.domain.product.query.dto.ProductExcelDownload">
+        <id property="productId" column="PROD_ID"/>
+        <result property="name" column="PROD_NAME"/>
+        <result property="serialNumber" column="PROD_SER_NO"/>
+        <result property="cost" column="PROD_COST"/>
+        <result property="stock" column="PROD_STCK"/>
+    </resultMap>
+
     <select id="findProductById" resultMap="productIdResultMap" parameterType="String">
         SELECT
         a.prod_id,
@@ -150,5 +158,18 @@
             AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
         </if>
     </select>
+
+    <select id="findProductsForExcel" resultMap="ProductExcel">
+        SELECT
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC;
+    </select>
+
 
 </mapper>

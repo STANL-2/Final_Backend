@@ -1,12 +1,14 @@
 package stanl_2.final_backend.domain.center.query.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class CenterSelectAllDTO {
     private String id;
     private String name;
@@ -16,6 +18,4 @@ public class CenterSelectAllDTO {
     private String operatingAt;
     private String createdAt;
     private String updatedAt;
-    private String deletedAt;
-    private Boolean active;
 }

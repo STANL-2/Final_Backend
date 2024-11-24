@@ -17,4 +17,5 @@ public class SalesHistorySearchDTO {
     private String endDate;
     private List<String> memberList;
     private List<String> centerList;
+    private String orderBy;
 }

@@ -25,7 +25,7 @@ public class EvaluationController {
         this.evaluationCommandService = evaluationCommandService;
     }
 
-    @Operation(summary = "평가서 요청 테스트")
+    @Operation(summary = "평가서 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))})
@@ -37,19 +37,12 @@ public class EvaluationController {
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("평가서 등록 성공")
                 .result(null)
                 .build());
     }
 
-    /**
-     * [PUT] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
-     * Request
-     *  {
-     *     "name": "abcc"
-     *  }
-     * */
-    @Operation(summary = "평가서 수정 테스트")
+    @Operation(summary = "평가서 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
@@ -58,19 +51,18 @@ public class EvaluationController {
     public ResponseEntity<EvaluationResponseMessage> putEvaluation(@PathVariable String id,
                                                          @RequestBody EvaluationModifyDTO evaluationModifyRequestDTO) {
 
-        evaluationCommandService.modifyEvaluation(id,evaluationModifyRequestDTO);
+        evaluationModifyRequestDTO.setEvaluationId(id);
+
+        evaluationCommandService.modifyEvaluation(evaluationModifyRequestDTO);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("평가서 수정 성공")
                 .result(null)
                 .build());
     }
 
-    /**
-     * [DELETE] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
-     * */
-    @Operation(summary = "평가서 삭제 테스트")
+    @Operation(summary = "평가서 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))})
@@ -82,7 +74,7 @@ public class EvaluationController {
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("평가서 삭제 성공")
                 .result(null)
                 .build());
     }

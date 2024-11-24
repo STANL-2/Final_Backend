@@ -29,8 +29,8 @@ public class ContractSeletIdDTO {
     private String deliveryDate;
     private String deliveryLocation;
     private String status;
-    private String NumberOfVehicles;
-    private String totalSales;
+    private Integer NumberOfVehicles;
+    private Integer totalSales;
     private String carName;
     private String createdUrl;
     private String updatedUrl;
