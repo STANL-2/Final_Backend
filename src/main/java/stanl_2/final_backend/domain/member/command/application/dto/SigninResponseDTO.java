@@ -11,4 +11,5 @@ public class SigninResponseDTO {
     private String refreshToken;
     private String name;
     private String role;
+    private String auth;
 }

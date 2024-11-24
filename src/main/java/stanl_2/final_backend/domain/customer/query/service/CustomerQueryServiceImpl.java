@@ -109,4 +109,15 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
         return customerInfoDTO;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String selectCustomerNameById(String customerId) throws GeneralSecurityException {
+
+        CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoById(customerId);
+
+        String customerName = aesUtils.decrypt(customerInfoDTO.getName());
+
+        return customerName;
+    }
 }

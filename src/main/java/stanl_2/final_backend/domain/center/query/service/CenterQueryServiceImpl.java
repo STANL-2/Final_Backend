@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.center.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,10 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
+import stanl_2.final_backend.domain.center.query.dto.CenterExcelDownload;
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 import stanl_2.final_backend.domain.center.query.repository.CenterMapper;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 
 import java.util.List;
 
@@ -21,11 +25,13 @@ public class CenterQueryServiceImpl implements CenterQueryService {
 
     private final CenterMapper centerMapper;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ExcelUtilsV1 excelUtilsV1;
 
     @Autowired
-    public CenterQueryServiceImpl(CenterMapper centerMapper, RedisTemplate<String, Object> redisTemplate) {
+    public CenterQueryServiceImpl(CenterMapper centerMapper, RedisTemplate<String, Object> redisTemplate, ExcelUtilsV1 excelUtilsV1) {
         this.centerMapper = centerMapper;
         this.redisTemplate = redisTemplate;
+        this.excelUtilsV1 = excelUtilsV1;
     }
 
     @Override
@@ -71,5 +77,19 @@ public class CenterQueryServiceImpl implements CenterQueryService {
         return centerList;
     }
 
+    @Override
+    @Transactional
+    public String selectNameById(String id) {
 
+        String centerName = centerMapper.findNameById(id);
+        return centerName;
+    }
+
+    @Override
+    @Transactional
+    public void exportCenterToExcel(HttpServletResponse response) {
+        List<CenterExcelDownload> centerList = centerMapper.findCentersForExcel();
+
+        excelUtilsV1.download(CenterExcelDownload.class, centerList, "centerExcel", response);
+    }
 }

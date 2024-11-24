@@ -172,8 +172,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-resources") ||
-                path.startsWith("/webjars") ||
-                path.equals("/api/v1/auth");
+                path.startsWith("/webjars");
     }
 
 }

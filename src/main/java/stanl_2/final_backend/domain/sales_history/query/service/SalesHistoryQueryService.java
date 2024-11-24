@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.sales_history.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.sales_history.query.dto.*;
@@ -38,4 +39,6 @@ public interface SalesHistoryQueryService {
     Page<SalesHistorySelectDTO> selectSalesHistoryBySearch(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable);
 
     SalesHistoryStatisticsAverageDTO selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
+    void exportSalesHistoryToExcel(HttpServletResponse response);
 }
