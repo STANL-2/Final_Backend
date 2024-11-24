@@ -38,9 +38,11 @@ public enum SalesHistoryErrorCode {
      * 서버들은 인증받지 않은 클라이언트로부터 리소스를 숨기기 위하여 이 응답을 403 대신에 전송할 수도 있습니다.
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
-    SAMPLE_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "sample 데이터를 찾지 못했습니다"),
-    SALES_HISTORY_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "판매내역 데이터를 찾지 못했습니다"),
-    CONTRACT_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "계약서 데이터를 찾지 못했습니다"),
+    MEMBER_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "사원 데이터를 찾지 못했습니다"),
+    CUSTOMER_NOT_FOUND(404002, HttpStatus.NOT_FOUND, "고객 데이터를 찾지 못했습니다"),
+    CENTER_NOT_FOUND(404003, HttpStatus.NOT_FOUND, "센터 데이터를 찾지 못했습니다"),
+    SALES_HISTORY_NOT_FOUND(404004, HttpStatus.NOT_FOUND, "판매내역 데이터를 찾지 못했습니다"),
+    CONTRACT_NOT_FOUND(404005, HttpStatus.NOT_FOUND, "계약서 데이터를 찾지 못했습니다"),
     /**
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */

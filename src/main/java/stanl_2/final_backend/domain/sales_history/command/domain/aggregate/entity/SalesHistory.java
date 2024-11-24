@@ -35,7 +35,7 @@ public class SalesHistory {
     private Integer totalSales;
 
     @Column(name = "SAL_HIST_INCE", nullable = false)
-    private Integer incentive;
+    private Double incentive;
 
     @Column(name = "CREATED_AT", nullable = false)
     private String createdAt;

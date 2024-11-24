@@ -7,7 +7,7 @@ import stanl_2.final_backend.domain.evaluation.command.application.dto.Evaluatio
 public interface EvaluationCommandService {
     void registerEvaluation(EvaluationRegistDTO evaluationRegistRequestDTO);
 
-    void modifyEvaluation(String id, EvaluationModifyDTO evaluationModifyRequestDTO);
+    void modifyEvaluation(EvaluationModifyDTO evaluationModifyRequestDTO);
 
     void deleteEvaluation(String id);
 }

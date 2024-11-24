@@ -31,10 +31,8 @@ public class CenterController {
     })
     @PostMapping("")
     public ResponseEntity<CenterResponseMessage> postTest(@RequestBody CenterRegistRequestDTO centerRegistRequestDTO){
-        /* 설명. memberId 토큰으로 받는 것 고려 */
 
         centerCommandService.registCenter(centerRegistRequestDTO);
-
 
         return ResponseEntity.ok(CenterResponseMessage.builder()
                 .httpStatus(200)
@@ -52,7 +50,9 @@ public class CenterController {
     public ResponseEntity<CenterResponseMessage> putTest(@PathVariable("id") String id,
                                      @RequestBody CenterModifyRequestDTO centerModifyRequestDTO){
 
-        centerCommandService.modifyCenter(id, centerModifyRequestDTO);
+        centerModifyRequestDTO.setCenterId(id);
+
+        centerCommandService.modifyCenter(centerModifyRequestDTO);
 
         return ResponseEntity.ok(CenterResponseMessage.builder()
                 .httpStatus(200)

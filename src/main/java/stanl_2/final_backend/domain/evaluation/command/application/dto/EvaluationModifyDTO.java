@@ -6,8 +6,8 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class EvaluationModifyDTO {
+    private String EvaluationId;
     private String title;
     private String content;
     private String centerId;

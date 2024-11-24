@@ -85,6 +85,8 @@ public interface SalesHistoryMapper {
     int findSalesHistoryCountBySearch(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
     SalesHistoryStatisticsAverageDTO findStatisticsAverageBySearch(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
+
+    List<SalesHistoryExcelDownload> findSalesHistoryForExcel();
 }
 
 
