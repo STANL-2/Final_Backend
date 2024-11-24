@@ -11,6 +11,7 @@ import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
 import stanl_2.final_backend.domain.product.common.exception.ProductCommonException;
 import stanl_2.final_backend.domain.product.common.exception.ProductErrorCode;
 import stanl_2.final_backend.domain.product.common.util.RequestList;
+import stanl_2.final_backend.domain.product.query.dto.ProductExcelDownload;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.repository.ProductMapper;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
@@ -94,12 +95,12 @@ public class ProductQueryServiceImpl implements ProductQueryService {
     @Override
     @Transactional
     public void exportProductsToExcel(HttpServletResponse response) {
-        List<SampleExcelDownload> productList = productMapper.findProductsForExcel();
+        List<ProductExcelDownload> productList = productMapper.findProductsForExcel();
 
         if(productList == null) {
             throw new ProductCommonException(ProductErrorCode.PRODUCT_NOT_FOUND);
         }
 
-        excelUtilsV1.download(SampleExcelDownload.class, productList, "productExcel", response);
+        excelUtilsV1.download(ProductExcelDownload.class, productList, "productExcel", response);
     }
 }

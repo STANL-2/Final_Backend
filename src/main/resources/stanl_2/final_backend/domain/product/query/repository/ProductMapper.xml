@@ -5,7 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.product.query.repository.ProductMapper">
 
     <resultMap id="productAllResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectAllDTO">
-        <id property="id" column="PROD_ID"/>
+        <id property="productId" column="PROD_ID"/>
         <result property="name" column="PROD_NAME"/>
         <result property="serialNumber" column="PROD_SER_NO"/>
         <result property="cost" column="PROD_COST"/>
@@ -13,7 +13,7 @@
     </resultMap>
 
     <resultMap id="productIdResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO">
-        <id property="id" column="PROD_ID"/>
+        <id property="productId" column="PROD_ID"/>
         <result property="name" column="PROD_NAME"/>
         <result property="serialNumber" column="PROD_SER_NO"/>
         <result property="cost" column="PROD_COST"/>

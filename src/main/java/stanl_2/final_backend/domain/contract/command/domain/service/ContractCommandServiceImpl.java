@@ -99,7 +99,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     @Transactional
     public void registerContract(ContractRegistDTO contractRegistRequestDTO) throws GeneralSecurityException {
         String memberId = authQueryService.selectMemberIdByLoginId(contractRegistRequestDTO.getMemberId());
-        String productId = productQueryService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum()).getId();
+        String productId = productQueryService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum()).getProductId();
         String customerId = handleCustomerInfo(contractRegistRequestDTO, memberId);
         String centerId = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId()).getCenterId();
 
@@ -206,13 +206,13 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
             // 제품 재고 수 줄이기
             ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
-            String productId = productSelectIdDTO.getId();
+            String productId = productSelectIdDTO.getProductId();
             productCommandService.modifyProductStock(productId, contract.getNumberOfVehicles());
         } else if (contractStatusModifyDTO.getStatus().equals("CANCLED")) {
             salesHistoryCommandService.deleteSalesHistory(contract.getContractId());
 
             ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
-            String productId = productSelectIdDTO.getId();
+            String productId = productSelectIdDTO.getProductId();
             productCommandService.deleteProductStock(productId, contract.getNumberOfVehicles());
         }
     }
