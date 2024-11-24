@@ -127,10 +127,10 @@
             AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND a.prod_name LIKE #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
         </if>
         ORDER BY a.created_at DESC
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
@@ -152,10 +152,10 @@
             AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND a.prod_name LIKE #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
         </if>
     </select>
 
