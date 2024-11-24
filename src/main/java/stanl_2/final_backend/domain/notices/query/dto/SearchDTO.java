@@ -11,6 +11,11 @@ public class SearchDTO {
     private String noticeId;
     private String title;
     private String tag;
+    private String content;
+    private String active;
+    private String createdAt;
+    private String updatedAt;
+    private String deletedAt;
     private String memberId;
     private String classification;
     private String startDate;
