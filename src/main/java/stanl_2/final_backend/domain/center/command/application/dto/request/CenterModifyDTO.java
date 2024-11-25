@@ -13,4 +13,5 @@ public class CenterModifyDTO {
     private String phone;
     private Integer memberCount;
     private String operatingAt;
+    private String imageUrl;
 }
