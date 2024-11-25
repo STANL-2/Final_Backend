@@ -11,11 +11,11 @@ public interface MemberQueryService {
     List<String> selectMemberByRole(String role);
 
     List<MemberDTO> selectMemberByCenterId(String centerId);
-
     List<MemberDTO> selectMemberByCenterList(List<String> centerList);
+
     String selectNameById(String memberId) throws GeneralSecurityException;
 
-    List<MemberDTO> selectMemberByOrganizationId(String organizationId);
+    List<MemberDTO> selectMemberByOrganizationId(String organizationId) throws GeneralSecurityException;
 
 //    MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException;
 }

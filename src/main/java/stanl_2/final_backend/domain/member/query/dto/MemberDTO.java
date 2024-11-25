@@ -28,4 +28,5 @@ public class MemberDTO {
     private String bankName;
     private String account;
     private String centerId;
+    private String createdAt;
 }

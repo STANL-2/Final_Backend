@@ -91,9 +91,17 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MemberDTO> selectMemberByOrganizationId(String organizationId) {
+    public List<MemberDTO> selectMemberByOrganizationId(String organizationId) throws GeneralSecurityException {
 
         List<MemberDTO> memberList = memberMapper.findMembersByOrganizationId(organizationId);
+
+        for(int i=0;i<memberList.size();i++){
+            memberList.get(i).getName();
+            MemberDTO member = memberList.get(i);
+            log.info(member.getName());
+            member.setName(aesUtils.decrypt(member.getName()));
+            memberList.set(i, member);
+        }
 
         return memberList;
     }

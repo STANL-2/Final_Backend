@@ -22,6 +22,7 @@
         <result property="bankName" column="MEM_BANK_NAME"/>
         <result property="account" column="MEM_ACC"/>
         <result property="centerId" column="CENTER_ID"/>
+        <result property="createdAt" column="CREATED_AT"/>
     </resultMap>
 
     <select id="findMemberInfoById" resultMap="Member" parameterType="String">
@@ -79,8 +80,8 @@
 
     <select id="findMembersByOrganizationId" resultMap="Member" parameterType="String">
         SELECT
-               a.mem_id,
                a.mem_login_id,
+               a.mem_name,
                a.mem_pos,
                a.created_at,
                a.mem_job_type
