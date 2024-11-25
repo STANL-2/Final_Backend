@@ -21,4 +21,5 @@ public class EvaluationSearchDTO {
     private String startDate;
     private String endDate;
     private String searcherName;
+    private String fileUrl;
 }

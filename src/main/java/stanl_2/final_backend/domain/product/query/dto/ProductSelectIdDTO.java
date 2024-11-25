@@ -8,11 +8,12 @@ import lombok.*;
 @Setter
 @ToString
 public class ProductSelectIdDTO {
-    private String id;
+    private String productId;
     private String name;
     private String serialNumber;
     private String cost;
     private String stock;
+    private String imageUrl;
 
     /* 설명. product option 받아올 필드 */
     private Character country;

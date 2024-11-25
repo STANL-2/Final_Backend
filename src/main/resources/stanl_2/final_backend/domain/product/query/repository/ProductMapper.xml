@@ -5,7 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.product.query.repository.ProductMapper">
 
     <resultMap id="productAllResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectAllDTO">
-        <id property="id" column="PROD_ID"/>
+        <id property="productId" column="PROD_ID"/>
         <result property="name" column="PROD_NAME"/>
         <result property="serialNumber" column="PROD_SER_NO"/>
         <result property="cost" column="PROD_COST"/>
@@ -13,11 +13,12 @@
     </resultMap>
 
     <resultMap id="productIdResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO">
-        <id property="id" column="PROD_ID"/>
+        <id property="productId" column="PROD_ID"/>
         <result property="name" column="PROD_NAME"/>
         <result property="serialNumber" column="PROD_SER_NO"/>
         <result property="cost" column="PROD_COST"/>
         <result property="stock" column="PROD_STCK"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
         <result property="country" column="OPT_CNTY"/>
         <result property="manufacturer" column="OPT_MNFR"/>
         <result property="vehicleType" column="OPT_VHC_TYPE"/>
@@ -127,10 +128,10 @@
             AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND a.prod_name LIKE #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
         </if>
         ORDER BY a.created_at DESC
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
@@ -152,10 +153,10 @@
             AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND a.prod_name LIKE #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
         </if>
     </select>
 
