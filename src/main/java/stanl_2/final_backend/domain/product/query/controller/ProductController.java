@@ -61,6 +61,8 @@ public class ProductController {
     @GetMapping("{id}")
     public ResponseEntity<ProductResponseMessage> getProductById(@PathVariable("id") String id){
 
+        System.out.println("호출");
+
         ProductSelectIdDTO productSelectIdDTO  = productQueryService.selectByProductId(id);
 
         return ResponseEntity.ok(ProductResponseMessage.builder()

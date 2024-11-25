@@ -4,8 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyRequestDTO;
-import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyDTO;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistDTO;
 import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
 import stanl_2.final_backend.domain.center.command.domain.aggregate.entity.Center;
 import stanl_2.final_backend.domain.center.command.domain.repository.CenterRepository;
@@ -31,20 +31,20 @@ public class CenterCommandServiceImpl implements CenterCommandService {
 
     @Override
     @Transactional
-    public void registCenter(CenterRegistRequestDTO centerRegistRequestDTO) {
+    public void registCenter(CenterRegistDTO centerRegistDTO) {
 
-        Center newCenter = modelMapper.map(centerRegistRequestDTO, Center.class);
+        Center newCenter = modelMapper.map(centerRegistDTO, Center.class);
 
         centerRepository.save(newCenter);
     }
 
     @Override
     @Transactional
-    public void modifyCenter(CenterModifyRequestDTO centerModifyRequestDTO) {
-        Center center = centerRepository.findById(centerModifyRequestDTO.getCenterId())
+    public void modifyCenter(CenterModifyDTO centerModifyDTO) {
+        Center center = centerRepository.findById(centerModifyDTO.getCenterId())
                 .orElseThrow(() -> new CenterCommonException(CenterErrorCode.CENTER_NOT_FOUND));
 
-        Center updateCenter = modelMapper.map(centerModifyRequestDTO, Center.class);
+        Center updateCenter = modelMapper.map(centerModifyDTO, Center.class);
 
         updateCenter.setCenterId(center.getCenterId());
         updateCenter.setCreatedAt(center.getCreatedAt());
