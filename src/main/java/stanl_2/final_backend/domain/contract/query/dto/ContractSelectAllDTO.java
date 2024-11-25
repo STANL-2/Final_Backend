@@ -13,9 +13,6 @@ public class ContractSelectAllDTO {
     private String customerName;
     private String companyName;
     private String status;
-    private String createdUrl;
-    private String updatedUrl;
-    private boolean active;
     private String memberId;
     private String centerId;
     private String customerId;
