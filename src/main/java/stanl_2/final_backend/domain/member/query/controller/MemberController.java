@@ -49,17 +49,17 @@ public class MemberController {
                                                         .build());
     }
 
-    @Operation(summary = "회원 정보 조회")
+    @Operation(summary = "회원 정보 조회(with 사번)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("info/{memberId}")
-    public ResponseEntity<MemberResponseMessage> getMemberInfoBymemberId(@PathVariable("memberId") String memberId) throws GeneralSecurityException {
+    @GetMapping("info/{loginId}")
+    public ResponseEntity<MemberResponseMessage> getMemberInfoBymemberId(@PathVariable("loginId") String loginId) throws GeneralSecurityException {
 
-        MemberDTO memberInfo = memberQueryService.selectMemberInfo(memberId);
+        MemberDTO memberInfo = memberQueryService.selectMemberInfo(loginId);
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
                 .httpStatus(200)
