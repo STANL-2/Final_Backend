@@ -5,6 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.member.query.repository.MemberMapper">
     <resultMap id="Member" type="stanl_2.final_backend.domain.member.query.dto.MemberDTO">
         <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="id" column="MEM_ID"/>
         <result property="name" column="MEM_NAME"/>
         <result property="email" column="MEM_EMA"/>
         <result property="age" column="MEM_AGE"/>
@@ -48,6 +49,8 @@
 
     <select id="findMembersByCenterId" resultMap="Member" parameterType="String">
         SELECT
+        a.mem_pos,
+        a.mem_ema,
         a.mem_id,
         a.mem_login_id
         FROM tb_member a

@@ -10,6 +10,8 @@ import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.repository.MemberMapper;
 import stanl_2.final_backend.domain.member.query.repository.MemberRoleMapper;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryCommonException;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryErrorCode;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
@@ -69,6 +71,16 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         List<MemberDTO> memberList = memberMapper.findMembersByCenterId(centerId);
 
+        memberList.forEach(dto -> {
+            try {
+                dto.setName(selectNameById(dto.getId()));
+
+                dto.setEmail(aesUtils.decrypt(dto.getEmail()));
+            } catch (Exception e) {
+                throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+            }
+        });
+
         return memberList;
     }
 
@@ -76,6 +88,14 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Transactional(readOnly = true)
     public List<MemberDTO> selectMemberByCenterList(List<String> centerList) {
         List<MemberDTO> memberList = memberMapper.findMembersByCenterList(centerList);
+
+        memberList.forEach(dto -> {
+            try {
+                dto.setName(selectNameById(dto.getId()));
+            } catch (Exception e) {
+                throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+            }
+        });
 
         return memberList;
     }

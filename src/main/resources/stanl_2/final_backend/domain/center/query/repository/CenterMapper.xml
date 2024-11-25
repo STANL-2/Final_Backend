@@ -5,7 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.center.query.repository.CenterMapper">
 
     <resultMap id="centerAllResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO">
-        <id property="id" column="CENT_ID"/>
+        <id property="centerId" column="CENT_ID"/>
         <result property="name" column="CENT_NAME"/>
         <result property="address" column="CENT_ADR"/>
         <result property="phone" column="CENT_PHO"/>
@@ -19,7 +19,7 @@
     </resultMap>
 
     <resultMap id="centerIdResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO">
-        <id property="id" column="CENT_ID"/>
+        <id property="centerId" column="CENT_ID"/>
         <result property="name" column="CENT_NAME"/>
         <result property="address" column="CENT_ADR"/>
         <result property="phone" column="CENT_PHO"/>
