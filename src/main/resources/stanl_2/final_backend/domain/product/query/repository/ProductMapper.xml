@@ -18,6 +18,7 @@
         <result property="serialNumber" column="PROD_SER_NO"/>
         <result property="cost" column="PROD_COST"/>
         <result property="stock" column="PROD_STCK"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
         <result property="country" column="OPT_CNTY"/>
         <result property="manufacturer" column="OPT_MNFR"/>
         <result property="vehicleType" column="OPT_VHC_TYPE"/>

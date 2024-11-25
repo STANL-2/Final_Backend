@@ -13,6 +13,7 @@ public class ProductSelectIdDTO {
     private String serialNumber;
     private String cost;
     private String stock;
+    private String imageUrl;
 
     /* 설명. product option 받아올 필드 */
     private Character country;
