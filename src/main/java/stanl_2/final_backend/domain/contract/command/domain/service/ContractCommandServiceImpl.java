@@ -24,7 +24,7 @@ import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.product.command.application.command.service.ProductCommandService;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.service.ProductQueryService;
-import stanl_2.final_backend.domain.s3.S3FileService;
+import stanl_2.final_backend.domain.s3.service.S3FileService;
 import stanl_2.final_backend.domain.sales_history.command.application.service.SalesHistoryCommandService;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -104,7 +104,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         String centerId = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId()).getCenterId();
 
         // 계약 생성
-        Contract contract = new Contract();
+        Contract contract = modelMapper.map(contractRegistRequestDTO, Contract.class);
         contract.setMemberId(memberId);
         contract.setCenterId(centerId);
         contract.setProductId(productId);
@@ -116,6 +116,11 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         contract.setCustomerEmail(aesUtils.encrypt(contractRegistRequestDTO.getCustomerEmail()));
         contract.setCustomerAddress(aesUtils.encrypt(contractRegistRequestDTO.getCustomerAddress()));
         contract.setCustomerIdentifiNo(aesUtils.encrypt(contractRegistRequestDTO.getCustomerIdentifiNo()));
+
+        String unescapedHtml = StringEscapeUtils.unescapeJson(contractRegistRequestDTO.getCreatedUrl());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, contractRegistRequestDTO.getTitle());
+
+        contract.setCreatedUrl(updatedS3Url);
 
         // 계약 저장
         contractRepository.save(contract);

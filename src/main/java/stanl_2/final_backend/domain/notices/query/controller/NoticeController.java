@@ -46,7 +46,7 @@ public class NoticeController {
 
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        SearchDTO searchDTO = new SearchDTO(title, tag, classification, memberId, startDate, endDate);
+        SearchDTO searchDTO = new SearchDTO(title,tag,memberId,classification,startDate,endDate);
         Page<NoticeDTO> noticeDTOPage = noticeService.findNotices(pageable,searchDTO);
 
         return ResponseEntity.ok(noticeDTOPage);

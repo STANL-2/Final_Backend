@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.s3;
+package stanl_2.final_backend.domain.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.s3.common.exception.S3CommonException;
 import stanl_2.final_backend.domain.s3.common.exception.S3ErrorCode;
-import stanl_2.final_backend.global.config.S3Config;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
