@@ -12,4 +12,5 @@ public class EvaluationRegistDTO {
     private String memberId;
     private String writerId;
     private String centerId;
+    private String fileUrl;
 }

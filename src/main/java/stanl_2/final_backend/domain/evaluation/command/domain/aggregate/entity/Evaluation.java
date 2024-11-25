@@ -55,6 +55,10 @@ public class Evaluation {
     @Column(name = "WRI_ID", nullable = false)
     private String writerId;
 
+    @Column(name = "FILE_URL", nullable = false)
+    private String fileUrl;
+
+
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();
