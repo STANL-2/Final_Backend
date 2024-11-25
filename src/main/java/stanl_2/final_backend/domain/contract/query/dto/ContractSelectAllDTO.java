@@ -21,4 +21,6 @@ public class ContractSelectAllDTO {
     private String customerId;
     private String productId;
     private String carName;
+    private String customerClassifcation;
+    private String customerPurchaseCondition;
 }

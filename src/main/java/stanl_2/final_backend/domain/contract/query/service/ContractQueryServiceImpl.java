@@ -29,13 +29,15 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     private final ContractMapper contractMapper;
     private final AuthQueryService authQueryService;
     private final MemberQueryService memberQueryService;
+    private final UpdateHistoryQueryService updateHistoryQueryService;
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public ContractQueryServiceImpl(ContractMapper contractMapper, AuthQueryService authQueryService, MemberQueryService memberQueryService, @Qualifier("redisTemplate") RedisTemplate redisTemplate) {
+    public ContractQueryServiceImpl(ContractMapper contractMapper, AuthQueryService authQueryService, MemberQueryService memberQueryService, UpdateHistoryQueryService updateHistoryQueryService, @Qualifier("redisTemplate") RedisTemplate redisTemplate) {
         this.contractMapper = contractMapper;
         this.authQueryService = authQueryService;
         this.memberQueryService = memberQueryService;
+        this.updateHistoryQueryService = updateHistoryQueryService;
         this.redisTemplate = redisTemplate;
     }
 
@@ -79,9 +81,17 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
         ContractSeletIdDTO responseContract = contractMapper.findContractByIdAndMemId(contractSeletIdDTO.getContractId(), memberId);
 
-        // 이스케이프된 HTML 제거
-        String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
-        responseContract.setCreatedUrl(unescapedHtml);
+        if (responseContract == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        String content = updateHistoryQueryService.selectUpdateHistoryByContractId(responseContract.getContractId());
+
+        if (content == null) {
+            String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
+            responseContract.setCreatedUrl(unescapedHtml);
+        }
+        responseContract.setCreatedUrl(content);
 
         return responseContract;
     }
@@ -176,18 +186,24 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
-        String caschKey = "myCache::contracts::offset=" + offset + "::pageSize=" + pageSize;
+//        String caschKey = "myCache::contracts::offset=" + offset + "::pageSize=" + pageSize;
+//
+//        List<ContractSelectAllDTO> contracts = (List<ContractSelectAllDTO>) redisTemplate.opsForValue().get(caschKey);
+//
+//        if (contracts == null) {
+//            contracts = contractMapper.findContractAll(offset, pageSize);
+//
+//            if (contracts == null) {
+//                throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+//            }
+//
+//            redisTemplate.opsForValue().set(caschKey, contracts);
+//        }
 
-        List<ContractSelectAllDTO> contracts = (List<ContractSelectAllDTO>) redisTemplate.opsForValue().get(caschKey);
+        List<ContractSelectAllDTO> contracts = contractMapper.findContractAll(offset, pageSize);
 
         if (contracts == null) {
-            contracts = contractMapper.findContractAll(offset, pageSize);
-
-            if (contracts == null) {
-                throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
-            }
-
-            redisTemplate.opsForValue().set(caschKey, contracts);
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
         Integer count = contractMapper.findContractCount();
@@ -203,9 +219,18 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
         ContractSeletIdDTO responseContract = contractMapper.findContractById(contractSeletIdDTO.getContractId());
 
-        // 이스케이프된 HTML 제거
-        String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
-        responseContract.setCreatedUrl(unescapedHtml);
+        if (responseContract == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        String content = updateHistoryQueryService.selectUpdateHistoryByContractId(responseContract.getContractId());
+
+        if (content == null) {
+            String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
+            responseContract.setCreatedUrl(unescapedHtml);
+            return responseContract;
+        }
+        responseContract.setCreatedUrl(content);
 
         return responseContract;
     }
