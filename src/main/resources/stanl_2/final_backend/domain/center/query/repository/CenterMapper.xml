@@ -15,6 +15,7 @@
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
         <result property="active" column="ACTIVE"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
     </resultMap>
 
     <resultMap id="centerIdResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO">
@@ -28,6 +29,7 @@
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
         <result property="active" column="ACTIVE"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
     </resultMap>
 
     <resultMap id="CenterExcel" type="stanl_2.final_backend.domain.center.query.dto.CenterExcelDownload">
@@ -50,6 +52,7 @@
         , a.updated_at
         , a.deleted_at
         , a.active
+        , a.image_url
         FROM tb_center a
         WHERE a.cent_id = #{id} AND a.active = TRUE
     </select>

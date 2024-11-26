@@ -8,8 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyRequestDTO;
-import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
+import org.springframework.web.multipart.MultipartFile;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyDTO;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistDTO;
 import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
 import stanl_2.final_backend.domain.center.common.response.CenterResponseMessage;
 
@@ -30,9 +31,9 @@ public class CenterController {
                     content = {@Content(schema = @Schema(implementation = CenterResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<CenterResponseMessage> postTest(@RequestBody CenterRegistRequestDTO centerRegistRequestDTO){
-
-        centerCommandService.registCenter(centerRegistRequestDTO);
+    public ResponseEntity<CenterResponseMessage> postTest(@RequestPart("dto") CenterRegistDTO centerRegistDTO,
+                                                          @RequestPart("file") MultipartFile imageUrl){
+        centerCommandService.registCenter(centerRegistDTO, imageUrl);
 
         return ResponseEntity.ok(CenterResponseMessage.builder()
                 .httpStatus(200)
@@ -46,13 +47,14 @@ public class CenterController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = CenterResponseMessage.class))})
     })
-    @PutMapping("{id}")
-    public ResponseEntity<CenterResponseMessage> putTest(@PathVariable("id") String id,
-                                     @RequestBody CenterModifyRequestDTO centerModifyRequestDTO){
+    @PutMapping("{centerId}")
+    public ResponseEntity<CenterResponseMessage> putTest(@PathVariable("centerId") String centerId,
+                                     @RequestPart("dto") CenterModifyDTO centerModifyDTO,
+                                     @RequestPart("file") MultipartFile imageUrl){
 
-        centerModifyRequestDTO.setCenterId(id);
+        centerModifyDTO.setCenterId(centerId);
 
-        centerCommandService.modifyCenter(centerModifyRequestDTO);
+        centerCommandService.modifyCenter(centerModifyDTO, imageUrl);
 
         return ResponseEntity.ok(CenterResponseMessage.builder()
                 .httpStatus(200)

@@ -18,4 +18,5 @@ public class EvaluationDTO {
     private String centerId;
     private String memberId;
     private String writerId;
+    private String fileUrl;
 }

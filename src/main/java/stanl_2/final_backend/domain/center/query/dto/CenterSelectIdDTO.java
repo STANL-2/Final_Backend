@@ -22,4 +22,5 @@ public class CenterSelectIdDTO {
     private String updatedAt;
     private String deletedAt;
     private Boolean active;
+    private String imageUrl;
 }

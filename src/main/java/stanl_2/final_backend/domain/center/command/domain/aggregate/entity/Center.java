@@ -51,6 +51,9 @@ public class Center {
     @Column(name = "DELETED_AT")
     private String deletedAt;
 
+    @Column(name = "IMAGE_URL", nullable = false)
+    private String imageUrl;
+
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
 

@@ -72,26 +72,78 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     }
 
     private String handleCustomerInfo(ContractRegistDTO contractRegistRequestDTO, String memberId) throws GeneralSecurityException {
+
         // 고객 정보 조회
         CustomerDTO customerDTO = customerQueryService.selectCustomerInfoByPhone(contractRegistRequestDTO.getCustomerPhone());
 
-        // 고객이 없으면 새로 등록
-        if (customerDTO == null) {
+        if (customerDTO != null) {
+
+            // 고객 정보 업데이트
+            CustomerModifyDTO customerModifyDTO = new CustomerModifyDTO();
+            customerModifyDTO.setCustomerId(customerDTO.getCustomerId());
+            customerModifyDTO.setName(contractRegistRequestDTO.getCustomerName());
+            customerModifyDTO.setAge(contractRegistRequestDTO.getCustomerAge());
+            customerModifyDTO.setPhone(contractRegistRequestDTO.getCustomerPhone());
+            customerModifyDTO.setEmail(contractRegistRequestDTO.getCustomerEmail());
+            customerModifyDTO.setSex(contractRegistRequestDTO.getCustomerSex());
+            customerModifyDTO.setMemberId(memberId);
+
+            customerCommandService.modifyCustomerInfo(customerModifyDTO);
+
+            return customerDTO.getCustomerId();
+        } else if (customerDTO == null) {
             CustomerRegistDTO customerRegistDTO = new CustomerRegistDTO();
             customerRegistDTO.setName(contractRegistRequestDTO.getCustomerName());
             customerRegistDTO.setAge(contractRegistRequestDTO.getCustomerAge());
             customerRegistDTO.setPhone(contractRegistRequestDTO.getCustomerPhone());
             customerRegistDTO.setEmail(contractRegistRequestDTO.getCustomerEmail());
+            customerRegistDTO.setSex(contractRegistRequestDTO.getCustomerSex());
             customerRegistDTO.setMemberId(memberId);
 
             // 고객 등록
-            customerCommandService.registerCustomerInfo(customerRegistDTO);
+            customerDTO = modelMapper.map(customerCommandService.registerCustomerInfo(customerRegistDTO), CustomerDTO.class);
 
-            // 등록 후 재조회
-            customerDTO = customerQueryService.selectCustomerInfoByPhone(contractRegistRequestDTO.getCustomerPhone());
+            return customerDTO.getCustomerId();
+        }
+        return customerDTO.getCustomerId();
+    }
+
+    private String updateCustomerInfo(ContractModifyDTO contractModifyDTO, String memberId) throws GeneralSecurityException {
+        // 고객 정보 조회
+        CustomerDTO customerDTO = customerQueryService.selectCustomerInfoByPhone(contractModifyDTO.getCustomerPhone());
+
+        if (customerDTO != null) {
+            // 고객 정보 업데이트
+            CustomerModifyDTO customerModifyDTO = new CustomerModifyDTO();
+            customerModifyDTO.setCustomerId(customerDTO.getCustomerId());
+            customerModifyDTO.setName(contractModifyDTO.getCustomerName());
+            customerModifyDTO.setAge(contractModifyDTO.getCustomerAge());
+            customerModifyDTO.setPhone(contractModifyDTO.getCustomerPhone());
+            customerModifyDTO.setEmail(contractModifyDTO.getCustomerEmail());
+            customerModifyDTO.setSex(contractModifyDTO.getCustomerSex());
+            customerModifyDTO.setMemberId(memberId);
+
+            customerCommandService.modifyCustomerInfo(customerModifyDTO);
+
+            // 업데이트된 고객 ID 반환
+            return customerDTO.getCustomerId();
         }
 
-        // 고객 ID 반환
+        // 고객이 없으면 새로 등록
+        CustomerRegistDTO customerRegistDTO = new CustomerRegistDTO();
+        customerRegistDTO.setName(contractModifyDTO.getCustomerName());
+        customerRegistDTO.setAge(contractModifyDTO.getCustomerAge());
+        customerRegistDTO.setPhone(contractModifyDTO.getCustomerPhone());
+        customerRegistDTO.setEmail(contractModifyDTO.getCustomerEmail());
+        customerRegistDTO.setMemberId(memberId);
+
+        // 등록 후 재조회
+        customerDTO = modelMapper.map(customerCommandService.registerCustomerInfo(customerRegistDTO), CustomerDTO.class);
+
+        if (customerDTO == null) {
+            throw new RuntimeException("새로 등록된 고객 정보를 찾을 수 없습니다.");
+        }
+
         return customerDTO.getCustomerId();
     }
 
@@ -99,12 +151,12 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     @Transactional
     public void registerContract(ContractRegistDTO contractRegistRequestDTO) throws GeneralSecurityException {
         String memberId = authQueryService.selectMemberIdByLoginId(contractRegistRequestDTO.getMemberId());
-        String productId = productQueryService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum()).getId();
+        String productId = productQueryService.selectByProductSerialNumber(contractRegistRequestDTO.getSerialNum()).getProductId();
         String customerId = handleCustomerInfo(contractRegistRequestDTO, memberId);
         String centerId = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId()).getCenterId();
 
         // 계약 생성
-        Contract contract = new Contract();
+        Contract contract = modelMapper.map(contractRegistRequestDTO, Contract.class);
         contract.setMemberId(memberId);
         contract.setCenterId(centerId);
         contract.setProductId(productId);
@@ -117,6 +169,11 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         contract.setCustomerAddress(aesUtils.encrypt(contractRegistRequestDTO.getCustomerAddress()));
         contract.setCustomerIdentifiNo(aesUtils.encrypt(contractRegistRequestDTO.getCustomerIdentifiNo()));
 
+        String unescapedHtml = StringEscapeUtils.unescapeJson(contractRegistRequestDTO.getCreatedUrl());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, contractRegistRequestDTO.getTitle());
+
+        contract.setCreatedUrl(updatedS3Url);
+
         // 계약 저장
         contractRepository.save(contract);
     }
@@ -125,35 +182,33 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     @Transactional
     public void modifyContract(ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException {
         String memberId = authQueryService.selectMemberIdByLoginId(contractModifyRequestDTO.getMemberId());
+        String productId = String.valueOf(productQueryService.selectByProductSerialNumber(contractModifyRequestDTO.getSerialNum()));
+        String customerId = updateCustomerInfo(contractModifyRequestDTO, memberId);
+        String centerId = memberQueryService.selectMemberInfo(contractModifyRequestDTO.getMemberId()).getCenterId();
+
 
         // 계약 조회
         Contract contract = (Contract)contractRepository.findByContractIdAndMemberId(contractModifyRequestDTO.getContractId(), memberId)
                 .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
 
-        // 고객 정보 수정
-        CustomerModifyDTO customerModifyDTO = new CustomerModifyDTO();
-        customerModifyDTO.setCustomerId(contractModifyRequestDTO.getCustomerId());
-        customerModifyDTO.setName(contractModifyRequestDTO.getCustomerName());
-        customerModifyDTO.setAge(contractModifyRequestDTO.getCustomerAge());
-        customerModifyDTO.setSex(contractModifyRequestDTO.getCustomerSex());
-        customerModifyDTO.setPhone(contractModifyRequestDTO.getCustomerPhone());
-        customerModifyDTO.setEmail(contractModifyRequestDTO.getCustomerEmail());
-        customerModifyDTO.setMemberId(memberId);
-
-        // 고객 정보 업데이트
-        customerCommandService.modifyCustomerInfo(customerModifyDTO);
+        // 계약 생성
+        Contract updateContract = modelMapper.map(contractModifyRequestDTO, Contract.class);
+        updateContract.setMemberId(memberId);
+        updateContract.setCenterId(centerId);
+        updateContract.setProductId(productId);
+        updateContract.setCustomerId(customerId);
+        updateContract.setStatus("WAIT");
 
         // 고객 정보가 수정된 경우 계약서의 고객 정보도 업데이트
-        contract.setCustomerPhone(aesUtils.encrypt(contractModifyRequestDTO.getCustomerPhone()));
-        contract.setCustomerEmail(aesUtils.encrypt(contractModifyRequestDTO.getCustomerEmail()));
-        contract.setCustomerAddress(aesUtils.encrypt(contractModifyRequestDTO.getCustomerAddress()));
-        contract.setCustomerIdentifiNo(aesUtils.encrypt(contractModifyRequestDTO.getCustomerIdentifiNo()));
+        updateContract.setCustomerPhone(aesUtils.encrypt(contractModifyRequestDTO.getCustomerPhone()));
+        updateContract.setCustomerEmail(aesUtils.encrypt(contractModifyRequestDTO.getCustomerEmail()));
+        updateContract.setCustomerAddress(aesUtils.encrypt(contractModifyRequestDTO.getCustomerAddress()));
+        updateContract.setCustomerIdentifiNo(aesUtils.encrypt(contractModifyRequestDTO.getCustomerIdentifiNo()));
 
-        // 계약 상태 업데이트
-        contract.setStatus("WAIT");
+        log.info("Update contract: " + updateContract);
 
         // 수정된 계약 정보 저장
-        contractRepository.save(contract);
+        contractRepository.save(updateContract);
 
         // 수정 이력 저장
         String unescapedHtml = StringEscapeUtils.unescapeJson(contractModifyRequestDTO.getCreatedUrl());
@@ -206,13 +261,13 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
             // 제품 재고 수 줄이기
             ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
-            String productId = productSelectIdDTO.getId();
+            String productId = productSelectIdDTO.getProductId();
             productCommandService.modifyProductStock(productId, contract.getNumberOfVehicles());
         } else if (contractStatusModifyDTO.getStatus().equals("CANCLED")) {
             salesHistoryCommandService.deleteSalesHistory(contract.getContractId());
 
             ProductSelectIdDTO productSelectIdDTO = productQueryService.selectByProductSerialNumber(contract.getSerialNum());
-            String productId = productSelectIdDTO.getId();
+            String productId = productSelectIdDTO.getProductId();
             productCommandService.deleteProductStock(productId, contract.getNumberOfVehicles());
         }
     }
