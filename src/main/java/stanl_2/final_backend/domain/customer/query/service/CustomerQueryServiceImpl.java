@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 import stanl_2.final_backend.domain.customer.query.repository.CustomerMapper;
@@ -65,7 +66,7 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException {
+    public Page<CustomerSearchDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException {
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         int offset = page*size;
@@ -77,16 +78,13 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         params.put("sex", customerSearchDTO.getSex());
         params.put("phone", customerSearchDTO.getPhone());
 
-        List<CustomerDTO> customerList = customerMapper.findCustomerByConditions(params);
+        List<CustomerSearchDTO> customerList = customerMapper.findCustomerByConditions(params);
 
         Integer count = customerMapper.findCustomerCnt(params);
 
         for(int i=0;i< customerList.size();i++){
             customerList.get(i).setPhone(aesUtils.decrypt(customerList.get(i).getPhone()));
-            customerList.get(i).setEmergePhone(aesUtils.decrypt(customerList.get(i).getEmergePhone()));
-            customerList.get(i).setEmail(aesUtils.decrypt(customerList.get(i).getEmail()));
         }
-
 
         return new PageImpl<>(customerList, pageable, count);
     }
@@ -119,5 +117,24 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         String customerName = aesUtils.decrypt(customerInfoDTO.getName());
 
         return customerName;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CustomerContractDTO> selectCustomerContractInfo(String customerId, Pageable pageable) {
+
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("customerId", customerId);
+        params.put("offset", page*size);
+        params.put("size", size);
+
+        List<CustomerContractDTO> customerContractDTOList = customerMapper.findCustomerContractById(params);
+        
+        int totalElements = customerMapper.selectCustomerContractCnt(customerId);
+
+        return new PageImpl<>(customerContractDTOList, pageable, totalElements);
     }
 }

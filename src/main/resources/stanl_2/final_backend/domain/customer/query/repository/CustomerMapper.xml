@@ -26,6 +26,16 @@
         <result property="phone" column="CUST_PHO"/>
     </resultMap>
 
+
+    <resultMap id="CustomerContract" type="stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO">
+        <id property="contractId" column="CONR_ID"/>
+        <result property="centerName" column="CENT_NAME"/>
+        <result property="contractCarName" column="CONR_CAR_NAME"/>
+        <result property="contractTTL" column="CONR_TTL"/>
+        <result property="contractTotalSale" column="CONR_TOTA_SALE"/>
+        <result property="contractState" column="CONR_STAT"/>
+    </resultMap>
+
     <select id="selectCustomerInfoById" resultMap="Customer" parameterType="String">
         SELECT
                a.cust_id,
@@ -69,7 +79,7 @@
          WHERE a.active != 'false';
     </select>
 
-    <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="map">
+    <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="String">
         SELECT
                a.cust_id,
                a.cust_name,
@@ -128,4 +138,32 @@
         FROM tb_customer_info a
         WHERE a.cust_pho = #{ customerPhone }
     </select>
+
+
+    <select id="findCustomerContractById" resultMap="CustomerContract" parameterType="map">
+        SELECT
+            b.conr_id,
+            c.cent_name,
+            b.conr_car_name,
+            b.conr_ttl,
+            b.conr_tota_sale,
+            b.conr_stat
+        FROM tb_customer_info a
+        JOIN tb_contract b ON(a.cust_id = b.cust_id)
+        JOIN tb_center c ON(b.cent_id = c.cent_id)
+        WHERE a.cust_id = #{ customerId }
+        ORDER BY b.created_at DESC
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+    <select id="selectCustomerContractCnt" resultType="_int" parameterType="String">
+        SELECT
+        COUNT(*)
+        FROM tb_customer_info a
+        JOIN tb_contract b ON(a.cust_id =b.cust_id)
+        WHERE a.cust_id = #{ customerId };
+    </select>
+
+
+
 </mapper>

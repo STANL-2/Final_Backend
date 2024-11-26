@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
+import stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
@@ -92,7 +93,7 @@ public class CustomerController {
     ) throws GeneralSecurityException {
         Pageable pageable = PageRequest.of(page, size);
         CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(null , name, sex, phone);
-        Page<CustomerDTO> customerDTOPage = customerQueryService.findCustomerByCondition(pageable, customerSearchDTO);
+        Page<CustomerSearchDTO> customerDTOPage = customerQueryService.findCustomerByCondition(pageable, customerSearchDTO);
 
         return ResponseEntity.ok(CustomerResponseMessage.builder()
                                                         .httpStatus(200)
@@ -101,4 +102,26 @@ public class CustomerController {
                                                         .build());
     }
 
+
+    @Operation(summary = "고객별 계약서 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/contract/{customerId}")
+    public ResponseEntity<CustomerResponseMessage> searchCustomer(@PathVariable String customerId,
+                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<CustomerContractDTO> customerContractDTOList = customerQueryService.selectCustomerContractInfo(customerId, pageable);
+
+        return ResponseEntity.ok(CustomerResponseMessage.builder()
+                                                        .httpStatus(200)
+                                                        .msg("성공")
+                                                        .result(customerContractDTOList)
+                                                        .build());
+    }
 }
