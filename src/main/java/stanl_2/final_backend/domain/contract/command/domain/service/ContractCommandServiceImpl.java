@@ -182,7 +182,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     @Transactional
     public void modifyContract(ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException {
         String memberId = authQueryService.selectMemberIdByLoginId(contractModifyRequestDTO.getMemberId());
-        String productId = productQueryService.selectByProductSerialNumber(contractModifyRequestDTO.getSerialNum()).getId();
+        String productId = String.valueOf(productQueryService.selectByProductSerialNumber(contractModifyRequestDTO.getSerialNum()));
         String customerId = updateCustomerInfo(contractModifyRequestDTO, memberId);
         String centerId = memberQueryService.selectMemberInfo(contractModifyRequestDTO.getMemberId()).getCenterId();
 
