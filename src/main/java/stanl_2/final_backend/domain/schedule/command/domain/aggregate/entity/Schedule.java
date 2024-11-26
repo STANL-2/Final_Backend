@@ -39,6 +39,9 @@ public class Schedule {
     @Column(name = "SCH_TAG", nullable = false)
     private String tag = "CONSULTATION";
 
+    @Column(name = "SCH_TAG_COLOR", nullable = false)
+    private String tagColor;
+
     @Column(name = "SCH_SRT_AT", nullable = false)
     private String startAt;
 

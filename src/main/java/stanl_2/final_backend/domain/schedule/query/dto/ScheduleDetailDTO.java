@@ -13,6 +13,7 @@ public class ScheduleDetailDTO {
     private String name;
     private String content;
     private String tag;
+    private String tagColor;
     private String startAt;
     private String endAt;
     private String memberId;

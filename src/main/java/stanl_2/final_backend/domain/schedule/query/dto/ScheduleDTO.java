@@ -14,6 +14,7 @@ public class ScheduleDTO {
     private String scheduleId;
     private String name;
     private String tag;
+    private String tagColor;
     private String startAt;
     private String endAt;
     private String memberId;

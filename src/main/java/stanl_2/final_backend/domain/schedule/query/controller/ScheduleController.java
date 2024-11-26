@@ -44,7 +44,6 @@ public class ScheduleController {
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
                 .result(schedules)
                 .build());
     }
@@ -71,7 +70,6 @@ public class ScheduleController {
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
                 .result(yearMonthSchedule)
                 .build());
     }
@@ -96,7 +94,6 @@ public class ScheduleController {
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
                 .result(responseDetailSchedule)
                 .build());
     }

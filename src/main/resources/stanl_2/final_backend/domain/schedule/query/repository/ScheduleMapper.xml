@@ -7,6 +7,7 @@
         <id property="scheduleId" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
         <result property="tag" column="SCH_TAG"/>
+        <result property="tagColor" column="SCH_TAG_COLOR"/>
         <result property="startAt" column="SCH_SRT_AT"/>
         <result property="endAt" column="SCH_END_AT"/>
         <result property="active" column="ACTIVE"/>
@@ -17,6 +18,7 @@
                a.sch_id,
                a.sch_name,
                a.sch_tag,
+               a.sch_tag_color
                a.sch_srt_at,
                a.sch_end_at,
                a.mem_id
@@ -29,7 +31,9 @@
     <resultMap id="yearMonthSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO">
         <id property="scheduleId" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
+        <result property="content" column="SCH_CONT"/>
         <result property="tag" column="SCH_TAG"/>
+        <result property="tagColor" column="SCH_TAG_COLOR"/>
         <result property="startAt" column="SCH_SRT_AT"/>
         <result property="endAt" column="SCH_END_AT"/>
         <result property="active" column="ACTIVE"/>
@@ -39,7 +43,9 @@
         SELECT
                a.sch_id,
                a.sch_name,
+               a.sch_cont,
                a.sch_tag,
+               a.sch_tag_color,
                a.sch_srt_at,
                a.sch_end_at,
                a.mem_id
@@ -54,6 +60,7 @@
         <result property="name" column="SCH_NAME"/>
         <result property="content" column="SCH_CONT"/>
         <result property="tag" column="SCH_TAG"/>
+        <result property="tagColor" column="SCH_TAG_COLOR"/>
         <result property="startAt" column="SCH_SRT_AT"/>
         <result property="endAt" column="SCH_END_AT"/>
         <result property="active" column="ACTIVE"/>
@@ -65,6 +72,7 @@
                a.sch_name,
                a.sch_cont,
                a.sch_tag,
+               a.sch_tag_color
                a.sch_srt_at,
                a.sch_end_at,
                a.mem_id

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,6 @@ public class ScheduleController {
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
                 .result(answer)
                 .build());
     }
@@ -70,7 +70,6 @@ public class ScheduleController {
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
                 .result(answer)
                 .build());
     }
@@ -93,7 +92,6 @@ public class ScheduleController {
 
         return ResponseEntity.ok(ScheduleResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
                 .result(answer)
                 .build());
     }
