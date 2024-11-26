@@ -11,5 +11,5 @@ import lombok.Setter;
 @Getter
 public class OrganizationRegisterDTO {
     private String name;
-    private String depth;
+    private String parent;
 }

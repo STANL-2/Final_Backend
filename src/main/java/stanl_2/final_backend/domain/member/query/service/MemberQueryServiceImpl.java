@@ -68,7 +68,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public List<MemberDTO> selectMemberByCenterId(String centerId){
 
         List<MemberDTO> memberList = memberMapper.findMembersByCenterId(centerId);
-
         return memberList;
     }
 
@@ -88,5 +87,22 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         name = aesUtils.decrypt(name);
 
         return name;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberDTO> selectMemberByOrganizationId(String organizationId) throws GeneralSecurityException {
+
+        List<MemberDTO> memberList = memberMapper.findMembersByOrganizationId(organizationId);
+
+        for(int i=0;i<memberList.size();i++){
+            memberList.get(i).getName();
+            MemberDTO member = memberList.get(i);
+            log.info(member.getName());
+            member.setName(aesUtils.decrypt(member.getName()));
+            memberList.set(i, member);
+        }
+
+        return memberList;
     }
 }

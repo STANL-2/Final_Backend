@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @RestController(value = "queryMemberController")
 @RequestMapping("/api/v1/member")
 public class MemberController {
@@ -45,6 +47,25 @@ public class MemberController {
                                                         .msg("성공")
                                                         .result(memberInfo)
                                                         .build());
+    }
+
+    @Operation(summary = "회원 정보 조회(with 사번)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("info/{loginId}")
+    public ResponseEntity<MemberResponseMessage> getMemberInfoBymemberId(@PathVariable("loginId") String loginId) throws GeneralSecurityException {
+
+        MemberDTO memberInfo = memberQueryService.selectMemberInfo(loginId);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(memberInfo)
+                .build());
     }
 
     @Operation(summary = "회원 정보 조건(매장) 조회")
@@ -86,6 +107,24 @@ public class MemberController {
     }
 
 
+    @Operation(summary = "회원 정보 조건(부서) 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/organization/{organizationId}")
+    public ResponseEntity<MemberResponseMessage> getMemberByOrganizationId(@PathVariable("organizationId") String organizationId) throws GeneralSecurityException {
+
+        List<MemberDTO> memberList = memberQueryService.selectMemberByOrganizationId(organizationId);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(memberList)
+                .build());
+    }
 
 
 }

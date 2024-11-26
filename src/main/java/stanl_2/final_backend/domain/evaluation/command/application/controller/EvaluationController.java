@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationModifyDTO;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationRegistDTO;
@@ -31,9 +32,10 @@ public class EvaluationController {
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<EvaluationResponseMessage> postEvaluation(@RequestBody EvaluationRegistDTO evaluationRegistRequestDTO) {
+    public ResponseEntity<EvaluationResponseMessage> postEvaluation(@RequestPart("dto") EvaluationRegistDTO evaluationRegistRequestDTO,
+                                                                    @RequestPart("file") MultipartFile fileUrl) {
 
-        evaluationCommandService.registerEvaluation(evaluationRegistRequestDTO);
+        evaluationCommandService.registerEvaluation(evaluationRegistRequestDTO, fileUrl);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
@@ -49,11 +51,12 @@ public class EvaluationController {
     })
     @PutMapping("{id}")
     public ResponseEntity<EvaluationResponseMessage> putEvaluation(@PathVariable String id,
-                                                         @RequestBody EvaluationModifyDTO evaluationModifyRequestDTO) {
+                                                         @RequestPart("dto") EvaluationModifyDTO evaluationModifyRequestDTO,
+                                                                   @RequestPart("file") MultipartFile fileUrl) {
 
         evaluationModifyRequestDTO.setEvaluationId(id);
 
-        evaluationCommandService.modifyEvaluation(evaluationModifyRequestDTO);
+        evaluationCommandService.modifyEvaluation(evaluationModifyRequestDTO, fileUrl);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
