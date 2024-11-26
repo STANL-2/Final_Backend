@@ -21,12 +21,16 @@ public interface ContractMapper {
 
     List<ContractSelectAllDTO> findContractAllByMemId(@Param("offset") int offset,
                                                       @Param("pageSize") int pageSize,
-                                                      @Param("memberId") String memberId);
+                                                      @Param("memberId") String memberId,
+                                                      @Param("sortField") String sortField,
+                                                      @Param("sortOrder") String sortOrder);
 
     int findContractCountByMemId(String memId);
 
     List<ContractSelectAllDTO> findContractAll(@Param("offset") int offset,
-                                               @Param("pageSize") int pageSize);
+                                               @Param("pageSize") int pageSize,
+                                               @Param("sortField") String sortField,
+                                               @Param("sortOrder") String sortOrder);
 
     int findContractCount();
 
@@ -39,13 +43,15 @@ public interface ContractMapper {
     int findContractBySearchCount(ContractSearchDTO contractSearchDTO);
 
     List<ContractSelectAllDTO> findContractAllByCenterId(@Param("offset") int offset,
-                                                                 @Param("pageSize") int pageSize,
-                                                                 @Param("centerId") String centerId);
+                                                         @Param("pageSize") int pageSize,
+                                                         @Param("centerId") String centerId,
+                                                         @Param("sortField") String sortField,
+                                                         @Param("sortOrder") String sortOrder);
 
     Integer findContractCountByCenterId(@Param("centerId") String centerId);
 
     ContractSeletIdDTO findContractByIdAndCenterId(@Param("contractId")String contractId,
-                                                           @Param("centerId") String centerId);
+                                                   @Param("centerId") String centerId);
 
     List<ContractSearchDTO> findContractBySearchAndCenterId(@Param("offset") int offset,
                                                             @Param("pageSize") int pageSize,

@@ -193,7 +193,44 @@
                a.prod_id
           FROM tb_contract a
          WHERE a.active = TRUE
-         ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.conr_cust_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.conr_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'carName'">
+                        ORDER BY a.conr_car_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.conr_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'companyName'">
+                        ORDER BY a.conr_comp_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerClassifcation'">
+                        ORDER BY a.conr_cust_cla ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerPurchaseCondition'">
+                        ORDER BY a.conr_cust_pur_cond ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
          LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
@@ -243,7 +280,44 @@
                 AND b.prod_name LIKE CONCAT('%', #{contractSearchDTO.productId}, '%')
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.conr_cust_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.conr_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'carName'">
+                        ORDER BY a.conr_car_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.conr_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'companyName'">
+                        ORDER BY a.conr_comp_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerClassifcation'">
+                        ORDER BY a.conr_cust_cla ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerPurchaseCondition'">
+                        ORDER BY a.conr_cust_pur_cond ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
@@ -292,7 +366,44 @@
                 AND b.prod_name LIKE CONCAT('%', #{contractSearchDTO.productId}, '%')
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.conr_cust_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.conr_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'carName'">
+                        ORDER BY a.conr_car_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.conr_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'companyName'">
+                        ORDER BY a.conr_comp_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerClassifcation'">
+                        ORDER BY a.conr_cust_cla ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerPurchaseCondition'">
+                        ORDER BY a.conr_cust_pur_cond ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
@@ -401,7 +512,44 @@
           FROM tb_contract a
          WHERE a.active = TRUE
             AND a.cent_id = #{centerId}
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.conr_cust_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.conr_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'carName'">
+                        ORDER BY a.conr_car_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.conr_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'companyName'">
+                        ORDER BY a.conr_comp_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerClassifcation'">
+                        ORDER BY a.conr_cust_cla ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerPurchaseCondition'">
+                        ORDER BY a.conr_cust_pur_cond ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
@@ -527,7 +675,44 @@
                 AND b.prod_name LIKE CONCAT('%', #{contractSearchDTO.productId}, '%')
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.conr_cust_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.conr_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'carName'">
+                        ORDER BY a.conr_car_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.conr_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'companyName'">
+                        ORDER BY a.conr_comp_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerClassifcation'">
+                        ORDER BY a.conr_cust_cla ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerPurchaseCondition'">
+                        ORDER BY a.conr_cust_pur_cond ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 

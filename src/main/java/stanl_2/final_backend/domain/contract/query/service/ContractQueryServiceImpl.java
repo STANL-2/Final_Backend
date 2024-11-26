@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,12 +53,21 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
         String caschKey = "myCache::contracts::offset=" + offset + "::pageSize=" + pageSize;
 
         List<ContractSelectAllDTO> contracts = (List<ContractSelectAllDTO>) redisTemplate.opsForValue().get(caschKey);
 
         if (contracts == null) {
-            contracts = contractMapper.findContractAllByMemId(offset, pageSize, memberId);
+            contracts = contractMapper.findContractAllByMemId(offset, pageSize, memberId, sortField, sortOrder);
 
             if (contracts == null) {
                 throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
@@ -125,12 +135,21 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
         String caschKey = "myCache::contracts::offset=" + offset + "::pageSize=" + pageSize;
 
         List<ContractSelectAllDTO> contracts = (List<ContractSelectAllDTO>) redisTemplate.opsForValue().get(caschKey);
 
         if (contracts == null) {
-            contracts = contractMapper.findContractAllByCenterId(offset, pageSize, centerId);
+            contracts = contractMapper.findContractAllByCenterId(offset, pageSize, centerId, sortField, sortOrder);
 
             if (contracts == null) {
                 throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
@@ -186,21 +205,16 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
-//        String caschKey = "myCache::contracts::offset=" + offset + "::pageSize=" + pageSize;
-//
-//        List<ContractSelectAllDTO> contracts = (List<ContractSelectAllDTO>) redisTemplate.opsForValue().get(caschKey);
-//
-//        if (contracts == null) {
-//            contracts = contractMapper.findContractAll(offset, pageSize);
-//
-//            if (contracts == null) {
-//                throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
-//            }
-//
-//            redisTemplate.opsForValue().set(caschKey, contracts);
-//        }
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
 
-        List<ContractSelectAllDTO> contracts = contractMapper.findContractAll(offset, pageSize);
+        List<ContractSelectAllDTO> contracts = contractMapper.findContractAll(offset, pageSize, sortField, sortOrder);
 
         if (contracts == null) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
