@@ -9,7 +9,6 @@ import java.util.Collection;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class ContractModifyDTO {
 
     private String contractId;
