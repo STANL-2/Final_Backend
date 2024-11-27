@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.evaluation.query.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
+import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationExcelDownload;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationSearchDTO;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface EvaluationMapper {
                                                         ,@Param("offset") int offset
                                                         ,@Param("centerId") String centerId);
 
-    EvaluationDTO findEvaluationById(String id);
+    EvaluationDTO findEvaluationById(@Param("id") String id);
 
     List<EvaluationDTO> findAllEvaluations(@Param("size") int size
             ,@Param("offset") int offset);
@@ -35,4 +36,6 @@ public interface EvaluationMapper {
     int findEvaluationBySearchCount(@Param("evaluationSearchDTO") EvaluationSearchDTO evaluationSearchDTO);
 
     int findEvaluationByCenterIdAndSearchCount(@Param("evaluationSearchDTO") EvaluationSearchDTO evaluationSearchDTO);
+
+    List<EvaluationExcelDownload> findEvaluationForExcel();
 }

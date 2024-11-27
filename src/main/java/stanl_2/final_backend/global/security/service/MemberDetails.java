@@ -27,6 +27,10 @@ public class MemberDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    public String getPosition() {
+        return member.getPosition();
+    }
+
     @Override
     public String getPassword() {
         return member.getPassword();

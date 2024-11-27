@@ -33,10 +33,10 @@ public class ProblemController {
                     content = {@Content(schema = @Schema(implementation = ProblemResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ProblemResponseMessage> postNotice(@RequestBody ProblemRegistDTO problemRegistDTO, Principal principal){
+    public ResponseEntity<ProblemResponseMessage> postProblem(@RequestBody ProblemRegistDTO problemRegistDTO, Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
         problemRegistDTO.setMemberId(memberId);
-        problemCommandService.registerProblem(problemRegistDTO);
+        problemCommandService.registerProblem(problemRegistDTO,principal);
         return ResponseEntity.ok(ProblemResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
@@ -51,9 +51,9 @@ public class ProblemController {
     })
     @PutMapping("{problemId}")
     public ResponseEntity<ProblemResponseMessage> modifyProblem(@PathVariable String problemId,
-                                                              @RequestBody ProblemModifyDTO problemModifyRequestDTO){
+                                                              @RequestBody ProblemModifyDTO problemModifyRequestDTO, Principal principal){
 
-        ProblemModifyDTO problemModifyDTO = problemCommandService.modifyProblem(problemId,problemModifyRequestDTO);
+        ProblemModifyDTO problemModifyDTO = problemCommandService.modifyProblem(problemId,problemModifyRequestDTO,principal);
 
         return ResponseEntity.ok(ProblemResponseMessage.builder()
                 .httpStatus(200)
@@ -68,9 +68,9 @@ public class ProblemController {
                     content = {@Content(schema = @Schema(implementation = ProblemResponseMessage.class))})
     })
     @DeleteMapping("{problemId}")
-    public ResponseEntity<ProblemResponseMessage> deleteProblem(@PathVariable String problemId) {
+    public ResponseEntity<ProblemResponseMessage> deleteProblem(@PathVariable String problemId, Principal principal) {
 
-        problemCommandService.deleteProblem(problemId);
+        problemCommandService.deleteProblem(problemId,principal);
 
         return ResponseEntity.ok(ProblemResponseMessage.builder()
                 .httpStatus(200)

@@ -1,24 +1,32 @@
 package stanl_2.final_backend.domain.center.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
-import stanl_2.final_backend.domain.center.common.util.RequestList;
+import org.apache.ibatis.annotations.Param;
+import stanl_2.final_backend.domain.center.query.dto.CenterExcelDownload;
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface CenterMapper {
     CenterSelectIdDTO findCenterById(String id);
 
-    List<Map<String, Object>> findCenterAll(RequestList<?> requestList);
+    List<CenterSelectAllDTO> findCenterAll(@Param("size") int size
+            , @Param("offset") int offset);
 
     Integer findCenterCount();
 
-    Integer findCenterBySearchCount(Map<String, Object> params);
+    Integer findCenterBySearchCount(@Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO);
 
-    List<Map<String, Object>> findCenterBySearch(Map<String, Object> params);
+    List<CenterSelectAllDTO> findCenterBySearch(@Param("size") int size
+                                                , @Param("offset") int offset
+                                                , @Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO);
 
+    List<CenterSelectAllDTO> findCenterListBySearch(@Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO);
+
+    String findNameById(@Param("id") String id);
+
+    List<CenterExcelDownload> findCentersForExcel();
 }

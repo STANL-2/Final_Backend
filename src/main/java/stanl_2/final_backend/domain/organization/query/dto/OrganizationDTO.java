@@ -12,5 +12,5 @@ import lombok.Setter;
 public class OrganizationDTO {
     private String organizationId;
     private String name;
-    private Integer depth;
+    private String parent;
 }

@@ -1,10 +1,11 @@
 package stanl_2.final_backend.global.security.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
@@ -18,6 +19,9 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import stanl_2.final_backend.domain.log.command.repository.LogRepository;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
 
 import java.util.Arrays;
@@ -25,6 +29,7 @@ import java.util.Collections;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+@Slf4j
 @Configuration
 @Profile("prod")
 public class ProdSecurityConfig {
@@ -32,33 +37,39 @@ public class ProdSecurityConfig {
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
+    private LogRepository logRepository;
+
+    @Autowired
+    public ProdSecurityConfig(LogRepository logRepository) {
+        this.logRepository = logRepository;
+    }
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
         CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
         http.cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        // 인증 없이 접근 가능한 API 설정
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**",
-                                "/api/v1/auth/signin",
-                                "/api/v1/auth/signup",
-                                "/api/v1/auth/refresh",
-                                "/api/v1/auth"  // 권한 부여때문에(일단 열어둠)
-                                ).permitAll()
-                        // [Example] member는 ADMIN 권한만 접근 가능 설정 예시
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasAnyRole("ADMIN", "MEMBER")
-                        .anyRequest().authenticated())
+
                 // 필터 순서: JWT 검증 -> CSRF
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey), UsernamePasswordAuthenticationFilter.class)
-                .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure());
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), UsernamePasswordAuthenticationFilter.class)
+                .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())
+                // 인증 및 권한 예외를 처리
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            log.error("Authentication error: {}", authException.getMessage());
+                            throw new GlobalCommonException(GlobalErrorCode.LOGIN_FAILURE);
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            log.error("Access denied: {}", accessDeniedException.getMessage());
+                            throw new GlobalCommonException(GlobalErrorCode.UNAUTHORIZED);
+                        }));
         http.formLogin(withDefaults());
         http.httpBasic(withDefaults());
+
+        // 접근 제어
+        RequestMatcherConfig.configureRequestMatchers(http);
+
         return http.build();
     }
 

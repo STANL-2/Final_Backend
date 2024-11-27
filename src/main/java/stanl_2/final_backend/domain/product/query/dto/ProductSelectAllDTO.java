@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 public class ProductSelectAllDTO {
-    private String id;
+    private String productId;
     private String name;
     private String serialNumber;
     private String cost;

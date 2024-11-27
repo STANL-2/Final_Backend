@@ -13,4 +13,8 @@ public interface CustomerQueryService {
     Page<CustomerDTO> selectCustomerList(Pageable pageable) throws GeneralSecurityException;
 
     Page<CustomerDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException;
+
+    CustomerDTO selectCustomerInfoByPhone(String customerPhone) throws GeneralSecurityException;
+
+    String selectCustomerNameById(String customerId) throws GeneralSecurityException;
 }

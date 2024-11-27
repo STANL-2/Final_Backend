@@ -5,12 +5,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
@@ -24,25 +26,6 @@ public class NoticeController {
     @Autowired
     public NoticeController(NoticeService noticeService) {
         this.noticeService = noticeService;
-    }
-
-    @Operation(summary = "공지사항 전체 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
-    })
-    @GetMapping("/all")
-    public ResponseEntity<Page<NoticeDTO>> getAllNotices(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        // PageRequest를 사용하여 페이지 번호와 페이지 크기를 설정
-        Pageable pageable = PageRequest.of(page, size);
-
-        // 공지사항 목록 조회
-        Page<NoticeDTO> noticeDTOPage = noticeService.findAllNotices(pageable);
-
-        return ResponseEntity.ok(noticeDTOPage);
     }
 
     @Operation(summary = "공지사항 조건별 조회")
@@ -63,7 +46,7 @@ public class NoticeController {
 
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        SearchDTO searchDTO = new SearchDTO(title, tag, classification, memberId, startDate, endDate);
+        SearchDTO searchDTO = new SearchDTO(title,tag,memberId,classification,startDate,endDate);
         Page<NoticeDTO> noticeDTOPage = noticeService.findNotices(pageable,searchDTO);
 
         return ResponseEntity.ok(noticeDTOPage);
@@ -79,6 +62,15 @@ public class NoticeController {
         NoticeDTO noticeDTO = noticeService.findNotice(noticeId);
         return ResponseEntity.ok(noticeDTO);
     }
+    @Operation(summary = "공지사항 엑셀 다운 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "공지사항 엑셀 다운 테스트 성공",
+                    content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))}),
+    })
+    @GetMapping("/excel")
+    public void exportNotice(HttpServletResponse response){
 
+        noticeService.exportNoticesToExcel(response);
+    }
 
 }

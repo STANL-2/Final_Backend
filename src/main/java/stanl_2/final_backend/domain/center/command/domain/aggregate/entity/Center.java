@@ -10,9 +10,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-/* 설명. 테스트를 위한 어노테이션(나중에 삭제 예정)*/
-@ToString
-
 @Entity
 @Table(name="TB_CENTER")
 @AllArgsConstructor
@@ -25,10 +22,10 @@ public class Center {
     @GeneratedValue(generator = "PrefixGeneratorConfig")
     @GenericGenerator(name = "PrefixGeneratorConfig",
             type = PrefixGeneratorConfig.class,
-            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CENT")
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "CEN")
     )
     @Column(name ="CENT_ID")
-    private String id;
+    private String centerId;
 
     @Column(name = "CENT_NAME", nullable = false)
     private String name;
@@ -54,19 +51,18 @@ public class Center {
     @Column(name = "DELETED_AT")
     private String deletedAt;
 
+    @Column(name = "IMAGE_URL", nullable = false)
+    private String imageUrl;
+
     @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
 
-
-    /* 설명. updatedAt 자동화 */
-    // Insert 되기 전에 실행
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();
         this.updatedAt = this.createdAt;
     }
 
-    // Update 되기 전에 실행
     @PreUpdate
     private void preUpdate() {
         this.updatedAt = getCurrentTime();

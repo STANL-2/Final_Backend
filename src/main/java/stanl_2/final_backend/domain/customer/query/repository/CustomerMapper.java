@@ -19,4 +19,5 @@ public interface CustomerMapper {
 
     int findCustomerCnt(Map<String, Object> map);
 
+    CustomerDTO selectCustomerInfoByPhone(String customerPhone);
 }

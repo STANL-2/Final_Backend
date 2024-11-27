@@ -90,4 +90,34 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
         return new PageImpl<>(customerList, pageable, count);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CustomerDTO selectCustomerInfoByPhone(String customerPhone) throws GeneralSecurityException {
+
+        String encryptedPhone = aesUtils.encrypt(customerPhone);
+
+        CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoByPhone(encryptedPhone);
+
+        if (customerInfoDTO == null) {
+            return null;
+        }
+
+        customerInfoDTO.setPhone(aesUtils.decrypt(customerInfoDTO.getPhone()));
+        customerInfoDTO.setEmergePhone(aesUtils.decrypt(customerInfoDTO.getEmergePhone()));
+        customerInfoDTO.setEmail(aesUtils.decrypt(customerInfoDTO.getEmail()));
+
+        return customerInfoDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String selectCustomerNameById(String customerId) throws GeneralSecurityException {
+
+        CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoById(customerId);
+
+        String customerName = aesUtils.decrypt(customerInfoDTO.getName());
+
+        return customerName;
+    }
 }

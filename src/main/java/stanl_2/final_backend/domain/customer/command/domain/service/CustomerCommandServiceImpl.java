@@ -1,5 +1,7 @@
 package stanl_2.final_backend.domain.customer.command.domain.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.customer.command.application.dto.CustomerModifyDTO;
 import stanl_2.final_backend.domain.customer.command.application.dto.CustomerRegistDTO;
+import stanl_2.final_backend.domain.customer.command.application.dto.CustomerResponseDTO;
 import stanl_2.final_backend.domain.customer.command.application.service.CustomerCommandService;
 import stanl_2.final_backend.domain.customer.command.domain.aggregate.entity.Customer;
 import stanl_2.final_backend.domain.customer.command.domain.repository.CustomerRepository;
@@ -20,6 +23,8 @@ import java.security.GeneralSecurityException;
 @Service("commandCustomerService")
 public class CustomerCommandServiceImpl implements CustomerCommandService {
 
+    @PersistenceContext
+    private EntityManager em;
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
     private final AESUtils aesUtils;
@@ -35,7 +40,7 @@ public class CustomerCommandServiceImpl implements CustomerCommandService {
 
     @Override
     @Transactional
-    public void registerCustomerInfo(CustomerRegistDTO customerRegistDTO) throws GeneralSecurityException {
+    public CustomerResponseDTO registerCustomerInfo(CustomerRegistDTO customerRegistDTO) throws GeneralSecurityException {
 
         Customer customer = modelMapper.map(customerRegistDTO, Customer.class);
 
@@ -43,7 +48,7 @@ public class CustomerCommandServiceImpl implements CustomerCommandService {
         customer.setEmergePhone(aesUtils.encrypt(customer.getEmergePhone()));
         customer.setEmail(aesUtils.encrypt(customer.getEmail()));
 
-        customerRepository.save(customer);
+        return modelMapper.map(customerRepository.saveAndFlush(customer), CustomerResponseDTO.class);
     }
 
     @Override

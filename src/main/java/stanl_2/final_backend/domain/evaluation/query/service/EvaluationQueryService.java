@@ -1,6 +1,7 @@
 package stanl_2.final_backend.domain.evaluation.query.service;
 
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
@@ -18,4 +19,6 @@ public interface EvaluationQueryService {
 
     Page<EvaluationDTO> selectEvaluationBySearchByManager(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException;
     Page<EvaluationDTO> selectEvaluationBySearchByRepresentative(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException;
+
+    void exportEvaluationToExcel(HttpServletResponse response);
 }

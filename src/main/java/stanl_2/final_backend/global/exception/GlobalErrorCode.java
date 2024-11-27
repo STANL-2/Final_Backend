@@ -51,13 +51,14 @@ public enum GlobalErrorCode {
      */
     USERDETAILS_NOT_FOUND(40400, HttpStatus.NOT_FOUND, "User Details를 찾을 수 없습니다."),
     USER_NOT_FOUND(40401, HttpStatus.NOT_FOUND, "유저 정보가 없습니다."),
-    NOT_FOUND_CSRF_TOKEN(40402, HttpStatus.NOT_FOUND, "CSRF토큰이 없습니다."),
+    AUTHORITIES_NOT_FOUND(40402, HttpStatus.NOT_FOUND, "유저 권한을 찾을 수 없습니다."),
 
     /**
      * 500(Internal Server Error)
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
-    INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다.");
+    INTERNAL_SERVER_ERROR(50000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
+    FAIL_LOG_SAVE(50001, HttpStatus.INTERNAL_SERVER_ERROR, "로그내용을 저장할 수 없습니다.");
 
 
     private final Integer code;

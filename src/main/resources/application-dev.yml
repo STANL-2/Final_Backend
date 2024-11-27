@@ -1,8 +1,10 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 logging:
   level:
     org.springframework.security: TRACE
+    org.mybatis: DEBUG
+    java.sql: DEBUG

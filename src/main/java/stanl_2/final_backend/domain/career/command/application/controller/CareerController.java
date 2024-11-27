@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.career.command.application.dto.CareerRegistDTO;
 import stanl_2.final_backend.domain.career.command.application.service.CareerCommandService;
 import stanl_2.final_backend.domain.career.common.response.CareerResponseMessage;
@@ -35,7 +34,7 @@ public class CareerController {
     @Operation(summary = "경력 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = CareerResponseMessage.class))})
     })
     @PostMapping("")
     public ResponseEntity<CareerResponseMessage> postCareer(@RequestBody CareerRegistDTO careerRegistDTO,

@@ -22,6 +22,11 @@
         <result property="title" column="NOT_TTL"/>
         <result property="tag" column="NOT_TAG"/>
         <result property="classification" column="NOT_CLA"/>
+        <result property="content" column="NOT_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
     <!-- 공지 전체 조회 페이지 네이션 -->
@@ -59,7 +64,6 @@
             a.not_cont,
             a.created_at,
             a.updated_at,
-            a.deleted_at,
             a.active,
             a.mem_id
         FROM tb_notice a
@@ -85,7 +89,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <select id="findNoticesCount" resultMap="SearchNotice" parameterType="String">
+    <select id="findNoticesCount" resultType="int" parameterType="stanl_2.final_backend.domain.notices.query.dto.SearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_notice a
@@ -101,7 +105,7 @@
                 AND a.mem_id = #{memberId}
             </if>
             <if test="title != null">
-                AND a.not_ttl = #{title}
+                AND a.not_ttl LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="startDate != null and endDate != null">
                 AND a.created_at BETWEEN #{startDate} AND #{endDate}
@@ -123,6 +127,28 @@
             a.mem_id
         FROM tb_notice a
         WHERE not_id = #{noticeId};
+    </select>
+
+    <resultMap id="NoticeExcel" type="stanl_2.final_backend.domain.notices.query.dto.NoticeExcelDownload">
+        <result property="title" column="NOT_TTL"/>
+        <result property="tag" column="NOT_TAG"/>
+        <result property="classification" column="NOT_CLA"/>
+        <result property="content" column="NOT_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+    <select id="findNoticesForExcel" resultMap="NoticeExcel">
+        SELECT
+            a.not_ttl,
+            a.not_tag,
+            a.not_cla,
+            a.not_cont,
+            a.created_at,
+            a.updated_at,
+            a.mem_id
+        FROM tb_notice a
     </select>
 
 </mapper>
