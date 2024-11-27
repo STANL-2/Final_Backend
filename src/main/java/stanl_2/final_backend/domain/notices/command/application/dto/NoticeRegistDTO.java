@@ -19,4 +19,6 @@ public class NoticeRegistDTO {
     private String content;
 
     private String memberId;
+
+    private String fileUrl;
 }
