@@ -12,7 +12,7 @@ import stanl_2.final_backend.domain.A_sample.command.domain.aggregate.entity.Sam
 import stanl_2.final_backend.domain.A_sample.command.domain.repository.SampleRepository;
 import stanl_2.final_backend.domain.A_sample.common.exception.SampleCommonException;
 import stanl_2.final_backend.domain.A_sample.common.exception.SampleErrorCode;
-import stanl_2.final_backend.domain.s3.service.S3FileService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
