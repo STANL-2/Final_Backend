@@ -100,7 +100,7 @@
         a.active,
         a.cst_id,
         a.mem_id,
-        a.prod_id
+        a.prod_id,
         a.file_url
         FROM tb_problem a
         WHERE prob_id = #{problemId};
