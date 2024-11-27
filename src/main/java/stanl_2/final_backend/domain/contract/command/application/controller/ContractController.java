@@ -58,7 +58,7 @@ public class ContractController {
     public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String contractId,
                                                                @RequestBody ContractModifyDTO contractModifyRequestDTO,
                                                                Principal principal) throws GeneralSecurityException {
-
+        log.info("수정임: " + contractId);
         contractModifyRequestDTO.setContractId(contractId);
         contractModifyRequestDTO.setMemberId(principal.getName());
 
@@ -101,6 +101,7 @@ public class ContractController {
     public ResponseEntity<ContractResponseMessage> putContractStatus(@PathVariable String contractId,
                                                                     @RequestBody ContractStatusModifyDTO contractStatusModifyDTO,
                                                                     Principal principal) {
+        log.info("putContractStatus: " + contractStatusModifyDTO.getStatus());
 
         // DTO에 설정
         contractStatusModifyDTO.setContractId(contractId);

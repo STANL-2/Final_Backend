@@ -245,6 +245,8 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         // 계약 조회 및 수정
         Contract contract = contractRepository.findByContractId(contractStatusModifyDTO.getContractId());
 
+        log.info("Contract : " + contract);
+
         if (contract == null) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
