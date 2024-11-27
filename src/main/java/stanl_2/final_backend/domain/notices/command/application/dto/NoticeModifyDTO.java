@@ -17,4 +17,5 @@ public class NoticeModifyDTO {
     private String classification;
     private String content;
     private String memberLoginId;
+    private String fileUrl;
 }

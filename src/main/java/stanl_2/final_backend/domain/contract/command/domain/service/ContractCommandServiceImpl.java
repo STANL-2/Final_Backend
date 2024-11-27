@@ -24,7 +24,7 @@ import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.product.command.application.command.service.ProductCommandService;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.service.ProductQueryService;
-import stanl_2.final_backend.domain.s3.service.S3FileService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 import stanl_2.final_backend.domain.sales_history.command.application.service.SalesHistoryCommandService;
 import stanl_2.final_backend.global.utils.AESUtils;
 

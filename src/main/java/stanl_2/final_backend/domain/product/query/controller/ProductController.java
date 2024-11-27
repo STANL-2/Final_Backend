@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessa
 import stanl_2.final_backend.domain.center.common.response.CenterResponseMessage;
 import stanl_2.final_backend.domain.product.common.response.ProductResponseMessage;
 import stanl_2.final_backend.domain.product.query.dto.ProductSearchRequestDTO;
+import stanl_2.final_backend.domain.product.query.dto.ProductSelectAllDTO;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.service.ProductQueryService;
 
@@ -41,9 +44,16 @@ public class ProductController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("")
-    public ResponseEntity<ProductResponseMessage> getProductAll(@PageableDefault(size = 20) Pageable pageable){
+    public ResponseEntity<ProductResponseMessage> getProductAll(@PageableDefault(size = 10) Pageable pageable,
+                                                                @RequestParam(required = false) String sortField,
+                                                                @RequestParam(required = false) String sortOrder){
 
-        Page<Map<String, Object>> responseProducts = productQueryService.selectAll(pageable);
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
+
+        Page<ProductSelectAllDTO> responseProducts = productQueryService.selectAll(pageable);
 
         return ResponseEntity.ok(ProductResponseMessage.builder()
                 .httpStatus(200)
@@ -78,18 +88,22 @@ public class ProductController {
     })
     @GetMapping("/search")
     public ResponseEntity<ProductResponseMessage> getProductBySearch(@RequestParam Map<String, String> params
-            ,@PageableDefault(size = 20) Pageable pageable){
+                                                                    ,@PageableDefault(size = 10) Pageable pageable){
 
         ProductSearchRequestDTO productSearchRequestDTO = new ProductSearchRequestDTO();
         productSearchRequestDTO.setId(params.get("id"));
         productSearchRequestDTO.setName(params.get("name"));
         productSearchRequestDTO.setSerialNumber(params.get("serialNumber"));
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("productSearchRequestDTO", productSearchRequestDTO);
-        paramMap.put("pageable", pageable);
+        String sortField = params.get("sortField");
+        String sortOrder = params.get("sortOrder");
 
-        Page<Map<String, Object>> responseProducts = productQueryService.selectProductBySearch(paramMap);
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
+
+        Page<ProductSelectAllDTO> responseProducts = productQueryService.selectProductBySearch(productSearchRequestDTO, pageable);
 
         return ResponseEntity.ok(ProductResponseMessage.builder()
                 .httpStatus(200)

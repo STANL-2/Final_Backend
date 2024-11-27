@@ -20,4 +20,6 @@ public class ProblemRegistDTO {
     private String memberId;
 
     private String productId;
+
+    private String fileUrl;
 }
