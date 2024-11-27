@@ -49,11 +49,11 @@ logging:
 cloud:
   aws:
     credentials:
-      access-key: ${S3_ACCESSKEY}
-      secret-key: ${S3_SECRETKEY}
+      access-key: AKIAQE3ROMWSWEBT7F7O
+      secret-key: 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
     s3:
-      bucket: ${S3_BUCKETNAME}
+      bucket: motivebk
     region:
-      static: ${S3_REGION}
+      static: ap-northeast-2
     stack:
       auto: false
