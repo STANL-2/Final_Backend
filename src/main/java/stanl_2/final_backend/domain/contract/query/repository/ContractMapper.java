@@ -2,6 +2,7 @@ package stanl_2.final_backend.domain.contract.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import stanl_2.final_backend.domain.contract.query.dto.ContractExcelDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
@@ -59,4 +60,6 @@ public interface ContractMapper {
                                                             @Param("centerId") String centerId);
 
     Integer findContractBySearchAndCenterCount(@Param("contractSearchDTO") ContractSearchDTO contractSearchDTO, @Param("centerId") String centerId);
+
+    List<ContractExcelDTO> findContractForExcel();
 }

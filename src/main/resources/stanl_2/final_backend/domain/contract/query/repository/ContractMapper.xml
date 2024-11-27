@@ -82,6 +82,17 @@
         <result property="carName" column="CONR_CAR_NAME"/>
     </resultMap>
 
+    <resultMap id="contractExcel" type="stanl_2.final_backend.domain.contract.query.dto.ContractExcelDTO">
+        <id property="contractId" column="CONR_ID"/>
+        <result property="title" column="CONR_TTL"/>
+        <result property="customerName" column="CONR_CUST_NAME"/>
+        <result property="companyName" column="CONR_COMP_NAME"/>
+        <result property="customerClassifcation" column="CONR_CUST_CLA"/>
+        <result property="customerPurchaseCondition" column="CONR_CUST_PUR_COND"/>
+        <result property="status" column="CONR_STAT"/>
+        <result property="carName" column="CONR_CAR_NAME"/>
+    </resultMap>
+
     <select id="findContractByIdAndMemId" resultMap="contractResultMap">
         SELECT
         a.conr_id,
@@ -750,6 +761,19 @@
                 AND b.prod_name LIKE CONCAT('%', #{productId}, '%')
             </if>
         </where>
+    </select>
+
+    <select id="findContractForExcel" resultMap="contractExcel">
+        SELECT
+               a.conr_id,
+               a.conr_ttl,
+               a.conr_cust_name,
+               a.conr_comp_name,
+               a.conr_cust_cla,
+               a.conr_car_name,
+               a.conr_stat,
+               a.conr_cust_pur_cond
+          FROM tb_contract a
     </select>
 
 </mapper>

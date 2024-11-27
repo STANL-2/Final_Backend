@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.contract.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.contract.common.exception.ContractCommonException;
 import stanl_2.final_backend.domain.contract.common.exception.ContractErrorCode;
+import stanl_2.final_backend.domain.contract.query.dto.ContractExcelDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSeletIdDTO;
 import stanl_2.final_backend.domain.contract.query.repository.ContractMapper;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -32,14 +35,16 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     private final MemberQueryService memberQueryService;
     private final UpdateHistoryQueryService updateHistoryQueryService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ExcelUtilsV1 excelUtilsV1;
 
     @Autowired
-    public ContractQueryServiceImpl(ContractMapper contractMapper, AuthQueryService authQueryService, MemberQueryService memberQueryService, UpdateHistoryQueryService updateHistoryQueryService, @Qualifier("redisTemplate") RedisTemplate redisTemplate) {
+    public ContractQueryServiceImpl(ContractMapper contractMapper, AuthQueryService authQueryService, MemberQueryService memberQueryService, UpdateHistoryQueryService updateHistoryQueryService, @Qualifier("redisTemplate") RedisTemplate redisTemplate, ExcelUtilsV1 excelUtilsV1) {
         this.contractMapper = contractMapper;
         this.authQueryService = authQueryService;
         this.memberQueryService = memberQueryService;
         this.updateHistoryQueryService = updateHistoryQueryService;
         this.redisTemplate = redisTemplate;
+        this.excelUtilsV1 = excelUtilsV1;
     }
 
     // 영업사원 조회
@@ -266,4 +271,16 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
         return new PageImpl<>(contracts, pageable, totalContract);
     }
+
+    @Override
+    public void exportContractToExcel(HttpServletResponse response) {
+        List<ContractExcelDTO> contractExcels = contractMapper.findContractForExcel();
+
+        if (contractExcels == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        excelUtilsV1.download(ContractExcelDTO.class, contractExcels, "contractExcel", response);
+    }
+
 }

@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.contract.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
@@ -30,4 +31,5 @@ public interface ContractQueryService {
     Page<ContractSearchDTO> selectBySearchAdmin(ContractSearchDTO contractSearchDTO, Pageable pageable) throws GeneralSecurityException;
 
 
+    void exportContractToExcel(HttpServletResponse response);
 }

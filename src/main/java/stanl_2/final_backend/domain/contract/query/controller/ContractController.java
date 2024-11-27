@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -311,5 +312,16 @@ public class ContractController {
                 .msg("계약서 검색 조회 성공")
                 .result(responseContracts)
                 .build());
+    }
+
+    @Operation(summary = "엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 검색 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("excel")
+    public void exportContract(HttpServletResponse response) {
+
+        contractQueryService.exportContractToExcel(response);
     }
 }
