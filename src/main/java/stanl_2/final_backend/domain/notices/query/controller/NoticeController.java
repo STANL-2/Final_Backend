@@ -60,6 +60,7 @@ public class NoticeController {
     @GetMapping("{noticeId}")
     public ResponseEntity<NoticeDTO> getNotice(@PathVariable String noticeId){
         NoticeDTO noticeDTO = noticeService.findNotice(noticeId);
+        System.out.println(noticeDTO);
         return ResponseEntity.ok(noticeDTO);
     }
     @Operation(summary = "공지사항 엑셀 다운 테스트")

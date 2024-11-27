@@ -56,6 +56,8 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public NoticeDTO findNotice(String noticeId) {
         NoticeDTO notice = noticeMapper.findNotice(noticeId);
+        System.out.println(notice.getContent());
+        System.out.println(notice.getFileUrl());
         return notice;
     }
     @Transactional
