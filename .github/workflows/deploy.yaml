@@ -77,7 +77,6 @@ jobs:
       # Elastic Beanstalk 배포
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb deploy --timeout 60
           eb init -p "Docker" ${{ env.APPLICATION_NAME }} --region ${{ env.AWS_REGION }}
           eb use ${{ env.ENVIRONMENT_NAME }}
-          eb deploy --staged
+          eb deploy --staged --timeout 60
