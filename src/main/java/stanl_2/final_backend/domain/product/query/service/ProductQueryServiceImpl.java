@@ -87,7 +87,7 @@ public class ProductQueryServiceImpl implements ProductQueryService {
             sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
         }
 
-        List<Map<String, Object>> productList = productMapper.findProductBySearch(size, offset, productSearchRequestDTO, sortField, sortOrder);
+        List<ProductSelectAllDTO> productList = productMapper.findProductBySearch(size, offset, productSearchRequestDTO, sortField, sortOrder);
 
         int total = productMapper.findProductBySearchCount(productSearchRequestDTO);
 

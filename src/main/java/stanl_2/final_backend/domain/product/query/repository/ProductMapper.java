@@ -24,7 +24,7 @@ public interface ProductMapper {
 
     ProductSelectIdDTO findProductById(String id);
 
-    List<Map<String, Object>> findProductBySearch(@Param("size") int size
+    List<ProductSelectAllDTO> findProductBySearch(@Param("size") int size
             , @Param("offset") int offset
             , @Param("productSearchRequestDTO") ProductSearchRequestDTO productSearchRequestDTO,
                                                   @Param("sortField") String sortField,

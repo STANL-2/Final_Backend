@@ -44,7 +44,7 @@ public class ProductController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("")
-    public ResponseEntity<ProductResponseMessage> getProductAll(@PageableDefault(size = 20) Pageable pageable,
+    public ResponseEntity<ProductResponseMessage> getProductAll(@PageableDefault(size = 10) Pageable pageable,
                                                                 @RequestParam(required = false) String sortField,
                                                                 @RequestParam(required = false) String sortOrder){
 
@@ -88,7 +88,7 @@ public class ProductController {
     })
     @GetMapping("/search")
     public ResponseEntity<ProductResponseMessage> getProductBySearch(@RequestParam Map<String, String> params
-                                                                    ,@PageableDefault(size = 20) Pageable pageable){
+                                                                    ,@PageableDefault(size = 10) Pageable pageable){
 
         ProductSearchRequestDTO productSearchRequestDTO = new ProductSearchRequestDTO();
         productSearchRequestDTO.setId(params.get("id"));
