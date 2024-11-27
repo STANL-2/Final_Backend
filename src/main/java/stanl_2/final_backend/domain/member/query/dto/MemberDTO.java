@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class MemberDTO {
-    private String id;
+    private String memberId;
     private String loginId;
     private String name;
     private String email;
@@ -28,4 +28,5 @@ public class MemberDTO {
     private String bankName;
     private String account;
     private String centerId;
+    private String createdAt;
 }

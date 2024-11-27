@@ -6,6 +6,7 @@
     <resultMap id="AllSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleDTO">
         <id property="scheduleId" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
+        <result property="content" column="SCH_CONT"/>
         <result property="tag" column="SCH_TAG"/>
         <result property="startAt" column="SCH_SRT_AT"/>
         <result property="endAt" column="SCH_END_AT"/>
@@ -16,6 +17,7 @@
         SELECT
                a.sch_id,
                a.sch_name,
+               a.sch_cont,
                a.sch_tag,
                a.sch_srt_at,
                a.sch_end_at,
@@ -29,6 +31,7 @@
     <resultMap id="yearMonthSchedules" type="stanl_2.final_backend.domain.schedule.query.dto.ScheduleYearMonthDTO">
         <id property="scheduleId" column="SCH_ID"/>
         <result property="name" column="SCH_NAME"/>
+        <result property="content" column="SCH_CONT"/>
         <result property="tag" column="SCH_TAG"/>
         <result property="startAt" column="SCH_SRT_AT"/>
         <result property="endAt" column="SCH_END_AT"/>
@@ -39,6 +42,7 @@
         SELECT
                a.sch_id,
                a.sch_name,
+               a.sch_cont,
                a.sch_tag,
                a.sch_srt_at,
                a.sch_end_at,

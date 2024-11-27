@@ -36,7 +36,6 @@ public class ContractModifyDTO {
     private String status;
     private String numberOfVehicles;
     private String createdUrl;
-    private Boolean active;
     private String createdAt;
     private String updatedAt;
     private String memberId;

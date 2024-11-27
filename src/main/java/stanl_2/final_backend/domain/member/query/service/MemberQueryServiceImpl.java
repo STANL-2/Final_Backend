@@ -10,8 +10,6 @@ import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.repository.MemberMapper;
 import stanl_2.final_backend.domain.member.query.repository.MemberRoleMapper;
-import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryCommonException;
-import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryErrorCode;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
@@ -108,5 +106,22 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         name = aesUtils.decrypt(name);
 
         return name;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberDTO> selectMemberByOrganizationId(String organizationId) throws GeneralSecurityException {
+
+        List<MemberDTO> memberList = memberMapper.findMembersByOrganizationId(organizationId);
+
+        for(int i=0;i<memberList.size();i++){
+            memberList.get(i).getName();
+            MemberDTO member = memberList.get(i);
+            log.info(member.getName());
+            member.setName(aesUtils.decrypt(member.getName()));
+            memberList.set(i, member);
+        }
+
+        return memberList;
     }
 }

@@ -5,9 +5,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,10 +42,19 @@ public class ContractController {
     })
     @GetMapping("employee")
     public ResponseEntity<ContractResponseMessage> getAllContractEmployee(@PageableDefault(size = 10) Pageable pageable,
-                                                                  Principal principal) {
+                                                                          Principal principal,
+                                                                          @RequestParam(required = false) String sortField,
+                                                                          @RequestParam(required = false) String sortOrder) {
 
         ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
         contractSelectAllDTO.setMemberId(principal.getName());
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
+
 
         Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContractEmployee(contractSelectAllDTO, pageable);
 
@@ -126,10 +138,18 @@ public class ContractController {
     })
     @GetMapping("center")
     public ResponseEntity<ContractResponseMessage> getAllContractAdmin(@PageableDefault(size = 10) Pageable pageable,
-                                                                          Principal principal) throws GeneralSecurityException {
+                                                                       Principal principal,
+                                                                       @RequestParam(required = false) String sortField,
+                                                                       @RequestParam(required = false) String sortOrder) throws GeneralSecurityException {
 
         ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
         contractSelectAllDTO.setMemberId(principal.getName());
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContractAdmin(contractSelectAllDTO, pageable);
 
@@ -212,9 +232,17 @@ public class ContractController {
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @GetMapping("")
-    public ResponseEntity<ContractResponseMessage> getAllContract(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<ContractResponseMessage> getAllContract(@PageableDefault(size = 10) Pageable pageable,
+                                                                  @RequestParam(required = false) String sortField,
+                                                                  @RequestParam(required = false) String sortOrder) {
 
         ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContract(contractSelectAllDTO, pageable);
 
@@ -284,5 +312,16 @@ public class ContractController {
                 .msg("계약서 검색 조회 성공")
                 .result(responseContracts)
                 .build());
+    }
+
+    @Operation(summary = "엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계약서 검색 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
+    })
+    @GetMapping("excel")
+    public void exportContract(HttpServletResponse response) {
+
+        contractQueryService.exportContractToExcel(response);
     }
 }
