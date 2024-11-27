@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class CenterSelectIdDTO {
 
-    private String id;
+    private String centerId;
     private String name;
     private String address;
     private String phone;
