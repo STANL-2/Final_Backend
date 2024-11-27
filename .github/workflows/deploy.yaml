@@ -79,4 +79,4 @@ jobs:
         run: |
           eb init -p "Docker" ${{ env.APPLICATION_NAME }} --region ${{ env.AWS_REGION }}
           eb use ${{ env.ENVIRONMENT_NAME }}
-          eb deploy --staged --timeout 50
+          eb deploy --staged
