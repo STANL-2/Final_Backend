@@ -1,10 +1,7 @@
 package stanl_2.final_backend.domain.customer.command.domain.aggregate.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 

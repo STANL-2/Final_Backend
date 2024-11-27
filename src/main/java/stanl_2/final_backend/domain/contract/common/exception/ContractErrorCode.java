@@ -39,6 +39,8 @@ public enum ContractErrorCode {
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
     CONTRACT_NOT_FOUND(40401, HttpStatus.NOT_FOUND, "계약서를 찾을 수 없습니다."),
+    UPDATE_HISTORY_NOT_FOUND(40402, HttpStatus.NOT_FOUND, "수정내역에서 계약서를 찾을 수 없습니다."),
+    CUSTOMER_NOT_FOUND(40403, HttpStatus.NOT_FOUND, "고객 정보를 찾을 수 없습니다."),
 
 
     /**

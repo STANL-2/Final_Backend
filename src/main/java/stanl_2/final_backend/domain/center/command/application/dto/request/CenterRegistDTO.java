@@ -6,11 +6,11 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
-public class CenterDeleteRequestDTO {
+public class CenterRegistDTO {
     private String name;
     private String address;
     private String phone;
     private Integer memberCount;
     private String operatingAt;
+    private String imageUrl;
 }

@@ -17,7 +17,7 @@ public class ContractModifyDTO {
     private String customerSex;
     private String customerIdentifiNo;
     private Integer customerAge;
-    private String customerAddrress;
+    private String customerAddress;
     private String customerEmail;
     private String customerPhone;
     private String companyName;
@@ -31,12 +31,11 @@ public class ContractModifyDTO {
     private Integer remainderPayment;
     private Integer consignmentPayment;
     private Integer totalSales;
-    private String delveryDate;
-    private String delveryLocation;
+    private String deliveryDate;
+    private String deliveryLocation;
     private String status;
     private String numberOfVehicles;
     private String createdUrl;
-    private Boolean active;
     private String createdAt;
     private String updatedAt;
     private String memberId;

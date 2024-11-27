@@ -5,7 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.product.query.repository.ProductMapper">
 
     <resultMap id="productAllResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectAllDTO">
-        <id property="id" column="PROD_ID"/>
+        <id property="productId" column="PROD_ID"/>
         <result property="name" column="PROD_NAME"/>
         <result property="serialNumber" column="PROD_SER_NO"/>
         <result property="cost" column="PROD_COST"/>
@@ -13,11 +13,12 @@
     </resultMap>
 
     <resultMap id="productIdResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO">
-        <id property="id" column="PROD_ID"/>
+        <id property="productId" column="PROD_ID"/>
         <result property="name" column="PROD_NAME"/>
         <result property="serialNumber" column="PROD_SER_NO"/>
         <result property="cost" column="PROD_COST"/>
         <result property="stock" column="PROD_STCK"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
         <result property="country" column="OPT_CNTY"/>
         <result property="manufacturer" column="OPT_MNFR"/>
         <result property="vehicleType" column="OPT_VHC_TYPE"/>
@@ -43,6 +44,14 @@
         <result property="outdoorPackage" column="OPT_OTDR_PCKG"/>
         <result property="sunRoof" column="OPT_SUN_ROOF"/>
         <result property="sound" column="OPT_SOND"/>
+    </resultMap>
+
+    <resultMap id="ProductExcel" type="stanl_2.final_backend.domain.product.query.dto.ProductExcelDownload">
+        <id property="productId" column="PROD_ID"/>
+        <result property="name" column="PROD_NAME"/>
+        <result property="serialNumber" column="PROD_SER_NO"/>
+        <result property="cost" column="PROD_COST"/>
+        <result property="stock" column="PROD_STCK"/>
     </resultMap>
 
     <select id="findProductById" resultMap="productIdResultMap" parameterType="String">
@@ -84,13 +93,13 @@
 
     <select id="findProductBySerialNumber" resultMap="productIdResultMap" parameterType="String">
         SELECT
-        A.PROD_ID
-        , A.PROD_NAME
-        , A.PROD_SER_NO
-        , A.PROD_COST
-        , A.PROD_STCK
-        FROM TB_PRODUCT A
-        WHERE A.PROD_SER_NO = #{serialNumber} AND A.ACTIVE = TRUE
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.prod_ser_no = #{serialNumber} AND a.active = TRUE
     </select>
 
     <select id="findProductAll" resultMap="productAllResultMap" parameterType="stanl_2.final_backend.domain.product.common.util.RequestList">
@@ -119,10 +128,10 @@
             AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND a.prod_name LIKE #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
         </if>
         ORDER BY a.created_at DESC
         OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
@@ -144,11 +153,24 @@
             AND a.prod_id LIKE #{productSearchRequestDTO.id}
         </if>
         <if test="productSearchRequestDTO.name != null">
-            AND a.prod_name LIKE #{productSearchRequestDTO.name}
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
         </if>
         <if test="productSearchRequestDTO.serialNumber != null">
-            AND a.prod_ser_no LIKE #{productSearchRequestDTO.serialNumber}
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
         </if>
     </select>
+
+    <select id="findProductsForExcel" resultMap="ProductExcel">
+        SELECT
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC;
+    </select>
+
 
 </mapper>

@@ -104,7 +104,6 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
         log.error("요청 거부됨: {}. Error: {}. Request URI: {}, Method: {}, Client IP: {}",
                 message, e.getMessage(), request.getRequestURI(), request.getMethod(), getClientIp(request));
 
-
         saveErrorLog(message, e, request);
     }
 
@@ -173,8 +172,7 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-resources") ||
-                path.startsWith("/webjars") ||
-                path.equals("/api/v1/auth");
+                path.startsWith("/webjars");
     }
 
 }

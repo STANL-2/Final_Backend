@@ -15,6 +15,7 @@
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
         <result property="active" column="ACTIVE"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
     </resultMap>
 
     <resultMap id="centerIdResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO">
@@ -28,6 +29,15 @@
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
         <result property="active" column="ACTIVE"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
+    </resultMap>
+
+    <resultMap id="CenterExcel" type="stanl_2.final_backend.domain.center.query.dto.CenterExcelDownload">
+        <id property="centerId" column="CENT_ID"/>
+        <result property="name" column="CENT_NAME"/>
+        <result property="address" column="CENT_ADR"/>
+        <result property="memberCount" column="CENT_MEM_CNT"/>
+        <result property="operatingAt" column="CENT_OPR_AT"/>
     </resultMap>
 
     <select id="findCenterById" resultMap="centerIdResultMap" parameterType="String">
@@ -42,6 +52,7 @@
         , a.updated_at
         , a.deleted_at
         , a.active
+        , a.image_url
         FROM tb_center a
         WHERE a.cent_id = #{id} AND a.active = TRUE
     </select>
@@ -56,8 +67,6 @@
         , a.cent_opr_at
         , a.created_at
         , a.updated_at
-        , a.deleted_at
-        , a.active
         FROM tb_center a
         WHERE a.active = TRUE
         ORDER BY a.created_at DESC
@@ -74,8 +83,6 @@
         , a.cent_opr_at
         , a.created_at
         , a.updated_at
-        , a.deleted_at
-        , a.active
         FROM tb_center a
         <where>
             a.active = TRUE
@@ -116,6 +123,51 @@
                 AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
             </if>
         </where>
+    </select>
+
+    <select id="findCenterListBySearch" resultMap="centerAllResultMap">
+        SELECT
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        FROM tb_center a
+        <where>
+            a.active = TRUE
+            <if test="centerSearchRequestDTO.id != null">
+                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            </if>
+            <if test="centerSearchRequestDTO.name != null">
+                AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.address != null">
+                AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+    </select>
+
+     <select id="findNameById" resultType="String">
+        SELECT
+            a.cent_name
+          FROM tb_center a
+         WHERE a.cent_id = #{id}
+    </select>
+
+    <select id="findCentersForExcel" resultMap="CenterExcel">
+        SELECT
+        a.cent_id,
+        a.cent_name,
+        a.cent_adr,
+        a.cent_mem_cnt,
+        a.cent_opr_at
+        FROM tb_center a
+        where a.active = true
+        ORDER BY a.created_at desc
     </select>
 
 </mapper>

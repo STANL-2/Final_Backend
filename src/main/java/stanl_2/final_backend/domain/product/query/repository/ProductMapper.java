@@ -1,7 +1,9 @@
 package stanl_2.final_backend.domain.product.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
+import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
 import stanl_2.final_backend.domain.product.common.util.RequestList;
+import stanl_2.final_backend.domain.product.query.dto.ProductExcelDownload;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 
 import java.util.List;
@@ -20,4 +22,6 @@ public interface ProductMapper {
     int findProductBySearchCount(Map<String, Object> paramMap);
 
     ProductSelectIdDTO findProductBySerialNumber(String serialNumber);
+
+    List<ProductExcelDownload> findProductsForExcel();
 }

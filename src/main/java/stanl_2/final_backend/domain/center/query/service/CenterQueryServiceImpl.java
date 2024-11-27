@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.center.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,29 +9,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.A_sample.common.exception.SampleCommonException;
-import stanl_2.final_backend.domain.A_sample.common.exception.SampleErrorCode;
-import stanl_2.final_backend.domain.center.common.util.RequestList;
+import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
+import stanl_2.final_backend.domain.center.query.dto.CenterExcelDownload;
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 import stanl_2.final_backend.domain.center.query.repository.CenterMapper;
-import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service("queryCenterServiceImpl")
-public class CenterServiceImpl implements CenterService{
+public class CenterQueryServiceImpl implements CenterQueryService {
 
     private final CenterMapper centerMapper;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ExcelUtilsV1 excelUtilsV1;
 
     @Autowired
-    public CenterServiceImpl(CenterMapper centerMapper, RedisTemplate<String, Object> redisTemplate) {
+    public CenterQueryServiceImpl(CenterMapper centerMapper, RedisTemplate<String, Object> redisTemplate, ExcelUtilsV1 excelUtilsV1) {
         this.centerMapper = centerMapper;
         this.redisTemplate = redisTemplate;
+        this.excelUtilsV1 = excelUtilsV1;
     }
 
     @Override
@@ -61,20 +62,34 @@ public class CenterServiceImpl implements CenterService{
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-//        String cacheKey = "myCache::center::offset=" + offset + "::size=" + size;
-//
-//        List<CenterSelectAllDTO> centerList = (List<CenterSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
-//        if (centerList == null) {
-//            System.out.println("여기까진 들어가나?");
-//            centerList = centerMapper.findCenterBySearch(size, offset, centerSearchRequestDTO);
-//            redisTemplate.opsForValue().set(cacheKey, centerList);
-//        }
-
         List<CenterSelectAllDTO> centerList = centerMapper.findCenterBySearch(size, offset, centerSearchRequestDTO);
         int total = centerMapper.findCenterBySearchCount(centerSearchRequestDTO);
 
         return new PageImpl<>(centerList, pageable, total);
     }
 
+    @Override
+    @Transactional
+    public List<CenterSelectAllDTO> selectCenterListBySearch(CenterSearchRequestDTO centerSearchRequestDTO){
 
+        List<CenterSelectAllDTO> centerList = centerMapper.findCenterListBySearch(centerSearchRequestDTO);
+
+        return centerList;
+    }
+
+    @Override
+    @Transactional
+    public String selectNameById(String id) {
+
+        String centerName = centerMapper.findNameById(id);
+        return centerName;
+    }
+
+    @Override
+    @Transactional
+    public void exportCenterToExcel(HttpServletResponse response) {
+        List<CenterExcelDownload> centerList = centerMapper.findCentersForExcel();
+
+        excelUtilsV1.download(CenterExcelDownload.class, centerList, "centerExcel", response);
+    }
 }

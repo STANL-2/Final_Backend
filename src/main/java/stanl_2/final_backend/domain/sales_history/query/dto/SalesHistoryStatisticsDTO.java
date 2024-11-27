@@ -10,4 +10,5 @@ public class SalesHistoryStatisticsDTO {
     private int incentive;
     private int performance;
     private int totalSales;
+    private String orderBy;
 }

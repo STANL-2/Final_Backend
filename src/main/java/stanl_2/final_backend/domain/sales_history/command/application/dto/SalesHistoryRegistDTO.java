@@ -12,7 +12,7 @@ import lombok.Setter;
 public class SalesHistoryRegistDTO {
     private Integer numberOfVehicles;
     private Integer totalSales;
-    private Integer incentive;
+    private Double incentive;
     private String contractId;
     private String customerInfoId;
     private String productId;

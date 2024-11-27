@@ -40,11 +40,15 @@ public class NoticeController {
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestBody NoticeRegistDTO noticeRegistDTO, Principal principal){
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
         noticeRegistDTO.setMemberId(memberId);
+        System.out.println("noticeRegistDTO"+noticeRegistDTO);
+        System.out.println("noticeRegistDTO"+noticeRegistDTO.getTitle());
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
+        System.out.println(noticeRegistDTO.getTitle());
+        System.out.println(noticeRegistDTO.getContent());
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
-                                                .result(null)
+                                                .result("noticeRegistDTO"+noticeRegistDTO)
                                                 .build());
 
     }

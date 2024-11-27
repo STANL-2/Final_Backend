@@ -6,12 +6,12 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
-public class CenterModifyRequestDTO {
-    private String id;
+public class CenterModifyDTO {
+    private String centerId;
     private String name;
     private String address;
     private String phone;
     private Integer memberCount;
     private String operatingAt;
+    private String imageUrl;
 }

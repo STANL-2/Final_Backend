@@ -27,6 +27,6 @@ public class Organization {
     @Column(name = "ORG_CHA_NAME")
     private String name;
 
-    @Column(name = "ORG_CHA_DEPTH")
-    private Integer depth;
+    @Column(name = "ORG_CHA_PARENT")
+    private String parent;
 }

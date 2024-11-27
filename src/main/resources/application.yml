@@ -23,14 +23,11 @@ spring:
       enabled: false
     restart:
       enabled: false
-
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate.format_sql: true
-
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 jwt:
   secret-key: s4G7tL9qH8vI2eP0j5W1uF3bM6nK8rXc
   header: Authorization
@@ -48,3 +45,15 @@ logging:
     org:
       springframework:
         security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESSKEY}
+      secret-key: ${S3_SECRETKEY}
+    s3:
+      bucket: ${S3_BUCKETNAME}
+    region:
+      static: ${S3_REGION}
+    stack:
+      auto: false

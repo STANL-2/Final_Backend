@@ -26,5 +26,6 @@ public class SalesHistorySelectDTO {
     private String memberId;
     private String centerId;
     private String searcherName;
+    private String orderBy;
 
 }

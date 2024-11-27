@@ -14,7 +14,7 @@ public class ContractSeletIdDTO {
     private String customerSex;
     private String customerIdentifiNo;
     private Integer customerAge;
-    private String customerAddrress;
+    private String customerAddress;
     private String customerEmail;
     private String customerPhone;
     private String companyName;
@@ -26,11 +26,11 @@ public class ContractSeletIdDTO {
     private Integer intermediatePayment;
     private Integer remainderPayment;
     private Integer consignmentPayment;
-    private String delveryDate;
-    private String delveryLocation;
+    private String deliveryDate;
+    private String deliveryLocation;
     private String status;
-    private String NumberOfVehicles;
-    private String totalSales;
+    private Integer NumberOfVehicles;
+    private Integer totalSales;
     private String carName;
     private String createdUrl;
     private String updatedUrl;

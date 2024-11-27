@@ -18,5 +18,5 @@ public class EvaluationDTO {
     private String centerId;
     private String memberId;
     private String writerId;
-    private Collection<? extends GrantedAuthority> roles;
+    private String fileUrl;
 }
