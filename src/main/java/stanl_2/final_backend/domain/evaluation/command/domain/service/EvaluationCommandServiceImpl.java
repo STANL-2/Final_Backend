@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationModifyDTO;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationRegistDTO;
 import stanl_2.final_backend.domain.evaluation.command.application.service.EvaluationCommandService;
@@ -11,6 +12,7 @@ import stanl_2.final_backend.domain.evaluation.command.domain.aggregate.entity.E
 import stanl_2.final_backend.domain.evaluation.command.domain.repository.EvaluationRepository;
 import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationCommonException;
 import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationErrorCode;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -21,11 +23,13 @@ public class EvaluationCommandServiceImpl implements EvaluationCommandService {
 
     private final EvaluationRepository evaluationRepository;
     private final ModelMapper modelMapper;
+    private final S3FileService s3FileService;
 
     @Autowired
-    public EvaluationCommandServiceImpl(EvaluationRepository evaluationRepository, ModelMapper modelMapper) {
+    public EvaluationCommandServiceImpl(EvaluationRepository evaluationRepository, ModelMapper modelMapper, S3FileService s3FileService) {
         this.evaluationRepository = evaluationRepository;
         this.modelMapper = modelMapper;
+        this.s3FileService = s3FileService;
     }
 
     private String getCurrentTime() {
@@ -35,20 +39,26 @@ public class EvaluationCommandServiceImpl implements EvaluationCommandService {
 
     @Override
     @Transactional
-    public void registerEvaluation(EvaluationRegistDTO evaluationRegistRequestDTO) {
+    public void registerEvaluation(EvaluationRegistDTO evaluationRegistRequestDTO, MultipartFile fileUrl) {
 
         Evaluation evaluation = modelMapper.map(evaluationRegistRequestDTO, Evaluation.class);
+
+        evaluation.setFileUrl(s3FileService.uploadOneFile(fileUrl));
 
         evaluationRepository.save(evaluation);
     }
 
     @Override
     @Transactional
-    public void modifyEvaluation(String id, EvaluationModifyDTO evaluationModifyRequestDTO) {
-        Evaluation evaluation = evaluationRepository.findById(id)
+    public void modifyEvaluation(EvaluationModifyDTO evaluationModifyRequestDTO, MultipartFile fileUrl) {
+        Evaluation evaluation = evaluationRepository.findById(evaluationModifyRequestDTO.getEvaluationId())
                 .orElseThrow(() -> new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND));
 
+        s3FileService.deleteFile(evaluation.getFileUrl());
+
         Evaluation updateEvaluation = modelMapper.map(evaluationModifyRequestDTO, Evaluation.class);
+
+        updateEvaluation.setFileUrl(s3FileService.uploadOneFile(fileUrl));
 
         updateEvaluation.setEvaluationId(evaluation.getEvaluationId());
         updateEvaluation.setCreatedAt(evaluation.getCreatedAt());

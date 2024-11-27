@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
@@ -35,7 +34,7 @@ public class CustomerController {
     @Operation(summary = "고객정보 상세조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
@@ -55,7 +54,7 @@ public class CustomerController {
     @Operation(summary = "고객번호로 전체 목록 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
@@ -79,7 +78,7 @@ public class CustomerController {
     @Operation(summary = "고객정보 조건별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))}),
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })

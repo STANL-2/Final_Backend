@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,37 +28,37 @@ public class Log {
     @Column(name = "LOG_ID", nullable = false)
     private String logId;
 
-    @Column(name = "SESSION_ID")
+    @Column(name = "SESSION_ID", nullable = false)
     private String sessionId;
 
-    @Column(name = "USER_AGENT", length = 500)
+    @Column(name = "USER_AGENT", length = 500, nullable = false)
     private String userAgent;
 
-    @Column(name = "IP_ADDRESS", length = 45)
+    @Column(name = "IP_ADDRESS", nullable = false)
     private String ipAddress;
 
-    @Column(name = "HOST_NAME")
+    @Column(name = "HOST_NAME", nullable = false)
     private String hostName;
 
-    @Column(name = "REMOTE_PORT")
+    @Column(name = "REMOTE_PORT", nullable = false)
     private Integer remotePort;
 
-    @Column(name = "URI", length = 2048)
+    @Column(name = "URI", length = 2048, nullable = false)
     private String uri;
 
-    @Column(name = "METHOD")
+    @Column(name = "METHOD", nullable = false)
     private String method;
 
-    @Column(name = "QUERY_STRING", length = 2048)
+    @Column(name = "QUERY_STRING", length = 2048, nullable = false)
     private String queryString;
 
     @Column(name = "REQUEST_TIME", nullable = false, updatable = false)
     private String requestTime;
 
-    @Column(name = "TRANSACTION_ID")
+    @Column(name = "TRANSACTION_ID", nullable = false)
     private String transactionId;
 
-    @Column(name = "STATUS", nullable = false, length = 50)
+    @Column(name = "STATUS", nullable = false)
     private String status;
 
     @Column(name = "ERROR_MESSAGE", columnDefinition = "TEXT")

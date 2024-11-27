@@ -51,7 +51,7 @@ public enum GlobalErrorCode {
      */
     USERDETAILS_NOT_FOUND(40400, HttpStatus.NOT_FOUND, "User Details를 찾을 수 없습니다."),
     USER_NOT_FOUND(40401, HttpStatus.NOT_FOUND, "유저 정보가 없습니다."),
-    NOT_FOUND_CSRF_TOKEN(40402, HttpStatus.NOT_FOUND, "CSRF토큰이 없습니다."),
+    AUTHORITIES_NOT_FOUND(40402, HttpStatus.NOT_FOUND, "유저 권한을 찾을 수 없습니다."),
 
     /**
      * 500(Internal Server Error)

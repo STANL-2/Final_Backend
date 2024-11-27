@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ import stanl_2.final_backend.domain.contract.common.response.ContractResponseMes
 
 import java.security.GeneralSecurityException;
 import java.security.Principal;
-
+@Slf4j
 @RestController("contractController")
 @RequestMapping("/api/v1/contract")
 public class ContractController {
@@ -29,13 +30,13 @@ public class ContractController {
         this.contractCommandService = contractCommandService;
     }
 
-    @Operation(summary = "계약서 등록(영업사원)")
+    @Operation(summary = "계약서 등록(영업사원, 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 등록 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ContractResponseMessage> postTest(@RequestBody ContractRegistDTO contractRegistRequestDTO,
+    public ResponseEntity<ContractResponseMessage> postContract(@RequestBody ContractRegistDTO contractRegistRequestDTO,
                                                             Principal principal) throws GeneralSecurityException {
 
         contractRegistRequestDTO.setMemberId(principal.getName());
@@ -48,7 +49,7 @@ public class ContractController {
                                                         .build());
                                             }
 
-    @Operation(summary = "계약서 수정(영업사원)")
+    @Operation(summary = "계약서 수정(영업사원, 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 수정 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
@@ -60,16 +61,17 @@ public class ContractController {
 
         contractModifyRequestDTO.setContractId(contractId);
         contractModifyRequestDTO.setMemberId(principal.getName());
-        ContractModifyDTO contractModifyDTO = contractCommandService.modifyContract(contractModifyRequestDTO);
+
+        contractCommandService.modifyContract(contractModifyRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
                 .httpStatus(200)
                 .msg("계약서가 성공적으로 수정되었습니다.")
-                .result(contractModifyDTO)
+                .result(null)
                 .build());
     }
 
-    @Operation(summary = "계약서 삭제(영업사원)")
+    @Operation(summary = "계약서 삭제(영업사원, 관리자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "계약서 삭제 성공",
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})

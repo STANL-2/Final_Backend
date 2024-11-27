@@ -69,13 +69,33 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         List<MemberDTO> memberList = memberMapper.findMembersByCenterId(centerId);
 
+
+
+        memberList.forEach(dto -> {
+            try {
+                dto.setName(selectNameById(dto.getMemberId()));
+
+                dto.setEmail(aesUtils.decrypt(dto.getEmail()));
+            } catch (Exception e) {
+                throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+            }
+        });
+
         return memberList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<MemberDTO> selectMemberByCenterList(List<CenterSelectAllDTO> centerList) {
+    public List<MemberDTO> selectMemberByCenterList(List<String> centerList) {
         List<MemberDTO> memberList = memberMapper.findMembersByCenterList(centerList);
+
+        memberList.forEach(dto -> {
+            try {
+                dto.setName(selectNameById(dto.getMemberId()));
+            } catch (Exception e) {
+                throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+            }
+        });
 
         return memberList;
     }
@@ -88,5 +108,22 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         name = aesUtils.decrypt(name);
 
         return name;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberDTO> selectMemberByOrganizationId(String organizationId) throws GeneralSecurityException {
+
+        List<MemberDTO> memberList = memberMapper.findMembersByOrganizationId(organizationId);
+
+        for(int i=0;i<memberList.size();i++){
+            memberList.get(i).getName();
+            MemberDTO member = memberList.get(i);
+            log.info(member.getName());
+            member.setName(aesUtils.decrypt(member.getName()));
+            memberList.set(i, member);
+        }
+
+        return memberList;
     }
 }

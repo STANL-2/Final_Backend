@@ -23,7 +23,7 @@ public class Evaluation {
     @GeneratedValue(generator = "PrefixGeneratorConfig")
     @GenericGenerator(name = "PrefixGeneratorConfig",
             type = PrefixGeneratorConfig.class,
-            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "EVAL")
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "EVA")
     )
     @Column(name = "EVAL_ID")
     private String evaluationId;
@@ -55,15 +55,16 @@ public class Evaluation {
     @Column(name = "WRI_ID", nullable = false)
     private String writerId;
 
-    /* 설명. updatedAt 자동화 */
-    // Insert 되기 전에 실행
+    @Column(name = "FILE_URL", nullable = false)
+    private String fileUrl;
+
+
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();
         this.updatedAt = this.createdAt;
     }
 
-    // Update 되기 전에 실행
     @PreUpdate
     private void preUpdate() {
         this.updatedAt = getCurrentTime();

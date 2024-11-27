@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -13,4 +15,7 @@ public class SalesHistorySearchDTO {
     private String searcherName;
     private String startDate;
     private String endDate;
+    private List<String> memberList;
+    private List<String> centerList;
+    private String orderBy;
 }

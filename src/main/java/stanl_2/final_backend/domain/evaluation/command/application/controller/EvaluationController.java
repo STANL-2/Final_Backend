@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationModifyDTO;
 import stanl_2.final_backend.domain.evaluation.command.application.dto.EvaluationRegistDTO;
@@ -25,52 +26,46 @@ public class EvaluationController {
         this.evaluationCommandService = evaluationCommandService;
     }
 
-    @Operation(summary = "평가서 요청 테스트")
+    @Operation(summary = "평가서 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<EvaluationResponseMessage> postEvaluation(@RequestBody EvaluationRegistDTO evaluationRegistRequestDTO) {
+    public ResponseEntity<EvaluationResponseMessage> postEvaluation(@RequestPart("dto") EvaluationRegistDTO evaluationRegistRequestDTO,
+                                                                    @RequestPart("file") MultipartFile fileUrl) {
 
-        evaluationCommandService.registerEvaluation(evaluationRegistRequestDTO);
+        evaluationCommandService.registerEvaluation(evaluationRegistRequestDTO, fileUrl);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("평가서 등록 성공")
                 .result(null)
                 .build());
     }
 
-    /**
-     * [PUT] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
-     * Request
-     *  {
-     *     "name": "abcc"
-     *  }
-     * */
-    @Operation(summary = "평가서 수정 테스트")
+    @Operation(summary = "평가서 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PutMapping("{id}")
     public ResponseEntity<EvaluationResponseMessage> putEvaluation(@PathVariable String id,
-                                                         @RequestBody EvaluationModifyDTO evaluationModifyRequestDTO) {
+                                                         @RequestPart("dto") EvaluationModifyDTO evaluationModifyRequestDTO,
+                                                                   @RequestPart("file") MultipartFile fileUrl) {
 
-        evaluationCommandService.modifyEvaluation(id,evaluationModifyRequestDTO);
+        evaluationModifyRequestDTO.setEvaluationId(id);
+
+        evaluationCommandService.modifyEvaluation(evaluationModifyRequestDTO, fileUrl);
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("평가서 수정 성공")
                 .result(null)
                 .build());
     }
 
-    /**
-     * [DELETE] http://localhost:7777/api/v1/sample?mem_id=SAM_000001
-     * */
-    @Operation(summary = "평가서 삭제 테스트")
+    @Operation(summary = "평가서 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))})
@@ -82,7 +77,7 @@ public class EvaluationController {
 
         return ResponseEntity.ok(EvaluationResponseMessage.builder()
                 .httpStatus(200)
-                .msg("성공")
+                .msg("평가서 삭제 성공")
                 .result(null)
                 .build());
     }

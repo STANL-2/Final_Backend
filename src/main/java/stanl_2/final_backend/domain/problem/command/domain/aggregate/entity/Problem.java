@@ -55,6 +55,9 @@ public class Problem {
     @Column(name = "PROD_ID", nullable = false)
     private String productId;
 
+    @Column(name = "FILE_URL")
+    private String fileUrl;
+
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,10 +35,6 @@ public class EvaluationController {
         this.evaluationQueryService = evaluationQueryService;
     }
 
-
-    /**
-     * [GET] http://localhost:7777/api/v1/sample/SAM_000000001
-     * */
     @Operation(summary = "평가서 관리자 전체 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
@@ -61,9 +58,6 @@ public class EvaluationController {
                 .build());
     }
 
-    /**
-     * [GET] http://localhost:7777/api/v1/sample/SAM_000000001
-     * */
     @Operation(summary = "평가서 담당자 전체 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
@@ -87,10 +81,7 @@ public class EvaluationController {
                 .build());
     }
 
-    /**
-     * [GET] http://localhost:7777/api/v1/sample/detail/SAM_000000001
-     * */
-    @Operation(summary = "평가서 상세 조회 테스트")
+    @Operation(summary = "평가서 상세 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
@@ -141,7 +132,7 @@ public class EvaluationController {
                 .build());
     }
 
-    @Operation(summary = "평가서 관리자 검색")
+    @Operation(summary = "평가서 담당자 검색")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = EvaluationResponseMessage.class))}),
@@ -170,6 +161,19 @@ public class EvaluationController {
                 .msg("담당자 검색 조회 성공")
                 .result(responseEvaluations)
                 .build());
+    }
+
+    @Operation(summary = "평가서 엑셀 다운")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "평가서 엑셀 다운 성공",
+                    content = {@Content(schema = @Schema(implementation = ProductResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/excel")
+    public void exportEvaluation(HttpServletResponse response){
+
+        evaluationQueryService.exportEvaluationToExcel(response);
     }
 
 }

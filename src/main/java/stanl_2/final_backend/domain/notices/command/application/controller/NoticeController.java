@@ -8,13 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeDeleteDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModifyDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 import stanl_2.final_backend.domain.notices.command.application.service.NoticeCommandService;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
-import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
+import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
 
 import java.security.Principal;
 
@@ -25,10 +26,13 @@ public class NoticeController {
     private final NoticeCommandService noticeCommandService;
     private final AuthQueryService authQueryService;
 
+    private final S3FileServiceImpl s3FileService;
+
     @Autowired
-    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService){
+    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService){
         this.noticeCommandService = noticeCommandService;
         this.authQueryService =authQueryService;
+        this.s3FileService = s3FileService;
     }
 
     @Operation(summary = "공지사항 작성")
@@ -36,10 +40,13 @@ public class NoticeController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
-    @PostMapping("")
-    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestBody NoticeRegistDTO noticeRegistDTO, Principal principal){
+    @PostMapping(value = "")
+    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("notice") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
+                                                            @RequestPart("file") MultipartFile file,
+                                                            Principal principal){
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
         noticeRegistDTO.setMemberId(memberId);
+        noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
