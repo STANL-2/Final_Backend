@@ -47,8 +47,7 @@ services:
       dockerfile: Dockerfile
     container_name: nginx
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     ports:
       - "80:80"
     networks:
