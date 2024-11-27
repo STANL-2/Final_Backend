@@ -69,9 +69,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         List<MemberDTO> memberList = memberMapper.findMembersByCenterId(centerId);
 
+
+
         memberList.forEach(dto -> {
             try {
-                dto.setName(selectNameById(dto.getId()));
+                dto.setName(selectNameById(dto.getMemberId()));
 
                 dto.setEmail(aesUtils.decrypt(dto.getEmail()));
             } catch (Exception e) {
@@ -89,7 +91,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         memberList.forEach(dto -> {
             try {
-                dto.setName(selectNameById(dto.getId()));
+                dto.setName(selectNameById(dto.getMemberId()));
             } catch (Exception e) {
                 throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
             }

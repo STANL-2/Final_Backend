@@ -11,7 +11,7 @@ import stanl_2.final_backend.domain.product.command.application.domain.aggregate
 import stanl_2.final_backend.domain.product.command.application.domain.repository.ProductRepository;
 import stanl_2.final_backend.domain.product.common.exception.ProductCommonException;
 import stanl_2.final_backend.domain.product.common.exception.ProductErrorCode;
-import stanl_2.final_backend.domain.s3.service.S3FileService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 @Service
 public class ProductCommandServiceImpl implements ProductCommandService {
