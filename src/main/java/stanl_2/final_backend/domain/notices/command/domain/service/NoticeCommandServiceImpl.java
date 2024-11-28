@@ -65,13 +65,9 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         noticeRegistDTO.setMemberId(memberId);
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
-            System.out.println("[After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
             Notice newNotice = noticeRepository.save(notice);
-            System.out.println("1. [After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
             NoticeAlarmDTO noticeAlarmDTO = modelMapper.map(newNotice, NoticeAlarmDTO.class);
-            System.out.println("2. [After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
             alarmCommandService.sendNoticeAlarm(noticeAlarmDTO);
-            System.out.println("3. [After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         } catch (DataIntegrityViolationException e){
             // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
             throw new NoticeCommonException(NoticeErrorCode.DATA_INTEGRITY_VIOLATION);

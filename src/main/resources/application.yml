@@ -16,7 +16,7 @@ spring:
 
     reader:
       hikari:
-        jdbc-url: jdbc:mariadb://motivereadonly.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
+        jdbc-url: jdbc:mariadb://readonlymotive.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
         username: admin
         password: motivepassword
         driver-class-name: org.mariadb.jdbc.Driver

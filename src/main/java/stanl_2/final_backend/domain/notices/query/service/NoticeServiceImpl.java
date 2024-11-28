@@ -17,6 +17,8 @@ import stanl_2.final_backend.global.redis.RedisService;
 
 import java.util.List;
 
+import static org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly;
+
 @Transactional(readOnly = true)
 @Service("queryNoticeServiceImpl")
 public class NoticeServiceImpl implements NoticeService{
@@ -33,16 +35,20 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO) {
+        System.out.println("2.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
+        System.out.println("3.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         String cacheKey = "NoticeCache::notices::offset=" + offset + "::size=" + size
                 + "::title=" + searchDTO.getTitle()+ "::tag=" + searchDTO.getTag()
                 +"::memberid=" + searchDTO.getMemberId()+ "::classification=" + searchDTO.getClassification()
                 + "::startDate=" + searchDTO.getStartDate()+ "::endDate=" + searchDTO.getEndDate();
-
+        System.out.println("4.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         List<NoticeDTO> notices = (List<NoticeDTO>) redisTemplate.opsForValue().get(cacheKey);
+        System.out.println("5.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         if (notices == null) {
             System.out.println("데이터베이스에서 데이터 조회 중...");
             notices = noticeMapper.findNotices(offset, size, searchDTO);

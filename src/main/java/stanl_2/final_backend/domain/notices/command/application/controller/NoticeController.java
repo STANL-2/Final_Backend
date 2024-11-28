@@ -19,6 +19,7 @@ import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessag
 import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
 import stanl_2.final_backend.global.config.datasource.ReplicationRoutingDataSource;
 
+import javax.sql.DataSource;
 import java.security.Principal;
 
 import static org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly;
@@ -51,12 +52,13 @@ public class NoticeController {
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("notice") NoticeRegistDTO noticeRegistDTO,
                                                             @RequestPart("file") MultipartFile file,
                                                             Principal principal){
-        replicationRoutingDataSource.determineCurrentLookupKey();
+
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
         noticeRegistDTO.setMemberId(memberId);
         noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
-        System.out.println(isCurrentTransactionReadOnly());
+        String dbUrl = getCurrentDbUrl();
+        System.out.println("Current DB URL: " + dbUrl);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
@@ -108,4 +110,17 @@ public class NoticeController {
                 .build());
     }
 
+    private String getCurrentDbUrl() {
+        try {
+            // DataSource에서 커넥션을 가져와 URL 확인
+            DataSource dataSource = replicationRoutingDataSource;
+            return dataSource.unwrap(javax.sql.DataSource.class)
+                    .getConnection()
+                    .getMetaData()
+                    .getURL();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Failed to fetch DB URL";
+        }
+    }
 }

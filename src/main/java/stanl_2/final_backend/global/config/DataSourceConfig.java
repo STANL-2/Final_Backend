@@ -23,7 +23,6 @@ public class DataSourceConfig {
     @ConfigurationProperties(prefix = "spring.datasource.writer.hikari")
     @Bean(name = "writerDataSource")
     public DataSource writerDataSource() {
-        // DataSourceBuilder를 사용해 HikariDataSource 타입의 데이터 소스를 생성합니다.
         return DataSourceBuilder.create().type(HikariDataSource.class).build();
     }
 
@@ -54,14 +53,6 @@ public class DataSourceConfig {
         return routingDataSource;
     }
 
-    /**
-     * `routingDataSource`가 생성된 이후에 이 메서드를 실행하도록 지정
-     * `LazyConnectionDataSourceProxy`는 실제 연결을 사용하는 시점에 데이터베이스 연결을 지연 생성
-     * 성능 최적화를 도모하고 트랜잭션 관리에서 데이터 소스의 사용을 효율적으로 처리 가능
-     *
-     * @param routingDataSource 라우팅 가능한 데이터 소스
-     * @return 지연된 연결 처리를 지원하는 데이터 소스 프록시
-     */
     @DependsOn("routingDataSource")
     @Primary  // 이 빈을 기본 `DataSource`로 설정
     @Bean
