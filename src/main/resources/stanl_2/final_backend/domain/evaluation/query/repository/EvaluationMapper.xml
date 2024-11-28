@@ -5,7 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.evaluation.query.repository.EvaluationMapper">
 
     <resultMap id="evaluationAllResultMap" type="stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO">
-        <id property="evalId" column="EVAL_ID"/>
+        <id property="evaluationId" column="EVAL_ID"/>
         <result property="title" column="EVAL_TTL"/>
         <result property="content" column="EVAL_CONT"/>
         <result property="createdAt" column="CREATED_AT"/>
@@ -17,7 +17,7 @@
     </resultMap>
 
     <resultMap id="EvaluationExcel" type="stanl_2.final_backend.domain.evaluation.query.dto.EvaluationExcelDownload">
-        <id property="evalId" column="EVAL_ID"/>
+        <id property="evaluationId" column="EVAL_ID"/>
         <result property="title" column="EVAL_TTL"/>
         <result property="centerId" column="CENT_ID"/>
         <result property="memberId" column="MEM_ID"/>
@@ -92,8 +92,8 @@
         FROM tb_evaluation a
         <where>
             a.active = TRUE AND a.cent_id = #{evaluationSearchDTO.centerId}
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
                 AND a.wri_id = #{evaluationSearchDTO.writerName}
@@ -108,7 +108,35 @@
                 AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'evaluationId'">
+                        ORDER BY a.eval_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.eval_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'writerName'">
+                        ORDER BY a.wri_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -123,8 +151,8 @@
         FROM tb_evaluation a
         <where>
             a.active = TRUE
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
                 AND a.wri_id = #{evaluationSearchDTO.writerName}
@@ -142,7 +170,35 @@
                 AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'evaluationId'">
+                        ORDER BY a.eval_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.eval_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'writerName'">
+                        ORDER BY a.wri_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -166,8 +222,8 @@
         FROM tb_evaluation a
         <where>
             a.active = TRUE
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
                 AND a.wri_id = #{evaluationSearchDTO.writerName}
@@ -193,8 +249,8 @@
         FROM tb_evaluation a
         <where>
             a.active = TRUE AND a.cent_id = #{evaluationSearchDTO.centerId}
-            <if test="evaluationSearchDTO.evalId != null">
-                AND a.eval_id = #{evaluationSearchDTO.evalId}
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
             </if>
             <if test="evaluationSearchDTO.writerName != null">
                 AND a.wri_id = #{evaluationSearchDTO.writerName}

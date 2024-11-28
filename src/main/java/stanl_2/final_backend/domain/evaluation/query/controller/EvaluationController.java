@@ -8,26 +8,26 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.evaluation.common.response.EvaluationResponseMessage;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO;
 import stanl_2.final_backend.domain.evaluation.query.dto.EvaluationSearchDTO;
 import stanl_2.final_backend.domain.evaluation.query.service.EvaluationQueryService;
 import stanl_2.final_backend.domain.product.common.response.ProductResponseMessage;
-import stanl_2.final_backend.domain.product.query.dto.ProductSearchRequestDTO;
 
 import java.security.GeneralSecurityException;
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController(value = "queryEvaluationController")
 @RequestMapping("/api/v1/evaluation")
 public class EvaluationController {
+
     private final EvaluationQueryService evaluationQueryService;
 
     @Autowired
@@ -44,10 +44,17 @@ public class EvaluationController {
     })
     @GetMapping("/manager")
     public ResponseEntity<EvaluationResponseMessage> getAllEvaluationsByManager(Principal principal,
-                                                                                Pageable pageable) throws GeneralSecurityException {
+                                                                                @PageableDefault(size = 20) Pageable pageable,
+                                                                                @RequestParam(required = false) String sortField,
+                                                                                @RequestParam(required = false) String sortOrder) throws GeneralSecurityException {
         EvaluationDTO evaluationDTO = new EvaluationDTO();
 
         evaluationDTO.setMemberId(principal.getName());
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectAllEvaluationsByManager(evaluationDTO, pageable);
 
@@ -67,10 +74,17 @@ public class EvaluationController {
     })
     @GetMapping("/representative")
     public ResponseEntity<EvaluationResponseMessage> getAllEvaluationsByRepresentative(Principal principal,
-                                                                           Pageable pageable) throws GeneralSecurityException {
+                                                                                       @PageableDefault(size = 20) Pageable pageable,
+                                                                                       @RequestParam(required = false) String sortField,
+                                                                                       @RequestParam(required = false) String sortOrder) throws GeneralSecurityException {
         EvaluationDTO evaluationDTO = new EvaluationDTO();
 
         evaluationDTO.setMemberId(principal.getName());
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectAllEvaluationsByRepresentative(evaluationDTO, pageable);
 
@@ -110,11 +124,13 @@ public class EvaluationController {
     })
     @GetMapping("/manager/search")
     public ResponseEntity<EvaluationResponseMessage> getEvaluationBySearchByManager(@RequestParam Map<String, String> params
-                                                                           ,Principal principal
-                                                                        , @PageableDefault(size = 20) Pageable pageable) throws GeneralSecurityException {
+                                                                                    ,Principal principal
+                                                                                    ,@PageableDefault(size = 20) Pageable pageable,
+                                                                                    @RequestParam(required = false) String sortField,
+                                                                                    @RequestParam(required = false) String sortOrder) throws GeneralSecurityException {
 
         EvaluationSearchDTO evaluationSearchDTO = new EvaluationSearchDTO();
-        evaluationSearchDTO.setEvalId(params.get("evalId"));
+        evaluationSearchDTO.setEvaluationId(params.get("evaluationId"));
         evaluationSearchDTO.setTitle(params.get("title"));
         evaluationSearchDTO.setWriterName(params.get("writerName"));
         evaluationSearchDTO.setMemberName(params.get("memberName"));
@@ -122,6 +138,11 @@ public class EvaluationController {
         evaluationSearchDTO.setStartDate(params.get("startDate"));
         evaluationSearchDTO.setEndDate(params.get("endDate"));
         evaluationSearchDTO.setSearcherName(principal.getName());
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectEvaluationBySearchByManager(pageable, evaluationSearchDTO);
 
@@ -141,11 +162,13 @@ public class EvaluationController {
     })
     @GetMapping("/representative/search")
     public ResponseEntity<EvaluationResponseMessage> getEvaluationBySearchByRepresentative(@RequestParam Map<String, String> params
-                                                                           ,Principal principal
-                                                                        , @PageableDefault(size = 20) Pageable pageable) throws GeneralSecurityException {
+                                                                                            ,Principal principal
+                                                                                            ,@PageableDefault(size = 20) Pageable pageable,
+                                                                                            @RequestParam(required = false) String sortField,
+                                                                                            @RequestParam(required = false) String sortOrder) throws GeneralSecurityException {
 
         EvaluationSearchDTO evaluationSearchDTO = new EvaluationSearchDTO();
-        evaluationSearchDTO.setEvalId(params.get("evalId"));
+        evaluationSearchDTO.setEvaluationId(params.get("evaluationId"));
         evaluationSearchDTO.setTitle(params.get("title"));
         evaluationSearchDTO.setWriterName(params.get("writerName"));
         evaluationSearchDTO.setMemberName(params.get("memberName"));
@@ -153,6 +176,11 @@ public class EvaluationController {
         evaluationSearchDTO.setStartDate(params.get("startDate"));
         evaluationSearchDTO.setEndDate(params.get("endDate"));
         evaluationSearchDTO.setSearcherName(principal.getName());
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<EvaluationDTO> responseEvaluations = evaluationQueryService.selectEvaluationBySearchByRepresentative(pageable, evaluationSearchDTO);
 
