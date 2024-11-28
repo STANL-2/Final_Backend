@@ -38,7 +38,7 @@ public class ProblemController {
                     content = {@Content(schema = @Schema(implementation = ProblemResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ProblemResponseMessage> postProblem(@RequestPart("problem") ProblemRegistDTO problemRegistDTO, // JSON 데이터
+    public ResponseEntity<ProblemResponseMessage> postProblem(@RequestPart("dto") ProblemRegistDTO problemRegistDTO, // JSON 데이터
                                                               @RequestPart("file") MultipartFile file,
                                                               Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
