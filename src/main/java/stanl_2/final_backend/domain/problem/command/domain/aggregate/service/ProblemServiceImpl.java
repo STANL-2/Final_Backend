@@ -46,7 +46,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
     @Transactional
     @Override
     public void registerProblem(ProblemRegistDTO problemRegistDTO, Principal principal) {
-        redisService.clearNoticeCache();
+        redisService.clearProblemCache();
         String memberId =principal.getName();
         problemRegistDTO.setMemberId(memberId);
         try {
@@ -63,7 +63,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
     @Transactional
     @Override
     public ProblemModifyDTO modifyProblem(String problemId, ProblemModifyDTO problemModifyDTO,Principal principal) {
-        redisService.clearNoticeCache();
+        redisService.clearProblemCache();
         String memberId= principal.getName();
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
@@ -96,7 +96,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
     @Transactional
     @Override
     public void deleteProblem(String problemId, Principal principal) {
-        redisService.clearNoticeCache();
+        redisService.clearProblemCache();
         String memberId= principal.getName();
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(()-> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
