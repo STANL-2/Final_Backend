@@ -37,7 +37,10 @@ public class NoticeServiceImpl implements NoticeService{
     public Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO) {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
-        String cacheKey = "NoticeCache::notices::offset=" + offset + "::size=" + size;
+        String cacheKey = "NoticeCache::notices::offset=" + offset + "::size=" + size
+                + "::title=" + searchDTO.getTitle()+ "::tag=" + searchDTO.getTag()
+                +"::memberid=" + searchDTO.getMemberId()+ "::classification=" + searchDTO.getClassification()
+                + "::startDate=" + searchDTO.getStartDate()+ "::endDate=" + searchDTO.getEndDate();
 
         List<NoticeDTO> notices = (List<NoticeDTO>) redisTemplate.opsForValue().get(cacheKey);
         if (notices == null) {

@@ -41,7 +41,7 @@ public class NoticeController {
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
     @PostMapping(value = "")
-    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("notice") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
+    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("dto") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
                                                             @RequestPart("file") MultipartFile file,
                                                             Principal principal){
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
