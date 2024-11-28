@@ -16,6 +16,7 @@ import stanl_2.final_backend.domain.promotion.command.domain.aggregate.entity.Pr
 import stanl_2.final_backend.domain.promotion.command.domain.aggregate.repository.PromotionRepository;
 import stanl_2.final_backend.domain.promotion.common.exception.PromotionCommonException;
 import stanl_2.final_backend.domain.promotion.common.exception.PromotionErrorCode;
+import stanl_2.final_backend.global.redis.RedisService;
 
 import java.security.Principal;
 import java.time.ZoneId;
@@ -25,12 +26,14 @@ import java.time.format.DateTimeFormatter;
 @Service("commandPromotionService")
 public class PromotionServiceImpl implements PromotionCommandService {
 
+    private final RedisService redisService;
     private final PromotionRepository promotionRepository;
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public PromotionServiceImpl(PromotionRepository promotionRepository, ModelMapper modelMapper) {
+    public PromotionServiceImpl(PromotionRepository promotionRepository, ModelMapper modelMapper,RedisService redisService) {
+        this.redisService = redisService;
         this.promotionRepository = promotionRepository;
         this.modelMapper = modelMapper;
     }
@@ -42,6 +45,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
     @Transactional
     @Override
     public void registerPromotion(PromotionRegistDTO promotionRegistDTO, Principal principal) {
+        redisService.clearNoticeCache();
         String memberId =principal.getName();
         promotionRegistDTO.setMemberId(memberId);
         try {
@@ -58,6 +62,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
     @Transactional
     @Override
     public PromotionModifyDTO modifyPromotion(String promotionId, PromotionModifyDTO promotionModifyDTO, Principal principal) {
+        redisService.clearNoticeCache();
         String memberId= principal.getName();
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
@@ -88,6 +93,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
     @Transactional
     @Override
     public void deletePromotion(String promotionId, Principal principal) {
+        redisService.clearNoticeCache();
         String memberId= principal.getName();
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(()-> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
