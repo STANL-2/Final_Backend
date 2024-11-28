@@ -17,6 +17,9 @@ import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Noti
 import stanl_2.final_backend.domain.notices.command.domain.repository.NoticeRepository;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
+import stanl_2.final_backend.global.redis.RedisService;
 
 import java.security.Principal;
 import java.time.ZoneId;
@@ -29,6 +32,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     private final NoticeRepository noticeRepository;
 
+    private final RedisService redisService;
     private final AuthQueryService authQueryService;
 
     private final ModelMapper modelMapper;
@@ -36,11 +40,13 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     @Autowired
     public NoticeCommandServiceImpl(NoticeRepository noticeRepository, ModelMapper modelMapper,
-                                    AuthQueryService authQueryService, AlarmCommandService alarmCommandService) {
+                                    AuthQueryService authQueryService, AlarmCommandService alarmCommandService,
+                                    RedisService redisService) {
         this.noticeRepository = noticeRepository;
         this.modelMapper = modelMapper;
         this.authQueryService =authQueryService;
         this.alarmCommandService = alarmCommandService;
+        this.redisService = redisService;
     }
 
     private String getCurrentTimestamp() {
@@ -52,6 +58,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Transactional
     public void registerNotice(NoticeRegistDTO noticeRegistDTO,
                                Principal principal) {
+        redisService.clearNoticeCache();
         String memberId= principal.getName();
         noticeRegistDTO.setMemberId(memberId);
 
@@ -75,6 +82,8 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Override
     @Transactional
     public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
+
+        redisService.clearNoticeCache();
         String memberId= principal.getName();
 
         Notice notice = noticeRepository.findById(id)
@@ -109,7 +118,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Override
     @Transactional
     public void deleteNotice(NoticeDeleteDTO noticeDeleteDTO, Principal principal) {
-
+        redisService.clearNoticeCache();
         String memberId = principal.getName();
 
         Notice notice = noticeRepository.findByNoticeId(noticeDeleteDTO.getNoticeId())

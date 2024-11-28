@@ -14,5 +14,6 @@ public class PromotionModifyDTO {
     private String title;
     private String memberId;
     private String content;
+    private String fileUrl;
 
 }

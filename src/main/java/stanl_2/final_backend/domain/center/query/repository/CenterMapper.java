@@ -14,7 +14,9 @@ public interface CenterMapper {
     CenterSelectIdDTO findCenterById(String id);
 
     List<CenterSelectAllDTO> findCenterAll(@Param("size") int size
-            , @Param("offset") int offset);
+                                        , @Param("offset") int offset,
+                                           @Param("sortField") String sortField,
+                                           @Param("sortOrder") String sortOrder);
 
     Integer findCenterCount();
 
@@ -22,7 +24,9 @@ public interface CenterMapper {
 
     List<CenterSelectAllDTO> findCenterBySearch(@Param("size") int size
                                                 , @Param("offset") int offset
-                                                , @Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO);
+                                                , @Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO,
+                                                @Param("sortField") String sortField,
+                                                @Param("sortOrder") String sortOrder);
 
     List<CenterSelectAllDTO> findCenterListBySearch(@Param("centerSearchRequestDTO") CenterSearchRequestDTO centerSearchRequestDTO);
 

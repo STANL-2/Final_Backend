@@ -12,7 +12,7 @@ import stanl_2.final_backend.domain.evaluation.command.domain.aggregate.entity.E
 import stanl_2.final_backend.domain.evaluation.command.domain.repository.EvaluationRepository;
 import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationCommonException;
 import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationErrorCode;
-import stanl_2.final_backend.domain.s3.service.S3FileService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
