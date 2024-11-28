@@ -61,6 +61,7 @@
         a.prod_ser_no,
         a.prod_cost,
         a.prod_stck,
+        a.image_url,
         b.opt_cnty,
         b.opt_mnfr,
         b.opt_vhc_type,
@@ -111,8 +112,36 @@
         a.prod_stck
         FROM tb_product a
         WHERE a.active = TRUE
-        ORDER BY a.created_at DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.prod_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'serialNumber'">
+                        ORDER BY a.prod_ser_no ${sortOrder}
+                    </when>
+                    <when test="sortField == 'cost'">
+                        ORDER BY a.prod_cost ${sortOrder}
+                    </when>
+                    <when test="sortField == 'stock'">
+                        ORDER BY a.prod_stck ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findProductBySearch" resultMap="productAllResultMap" parameterType="java.util.Map">
@@ -133,8 +162,36 @@
         <if test="productSearchRequestDTO.serialNumber != null">
             AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
         </if>
-        ORDER BY a.created_at DESC
-        OFFSET #{pageable.offset} ROWS FETCH NEXT #{pageable.pageSize} ROWS ONLY;
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.prod_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'serialNumber'">
+                        ORDER BY a.prod_ser_no ${sortOrder}
+                    </when>
+                    <when test="sortField == 'cost'">
+                        ORDER BY a.prod_cost ${sortOrder}
+                    </when>
+                    <when test="sortField == 'stock'">
+                        ORDER BY a.prod_stck ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findProductCount" resultType="int">

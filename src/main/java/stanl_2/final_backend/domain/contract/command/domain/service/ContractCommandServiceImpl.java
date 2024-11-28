@@ -24,7 +24,7 @@ import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.product.command.application.command.service.ProductCommandService;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.service.ProductQueryService;
-import stanl_2.final_backend.domain.s3.service.S3FileService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 import stanl_2.final_backend.domain.sales_history.command.application.service.SalesHistoryCommandService;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -141,7 +141,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         customerDTO = modelMapper.map(customerCommandService.registerCustomerInfo(customerRegistDTO), CustomerDTO.class);
 
         if (customerDTO == null) {
-            throw new RuntimeException("새로 등록된 고객 정보를 찾을 수 없습니다.");
+            throw new ContractCommonException(ContractErrorCode.CUSTOMER_NOT_FOUND);
         }
 
         return customerDTO.getCustomerId();
@@ -182,7 +182,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     @Transactional
     public void modifyContract(ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException {
         String memberId = authQueryService.selectMemberIdByLoginId(contractModifyRequestDTO.getMemberId());
-        String productId = String.valueOf(productQueryService.selectByProductSerialNumber(contractModifyRequestDTO.getSerialNum()));
+        String productId = productQueryService.selectByProductSerialNumber(contractModifyRequestDTO.getSerialNum()).getProductId();
         String customerId = updateCustomerInfo(contractModifyRequestDTO, memberId);
         String centerId = memberQueryService.selectMemberInfo(contractModifyRequestDTO.getMemberId()).getCenterId();
 
@@ -204,8 +204,6 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         updateContract.setCustomerEmail(aesUtils.encrypt(contractModifyRequestDTO.getCustomerEmail()));
         updateContract.setCustomerAddress(aesUtils.encrypt(contractModifyRequestDTO.getCustomerAddress()));
         updateContract.setCustomerIdentifiNo(aesUtils.encrypt(contractModifyRequestDTO.getCustomerIdentifiNo()));
-
-        log.info("Update contract: " + updateContract);
 
         // 수정된 계약 정보 저장
         contractRepository.save(updateContract);

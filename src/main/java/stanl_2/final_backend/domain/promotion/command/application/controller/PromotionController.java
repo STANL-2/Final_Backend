@@ -8,11 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.problem.command.application.dto.ProblemRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionModifyDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.service.PromotionCommandService;
 import stanl_2.final_backend.domain.promotion.common.response.PromotionResponseMessage;
+import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
 
 import java.security.Principal;
 
@@ -21,11 +24,13 @@ import java.security.Principal;
 public class PromotionController {
     private final PromotionCommandService promotionCommandService;
     private final AuthQueryService authQueryService;
+    private final S3FileServiceImpl s3FileService;
 
     @Autowired
-    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService) {
+    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService) {
         this.promotionCommandService = promotionCommandService;
         this.authQueryService =authQueryService;
+        this.s3FileService = s3FileService;
     }
 
     @Operation(summary = "프로모션 작성")
@@ -34,10 +39,13 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<PromotionResponseMessage> postNotice(@RequestBody PromotionRegistDTO prmotionRegistDTO, Principal principal){
+    public ResponseEntity<PromotionResponseMessage> postNotice(@RequestPart("promotion") PromotionRegistDTO promotionRegistDTO, // JSON 데이터
+                                                               @RequestPart("file") MultipartFile file,
+                                                               Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
-        prmotionRegistDTO.setMemberId(memberId);
-        promotionCommandService.registerPromotion(prmotionRegistDTO,principal);
+        promotionRegistDTO.setMemberId(memberId);
+        promotionRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        promotionCommandService.registerPromotion(promotionRegistDTO,principal);
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")

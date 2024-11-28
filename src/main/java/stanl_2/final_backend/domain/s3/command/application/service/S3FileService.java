@@ -1,6 +1,7 @@
-package stanl_2.final_backend.domain.s3.service;
+package stanl_2.final_backend.domain.s3.command.application.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import stanl_2.final_backend.domain.s3.command.application.dto.FileDTO;
 
 public interface S3FileService {
 
@@ -21,4 +22,5 @@ public interface S3FileService {
     // 파일 다운로드
     byte[] downloadFile(String fileName);
 
+    void registerFile(FileDTO fileDTO);
 }

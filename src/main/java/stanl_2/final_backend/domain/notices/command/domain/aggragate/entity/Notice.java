@@ -55,6 +55,9 @@ public class Notice {
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
+    @Column(name = "FILE_URL")
+    private String fileUrl;
+
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();

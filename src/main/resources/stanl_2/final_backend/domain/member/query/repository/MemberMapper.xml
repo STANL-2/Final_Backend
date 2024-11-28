@@ -50,6 +50,8 @@
 
     <select id="findMembersByCenterId" resultMap="Member" parameterType="String">
         SELECT
+        a.mem_pos,
+        a.mem_ema,
         a.mem_id,
         a.mem_login_id
         FROM tb_member a

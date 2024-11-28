@@ -39,7 +39,7 @@ public enum S3ErrorCode {
      * 이 응답 코드는 웹에서 반복적으로 발생하기 때문에 가장 유명할지도 모릅니다.
      */
     FILE_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다."),
-
+    DATA_INTEGRITY_VIOLATION(40402, HttpStatus.BAD_REQUEST, "데이터 무결 위반하였습니다."),
     /**
      * 서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
      */
