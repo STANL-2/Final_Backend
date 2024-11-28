@@ -39,7 +39,7 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<PromotionResponseMessage> postNotice(@RequestPart("promotion") PromotionRegistDTO promotionRegistDTO, // JSON 데이터
+    public ResponseEntity<PromotionResponseMessage> postNotice(@RequestPart("dto") PromotionRegistDTO promotionRegistDTO, // JSON 데이터
                                                                @RequestPart("file") MultipartFile file,
                                                                Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
