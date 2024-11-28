@@ -45,7 +45,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
     @Transactional
     @Override
     public void registerPromotion(PromotionRegistDTO promotionRegistDTO, Principal principal) {
-        redisService.clearNoticeCache();
+        redisService.clearPromotionCache();
         String memberId =principal.getName();
         promotionRegistDTO.setMemberId(memberId);
         try {
@@ -62,7 +62,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
     @Transactional
     @Override
     public PromotionModifyDTO modifyPromotion(String promotionId, PromotionModifyDTO promotionModifyDTO, Principal principal) {
-        redisService.clearNoticeCache();
+        redisService.clearPromotionCache();
         String memberId= principal.getName();
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
@@ -93,7 +93,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
     @Transactional
     @Override
     public void deletePromotion(String promotionId, Principal principal) {
-        redisService.clearNoticeCache();
+        redisService.clearPromotionCache();
         String memberId= principal.getName();
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(()-> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
