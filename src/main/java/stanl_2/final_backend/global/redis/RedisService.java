@@ -1,9 +1,11 @@
 package stanl_2.final_backend.global.redis;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Set;
 
 @Service
 public class RedisService {
@@ -28,4 +30,33 @@ public class RedisService {
     public boolean setTTL(String key, long ttlInSeconds) {
         return redisTemplate.expire(key, Duration.ofSeconds(ttlInSeconds));
     }
+
+    public void clearNoticeCache() {
+        Set<String> keys = redisTemplate.keys("NoticeCache*");
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys); // Delete all matching keys
+            System.out.println("Deleted NoticeCache keys: " + keys);
+        } else {
+            System.out.println("No keys found for pattern 'NoticeCache*'.");
+        }
+    }
+
+    public void clearPromotionCache() {
+        Set<String> keys = redisTemplate.keys("PromotionCache*");
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys); // Delete all matching keys
+            System.out.println("Deleted PromotionCache keys: " + keys);
+        } else {
+            System.out.println("No keys found for pattern 'PromotionCache*'.");
+        }
+    }public void clearProblemCache() {
+        Set<String> keys = redisTemplate.keys("ProblemCache*");
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys); // Delete all matching keys
+            System.out.println("Deleted ProblemCache keys: " + keys);
+        } else {
+            System.out.println("No keys found for pattern 'ProblemCache*'.");
+        }
+    }
+
 }
