@@ -18,6 +18,7 @@ import stanl_2.final_backend.domain.promotion.common.exception.PromotionCommonEx
 import stanl_2.final_backend.domain.promotion.common.exception.PromotionErrorCode;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
+import stanl_2.final_backend.global.redis.RedisService;
 
 import java.security.Principal;
 import java.time.ZoneId;
@@ -28,13 +29,14 @@ import java.time.format.DateTimeFormatter;
 public class ProblemServiceImpl implements ProblemCommandService {
 
     private final ProblemRepository problemRepository;
-
+    private final RedisService redisService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProblemServiceImpl(ProblemRepository problemRepository, ModelMapper modelMapper) {
+    public ProblemServiceImpl(ProblemRepository problemRepository, ModelMapper modelMapper, RedisService redisService) {
         this.problemRepository = problemRepository;
         this.modelMapper = modelMapper;
+        this.redisService = redisService;
     }
     private String getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -44,6 +46,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
     @Transactional
     @Override
     public void registerProblem(ProblemRegistDTO problemRegistDTO, Principal principal) {
+        redisService.clearNoticeCache();
         String memberId =principal.getName();
         problemRegistDTO.setMemberId(memberId);
         try {
@@ -60,6 +63,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
     @Transactional
     @Override
     public ProblemModifyDTO modifyProblem(String problemId, ProblemModifyDTO problemModifyDTO,Principal principal) {
+        redisService.clearNoticeCache();
         String memberId= principal.getName();
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
@@ -92,6 +96,7 @@ public class ProblemServiceImpl implements ProblemCommandService {
     @Transactional
     @Override
     public void deleteProblem(String problemId, Principal principal) {
+        redisService.clearNoticeCache();
         String memberId= principal.getName();
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(()-> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
