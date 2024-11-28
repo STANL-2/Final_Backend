@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,10 +46,10 @@ public class CustomerController {
         CustomerDTO customerInfoDTO = customerQueryService.selectCustomerInfo(customerId);
 
         return ResponseEntity.ok(CustomerResponseMessage.builder()
-                                                        .httpStatus(200)
-                                                        .msg("성공")
-                                                        .result(customerInfoDTO)
-                                                        .build());
+                .httpStatus(200)
+                .msg("성공")
+                .result(customerInfoDTO)
+                .build());
     }
 
 
@@ -87,19 +88,20 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseMessage> searchCustomer(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String customerId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String sex,
             @RequestParam(required = false) String phone
     ) throws GeneralSecurityException {
         Pageable pageable = PageRequest.of(page, size);
-        CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(null , name, sex, phone);
+        CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(customerId , name, sex, phone);
         Page<CustomerSearchDTO> customerDTOPage = customerQueryService.findCustomerByCondition(pageable, customerSearchDTO);
 
         return ResponseEntity.ok(CustomerResponseMessage.builder()
-                                                        .httpStatus(200)
-                                                        .msg("성공")
-                                                        .result(customerDTOPage)
-                                                        .build());
+                .httpStatus(200)
+                .msg("성공")
+                .result(customerDTOPage)
+                .build());
     }
 
 
@@ -119,9 +121,23 @@ public class CustomerController {
         Page<CustomerContractDTO> customerContractDTOList = customerQueryService.selectCustomerContractInfo(customerId, pageable);
 
         return ResponseEntity.ok(CustomerResponseMessage.builder()
-                                                        .httpStatus(200)
-                                                        .msg("성공")
-                                                        .result(customerContractDTOList)
-                                                        .build());
+                .httpStatus(200)
+                .msg("성공")
+                .result(customerContractDTOList)
+                .build());
+    }
+
+
+    @Operation(summary = "엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("excel")
+    public void exportCustomer(HttpServletResponse response){
+
+        customerQueryService.exportCustomerToExcel(response);
     }
 }

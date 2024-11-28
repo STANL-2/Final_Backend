@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Page;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
+import stanl_2.final_backend.domain.customer.query.dto.CustomerExcelDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface CustomerMapper {
     List<CustomerContractDTO> findCustomerContractById(Map<String, Object> map);
 
     int selectCustomerContractCnt(String customerId);
+
+    List<CustomerExcelDTO> findCustomerForExcel();
 }

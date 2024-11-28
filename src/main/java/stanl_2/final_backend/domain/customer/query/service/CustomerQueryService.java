@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.customer.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO;
@@ -21,4 +22,6 @@ public interface CustomerQueryService {
     String selectCustomerNameById(String customerId) throws GeneralSecurityException;
 
     Page<CustomerContractDTO> selectCustomerContractInfo(String customerId, Pageable pageable);
+
+    void exportCustomerToExcel(HttpServletResponse response);
 }
