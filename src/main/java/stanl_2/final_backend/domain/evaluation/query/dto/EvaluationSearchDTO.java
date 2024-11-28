@@ -13,7 +13,7 @@ import java.util.Collection;
 @Getter
 @Setter
 public class EvaluationSearchDTO {
-    private String evalId;
+    private String evaluationId;
     private String title;
     private String writerName;
     private String memberName;

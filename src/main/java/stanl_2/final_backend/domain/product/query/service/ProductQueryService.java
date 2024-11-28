@@ -15,7 +15,7 @@ import java.util.Map;
 public interface ProductQueryService {
     Page<ProductSelectAllDTO> selectAll(Pageable pageable);
 
-    ProductSelectIdDTO selectByProductId(String id);
+    ProductSelectIdDTO selectByProductId(String productId);
 
     Page<ProductSelectAllDTO> selectProductBySearch(ProductSearchRequestDTO productSearchRequestDTO, Pageable pageable);
 

@@ -2,13 +2,12 @@ package stanl_2.final_backend.domain.evaluation.query.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
 import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
 import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationCommonException;
 import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationErrorCode;
@@ -19,8 +18,6 @@ import stanl_2.final_backend.domain.evaluation.query.repository.EvaluationMapper
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
-import stanl_2.final_backend.domain.product.common.exception.ProductCommonException;
-import stanl_2.final_backend.domain.product.common.exception.ProductErrorCode;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 
 import java.security.GeneralSecurityException;
@@ -54,7 +51,16 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
         MemberDTO memberDTO = memberQueryService.selectMemberInfo(evaluationDTO.getMemberId());
         String centerId = memberDTO.getCenterId();
 
-        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterId(size,offset, centerId);
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterId(size,offset, centerId, sortField, sortOrder);
 
         int total = evaluationMapper.findEvaluationCountByCenterId(centerId);
 
@@ -79,7 +85,17 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        List<EvaluationDTO> evaluationList = evaluationMapper.findAllEvaluations(size,offset);
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+
+        List<EvaluationDTO> evaluationList = evaluationMapper.findAllEvaluations(size,offset, sortField, sortOrder);
 
         int total = evaluationMapper.findEvaluationCount();
 
@@ -109,6 +125,15 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
         if(evaluationDTO == null){
             throw new EvaluationCommonException(EvaluationErrorCode.EVALUATION_NOT_FOUND);
         }
+
+        try {
+            evaluationDTO.setMemberId(memberQueryService.selectNameById(evaluationDTO.getMemberId()));
+            evaluationDTO.setWriterId(memberQueryService.selectNameById(evaluationDTO.getWriterId()));
+            evaluationDTO.setCenterId(centerQueryService.selectNameById(evaluationDTO.getCenterId()));
+        } catch (Exception e) {
+            throw new EvaluationCommonException(EvaluationErrorCode.MEMBER_CENTER_NOT_FOUND);
+        }
+
         return evaluationDTO;
     }
 
@@ -117,6 +142,14 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
     public Page<EvaluationDTO> selectEvaluationBySearchByManager(Pageable pageable, EvaluationSearchDTO evaluationSearchDTO) throws GeneralSecurityException {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
+
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
 
         String writerName = Optional.ofNullable(evaluationSearchDTO.getWriterName()).orElse("");
         if (!writerName.isEmpty()) {
@@ -130,7 +163,7 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
         MemberDTO memberDTO = memberQueryService.selectMemberInfo(evaluationSearchDTO.getSearcherName());
         evaluationSearchDTO.setCenterId(memberDTO.getCenterId());
 
-        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterIdAndSearch(size,offset, evaluationSearchDTO);
+        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationByCenterIdAndSearch(size,offset, evaluationSearchDTO, sortField, sortOrder);
 
         int total = evaluationMapper.findEvaluationByCenterIdAndSearchCount(evaluationSearchDTO);
 
@@ -154,6 +187,14 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
         String writerName = Optional.ofNullable(evaluationSearchDTO.getWriterName()).orElse("");
         if (!writerName.isEmpty()) {
             evaluationSearchDTO.setWriterName(authQueryService.selectMemberIdByLoginId(writerName));
@@ -163,7 +204,7 @@ public class EvaluationQueryServiceImpl implements EvaluationQueryService {
             evaluationSearchDTO.setMemberName(authQueryService.selectMemberIdByLoginId(memberName));
         }
 
-        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationBySearch(size,offset, evaluationSearchDTO);
+        List<EvaluationDTO> evaluationList = evaluationMapper.findEvaluationBySearch(size,offset, evaluationSearchDTO, sortField, sortOrder);
 
         int total = evaluationMapper.findEvaluationBySearchCount(evaluationSearchDTO);
 

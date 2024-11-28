@@ -114,8 +114,8 @@
         FROM tb_center a
         <where>
             a.active = TRUE
-        <if test="centerSearchRequestDTO.id != null">
-            AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+        <if test="centerSearchRequestDTO.centerId != null">
+            AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
         </if>
         <if test="centerSearchRequestDTO.name != null">
             AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
@@ -169,8 +169,8 @@
         FROM tb_center a
         <where>
             a.active = TRUE
-            <if test="centerSearchRequestDTO.id != null">
-                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            <if test="centerSearchRequestDTO.centerId != null">
+                AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
             </if>
             <if test="centerSearchRequestDTO.name != null">
                 AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
@@ -194,8 +194,8 @@
         FROM tb_center a
         <where>
             a.active = TRUE
-            <if test="centerSearchRequestDTO.id != null">
-                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            <if test="centerSearchRequestDTO.centerId != null">
+                AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
             </if>
             <if test="centerSearchRequestDTO.name != null">
                 AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
