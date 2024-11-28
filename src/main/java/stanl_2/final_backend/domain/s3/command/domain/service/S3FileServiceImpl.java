@@ -144,6 +144,7 @@ public class S3FileServiceImpl implements S3FileService {
         fileValidate.add(".html");
         fileValidate.add(".xlsx");
         fileValidate.add(".pdf");
+        fileValidate.add(".webp");
         String idxFileName = fileName.substring(fileName.lastIndexOf("."));
         if(!fileValidate.contains(idxFileName)) {
             throw new S3CommonException(S3ErrorCode.FILE_NOT_FOUND);
