@@ -32,7 +32,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public MemberDTO selectMemberInfo(String name) throws GeneralSecurityException {
 
         MemberDTO memberInfo = memberMapper.findMemberInfoById(name);
@@ -55,7 +55,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<String> selectMemberByRole(String role){
 
         List<String> memberList = memberRoleMapper.findMembersbyRole(role);
@@ -64,7 +64,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<MemberDTO> selectMemberByCenterId(String centerId){
 
         List<MemberDTO> memberList = memberMapper.findMembersByCenterId(centerId);
@@ -85,7 +85,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<MemberDTO> selectMemberByCenterList(List<String> centerList) {
         List<MemberDTO> memberList = memberMapper.findMembersByCenterList(centerList);
 
@@ -101,7 +101,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public String selectNameById(String memberId) throws GeneralSecurityException {
 
         String name = memberMapper.findNameById(memberId);

@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly;
 @Slf4j
 @Service("commandNoticeService")
 public class NoticeCommandServiceImpl implements NoticeCommandService {
@@ -55,21 +56,22 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = false)
     public void registerNotice(NoticeRegistDTO noticeRegistDTO,
                                Principal principal) {
+        System.out.println("[Before Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         redisService.clearNoticeCache();
         String memberId= principal.getName();
         noticeRegistDTO.setMemberId(memberId);
-
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
+            System.out.println("[After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
             Notice newNotice = noticeRepository.save(notice);
-
+            System.out.println("1. [After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
             NoticeAlarmDTO noticeAlarmDTO = modelMapper.map(newNotice, NoticeAlarmDTO.class);
-
+            System.out.println("2. [After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
             alarmCommandService.sendNoticeAlarm(noticeAlarmDTO);
-
+            System.out.println("3. [After Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         } catch (DataIntegrityViolationException e){
             // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
             throw new NoticeCommonException(NoticeErrorCode.DATA_INTEGRITY_VIOLATION);
@@ -78,9 +80,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
             throw new NoticeCommonException(NoticeErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
-
     @Override
-    @Transactional
     public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
 
         redisService.clearNoticeCache();
@@ -116,7 +116,6 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
 
     @Override
-    @Transactional
     public void deleteNotice(NoticeDeleteDTO noticeDeleteDTO, Principal principal) {
         redisService.clearNoticeCache();
         String memberId = principal.getName();

@@ -7,13 +7,20 @@ spring:
     name: finalbackend
 
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    #    url: jdbc:mariadb://${DATABASE_URL}:${MARIA_DATABASE_PORT}/${MARIA_DATABASE_NAME}
-    url: jdbc:mariadb://motive.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
-    username: admin
-    password: motivepassword
-  #    username: ${DB_USERNAME}
-  #    password: ${DB_PASSWORD}
+    writer:
+      hikari:
+        jdbc-url: jdbc:mariadb://motive.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
+        username: admin
+        password: motivepassword
+        driver-class-name: org.mariadb.jdbc.Driver
+
+    reader:
+      hikari:
+        jdbc-url: jdbc:mariadb://motivereadonly.cdw8kw8go27z.ap-northeast-2.rds.amazonaws.com:3306/motive
+        username: admin
+        password: motivepassword
+        driver-class-name: org.mariadb.jdbc.Driver
+
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
@@ -57,3 +64,7 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+  #    url: jdbc:mariadb://${DATABASE_URL}:${MARIA_DATABASE_PORT}/${MARIA_DATABASE_NAME}
+  #    username: ${DB_USERNAME}
+  #    password: ${DB_PASSWORD} // 추후 반영예정

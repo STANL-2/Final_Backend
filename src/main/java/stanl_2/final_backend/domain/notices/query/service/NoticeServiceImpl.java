@@ -17,7 +17,7 @@ import stanl_2.final_backend.global.redis.RedisService;
 
 import java.util.List;
 
-
+@Transactional(readOnly = true)
 @Service("queryNoticeServiceImpl")
 public class NoticeServiceImpl implements NoticeService{
     private final NoticeMapper noticeMapper;
@@ -32,7 +32,7 @@ public class NoticeServiceImpl implements NoticeService{
         this.excelUtilsV1 =excelUtilsV1;
     }
 
-    @Transactional
+
     @Override
     public Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO) {
         int offset = Math.toIntExact(pageable.getOffset());
@@ -55,13 +55,13 @@ public class NoticeServiceImpl implements NoticeService{
         int totalElements = noticeMapper.findNoticeCount(); // 총 개수 조회
         return new PageImpl<>(notices, pageable, totalElements);
     }
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public NoticeDTO findNotice(String noticeId) {
         NoticeDTO notice = noticeMapper.findNotice(noticeId);
         return notice;
     }
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public void exportNoticesToExcel(HttpServletResponse response) {
         List<NoticeExcelDownload> noticeList = noticeMapper.findNoticesForExcel();
