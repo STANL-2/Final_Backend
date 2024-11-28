@@ -41,4 +41,22 @@ public class RedisService {
         }
     }
 
+    public void clearPromotionCache() {
+        Set<String> keys = redisTemplate.keys("PromotionCache*");
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys); // Delete all matching keys
+            System.out.println("Deleted PromotionCache keys: " + keys);
+        } else {
+            System.out.println("No keys found for pattern 'PromotionCache*'.");
+        }
+    }public void clearProblemCache() {
+        Set<String> keys = redisTemplate.keys("ProblemCache*");
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys); // Delete all matching keys
+            System.out.println("Deleted ProblemCache keys: " + keys);
+        } else {
+            System.out.println("No keys found for pattern 'ProblemCache*'.");
+        }
+    }
+
 }
