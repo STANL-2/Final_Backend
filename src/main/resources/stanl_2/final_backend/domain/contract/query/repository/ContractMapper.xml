@@ -208,7 +208,7 @@
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
             <when test="sortField != null and sortOrder != null">
                 <choose>
-                    <when test="sortField == 'name'">
+                    <when test="sortField == 'customerName'">
                         ORDER BY a.conr_cust_name ${sortOrder}
                     </when>
                     <when test="sortField == 'title'">
@@ -295,7 +295,7 @@
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
             <when test="sortField != null and sortOrder != null">
                 <choose>
-                    <when test="sortField == 'name'">
+                    <when test="sortField == 'customerName'">
                         ORDER BY a.conr_cust_name ${sortOrder}
                     </when>
                     <when test="sortField == 'title'">
@@ -332,56 +332,55 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id="findContractBySearch" resultMap="contractSearchResultMap" parameterType="stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO">
+    <select id="findContractBySearch" resultMap="contractSearchResultMap">
         SELECT
         a.conr_id,
         a.conr_cust_name,
-        a.conr_ttl,
         a.conr_comp_name,
-        a.conr_stat,
-        a.created_url,
-        a.conr_cust_pur_cond,
         a.conr_car_name,
-        a.created_at,
-        a.updated_at,
-        a.deleted_at,
-        a.active
+        a.conr_ttl,
+        a.conr_stat,
+        a.conr_cust_pur_cond,
+        a.conr_cust_cla
         FROM tb_contract a
         <where>
             a.active = TRUE
-            <if test="contractSearchDTO.centerId != null">
+            <if test="contractSearchDTO.searchMemberId != null and contractSearchDTO.searchMemberId != ''">
+                AND a.mem_id = #{contractSearchDTO.searchMemberId}
+            </if>
+            <if test="contractSearchDTO.centerId != null and contractSearchDTO.centerId != ''">
                 AND a.cent_id = #{contractSearchDTO.centerId}
             </if>
-            <if test="contractSearchDTO.title != null">
-                AND a.conr_name LIKE CONCAT('%', #{contractSearchDTO.title}, '%')
+            <if test="contractSearchDTO.title != null and contractSearchDTO.title != ''">
+                AND a.conr_ttl LIKE CONCAT('%', #{contractSearchDTO.title}, '%')
             </if>
-            <if test="contractSearchDTO.customerName != null">
+            <if test="contractSearchDTO.customerName != null and contractSearchDTO.customerName != ''">
                 AND a.conr_cust_name LIKE CONCAT('%', #{contractSearchDTO.customerName}, '%')
             </if>
-            <if test="contractSearchDTO.customerClassifcation != null">
+            <if test="contractSearchDTO.customerClassifcation != null and contractSearchDTO.customerClassifcation != ''">
                 AND a.conr_cust_cla LIKE CONCAT('%', #{contractSearchDTO.customerClassifcation}, '%')
             </if>
-            <if test="contractSearchDTO.status != null">
+            <if test="contractSearchDTO.status != null and contractSearchDTO.status != ''">
                 AND a.conr_stat = #{contractSearchDTO.status}
             </if>
-            <if test="contractSearchDTO.companyName != null">
+            <if test="contractSearchDTO.companyName != null and contractSearchDTO.companyName != ''">
                 AND a.conr_comp_name LIKE CONCAT('%', #{contractSearchDTO.companyName}, '%')
             </if>
-            <if test="contractSearchDTO.customerPurchaseCondition != null">
+            <if test="contractSearchDTO.customerPurchaseCondition != null and contractSearchDTO.customerPurchaseCondition != ''">
                 AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
             </if>
-            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null">
+            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null and contractSearchDTO.startAt != '' and contractSearchDTO.endAt != ''">
                 AND a.created_at BETWEEN #{contractSearchDTO.startAt} AND #{contractSearchDTO.endAt}
             </if>
-            <if test="contractSearchDTO.productId != null">
-                AND b.prod_name LIKE CONCAT('%', #{contractSearchDTO.productId}, '%')
+            <if test="contractSearchDTO.carName != null and contractSearchDTO.carName != ''">
+                AND a.conr_car_name LIKE CONCAT('%', #{contractSearchDTO.carName}, '%')
             </if>
         </where>
         <choose>
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
             <when test="sortField != null and sortOrder != null">
                 <choose>
-                    <when test="sortField == 'name'">
+                    <when test="sortField == 'customerName'">
                         ORDER BY a.conr_cust_name ${sortOrder}
                     </when>
                     <when test="sortField == 'title'">
@@ -469,37 +468,41 @@
         </where>
     </select>
 
-    <select id="findContractBySearchCount" resultType="Integer" parameterType="stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO">
-        SELECT COUNT(*)
+    <select id="findContractBySearchCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
         FROM tb_contract a
         <where>
             a.active = TRUE
-            <if test="centerId != null">
-                AND a.cent_id = #{centerId}
+            <if test="contractSearchDTO.searchMemberId != null and contractSearchDTO.searchMemberId != ''">
+                AND a.mem_id = #{contractSearchDTO.searchMemberId}
             </if>
-            <if test="title != null">
-                AND a.conr_name LIKE CONCAT('%', #{title}, '%')
+            <if test="contractSearchDTO.centerId != null and contractSearchDTO.centerId != ''">
+                AND a.cent_id = #{contractSearchDTO.centerId}
             </if>
-            <if test="customerName != null">
-                AND a.conr_cust_name LIKE CONCAT('%', #{customerName}, '%')
+            <if test="contractSearchDTO.title != null and contractSearchDTO.title != ''">
+                AND a.conr_ttl LIKE CONCAT('%', #{contractSearchDTO.title}, '%')
             </if>
-            <if test="customerClassifcation != null">
-                AND a.conr_cust_cla LIKE CONCAT('%', #{customerClassifcation}, '%')
+            <if test="contractSearchDTO.customerName != null and contractSearchDTO.customerName != ''">
+                AND a.conr_cust_name LIKE CONCAT('%', #{contractSearchDTO.customerName}, '%')
             </if>
-            <if test="status != null">
-                AND a.conr_stat = #{status}
+            <if test="contractSearchDTO.customerClassifcation != null and contractSearchDTO.customerClassifcation != ''">
+                AND a.conr_cust_cla LIKE CONCAT('%', #{contractSearchDTO.customerClassifcation}, '%')
             </if>
-            <if test="companyName != null">
-                AND a.conr_comp_name LIKE CONCAT('%', #{companyName}, '%')
+            <if test="contractSearchDTO.status != null and contractSearchDTO.status != ''">
+                AND a.conr_stat = #{contractSearchDTO.status}
             </if>
-            <if test="customerPurchaseCondition != null">
-                AND a.conr_cust_pur_cond LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
+            <if test="contractSearchDTO.companyName != null and contractSearchDTO.companyName != ''">
+                AND a.conr_comp_name LIKE CONCAT('%', #{contractSearchDTO.companyName}, '%')
             </if>
-            <if test="startAt != null and endAt != null">
-                AND a.created_at BETWEEN #{startAt} AND #{endAt}
+            <if test="contractSearchDTO.customerPurchaseCondition != null and contractSearchDTO.customerPurchaseCondition != ''">
+                AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
             </if>
-            <if test="productId != null">
-                AND b.prod_name LIKE CONCAT('%', #{productId}, '%')
+            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null and contractSearchDTO.startAt != '' and contractSearchDTO.endAt != ''">
+                AND a.created_at BETWEEN #{contractSearchDTO.startAt} AND #{contractSearchDTO.endAt}
+            </if>
+            <if test="contractSearchDTO.carName != null and contractSearchDTO.carName != ''">
+                AND a.conr_car_name LIKE CONCAT('%', #{contractSearchDTO.carName}, '%')
             </if>
         </where>
     </select>

@@ -39,7 +39,9 @@ public interface ContractMapper {
 
     List<ContractSearchDTO> findContractBySearch(@Param("offset") int offset,
                                                  @Param("pageSize") int pageSize,
-                                                 @Param("contractSearchDTO") ContractSearchDTO contractSearchDTO);
+                                                 @Param("contractSearchDTO") ContractSearchDTO contractSearchDTO,
+                                                 @Param("sortField") String sortField,
+                                                 @Param("sortOrder") String sortOrder);
 
     int findContractBySearchCount(ContractSearchDTO contractSearchDTO);
 

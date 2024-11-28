@@ -6,6 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class ContractSearchDTO {
 
     private String contractId;
@@ -39,7 +40,6 @@ public class ContractSearchDTO {
     private String searchMemberId;
     private String centerId;
     private String customerId;
-    private String productId;
     private String startAt;
     private String endAt;
     private String carName;

@@ -260,16 +260,38 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<ContractSearchDTO> contracts = contractMapper.findContractBySearch(offset, pageSize, contractSearchDTO);
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        log.info("service Field: " + sortField);
+        log.info("service order: " + sortOrder);
+
+        List<ContractSearchDTO> contracts = contractMapper.findContractBySearch(offset, pageSize, contractSearchDTO, sortField, sortOrder);
 
         if (contracts == null) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
-        Integer count = contractMapper.findContractBySearchCount(contractSearchDTO);
-        int totalContract = (count != null) ? count : 0;
+        log.info("값들어가는지 확인: " + contracts);
 
-        return new PageImpl<>(contracts, pageable, totalContract);
+//        int count = contractMapper.findContractBySearchCount(contractSearchDTO);
+        int count = 1;
+//        int totalContract = contractMapper.findContractBySearchCount(contractSearchDTO);
+
+        if (count == 0) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        log.info("count: " + count);
+
+        return new PageImpl<>(contracts, pageable, count);
     }
 
     @Override
