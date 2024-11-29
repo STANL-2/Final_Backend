@@ -65,7 +65,7 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @GetMapping("/excel")
-    public void exportNotice(HttpServletResponse response){
+    public void exportPromotion(HttpServletResponse response){
 
         promotionService.exportPromotionToExcel(response);
     }
