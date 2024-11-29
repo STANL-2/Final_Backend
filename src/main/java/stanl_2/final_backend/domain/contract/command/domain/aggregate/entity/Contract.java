@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Setter
 @Entity
-@ToString
 @Table(name = "TB_CONTRACT")
 public class Contract {
 

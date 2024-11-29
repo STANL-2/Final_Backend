@@ -43,7 +43,6 @@ public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandServic
     @Transactional
     public void registerSalesHistory(String contractId) {
 
-        log.info("판매실적: " + contractId);
         ContractSeletIdDTO salesHistoryDTO = new ContractSeletIdDTO();
         SalesHistoryRegistDTO salesHistoryRegistDTO = new SalesHistoryRegistDTO();
 

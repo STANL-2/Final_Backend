@@ -276,8 +276,6 @@ public class ContractQueryServiceImpl implements ContractQueryService {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
-        log.info("값들어가는지 확인: " + contracts);
-
         int totalContract = contractMapper.findContractBySearchCount(contractSearchDTO);
 
         if (totalContract == 0) {

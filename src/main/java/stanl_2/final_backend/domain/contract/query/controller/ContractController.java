@@ -294,7 +294,6 @@ public class ContractController {
                                                                                @RequestParam(required = false) String sortOrder,
                                                                                @PageableDefault(size = 10) Pageable pageable) {
 
-        log.info("검색조건: " + sortField + "ddd: " + sortOrder);
         // 정렬 추가
         if (sortField != null && sortOrder != null) {
             Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
