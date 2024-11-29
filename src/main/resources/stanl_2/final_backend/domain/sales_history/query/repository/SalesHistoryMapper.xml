@@ -34,6 +34,7 @@
         <result property="incentive" column="INCENTIVE"/>
         <result property="performance" column="PERFORMANCE"/>
         <result property="totalSales" column="TOTAL_SALES"/>
+        <result property="month" column="MONTH"/>
     </resultMap>
 
     <resultMap id="SalesHistoryRankedDataResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO">
@@ -266,7 +267,7 @@
         WHERE a.active = TRUE;
     </select>
 
-    <select id="findStatisticsSearchMonthByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+    <select id="findStatisticsSearchMonthByEmployee" resultMap="salesHistoryAggregatedDataResultMap">
         SELECT
         LEFT(a.created_at, 7) AS MONTH,
         SUM(a.sal_hist_ince) AS INCENTIVE,

@@ -1,23 +1,16 @@
 package stanl_2.final_backend.domain.sales_history.query.service;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
 import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
 import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
-import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationCommonException;
-import stanl_2.final_backend.domain.evaluation.common.exception.EvaluationErrorCode;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
-import stanl_2.final_backend.domain.product.common.exception.ProductCommonException;
-import stanl_2.final_backend.domain.product.common.exception.ProductErrorCode;
 import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryCommonException;
 import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryErrorCode;
 import stanl_2.final_backend.domain.sales_history.query.dto.*;
@@ -246,21 +239,35 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public SalesHistoryStatisticsDTO selectStatisticsSearchMonthByEmployee(SalesHistorySearchDTO salesHistorySearchDTO) {
+    public List<SalesHistoryStatisticsDTO> selectStatisticsSearchMonthByEmployee(SalesHistorySearchDTO salesHistorySearchDTO) {
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
 
-        SalesHistoryStatisticsDTO salesHistoryStatisticsDTO = salesHistoryMapper.findStatisticsSearchMonthByEmployee(salesHistorySearchDTO);
+        System.out.println(salesHistorySearchDTO.getSearcherName());
 
-        if(salesHistoryStatisticsDTO == null){
+        String parseStartDate = salesHistorySearchDTO.getStartDate();
+        String parseEndDate = salesHistorySearchDTO.getEndDate();
+
+        salesHistorySearchDTO.setStartDate(parseStartDate.substring(0,7));
+        salesHistorySearchDTO.setEndDate(parseEndDate.substring(0,7));
+
+        List<SalesHistoryStatisticsDTO> salesHistoryStatisticsDTOList = salesHistoryMapper.findStatisticsSearchMonthByEmployee(salesHistorySearchDTO);
+
+        if(salesHistoryStatisticsDTOList == null){
             throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
         }
-        return salesHistoryStatisticsDTO;
+        return salesHistoryStatisticsDTOList;
     }
 
     @Override
     @Transactional(readOnly = true)
     public SalesHistoryStatisticsDTO selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO) {
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
+
+        String parseStartDate = salesHistorySearchDTO.getStartDate();
+        String parseEndDate = salesHistorySearchDTO.getEndDate();
+
+        parseStartDate = parseStartDate.substring(0,4);
+        parseEndDate = parseStartDate.substring(0,4);
 
         SalesHistoryStatisticsDTO salesHistoryStatisticsDTO = salesHistoryMapper.findStatisticsSearchYearByEmployee(salesHistorySearchDTO);
 
@@ -331,6 +338,12 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
+        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
+        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
+
+        parseStartDate = parseStartDate.substring(0,7);
+        parseEndDate = parseStartDate.substring(0,7);
+
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearchMonth(size,offset, salesHistoryRankedDataDTO);
 
         int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
@@ -347,6 +360,12 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
     public Page<SalesHistoryRankedDataDTO> selectStatisticsBySearchYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
+
+        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
+        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
+
+        parseStartDate = parseStartDate.substring(0,4);
+        parseEndDate = parseStartDate.substring(0,4);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearchYear(size,offset, salesHistoryRankedDataDTO);
 
@@ -381,6 +400,12 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
+        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
+        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
+
+        parseStartDate = parseStartDate.substring(0,7);
+        parseEndDate = parseStartDate.substring(0,7);
+
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearchMonth(size,offset, salesHistoryRankedDataDTO);
 
         int total = salesHistoryMapper.findStatisticsCenterBySearchCountMonth(salesHistoryRankedDataDTO);
@@ -396,6 +421,12 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
     public Page<SalesHistoryRankedDataDTO> selectStatisticsCenterBySearchYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
+
+        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
+        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
+
+        parseStartDate = parseStartDate.substring(0,4);
+        parseEndDate = parseStartDate.substring(0,4);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearchYear(size,offset, salesHistoryRankedDataDTO);
 

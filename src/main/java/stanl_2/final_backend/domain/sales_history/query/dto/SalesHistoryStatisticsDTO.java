@@ -11,4 +11,5 @@ public class SalesHistoryStatisticsDTO {
     private int performance;
     private int totalSales;
     private String orderBy;
+    private String month;
 }
