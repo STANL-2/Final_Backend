@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.sales_history.query.dto.*;
 
+import java.util.List;
+
 public interface SalesHistoryQueryService {
     Page<SalesHistorySelectDTO> selectAllSalesHistoryByEmployee(SalesHistorySelectDTO salesHistorySelectDTO, Pageable pageable);
 
@@ -16,7 +18,7 @@ public interface SalesHistoryQueryService {
 
     SalesHistoryStatisticsDTO selectStatisticsSearchByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
 
-    SalesHistoryStatisticsDTO selectStatisticsSearchMonthByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
+    List<SalesHistoryStatisticsDTO> selectStatisticsSearchMonthByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
 
     SalesHistoryStatisticsDTO selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
 
@@ -41,4 +43,10 @@ public interface SalesHistoryQueryService {
     SalesHistoryStatisticsAverageDTO selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 
     void exportSalesHistoryToExcel(HttpServletResponse response);
+
+    Page<SalesHistoryRankedDataDTO> selectAllStatisticsByMonth(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
+    Page<SalesHistoryRankedDataDTO> selectAllStatisticsByYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
+    Page<SalesHistoryRankedDataDTO> selectAllStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 }
