@@ -11,5 +11,6 @@ public interface ProblemCommandService {
 
     ProblemModifyDTO modifyProblem(String problemId, ProblemModifyDTO problemModifyDTO, Principal principal);
 
+    void modifyStatus(String problemId, Principal principal);
     void deleteProblem(String problemId, Principal principal);
 }

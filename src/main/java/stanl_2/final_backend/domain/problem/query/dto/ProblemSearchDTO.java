@@ -21,6 +21,7 @@ public class ProblemSearchDTO {
     private String deletedAt;
     private String startDate;
     private String endDate;
+    private String status;
 
     public ProblemSearchDTO(String title, String memberId, String productId, String customerId, String startDate, String endDate) {
         this.title = title;

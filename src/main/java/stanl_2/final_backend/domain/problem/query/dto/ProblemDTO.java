@@ -25,6 +25,8 @@ public class ProblemDTO {
 
     private Boolean active;
 
+    private String status;
+
     private String customerId;
 
     private String memberId;

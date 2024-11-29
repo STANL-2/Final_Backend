@@ -34,6 +34,7 @@
         <result property="incentive" column="INCENTIVE"/>
         <result property="performance" column="PERFORMANCE"/>
         <result property="totalSales" column="TOTAL_SALES"/>
+        <result property="month" column="MONTH"/>
     </resultMap>
 
     <resultMap id="SalesHistoryRankedDataResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO">
@@ -266,7 +267,7 @@
         WHERE a.active = TRUE;
     </select>
 
-    <select id="findStatisticsSearchMonthByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+    <select id="findStatisticsSearchMonthByEmployee" resultMap="salesHistoryAggregatedDataResultMap">
         SELECT
         LEFT(a.created_at, 7) AS MONTH,
         SUM(a.sal_hist_ince) AS INCENTIVE,
@@ -751,5 +752,96 @@
         GROUP BY a.mem_id, LEFT(a.created_at, 4)) AS A
     </select>
 
+    <select id="findAllStatisticsByMonth" resultMap="SalesHistoryRankedDataResultMap">
+        SELECT
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales,
+        LEFT(a.created_at, 7) AS MONTH
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY LEFT(a.created_at, 7)
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY MONTH ASC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findAllStatisticsByYear" resultMap="SalesHistoryRankedDataResultMap">
+        SELECT
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales,
+        LEFT(a.created_at, 4) AS YEAR
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        GROUP BY LEFT(a.created_at, 4)
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY YEAR ASC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findAllStatisticsBySearch" resultMap="SalesHistoryRankedDataResultMap">
+        SELECT
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales,
+        a.created_at
+        FROM tb_sales_history a
+        <where>
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+            AND a.active = TRUE
+        </where>
+        <choose>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
+                ORDER BY total_incentive DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
+                ORDER BY total_performance DESC
+            </when>
+            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
+                ORDER BY total_sales DESC
+            </when>
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
 
 </mapper>
