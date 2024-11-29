@@ -498,8 +498,11 @@
             <if test="contractSearchDTO.customerPurchaseCondition != null and contractSearchDTO.customerPurchaseCondition != ''">
                 AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
             </if>
-            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null and contractSearchDTO.startAt != '' and contractSearchDTO.endAt != ''">
-                AND a.created_at BETWEEN #{contractSearchDTO.startAt} AND #{contractSearchDTO.endAt}
+            <if test="contractSearchDTO.startAt != null and contractSearchDTO.startAt != ''">
+                AND a.created_at &gt;= #{contractSearchDTO.startAt}
+            </if>
+            <if test="contractSearchDTO.endAt != null and contractSearchDTO.endAt != ''">
+                AND a.created_at &lt;= #{contractSearchDTO.endAt}
             </if>
             <if test="contractSearchDTO.carName != null and contractSearchDTO.carName != ''">
                 AND a.conr_car_name LIKE CONCAT('%', #{contractSearchDTO.carName}, '%')

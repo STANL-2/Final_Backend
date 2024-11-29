@@ -270,9 +270,6 @@ public class ContractQueryServiceImpl implements ContractQueryService {
             sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
         }
 
-        log.info("service Field: " + sortField);
-        log.info("service order: " + sortOrder);
-
         List<ContractSearchDTO> contracts = contractMapper.findContractBySearch(offset, pageSize, contractSearchDTO, sortField, sortOrder);
 
         if (contracts == null) {
@@ -281,17 +278,13 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
         log.info("값들어가는지 확인: " + contracts);
 
-//        int count = contractMapper.findContractBySearchCount(contractSearchDTO);
-        int count = 1;
-//        int totalContract = contractMapper.findContractBySearchCount(contractSearchDTO);
+        int totalContract = contractMapper.findContractBySearchCount(contractSearchDTO);
 
-        if (count == 0) {
+        if (totalContract == 0) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
-        log.info("count: " + count);
-
-        return new PageImpl<>(contracts, pageable, count);
+        return new PageImpl<>(contracts, pageable, totalContract);
     }
 
     @Override

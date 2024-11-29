@@ -43,7 +43,7 @@ public interface ContractMapper {
                                                  @Param("sortField") String sortField,
                                                  @Param("sortOrder") String sortOrder);
 
-    int findContractBySearchCount(ContractSearchDTO contractSearchDTO);
+    int findContractBySearchCount(@Param("contractSearchDTO") ContractSearchDTO contractSearchDTO);
 
     List<ContractSelectAllDTO> findContractAllByCenterId(@Param("offset") int offset,
                                                          @Param("pageSize") int pageSize,
