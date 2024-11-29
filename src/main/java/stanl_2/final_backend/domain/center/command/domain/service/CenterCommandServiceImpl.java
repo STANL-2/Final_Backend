@@ -12,7 +12,7 @@ import stanl_2.final_backend.domain.center.command.domain.aggregate.entity.Cente
 import stanl_2.final_backend.domain.center.command.domain.repository.CenterRepository;
 import stanl_2.final_backend.domain.center.common.exception.CenterCommonException;
 import stanl_2.final_backend.domain.center.common.exception.CenterErrorCode;
-import stanl_2.final_backend.domain.s3.service.S3FileService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

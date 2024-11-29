@@ -10,7 +10,7 @@ import java.util.Collection;
 @Getter
 @Setter
 public class EvaluationDTO {
-    private String evalId;
+    private String evaluationId;
     private String title;
     private String content;
     private String createdAt;

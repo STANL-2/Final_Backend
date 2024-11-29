@@ -5,7 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.center.query.repository.CenterMapper">
 
     <resultMap id="centerAllResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO">
-        <id property="id" column="CENT_ID"/>
+        <id property="centerId" column="CENT_ID"/>
         <result property="name" column="CENT_NAME"/>
         <result property="address" column="CENT_ADR"/>
         <result property="phone" column="CENT_PHO"/>
@@ -19,7 +19,7 @@
     </resultMap>
 
     <resultMap id="centerIdResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO">
-        <id property="id" column="CENT_ID"/>
+        <id property="centerId" column="CENT_ID"/>
         <result property="name" column="CENT_NAME"/>
         <result property="address" column="CENT_ADR"/>
         <result property="phone" column="CENT_PHO"/>
@@ -69,7 +69,35 @@
         , a.updated_at
         FROM tb_center a
         WHERE a.active = TRUE
-        ORDER BY a.created_at DESC
+        <choose>
+        <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+        <when test="sortField != null and sortOrder != null">
+            <choose>
+                <when test="sortField == 'centerId'">
+                    ORDER BY a.cent_id ${sortOrder}
+                </when>
+                <when test="sortField == 'name'">
+                    ORDER BY a.cent_name ${sortOrder}
+                </when>
+                <when test="sortField == 'address'">
+                    ORDER BY a.cent_adr ${sortOrder}
+                </when>
+                <when test="sortField == 'memberCount'">
+                    ORDER BY a.cent_mem_cnt ${sortOrder}
+                </when>
+                <when test="sortField == 'operatingAt'">
+                    ORDER BY a.cent_opr_at ${sortOrder}
+                </when>
+                <otherwise>
+                    ORDER BY a.created_at DESC
+                </otherwise>
+            </choose>
+        </when>
+        <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+        <otherwise>
+            ORDER BY a.created_at DESC
+        </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -86,8 +114,8 @@
         FROM tb_center a
         <where>
             a.active = TRUE
-        <if test="centerSearchRequestDTO.id != null">
-            AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+        <if test="centerSearchRequestDTO.centerId != null">
+            AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
         </if>
         <if test="centerSearchRequestDTO.name != null">
             AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
@@ -96,7 +124,35 @@
             AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
         </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.cent_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'address'">
+                        ORDER BY a.cent_adr ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberCount'">
+                        ORDER BY a.cent_mem_cnt ${sortOrder}
+                    </when>
+                    <when test="sortField == 'operatingAt'">
+                        ORDER BY a.cent_opr_at ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -113,8 +169,8 @@
         FROM tb_center a
         <where>
             a.active = TRUE
-            <if test="centerSearchRequestDTO.id != null">
-                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            <if test="centerSearchRequestDTO.centerId != null">
+                AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
             </if>
             <if test="centerSearchRequestDTO.name != null">
                 AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
@@ -138,8 +194,8 @@
         FROM tb_center a
         <where>
             a.active = TRUE
-            <if test="centerSearchRequestDTO.id != null">
-                AND a.cent_id LIKE #{centerSearchRequestDTO.id}
+            <if test="centerSearchRequestDTO.centerId != null">
+                AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
             </if>
             <if test="centerSearchRequestDTO.name != null">
                 AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')

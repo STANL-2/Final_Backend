@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CenterSelectAllDTO {
-    private String id;
+    private String centerId;
     private String name;
     private String address;
     private String phone;

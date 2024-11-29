@@ -1,7 +1,6 @@
 package stanl_2.final_backend.domain.center.query.service;
 
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -9,17 +8,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
 import stanl_2.final_backend.domain.center.query.dto.CenterExcelDownload;
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO;
 import stanl_2.final_backend.domain.center.query.repository.CenterMapper;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
-@Slf4j
 @Service("queryCenterServiceImpl")
 public class CenterQueryServiceImpl implements CenterQueryService {
 
@@ -49,7 +47,16 @@ public class CenterQueryServiceImpl implements CenterQueryService {
 
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
-        List<CenterSelectAllDTO> centerList = centerMapper.findCenterAll(size, offset);
+
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<CenterSelectAllDTO> centerList = centerMapper.findCenterAll(size, offset, sortField, sortOrder);
 
         int total = centerMapper.findCenterCount();
 
@@ -62,7 +69,15 @@ public class CenterQueryServiceImpl implements CenterQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        List<CenterSelectAllDTO> centerList = centerMapper.findCenterBySearch(size, offset, centerSearchRequestDTO);
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<CenterSelectAllDTO> centerList = centerMapper.findCenterBySearch(size, offset, centerSearchRequestDTO, sortField, sortOrder);
         int total = centerMapper.findCenterBySearchCount(centerSearchRequestDTO);
 
         return new PageImpl<>(centerList, pageable, total);

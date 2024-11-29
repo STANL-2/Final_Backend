@@ -8,11 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.center.common.response.CenterResponseMessage;
 import stanl_2.final_backend.domain.center.query.dto.CenterSearchRequestDTO;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
@@ -41,7 +42,14 @@ public class CenterController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("")
-    public ResponseEntity<CenterResponseMessage> getCenterAll(@PageableDefault(size = 20) Pageable pageable){
+    public ResponseEntity<CenterResponseMessage> getCenterAll(@PageableDefault(size = 20) Pageable pageable,
+                                                              @RequestParam(required = false) String sortField,
+                                                              @RequestParam(required = false) String sortOrder){
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<CenterSelectAllDTO> responseCenters = centerQueryService.selectAll(pageable);
 
@@ -80,12 +88,19 @@ public class CenterController {
     })
     @GetMapping("/search")
     public ResponseEntity<CenterResponseMessage> getCenterBySearch(@RequestParam Map<String, String> params
-                                               ,@PageableDefault(size = 20) Pageable pageable){
+                                               ,@PageableDefault(size = 20) Pageable pageable,
+                                               @RequestParam(required = false) String sortField,
+                                               @RequestParam(required = false) String sortOrder){
 
         CenterSearchRequestDTO centerSearchRequestDTO = new CenterSearchRequestDTO();
-        centerSearchRequestDTO.setId(params.get("id"));
+        centerSearchRequestDTO.setCenterId(params.get("centerId"));
         centerSearchRequestDTO.setName(params.get("name"));
         centerSearchRequestDTO.setAddress(params.get("address"));
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<CenterSelectAllDTO> responseCenters = centerQueryService.selectBySearch(centerSearchRequestDTO, pageable);
 
@@ -107,7 +122,7 @@ public class CenterController {
     public ResponseEntity<CenterResponseMessage> getCenterListBySearch(@RequestParam Map<String, String> params){
 
         CenterSearchRequestDTO centerSearchRequestDTO = new CenterSearchRequestDTO();
-        centerSearchRequestDTO.setId(params.get("id"));
+        centerSearchRequestDTO.setCenterId(params.get("centerId"));
         centerSearchRequestDTO.setName(params.get("name"));
         centerSearchRequestDTO.setAddress(params.get("address"));
 

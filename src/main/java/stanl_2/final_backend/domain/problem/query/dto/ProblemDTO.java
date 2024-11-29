@@ -31,4 +31,5 @@ public class ProblemDTO {
 
     private String productId;
 
+    private String fileUrl;
 }

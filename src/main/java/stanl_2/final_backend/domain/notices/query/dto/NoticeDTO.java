@@ -32,4 +32,5 @@ public class NoticeDTO {
 
     private String memberId;
 
+    private String fileUrl;
 }
