@@ -48,6 +48,6 @@ public class Product {
     @Column(name ="ACTIVE", nullable = false)
     private Boolean active = true;
 
-    @Column(name ="IMAGE_URL", nullable = false)
+    @Column(name ="IMAGE_URL")
     private String imageUrl;
 }

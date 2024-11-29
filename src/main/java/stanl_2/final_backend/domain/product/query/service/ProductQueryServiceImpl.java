@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.A_sample.query.dto.SampleExcelDownload;
@@ -12,6 +13,8 @@ import stanl_2.final_backend.domain.product.common.exception.ProductCommonExcept
 import stanl_2.final_backend.domain.product.common.exception.ProductErrorCode;
 import stanl_2.final_backend.domain.product.common.util.RequestList;
 import stanl_2.final_backend.domain.product.query.dto.ProductExcelDownload;
+import stanl_2.final_backend.domain.product.query.dto.ProductSearchRequestDTO;
+import stanl_2.final_backend.domain.product.query.dto.ProductSelectAllDTO;
 import stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO;
 import stanl_2.final_backend.domain.product.query.repository.ProductMapper;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
@@ -33,12 +36,19 @@ public class ProductQueryServiceImpl implements ProductQueryService {
 
     @Override
     @Transactional
-    public Page<Map<String, Object>> selectAll(Pageable pageable) {
-        RequestList<?> requestList = RequestList.builder()
-                .pageable(pageable)
-                .build();
+    public Page<ProductSelectAllDTO> selectAll(Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
 
-        List<Map<String, Object>> productList = productMapper.findProductAll(requestList);
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<ProductSelectAllDTO> productList = productMapper.findProductAll(size, offset, sortField, sortOrder);
 
         int total = productMapper.findProductCount();
 
@@ -52,8 +62,8 @@ public class ProductQueryServiceImpl implements ProductQueryService {
 
     @Override
     @Transactional
-    public ProductSelectIdDTO selectByProductId(String id) {
-        ProductSelectIdDTO productSelectIdDTO = productMapper.findProductById(id);
+    public ProductSelectIdDTO selectByProductId(String productId) {
+        ProductSelectIdDTO productSelectIdDTO = productMapper.findProductById(productId);
 
         if(productSelectIdDTO == null) {
             throw new ProductCommonException(ProductErrorCode.PRODUCT_NOT_FOUND);
@@ -64,13 +74,22 @@ public class ProductQueryServiceImpl implements ProductQueryService {
 
     @Override
     @Transactional
-    public Page<Map<String, Object>> selectProductBySearch(Map<String, Object> paramMap) {
+    public Page<ProductSelectAllDTO> selectProductBySearch(ProductSearchRequestDTO productSearchRequestDTO, Pageable pageable) {
 
-        Pageable pageable = (Pageable) paramMap.get("pageable");
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
 
-        List<Map<String, Object>> productList = productMapper.findProductBySearch(paramMap);
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
 
-        int total = productMapper.findProductBySearchCount(paramMap);
+        List<ProductSelectAllDTO> productList = productMapper.findProductBySearch(size, offset, productSearchRequestDTO, sortField, sortOrder);
+
+        int total = productMapper.findProductBySearchCount(productSearchRequestDTO);
 
         if(productList == null || total == 0) {
             throw new ProductCommonException(ProductErrorCode.PRODUCT_NOT_FOUND);
