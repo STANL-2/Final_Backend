@@ -31,7 +31,7 @@ public class Promotion {
     @Column(name = "PRM_TTL", nullable = false)
     private String title;
 
-    @Column(name = "PRM_CONT", nullable = false)
+    @Column(name = "PRM_CONT",columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false, length=19)

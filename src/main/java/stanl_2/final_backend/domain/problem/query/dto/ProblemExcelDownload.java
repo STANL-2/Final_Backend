@@ -27,4 +27,7 @@ public class ProblemExcelDownload {
 
     @ExcelColumnName(name = "제품명")
     private String productId;
+
+    @ExcelColumnName(name = "상태")
+    private String status;
 }
