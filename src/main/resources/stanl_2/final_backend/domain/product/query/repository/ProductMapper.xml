@@ -89,7 +89,7 @@
         b.opt_sond
         FROM tb_product a
         JOIN tb_product_option b ON a.prod_id = b.prod_id
-        WHERE a.prod_id = #{id} AND a.active = TRUE
+        WHERE a.prod_id = #{productId} AND a.active = TRUE
     </select>
 
     <select id="findProductBySerialNumber" resultMap="productIdResultMap" parameterType="String">
@@ -153,8 +153,8 @@
         a.prod_stck
         FROM tb_product a
         WHERE a.active = TRUE
-        <if test="productSearchRequestDTO.id != null">
-            AND a.prod_id LIKE #{productSearchRequestDTO.id}
+        <if test="productSearchRequestDTO.productId != null">
+            AND a.prod_id LIKE CONCAT('%', #{productSearchRequestDTO.productId}, '%')
         </if>
         <if test="productSearchRequestDTO.name != null">
             AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
@@ -206,8 +206,8 @@
         COUNT(*) AS cnt
         FROM tb_product a
         WHERE a.active = TRUE
-        <if test="productSearchRequestDTO.id != null">
-            AND a.prod_id LIKE #{productSearchRequestDTO.id}
+        <if test="productSearchRequestDTO.productId != null">
+            AND a.prod_id LIKE CONCAT('%', #{productSearchRequestDTO.productId}, '%')
         </if>
         <if test="productSearchRequestDTO.name != null">
             AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')

@@ -62,8 +62,8 @@ public class ProductQueryServiceImpl implements ProductQueryService {
 
     @Override
     @Transactional
-    public ProductSelectIdDTO selectByProductId(String id) {
-        ProductSelectIdDTO productSelectIdDTO = productMapper.findProductById(id);
+    public ProductSelectIdDTO selectByProductId(String productId) {
+        ProductSelectIdDTO productSelectIdDTO = productMapper.findProductById(productId);
 
         if(productSelectIdDTO == null) {
             throw new ProductCommonException(ProductErrorCode.PRODUCT_NOT_FOUND);

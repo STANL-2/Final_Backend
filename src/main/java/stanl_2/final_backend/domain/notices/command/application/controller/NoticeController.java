@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
@@ -17,12 +16,8 @@ import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegist
 import stanl_2.final_backend.domain.notices.command.application.service.NoticeCommandService;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
-import stanl_2.final_backend.global.config.datasource.ReplicationRoutingDataSource;
 
-import javax.sql.DataSource;
 import java.security.Principal;
-
-import static org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly;
 
 @RestController("commandNoticeController")
 @RequestMapping("/api/v1/notice")
@@ -30,16 +25,14 @@ public class NoticeController {
 
     private final NoticeCommandService noticeCommandService;
     private final AuthQueryService authQueryService;
-    private final ReplicationRoutingDataSource replicationRoutingDataSource;
+
     private final S3FileServiceImpl s3FileService;
 
     @Autowired
-    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, ReplicationRoutingDataSource replicationRoutingDataSource){
-        this.replicationRoutingDataSource = replicationRoutingDataSource;
+    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService){
         this.noticeCommandService = noticeCommandService;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
-
     }
 
     @Operation(summary = "공지사항 작성")
@@ -47,23 +40,20 @@ public class NoticeController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
-
     @PostMapping(value = "")
-    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("notice") NoticeRegistDTO noticeRegistDTO,
+    public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("notice") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
                                                             @RequestPart("file") MultipartFile file,
                                                             Principal principal){
-
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
         noticeRegistDTO.setMemberId(memberId);
         noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
-        String dbUrl = getCurrentDbUrl();
-        System.out.println("Current DB URL: " + dbUrl);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(null)
                                                 .build());
+
     }
     @Operation(summary = "공지사항 수정")
     @ApiResponses(value = {
@@ -110,17 +100,4 @@ public class NoticeController {
                 .build());
     }
 
-    private String getCurrentDbUrl() {
-        try {
-            // DataSource에서 커넥션을 가져와 URL 확인
-            DataSource dataSource = replicationRoutingDataSource;
-            return dataSource.unwrap(javax.sql.DataSource.class)
-                    .getConnection()
-                    .getMetaData()
-                    .getURL();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Failed to fetch DB URL";
-        }
-    }
 }

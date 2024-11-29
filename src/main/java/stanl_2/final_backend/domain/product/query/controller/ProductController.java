@@ -68,10 +68,10 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("{id}")
-    public ResponseEntity<ProductResponseMessage> getProductById(@PathVariable("id") String id){
+    @GetMapping("{productId}")
+    public ResponseEntity<ProductResponseMessage> getProductById(@PathVariable("productId") String productId){
 
-        ProductSelectIdDTO productSelectIdDTO  = productQueryService.selectByProductId(id);
+        ProductSelectIdDTO productSelectIdDTO  = productQueryService.selectByProductId(productId);
 
         return ResponseEntity.ok(ProductResponseMessage.builder()
                 .httpStatus(200)
@@ -91,7 +91,7 @@ public class ProductController {
                                                                     ,@PageableDefault(size = 10) Pageable pageable){
 
         ProductSearchRequestDTO productSearchRequestDTO = new ProductSearchRequestDTO();
-        productSearchRequestDTO.setId(params.get("id"));
+        productSearchRequestDTO.setProductId(params.get("productId"));
         productSearchRequestDTO.setName(params.get("name"));
         productSearchRequestDTO.setSerialNumber(params.get("serialNumber"));
 

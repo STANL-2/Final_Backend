@@ -22,7 +22,7 @@ public interface ProductMapper {
 
     int findProductCount();
 
-    ProductSelectIdDTO findProductById(String id);
+    ProductSelectIdDTO findProductById(String productId);
 
     List<ProductSelectAllDTO> findProductBySearch(@Param("size") int size
             , @Param("offset") int offset
