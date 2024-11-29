@@ -88,7 +88,7 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         params.put("customerId", customerSearchDTO.getCustomerId());
         params.put("name", customerSearchDTO.getName());
         params.put("sex", customerSearchDTO.getSex());
-        params.put("phone", customerSearchDTO.getPhone());
+        params.put("phone", aesUtils.encrypt(customerSearchDTO.getPhone()));
 
         List<CustomerSearchDTO> customerList = customerMapper.findCustomerByConditions(params);
 

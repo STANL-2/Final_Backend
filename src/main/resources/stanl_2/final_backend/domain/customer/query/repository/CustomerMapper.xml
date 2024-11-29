@@ -111,7 +111,7 @@
                 AND a.cust_pho = #{ phone }
             </if>
             <if test="customerId != null">
-                AND a.cust_id= #{ customerId }
+                AND a.cust_id = #{ customerId }
             </if>
         </where>
         ORDER BY a.created_at DESC
@@ -133,6 +133,9 @@
             </if>
             <if test="phone != null">
                 AND a.cust_pho = #{ phone }
+            </if>
+            <if test="customerId != null">
+                AND a.cust_id= #{ customerId }
             </if>
         </where>
     </select>
