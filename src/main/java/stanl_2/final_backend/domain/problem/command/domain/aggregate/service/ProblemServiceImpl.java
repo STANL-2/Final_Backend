@@ -73,7 +73,10 @@ public class ProblemServiceImpl implements ProblemCommandService {
         try {
             Problem updateProblem = modelMapper.map(problemModifyDTO, Problem.class);
             updateProblem.setProblemId(problem.getProblemId());
+            updateProblem.setProblemId(problem.getTitle());
+            updateProblem.setProblemId(problem.getContent());
             updateProblem.setMemberId(problem.getMemberId());
+            updateProblem.setStatus("DONE");
             updateProblem.setCreatedAt(problem.getCreatedAt());
             updateProblem.setActive(problem.getActive());
             updateProblem.setCustomerId(problem.getCustomerId());
@@ -84,6 +87,29 @@ public class ProblemServiceImpl implements ProblemCommandService {
             ProblemModifyDTO problemModify = modelMapper.map(updateProblem,ProblemModifyDTO.class);
 
             return problemModify;
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 위반 예외 처리
+            throw new ProblemCommonException(ProblemErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new ProblemCommonException(ProblemErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void modifyStatus(String problemId,Principal principal) {
+        redisService.clearProblemCache();
+        String memberId= principal.getName();
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
+        if(!problem.getMemberId().equals(memberId)){
+            throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
+        }
+        try {
+            problem.setStatus("DONE");
+            problem.setUpdatedAt(getCurrentTimestamp());
         } catch (DataIntegrityViolationException e) {
             // 데이터 무결성 위반 예외 처리
             throw new ProblemCommonException(ProblemErrorCode.DATA_INTEGRITY_VIOLATION);
