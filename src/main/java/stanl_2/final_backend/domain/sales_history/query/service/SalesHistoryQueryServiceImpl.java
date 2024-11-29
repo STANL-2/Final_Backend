@@ -469,4 +469,67 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         excelUtilsV1.download(SalesHistoryExcelDownload.class, salesHistoryList, "SalesHistoryExcel", response);
 
     }
+
+    @Override
+    @Transactional
+    public Page<SalesHistoryRankedDataDTO> selectAllStatisticsByMonth(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
+        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
+
+        parseStartDate = parseStartDate.substring(0,7);
+        parseEndDate = parseStartDate.substring(0,7);
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsByMonth(size,offset, salesHistoryRankedDataDTO);
+
+        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+    }
+
+    @Override
+    @Transactional
+    public Page<SalesHistoryRankedDataDTO> selectAllStatisticsByYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
+        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
+
+        parseStartDate = parseStartDate.substring(0,4);
+        parseEndDate = parseStartDate.substring(0,4);
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsByYear(size,offset, salesHistoryRankedDataDTO);
+
+        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+    }
+
+    @Override
+    @Transactional
+    public Page<SalesHistoryRankedDataDTO> selectAllStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsBySearch(size,offset, salesHistoryRankedDataDTO);
+
+        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+    }
 }
