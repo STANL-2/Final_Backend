@@ -63,8 +63,8 @@
             <if test="searchLogDTO.ipAddress != null">
                 AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
             </if>
-            <if test="searchLogDTO.requestTime != null">
-                AND a.request_time LIKE CONCAT('%', #{ searchLogDTO.requestTime }, '%')
+            <if test="searchLogDTO.requestTime_start != null and searchLogDTO.requestTime_end != null">
+                AND a.request_time BETWEEN #{ searchLogDTO.requestTime_start } AND #{ searchLogDTO.requestTime_end }
             </if>
             <if test="searchLogDTO.status != null">
                 AND a.status LIKE CONCAT('%', #{ searchLogDTO.status }, '%')
@@ -80,21 +80,21 @@
         LIMIT #{ size } OFFSET #{ offset }
     </select>
 
-
     <select id="findLogForExcel" resultMap="logExcel">
         SELECT
-               a.log_id,
-               a.error_message,
-               a.host_name,
-               a.ip_address,
-               a.method,
-               a.query_string,
-               a.remote_port,
-               a.request_time,
-               a.status,
-               a.transaction_id,
-               a.uri,
-               a.user_agent
-          FROM tb_log a
+        a.log_id,
+        a.error_message,
+        a.host_name,
+        a.ip_address,
+        a.method,
+        a.query_string,
+        a.remote_port,
+        a.request_time,
+        a.status,
+        a.transaction_id,
+        a.uri,
+        a.user_agent
+        FROM tb_log a
     </select>
+
 </mapper>

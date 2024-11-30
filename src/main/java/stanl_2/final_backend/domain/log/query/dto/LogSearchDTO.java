@@ -19,20 +19,23 @@ public class LogSearchDTO {
     private String uri;
     private String method;
     private String queryString;
-    private String requestTime;
+    private String requestTime_start;
+    private String requestTime_end;
     private String transactionId;
     private String status;
     private String errorMessage;
 
     public LogSearchDTO(String logId,
                         String ipAddress,
-                        String requestTime,
+                        String requestTime_start,
+                        String requestTime_end,
                         String status,
                         String method,
                         String uri){
         this.logId = logId;
         this.ipAddress = ipAddress;
-        this.requestTime = requestTime;
+        this.requestTime_start = requestTime_start;
+        this.requestTime_end = requestTime_end;
         this.status = status;
         this.method = method;
         this.uri = uri;

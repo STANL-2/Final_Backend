@@ -56,6 +56,13 @@ public class LogQueryServiceImpl implements LogQueryService {
             throw new LogCommonException(LogErrorCode.LOG_NOT_FOUND);
         }
 
-            excelUtilsV1.download(LogExcelDTO.class, logExcels, "logExcel", response);
+        log.info("$$$$$$$$$$$$$$$$$$$$$");
+
+        for(int i=0;i<logExcels.size();i++){
+            System.out.println(logExcels.get(i));
+        }
+
+
+        excelUtilsV1.download(LogExcelDTO.class, logExcels, "logExcel", response);
     }
 }
