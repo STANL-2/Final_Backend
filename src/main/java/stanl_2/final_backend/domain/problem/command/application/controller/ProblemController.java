@@ -70,6 +70,23 @@ public class ProblemController {
                 .build());
     }
 
+    @Operation(summary = "문제사항 상태 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = ProblemResponseMessage.class))})
+    })
+    @PutMapping("/status/{problemId}")
+    public ResponseEntity<ProblemResponseMessage> modifyProblemStatus(@PathVariable String problemId, Principal principal){
+
+        problemCommandService.modifyStatus(problemId,principal);
+
+        return ResponseEntity.ok(ProblemResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(null)
+                .build());
+    }
+
     @Operation(summary = "문제사항 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
