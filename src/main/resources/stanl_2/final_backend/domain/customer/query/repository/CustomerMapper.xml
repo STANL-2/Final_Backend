@@ -83,7 +83,7 @@
           FROM tb_customer_info a
          LIMIT #{ size } OFFSET #{ offset }
     </select>
-    
+
     <select id="selectCustomerCount" resultType="_int">
         SELECT
                COUNT(*)
@@ -185,16 +185,14 @@
 
     <select id="findCustomerForExcel" resultMap="customerExcel">
         SELECT
-        a.cust_id,
-        a.cust_name,
-        a.cust_age,
-        a.cust_sex,
-        a.cust_pho,
-        a.cust_emer_pho,
-        a.cust_ema,
-        a.mem_id
-        FROM tb_customer_info a
+               a.cust_id,
+               a.cust_name,
+               a.cust_age,
+               a.cust_sex,
+               a.cust_pho,
+               a.cust_emer_pho,
+               a.cust_ema,
+               a.mem_id
+          FROM tb_customer_info a
     </select>
-
-
 </mapper>

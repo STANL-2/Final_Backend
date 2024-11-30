@@ -93,6 +93,7 @@ public class CustomerController {
             @RequestParam(required = false) String sex,
             @RequestParam(required = false) String phone
     ) throws GeneralSecurityException {
+
         Pageable pageable = PageRequest.of(page, size);
         CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(customerId , name, sex, phone);
         Page<CustomerSearchDTO> customerDTOPage = customerQueryService.findCustomerByCondition(pageable, customerSearchDTO);

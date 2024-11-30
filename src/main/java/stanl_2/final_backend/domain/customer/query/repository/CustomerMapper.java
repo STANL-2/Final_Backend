@@ -2,7 +2,6 @@ package stanl_2.final_backend.domain.customer.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Page;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerExcelDTO;

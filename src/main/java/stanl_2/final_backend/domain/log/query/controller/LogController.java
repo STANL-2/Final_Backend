@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,11 +16,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.log.common.response.LogResponseMessage;
 import stanl_2.final_backend.domain.log.query.dto.LogDTO;
 import stanl_2.final_backend.domain.log.query.dto.LogSearchDTO;
 import stanl_2.final_backend.domain.log.query.service.LogQueryService;
 
+@Slf4j
 @RestController(value = "queryLogController")
 @RequestMapping("/api/v1/log")
 public class LogController {
@@ -57,5 +61,20 @@ public class LogController {
                                                     .httpStatus(200)
                                                     .result(logDTOPage)
                                                     .build());
+    }
+
+    @Operation(summary = "엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("excel")
+    public void exportCustomer(HttpServletResponse response){
+
+        log.info("!!!!!");
+
+        logQueryService.exportLogToExcel(response);
     }
 }

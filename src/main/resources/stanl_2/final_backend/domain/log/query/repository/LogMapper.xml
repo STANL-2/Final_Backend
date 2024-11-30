@@ -17,7 +17,21 @@
         <result property="transactionId" column="TRANSACTION_ID"/>
         <result property="status" column="STATUS"/>
         <result property="errorMessage" column="ERROR_MESSAGE"/>
+    </resultMap>
 
+    <resultMap id="logExcel" type="stanl_2.final_backend.domain.log.query.dto.LogExcelDTO">
+        <id property="logId" column="LOG_ID"/>
+        <result property="userAgent" column="USER_AGENT"/>
+        <result property="ipAddress" column="IP_ADDRESS"/>
+        <result property="hostName" column="HOST_NAME"/>
+        <result property="remotePort" column="REMOTE_PORT"/>
+        <result property="uri" column="URI"/>
+        <result property="method" column="METHOD"/>
+        <result property="queryString" column="QUERY_STRING"/>
+        <result property="requestTime" column="REQUEST_TIME"/>
+        <result property="transactionId" column="TRANSACTION_ID"/>
+        <result property="status" column="STATUS"/>
+        <result property="errorMessage" column="ERROR_MESSAGE"/>
     </resultMap>
 
     <select id="findLogsCnt" resultType="_int">
@@ -64,5 +78,23 @@
         </where>
         ORDER BY a.request_time DESC
         LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+
+    <select id="findLogForExcel" resultMap="logExcel">
+        SELECT
+               a.log_id,
+               a.error_message,
+               a.host_name,
+               a.ip_address,
+               a.method,
+               a.query_string,
+               a.remote_port,
+               a.request_time,
+               a.status,
+               a.transaction_id,
+               a.uri,
+               a.user_agent
+          FROM tb_log a
     </select>
 </mapper>
