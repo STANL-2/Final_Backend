@@ -43,6 +43,9 @@
                a.user_agent
           FROM tb_log a
         <where>
+            <if test="searchLogDTO.logId != null">
+                AND a.log_id LIKE CONCAT('%', #{ searchLogDTO.logId }, '%')
+            </if>
             <if test="searchLogDTO.ipAddress != null">
                 AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
             </if>
