@@ -46,6 +46,16 @@
         AND a.alr_type = #{type}
         AND a.alr_read_stat = false
     </select>
+    <select id="findAllAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
+        SELECT
+               a.alr_msg,
+               a.alr_type,
+               a.alr_url,
+               a.alr_read_stat
+          FROM tb_alarm a
+         WHERE a.mem_id = #{memberId}
+           AND a.alr_type = #{type}
+    </select>
 
     <select id="findReadAlarmsCountByMemberId" resultType="int" parameterType="String">
         SELECT

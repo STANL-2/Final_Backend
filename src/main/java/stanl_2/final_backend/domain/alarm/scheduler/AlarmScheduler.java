@@ -30,7 +30,8 @@ public class AlarmScheduler {
         this.scheduleQueryService = scheduleQueryService;
     }
 
-    @Scheduled(cron = "0 0 2 * * *")  // 매일 새벽 2시에 실행)
+//    @Scheduled(cron = "0 0 2 * * *")  // 매일 새벽 2시에 실행)
+    @Scheduled(cron = "0 8 22 * * *")
     @Transactional
     public void alarmTodaySchedule(){
 

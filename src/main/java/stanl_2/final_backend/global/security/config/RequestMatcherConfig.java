@@ -20,6 +20,7 @@ public class RequestMatcherConfig {
 
                 // Alarm API
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm").hasAnyRole("alarm-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 알림창 전체 조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/alarm/**").hasAnyRole("alarm-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 태그별 알림창 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm/read/**").hasAnyRole("alarm-read-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 읽은 알림 상세 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm/unread/**").hasAnyRole("alarm-unread-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 읽지 않은 알림 상세 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm/connect").hasAnyRole("alarm-connect-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // sse 연결 (전체)

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.alarm.common.exception.AlarmCommonException;
 import stanl_2.final_backend.domain.alarm.common.exception.AlarmErrorCode;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDTO;
 import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectReadDTO;
 import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO;
 import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectUnreadDTO;
@@ -75,5 +76,23 @@ public class AlarmQueryServiceImpl implements AlarmQueryService{
         int totalOrder = (count != null) ? count : 0;
 
         return new PageImpl<>(unReadAlarmList, pageable, totalOrder);
+    }
+
+    @Override
+    public Page<AlarmSelectDTO> selectAlarmByType(AlarmSelectDTO alarmSelectDTO, Pageable pageable) {
+
+        Integer offset = Math.toIntExact(pageable.getOffset());
+        Integer pageSize = pageable.getPageSize();
+
+        String memberId = authQueryService.selectMemberIdByLoginId(alarmSelectDTO.getMemberLoginId());
+
+        List<AlarmSelectDTO> readAlarmList
+                = alarmMapper.findAllAlarmsByType(offset, pageSize, memberId, alarmSelectDTO.getType());
+
+        Integer count = alarmMapper.findReadAlarmsCountByMemberId(memberId);
+        int totalOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(readAlarmList, pageable, totalOrder);
+
     }
 }
