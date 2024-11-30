@@ -59,6 +59,13 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
         String memberId = authQueryService.selectMemberIdByLoginId(alarmRegistDTO.getMemberLoginId());
         String emitterId = memberId + "_" + System.currentTimeMillis();
 
+        // 기존 Emitter 확인 및 삭제
+        SseEmitter existingEmitter = emitterRepository.findEmitterByMemberId(memberId);
+        if (existingEmitter != null) {
+            emitterRepository.deleteAllByEmitterId(memberId); // 기존 Emitter 제거
+            existingEmitter.complete(); // 기존 연결 종료
+        }
+
         // 클라이언트의 sse 연결 요청에 응답하기 위한 SseEmitter 객체 생성
         // 유효시간 지정으로 시간이 지나면 클라이언트에서 자동으로 재연결 요청함
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));

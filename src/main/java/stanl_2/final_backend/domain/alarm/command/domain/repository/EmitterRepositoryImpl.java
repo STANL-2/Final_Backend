@@ -70,5 +70,12 @@ public class EmitterRepositoryImpl implements EmitterRepository{
         );
     }
 
-
+    @Override
+    public SseEmitter findEmitterByMemberId(String memberId) {
+        return emitters.entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith(memberId)) // memberId로 시작하는 키 검색
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null); // 없으면 null 반환
+    }
 }

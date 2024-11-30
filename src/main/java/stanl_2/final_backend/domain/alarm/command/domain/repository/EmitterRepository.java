@@ -18,4 +18,6 @@ public interface EmitterRepository {
     void deleteAllEmitterStartWithMemberId(String memberId);
 
     void deleteAllEventCacheStartWithmemberId(String memberId);
+
+    SseEmitter findEmitterByMemberId(String memberId);
 }
