@@ -112,6 +112,7 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/problem/{problemId}").hasAnyRole("problem-id-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 문제사항 Id로 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/problem").hasAnyRole("problem-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 문제사항 조건별 조회 (전체)
                 .requestMatchers(HttpMethod.PUT, "/api/v1/problem/{problemId}").hasAnyRole("problem-update", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 문제사항 수정 (전체)
+                .requestMatchers(HttpMethod.PUT, "/api/v1/problem/status/{problemId}").hasAnyRole("problem-status-update", "GOD") // 문제사항 상태 수정 (전체)
                 .requestMatchers(HttpMethod.POST, "/api/v1/problem").hasAnyRole("problem-create", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 문제사항 작성 (전체)
 
                 // Product API

@@ -31,7 +31,7 @@ public class Problem {
     @Column(name = "PROB_TTL", nullable = false)
     private String title;
 
-    @Column(name = "PROB_CONT", nullable = false)
+    @Column(name = "PROB_CONT",columnDefinition = "TEXT",nullable = false)
     private String content;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false, length=19)
@@ -54,6 +54,9 @@ public class Problem {
 
     @Column(name = "PROD_ID", nullable = false)
     private String productId;
+
+    @Column(name ="PROB_STATUS",nullable = false)
+    private String status = "PROGRESS";
 
     @Column(name = "FILE_URL")
     private String fileUrl;

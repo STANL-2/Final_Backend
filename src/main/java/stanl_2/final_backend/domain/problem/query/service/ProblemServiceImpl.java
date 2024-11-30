@@ -39,7 +39,10 @@ public class ProblemServiceImpl implements ProblemService {
     public Page<ProblemDTO> findProblems(Pageable pageable, ProblemSearchDTO problemSearchDTO) {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
-        String cacheKey = "ProblemCache::offset=" + offset + "::size=" + size + problemSearchDTO.getTitle();
+        String cacheKey = "ProblemCache::offset=" + offset + "::size=" + size +"::title="+problemSearchDTO.getTitle() +
+        "::memberId="+problemSearchDTO.getMemberId()+"::productId="+problemSearchDTO.getProductId()+
+        "::customerId="+problemSearchDTO.getCustomerId()+"::startDate"+problemSearchDTO.getStartDate()+
+        "::endDate"+problemSearchDTO.getEndDate();
         // Redis에서 데이터 조회
         List<ProblemDTO> problems = (List<ProblemDTO>) redisTemplate.opsForValue().get(cacheKey);
 
