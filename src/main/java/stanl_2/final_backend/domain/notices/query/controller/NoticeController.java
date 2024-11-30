@@ -24,6 +24,12 @@ import javax.sql.DataSource;
 
 import static org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly;
 
+/* 설명. Service단 설정이 완료되었다면
+    String dbUrl = getCurrentDbUrl();
+    System.out.println("Current DB URL: " + dbUrl);
+    를 통해 현재 접근하고 있는 DB를 조회할 경우와 DB의 값을 등록,수정,삭제할 경우의
+    url 주소를 비교해 본다.
+*/
 @RestController("queryNoticeController")
 @RequestMapping("/api/v1/notice")
 public class NoticeController {

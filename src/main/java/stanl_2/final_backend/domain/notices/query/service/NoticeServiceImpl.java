@@ -18,6 +18,12 @@ import stanl_2.final_backend.global.redis.RedisService;
 import java.util.List;
 
 import static org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly;
+/* 설명. 조회의 경우 readOnly= true 를 설정해 readOnlyDB에 접근을 하도록 만든다.
+    "Transaction ReadOnly: " + isCurrentTransactionReadOnly();를 통해
+    현재의 트랜젝션이 ReadOnly 상태인지 확인할 수 있다.
+    (readOnly=false)나 default로 설정된 메소드를 호출할 경우 readOnly설정이 풀릴 수도 있음
+    이런 경우, Controller의 api에 (readOnly=true)로 설정해 본다.
+*/
 
 @Transactional(readOnly = true)
 @Service("queryNoticeServiceImpl")
