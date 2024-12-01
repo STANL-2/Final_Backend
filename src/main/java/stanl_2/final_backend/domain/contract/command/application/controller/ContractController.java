@@ -19,7 +19,7 @@ import stanl_2.final_backend.domain.contract.common.response.ContractResponseMes
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 @Slf4j
-@RestController("contractController")
+@RestController("commandContractController")
 @RequestMapping("/api/v1/contract")
 public class ContractController {
 

@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.log.query.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import stanl_2.final_backend.domain.log.query.dto.LogDTO;
+import stanl_2.final_backend.domain.log.query.dto.LogExcelDTO;
 import stanl_2.final_backend.domain.log.query.dto.LogSearchDTO;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface LogMapper {
     );
 
     int findLogsCnt();
+
+    List<LogExcelDTO> findLogForExcel();
 }

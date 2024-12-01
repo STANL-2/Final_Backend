@@ -24,6 +24,28 @@
         <result property="name" column="CUST_NAME"/>
         <result property="sex" column="CUST_SEX"/>
         <result property="phone" column="CUST_PHO"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+
+    <resultMap id="CustomerContract" type="stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO">
+        <id property="contractId" column="CONR_ID"/>
+        <result property="centerName" column="CENT_NAME"/>
+        <result property="contractCarName" column="CONR_CAR_NAME"/>
+        <result property="contractTTL" column="CONR_TTL"/>
+        <result property="contractTotalSale" column="CONR_TOTA_SALE"/>
+        <result property="contractState" column="CONR_STAT"/>
+    </resultMap>
+
+    <resultMap id="customerExcel" type="stanl_2.final_backend.domain.customer.query.dto.CustomerExcelDTO">
+        <id property="customerId" column="CUST_ID"/>
+        <result property="name" column="CUST_NAME"/>
+        <result property="age" column="CUST_AGE"/>
+        <result property="sex" column="CUST_SEX"/>
+        <result property="phone" column="CUST_PHO"/>
+        <result property="emergePhone" column="CUST_EMER_PHO"/>
+        <result property="email" column="CUST_EMA"/>
+        <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
     <select id="selectCustomerInfoById" resultMap="Customer" parameterType="String">
@@ -61,7 +83,7 @@
           FROM tb_customer_info a
          LIMIT #{ size } OFFSET #{ offset }
     </select>
-    
+
     <select id="selectCustomerCount" resultType="_int">
         SELECT
                COUNT(*)
@@ -69,12 +91,13 @@
          WHERE a.active != 'false';
     </select>
 
-    <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="map">
+    <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="String">
         SELECT
                a.cust_id,
                a.cust_name,
                a.cust_sex,
-               a.cust_pho
+               a.cust_pho,
+               a.mem_id
           FROM tb_customer_info a
         <where>
             a.active != 'false'
@@ -86,6 +109,9 @@
             </if>
             <if test="phone != null">
                 AND a.cust_pho = #{ phone }
+            </if>
+            <if test="customerId != null">
+                AND a.cust_id = #{ customerId }
             </if>
         </where>
         ORDER BY a.created_at DESC
@@ -108,6 +134,9 @@
             <if test="phone != null">
                 AND a.cust_pho = #{ phone }
             </if>
+            <if test="customerId != null">
+                AND a.cust_id= #{ customerId }
+            </if>
         </where>
     </select>
 
@@ -127,5 +156,43 @@
         a.deleted_at
         FROM tb_customer_info a
         WHERE a.cust_pho = #{ customerPhone }
+    </select>
+
+
+    <select id="findCustomerContractById" resultMap="CustomerContract" parameterType="map">
+        SELECT
+            b.conr_id,
+            c.cent_name,
+            b.conr_car_name,
+            b.conr_ttl,
+            b.conr_tota_sale,
+            b.conr_stat
+        FROM tb_customer_info a
+        JOIN tb_contract b ON(a.cust_id = b.cust_id)
+        JOIN tb_center c ON(b.cent_id = c.cent_id)
+        WHERE a.cust_id = #{ customerId }
+        ORDER BY b.created_at DESC
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+    <select id="selectCustomerContractCnt" resultType="_int" parameterType="String">
+        SELECT
+        COUNT(*)
+        FROM tb_customer_info a
+        JOIN tb_contract b ON(a.cust_id =b.cust_id)
+        WHERE a.cust_id = #{ customerId };
+    </select>
+
+    <select id="findCustomerForExcel" resultMap="customerExcel">
+        SELECT
+               a.cust_id,
+               a.cust_name,
+               a.cust_age,
+               a.cust_sex,
+               a.cust_pho,
+               a.cust_emer_pho,
+               a.cust_ema,
+               a.mem_id
+          FROM tb_customer_info a
     </select>
 </mapper>
