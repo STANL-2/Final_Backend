@@ -49,6 +49,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         memberInfo.setAddress(aesUtils.decrypt(memberInfo.getAddress()));
         memberInfo.setBankName(aesUtils.decrypt(memberInfo.getBankName()));
         memberInfo.setAccount(aesUtils.decrypt(memberInfo.getAccount()));
+        memberInfo.setImageUrl(aesUtils.decrypt(memberInfo.getImageUrl()));
         memberInfo.setCenterId(memberInfo.getCenterId());
 
         return memberInfo;

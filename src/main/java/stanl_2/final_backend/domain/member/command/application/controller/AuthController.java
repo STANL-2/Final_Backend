@@ -9,12 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
 import java.security.GeneralSecurityException;
-import java.security.Principal;
 
 @Slf4j
 @RestController("commandAuthController")
@@ -52,21 +52,40 @@ public class AuthController {
      *     "organizationId": "ORG_000000001"
      * }
      */
+//    @Operation(summary = "회원가입")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "성공",
+//                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
+//    })
+//    @PostMapping("signup")
+//    public ResponseEntity<MemberResponseMessage> signup(@RequestBody SignupDTO signupDTO) throws GeneralSecurityException {
+//
+//        authCommandService.signup(signupDTO);
+//
+//        return ResponseEntity.ok(MemberResponseMessage.builder()
+//                                                .httpStatus(200)
+//                                                .msg("성공")
+//                                                .result(null)
+//                                                .build());
+//    }
+
+
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     @PostMapping("signup")
-    public ResponseEntity<MemberResponseMessage> signup(@RequestBody SignupDTO signupDTO) throws GeneralSecurityException {
+    public ResponseEntity<MemberResponseMessage> signup(@RequestPart("dto") SignupDTO signupDTO,
+            @RequestPart("file") MultipartFile imageUrl) throws GeneralSecurityException {
 
-        authCommandService.signup(signupDTO);
+        authCommandService.signup(signupDTO, imageUrl);
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                                                .httpStatus(200)
-                                                .msg("성공")
-                                                .result(null)
-                                                .build());
+                .httpStatus(200)
+                .msg("성공")
+                .result(null)
+                .build());
     }
 
     /**
