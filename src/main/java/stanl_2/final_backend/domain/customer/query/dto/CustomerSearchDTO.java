@@ -14,4 +14,12 @@ public class CustomerSearchDTO {
     private String name;
     private String sex;
     private String phone;
+    private String memberId;
+
+    public CustomerSearchDTO(String customerId, String name, String sex, String phone) {
+        this.customerId = customerId;
+        this.name = name;
+        this.sex = sex;
+        this.phone = phone;
+    }
 }
