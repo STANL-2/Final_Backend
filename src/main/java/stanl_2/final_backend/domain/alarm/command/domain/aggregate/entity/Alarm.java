@@ -29,7 +29,7 @@ public class Alarm {
     @Column(name = "ALR_MSG", nullable = false)
     private String message;
 
-    @Column(name = "ALR_URL", nullable = false)
+    @Column(columnDefinition = "TEXT", name = "ALR_URL", nullable = false)
     private String redirectUrl;
 
     @Column(name = "ALR_TYPE", nullable = false)

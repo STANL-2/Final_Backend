@@ -160,7 +160,12 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
         memberIdList.forEach(member -> {
             String memberId = member;
             String type = "NOTICE";
-            String tag = noticeAlarmDTO.getClassification();
+            String tag = null;
+            if(noticeAlarmDTO.getClassification().equals("important")){
+                tag = "중요";
+            } else {
+                tag = "일반";
+            }
 
             String target = null;
             if(noticeAlarmDTO.getTag().equals("all")){
@@ -172,7 +177,9 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
             }
 
             String message =  target + " 대상 공지사항이 등록되었습니다.";
-            String redirectUrl = "/api/v1/notice/" + noticeAlarmDTO.getNoticeId();
+            String redirectUrl = "/notice/detail?tag=" + noticeAlarmDTO.getTag() + "&classification=" + noticeAlarmDTO.getClassification()
+                    + "&noticeTitle=" + noticeAlarmDTO.getTitle() + "&noticeContent=" + noticeAlarmDTO.getContent()
+                    + "&noticeId=" + noticeAlarmDTO.getNoticeId();
             String createdAt = getCurrentTime();
 
             send(memberId, message, redirectUrl, tag, type, createdAt);
@@ -186,31 +193,33 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
         String type = "CONTRACT";
         String tag = "계약서";
         String message = contract.getCustomerName() +" 고객님의 계약서가 승인되었습니다.";
-        String redirectUrl = "/api/v1/employee/" + contract.getContractId();
+        String redirectUrl = "/contract/list";
         String createdAt = getCurrentTime();
 
         send(contract.getMemberId(), message, redirectUrl, tag, type, createdAt);
     }
 
     @Override
+    @Transactional
     public void sendPurchaseOrderAlarm(PurchaseOrder purchaseOrder) {
 
         String type = "CONTRACT";
         String tag = "발주서";
         String message = purchaseOrder.getTitle() +"  발주서가 승인되었습니다.";
-        String redirectUrl = "/api/v1/purchase-order/admin/" + purchaseOrder.getPurchaseOrderId();
+        String redirectUrl = "/purchase-order/list";
         String createdAt = getCurrentTime();
 
         send(purchaseOrder.getMemberId(), message, redirectUrl, tag, type, createdAt);
     }
 
     @Override
+    @Transactional
     public void sendOrderAlarm(Order order) {
 
         String type = "CONTRACT";
         String tag = "수주서";
         String message = order.getTitle() +" 수주서가 승인되었습니다.";
-        String redirectUrl = "/api/v1/order/employee/" + order.getOrderId();
+        String redirectUrl = "/order/list";
         String createdAt = getCurrentTime();
 
         send(order.getMemberId(), message, redirectUrl, tag, type, createdAt);

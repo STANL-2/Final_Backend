@@ -51,6 +51,7 @@
            AND a.alr_read_stat = false
     </select>
     <resultMap id="allAlarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDTO">
+        <id property="alarmId" column="ALR_ID"/>
         <result property="message" column="ALR_MSG"/>
         <result property="tag" column="ALR_TAG"/>
         <result property="type" column="ALR_TYPE"/>
@@ -60,6 +61,7 @@
     </resultMap>
     <select id="findAllAlarmsByType" resultMap="allAlarmsByType" parameterType="hashmap">
         SELECT
+               a.alr_id,
                a.alr_msg,
                a.alr_tag,
                a.alr_type,

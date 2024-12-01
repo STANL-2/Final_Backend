@@ -33,7 +33,7 @@ public class AlarmScheduler {
     }
 
 //    @Scheduled(cron = "0 0 2 * * *")  // 매일 새벽 2시에 실행)
-    @Scheduled(cron = "0 31 11 * * *")
+    @Scheduled(cron = "0 59 23 * * *")
     @Transactional
     public void alarmTodaySchedule(){
 
@@ -48,9 +48,20 @@ public class AlarmScheduler {
 
             String memberId = schedule.getMemberId();
             String type = "SCHEDULE";
-            String tag = schedule.getTag();
+
+            String tag = null;
+            if(schedule.getTag().equals("MEETING")){
+                tag = "미팅";
+            } else if(schedule.getTag().equals("SESSION")){
+                tag = "회의";
+            } else if(schedule.getTag().equals("VACATION")){
+                tag = "휴가";
+            } else{
+                tag = "교육";
+            }
+
             String message =  "금일 " + Hour + "시 " + Minute + "분에 '" + schedule.getName() + "' 일정이 있습니다";
-            String redirectUrl = "/api/v1/schedule";
+            String redirectUrl = "/schedule";
             String createdAt = getCurrentTime();
 
             alarmCommandService.send(memberId, message, redirectUrl, tag, type, createdAt);
