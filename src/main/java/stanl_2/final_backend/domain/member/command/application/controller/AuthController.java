@@ -52,24 +52,6 @@ public class AuthController {
      *     "organizationId": "ORG_000000001"
      * }
      */
-//    @Operation(summary = "회원가입")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "성공",
-//                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
-//    })
-//    @PostMapping("signup")
-//    public ResponseEntity<MemberResponseMessage> signup(@RequestBody SignupDTO signupDTO) throws GeneralSecurityException {
-//
-//        authCommandService.signup(signupDTO);
-//
-//        return ResponseEntity.ok(MemberResponseMessage.builder()
-//                                                .httpStatus(200)
-//                                                .msg("성공")
-//                                                .result(null)
-//                                                .build());
-//    }
-
-
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
@@ -77,15 +59,16 @@ public class AuthController {
     })
     @PostMapping("signup")
     public ResponseEntity<MemberResponseMessage> signup(@RequestPart("dto") SignupDTO signupDTO,
-            @RequestPart("file") MultipartFile imageUrl) throws GeneralSecurityException {
+                                                        @RequestPart("file") MultipartFile imageUrl)
+                                                        throws GeneralSecurityException {
 
         authCommandService.signup(signupDTO, imageUrl);
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(null)
-                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
     }
 
     /**
@@ -107,10 +90,10 @@ public class AuthController {
         authCommandService.grantAuthority(grantDTO);
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                                                .httpStatus(200)
-                                                .msg("성공")
-                                                .result(null)
-                                                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
     }
 
 
@@ -133,10 +116,10 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 MemberResponseMessage.builder()
-                        .httpStatus(200)
-                        .msg("성공")
-                        .result(responseDTO)
-                        .build()
+                                     .httpStatus(200)
+                                     .msg("성공")
+                                     .result(responseDTO)
+                                     .build()
         );
     }
 
@@ -151,10 +134,10 @@ public class AuthController {
         RefreshDTO newAccessToken = authCommandService.refreshAccessToken(refreshDTO.getRefreshToken());
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(newAccessToken)
-                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(newAccessToken)
+                                                      .build());
     }
 
 
