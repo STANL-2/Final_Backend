@@ -101,7 +101,7 @@ public class ContractController {
                                                                        @RequestParam(required = false) String endAt,
                                                                        @RequestParam(required = false) String customerName,
                                                                        @RequestParam(required = false) String customerClassifcation,
-                                                                       @RequestParam(required = false) String productId,
+                                                                       @RequestParam(required = false) String carName,
                                                                        @RequestParam(required = false) String status,
                                                                        @RequestParam(required = false) String companyName,
                                                                        @RequestParam(required = false) String customerPurchaseCondition,
@@ -116,7 +116,7 @@ public class ContractController {
         contractSearchDTO.setEndAt(endAt);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
-        contractSearchDTO.setProductId(productId);
+        contractSearchDTO.setCarName(carName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
@@ -196,7 +196,7 @@ public class ContractController {
                                                                                @RequestParam(required = false) String endAt,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
-                                                                               @RequestParam(required = false) String productId,
+                                                                               @RequestParam(required = false) String carName,
                                                                                @RequestParam(required = false) String status,
                                                                                @RequestParam(required = false) String companyName,
                                                                                @RequestParam(required = false) String customerPurchaseCondition,
@@ -211,7 +211,7 @@ public class ContractController {
         contractSearchDTO.setEndAt(endAt);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
-        contractSearchDTO.setProductId(productId);
+        contractSearchDTO.setCarName(carName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
@@ -286,11 +286,19 @@ public class ContractController {
                                                                                @RequestParam(required = false) String endAt,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
-                                                                               @RequestParam(required = false) String productId,
+                                                                               @RequestParam(required = false) String carName,
                                                                                @RequestParam(required = false) String status,
                                                                                @RequestParam(required = false) String companyName,
                                                                                @RequestParam(required = false) String customerPurchaseCondition,
+                                                                               @RequestParam(required = false) String sortField,
+                                                                               @RequestParam(required = false) String sortOrder,
                                                                                @PageableDefault(size = 10) Pageable pageable) {
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
         contractSearchDTO.setSearchMemberId(searchMemberId);
@@ -300,7 +308,7 @@ public class ContractController {
         contractSearchDTO.setEndAt(endAt);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
-        contractSearchDTO.setProductId(productId);
+        contractSearchDTO.setCarName(carName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);

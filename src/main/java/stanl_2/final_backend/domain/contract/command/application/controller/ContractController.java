@@ -19,7 +19,7 @@ import stanl_2.final_backend.domain.contract.common.response.ContractResponseMes
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 @Slf4j
-@RestController("contractController")
+@RestController("commandContractController")
 @RequestMapping("/api/v1/contract")
 public class ContractController {
 
@@ -47,7 +47,7 @@ public class ContractController {
                                                         .msg("계약서가 성공적으로 등록되었습니다.")
                                                         .result(null)
                                                         .build());
-                                            }
+    }
 
     @Operation(summary = "계약서 수정(영업사원, 관리자)")
     @ApiResponses(value = {
