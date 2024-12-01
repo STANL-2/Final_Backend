@@ -30,4 +30,5 @@ public class MemberDTO {
     private String account;
     private String centerId;
     private String createdAt;
+    private String updatedAt;
 }
