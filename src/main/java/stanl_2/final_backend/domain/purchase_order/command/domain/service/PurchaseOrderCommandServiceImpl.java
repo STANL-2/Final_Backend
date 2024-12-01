@@ -1,9 +1,11 @@
 package stanl_2.final_backend.domain.purchase_order.command.domain.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.order.command.domain.repository.OrderRepository;
@@ -23,19 +25,23 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
+@Slf4j
 public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final OrderRepository orderRepository;
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
+    private final AlarmCommandService alarmCommandService;
 
     @Autowired
-    public PurchaseOrderCommandServiceImpl(PurchaseOrderRepository purchaseOrderRepository, OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper) {
+    public PurchaseOrderCommandServiceImpl(PurchaseOrderRepository purchaseOrderRepository, OrderRepository orderRepository,
+                                           AuthQueryService authQueryService, ModelMapper modelMapper, AlarmCommandService alarmCommandService) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
+        this.alarmCommandService = alarmCommandService;
     }
 
     private String  getCurrentTime() {
@@ -130,5 +136,8 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         purchaseOrder.setAdminId(adminId);
 
         purchaseOrderRepository.save(purchaseOrder);
+
+        alarmCommandService.sendPurchaseOrderAlarm(purchaseOrder);
     }
 }
+

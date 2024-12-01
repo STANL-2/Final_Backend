@@ -91,7 +91,7 @@ public class PurchaseOrderController {
             @ApiResponse(responseCode = "200", description = "발주서 승인 상태 수정 성공",
                     content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
     })
-    @PutMapping("stauts/{purchaseOrderId}")
+    @PutMapping("status/{purchaseOrderId}")
     public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrderStatus(@PathVariable String purchaseOrderId,
                                                                                PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO,
                                                                                Principal principal) {

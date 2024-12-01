@@ -13,8 +13,10 @@ public class AlarmSelectDTO {
 
     private String message;
     private String type;
+    private String tag;
     private String redirectUrl;
     private Boolean readStatus;
+    private String createdAt;
 
     private String memberLoginId;
 }

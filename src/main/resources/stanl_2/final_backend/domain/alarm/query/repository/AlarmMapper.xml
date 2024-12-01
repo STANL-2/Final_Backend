@@ -20,13 +20,16 @@
 
     <resultMap id="alarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectUnreadDTO">
         <result property="message" column="ALR_MSG"/>
+        <result property="tag" column="ALR_TAG"/>
         <result property="type" column="ALR_TYPE"/>
         <result property="redirectUrl" column="ALR_URL"/>
         <result property="readStatus" column="ALR_READ_STAT"/>
+        <result property="createdAt" column="CREATED_AT"/>
     </resultMap>
     <select id="findReadAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
         SELECT
                a.alr_msg,
+               a.alr_tag,
                a.alr_type,
                a.alr_url,
                a.alr_read_stat
@@ -37,21 +40,32 @@
     </select>
     <select id="findUnReadAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
         SELECT
-        a.alr_msg,
-        a.alr_type,
-        a.alr_url,
-        a.alr_read_stat
-        FROM tb_alarm a
-        WHERE a.mem_id = #{memberId}
-        AND a.alr_type = #{type}
-        AND a.alr_read_stat = false
-    </select>
-    <select id="findAllAlarmsByType" resultMap="alarmsByType" parameterType="hashmap">
-        SELECT
                a.alr_msg,
+               a.alr_tag,
                a.alr_type,
                a.alr_url,
                a.alr_read_stat
+          FROM tb_alarm a
+         WHERE a.mem_id = #{memberId}
+           AND a.alr_type = #{type}
+           AND a.alr_read_stat = false
+    </select>
+    <resultMap id="allAlarmsByType" type="stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDTO">
+        <result property="message" column="ALR_MSG"/>
+        <result property="tag" column="ALR_TAG"/>
+        <result property="type" column="ALR_TYPE"/>
+        <result property="redirectUrl" column="ALR_URL"/>
+        <result property="readStatus" column="ALR_READ_STAT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+    <select id="findAllAlarmsByType" resultMap="allAlarmsByType" parameterType="hashmap">
+        SELECT
+               a.alr_msg,
+               a.alr_tag,
+               a.alr_type,
+               a.alr_url,
+               a.alr_read_stat,
+               a.created_at
           FROM tb_alarm a
          WHERE a.mem_id = #{memberId}
            AND a.alr_type = #{type}

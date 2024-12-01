@@ -39,6 +39,13 @@ public class AlarmQueryServiceImpl implements AlarmQueryService{
 
         AlarmSelectTypeDTO alarmSelectTypeDTO = alarmMapper.findNumberOfAlarmsByType(memberId);
 
+        if(alarmSelectTypeDTO == null){
+            AlarmSelectTypeDTO alarmNullSelectTypeDTO
+                    = new AlarmSelectTypeDTO(0,0,0);
+
+            return alarmNullSelectTypeDTO;
+        }
+
         return alarmSelectTypeDTO;
     }
 

@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.contract.command.application.dto.*;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
@@ -49,9 +50,15 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     private final ModelMapper modelMapper;
     private final AESUtils aesUtils;
     private final S3FileService s3FileService;
+    private final AlarmCommandService alarmCommandService;
 
     @Autowired
-    public ContractCommandServiceImpl(ContractRepository contractRepository, UpdateHistoryRepository updateHistoryRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductQueryService productQueryService, ProductCommandService productCommandService, SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper, AESUtils aesUtils, S3FileService s3FileService) {
+    public ContractCommandServiceImpl(ContractRepository contractRepository, UpdateHistoryRepository updateHistoryRepository,
+                                      AuthQueryService authQueryService, CustomerQueryService customerQueryService,
+                                      MemberQueryService memberQueryService, CustomerCommandService customerCommandService,
+                                      ProductQueryService productQueryService, ProductCommandService productCommandService,
+                                      SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper,
+                                      AESUtils aesUtils, S3FileService s3FileService, AlarmCommandService alarmCommandService) {
         this.contractRepository = contractRepository;
         this.updateHistoryRepository = updateHistoryRepository;
         this.authQueryService = authQueryService;
@@ -64,6 +71,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         this.modelMapper = modelMapper;
         this.aesUtils = aesUtils;
         this.s3FileService = s3FileService;
+        this.alarmCommandService = alarmCommandService;
     }
 
     private String  getCurrentTime() {
@@ -252,6 +260,8 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         contract.setAdminId(adminId);
 
         contractRepository.save(contract);
+
+        alarmCommandService.sendContractAlarm(contract);
 
         if (contractStatusModifyDTO.getStatus().equals("APPROVED")) {
             // 판매 내역 등록

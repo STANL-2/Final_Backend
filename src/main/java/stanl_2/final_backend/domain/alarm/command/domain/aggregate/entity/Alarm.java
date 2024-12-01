@@ -35,6 +35,9 @@ public class Alarm {
     @Column(name = "ALR_TYPE", nullable = false)
     private String type = "NOTICE";
 
+    @Column(name = "ALR_TAG", nullable = false)
+    private String tag;
+
     @Column(name = "ALR_READ_STAT", nullable = false)
     private Boolean readStatus;
 

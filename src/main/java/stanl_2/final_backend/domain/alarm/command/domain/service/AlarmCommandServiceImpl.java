@@ -14,9 +14,12 @@ import stanl_2.final_backend.domain.alarm.command.domain.repository.AlarmReposit
 import stanl_2.final_backend.domain.alarm.command.domain.repository.EmitterRepository;
 import stanl_2.final_backend.domain.alarm.common.exception.AlarmCommonException;
 import stanl_2.final_backend.domain.alarm.common.exception.AlarmErrorCode;
+import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
+import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
+import stanl_2.final_backend.domain.purchase_order.command.domain.aggregate.entity.PurchaseOrder;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
@@ -106,9 +109,9 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public void send(String memberId, String message, String redirectUrl, String type, String createdAt){
+    public void send(String memberId, String message, String redirectUrl, String tag, String type, String createdAt){
 
-        Alarm alarm = alarmRepository.save(createAlarm(memberId, message, redirectUrl, type, createdAt));
+        Alarm alarm = alarmRepository.save(createAlarm(memberId, message, redirectUrl, tag, type, createdAt));
 
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByMemberId(memberId);
         sseEmitters.forEach(
@@ -121,12 +124,13 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public Alarm createAlarm(String memberId, String message, String redirectUrl, String type, String createdAt) {
+    public Alarm createAlarm(String memberId, String message, String redirectUrl, String tag, String type, String createdAt) {
 
         Alarm alarm = new Alarm();
         alarm.setMemberId(memberId);
         alarm.setMessage(message);
         alarm.setRedirectUrl(redirectUrl);
+        alarm.setTag(tag);
         alarm.setType(type);
         alarm.setReadStatus(false);
         alarm.setCreatedAt(createdAt);
@@ -148,8 +152,45 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
             String redirectUrl = "/api/v1/notice/" + noticeAlarmDTO.getNoticeId();
             String createdAt = getCurrentTime();
 
-            send(memberId, message, redirectUrl, type, createdAt);
+            send(memberId, message, redirectUrl, tag, type, createdAt);
         });
+    }
+
+    @Override
+    @Transactional
+    public void sendContractAlarm(Contract contract) {
+
+        String type = "CONTRACT";
+        String tag = "계약서";
+        String message = contract.getCustomerName() +" 고객님의 계약서가 승인되었습니다.";
+        String redirectUrl = "/api/v1/employee/" + contract.getContractId();
+        String createdAt = getCurrentTime();
+
+        send(contract.getMemberId(), message, redirectUrl, tag, type, createdAt);
+    }
+
+    @Override
+    public void sendPurchaseOrderAlarm(PurchaseOrder purchaseOrder) {
+
+        String type = "CONTRACT";
+        String tag = "발주서";
+        String message = purchaseOrder.getTitle() +"  발주서가 승인되었습니다.";
+        String redirectUrl = "/api/v1/purchase-order/admin/" + purchaseOrder.getPurchaseOrderId();
+        String createdAt = getCurrentTime();
+
+        send(purchaseOrder.getMemberId(), message, redirectUrl, tag, type, createdAt);
+    }
+
+    @Override
+    public void sendOrderAlarm(Order order) {
+
+        String type = "CONTRACT";
+        String tag = "수주서";
+        String message = order.getTitle() +" 수주서가 승인되었습니다.";
+        String redirectUrl = "/api/v1/order/employee/" + order.getOrderId();
+        String createdAt = getCurrentTime();
+
+        send(order.getMemberId(), message, redirectUrl, tag, type, createdAt);
     }
 
     @Override

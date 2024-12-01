@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.alarm.scheduler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 
 
 @Service("AlarmSchdulerService")
+@Slf4j
 public class AlarmScheduler {
 
     private final AlarmCommandService alarmCommandService;
@@ -31,7 +33,7 @@ public class AlarmScheduler {
     }
 
 //    @Scheduled(cron = "0 0 2 * * *")  // 매일 새벽 2시에 실행)
-    @Scheduled(cron = "0 8 22 * * *")
+    @Scheduled(cron = "0 31 11 * * *")
     @Transactional
     public void alarmTodaySchedule(){
 
@@ -46,12 +48,12 @@ public class AlarmScheduler {
 
             String memberId = schedule.getMemberId();
             String type = "SCHEDULE";
-            String message = "[" + type + "] 금일 " + Hour + "시 " + Minute + "분에 '"
-                                 + schedule.getName() + "' 일정이 있습니다";
-            String redirectUrl = "/api/v1/schedule/" + schedule.getMemberId();
+            String tag = schedule.getTag();
+            String message =  "금일 " + Hour + "시 " + Minute + "분에 '" + schedule.getName() + "' 일정이 있습니다";
+            String redirectUrl = "/api/v1/schedule";
             String createdAt = getCurrentTime();
 
-            alarmCommandService.send(memberId, message, redirectUrl, type, createdAt);
+            alarmCommandService.send(memberId, message, redirectUrl, tag, type, createdAt);
         });
     }
 }

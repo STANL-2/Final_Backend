@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.order.command.domain.service;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
@@ -23,11 +24,14 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final OrderRepository orderRepository;
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
+    private final AlarmCommandService alarmCommandService;
 
-    public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper) {
+    public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService,
+                                   ModelMapper modelMapper, AlarmCommandService alarmCommandService) {
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
+        this.alarmCommandService = alarmCommandService;
     }
 
     private String  getCurrentTime() {
@@ -106,5 +110,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         order.setAdminId(adminId);
 
         orderRepository.save(order);
+
+        alarmCommandService.sendOrderAlarm(order);
     }
 }
