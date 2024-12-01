@@ -1,20 +1,25 @@
 package stanl_2.final_backend.domain.purchase_order.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderExcelDTO;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectIdDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO;
 import stanl_2.final_backend.domain.purchase_order.query.repository.PurchaseOrderMapper;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
+
 import java.util.List;
 @Service
 public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService {
@@ -22,12 +27,14 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final AuthQueryService authQueryService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ExcelUtilsV1 excelUtilsV1;
 
     @Autowired
-    public PurchaseOrderQueryServiceImpl(PurchaseOrderMapper purchaseOrderMapper, AuthQueryService authQueryService, RedisTemplate<String, Object> redisTemplate) {
+    public PurchaseOrderQueryServiceImpl(PurchaseOrderMapper purchaseOrderMapper, AuthQueryService authQueryService, RedisTemplate<String, Object> redisTemplate, ExcelUtilsV1 excelUtilsV1) {
         this.purchaseOrderMapper = purchaseOrderMapper;
         this.authQueryService = authQueryService;
         this.redisTemplate = redisTemplate;
+        this.excelUtilsV1 = excelUtilsV1;
     }
 
     // 영업 관리자 조회
@@ -147,15 +154,38 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<PurchaseOrderSelectSearchDTO> purchaseOrders = purchaseOrderMapper.findSearchPurchaseOrder(offset, pageSize, purchaseOrderSelectSearchDTO);
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<PurchaseOrderSelectSearchDTO> purchaseOrders = purchaseOrderMapper.findSearchPurchaseOrder(offset, pageSize, purchaseOrderSelectSearchDTO, sortField, sortOrder);
 
         if (purchaseOrders == null) {
             throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
         }
 
-        Integer count = purchaseOrderMapper.findSearchPurchaseOrderCount(purchaseOrderSelectSearchDTO);
-        int totalPurchaseOrder = (count != null) ? count : 0;
+        int count = purchaseOrderMapper.findSearchPurchaseOrderCount(purchaseOrderSelectSearchDTO);
+        if (count == 0) {
+            throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
+        }
+        System.out.println("dkjdkdk:");
+        return new PageImpl<>(purchaseOrders, pageable, count);
+    }
 
-        return new PageImpl<>(purchaseOrders, pageable, totalPurchaseOrder);
+    @Override
+    @Transactional(readOnly = true)
+    public void exportPurchaseOrder(HttpServletResponse response) {
+
+        List<PurchaseOrderExcelDTO> purchaseOrderExcels = purchaseOrderMapper.findPurchaseOrderForExcel();
+        if(purchaseOrderExcels == null) {
+            throw new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND);
+        }
+        excelUtilsV1.download(PurchaseOrderExcelDTO.class, purchaseOrderExcels, "purchaseOrderExcel", response);
     }
 }

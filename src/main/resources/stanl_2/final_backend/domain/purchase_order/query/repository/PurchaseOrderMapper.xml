@@ -18,7 +18,7 @@
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
-    <resultMap id="purchaseOrderResultMap" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO">
+    <resultMap id="purchaseOrderResultMap" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO">
         <id property="purchaseOrderId" column="PUR_ORD_ID"/>
         <result property="title" column="PUR_ORD_TTL"/>
         <result property="status" column="PUR_ORD_STAT"/>
@@ -26,6 +26,7 @@
         <result property="adminName" column="ADMIN_NAME"/>
         <result property="memberName" column="MEM_NAME"/>
         <result property="productName" column="PROD_NAME"/>
+        <result property="createdAt" column="CREATED_AT"/>
     </resultMap>
 
     <!-- 영업관리자 조회 -->
@@ -201,11 +202,13 @@
         WHERE a.active = TRUE;
     </select>
 
-    <select id="findSearchPurchaseOrder" resultMap="purchaseOrderResultMap" parameterType="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO">
+    <select id="findSearchPurchaseOrder" resultMap="purchaseOrderResultMap">
         SELECT
         a.pur_ord_id,
         a.pur_ord_ttl,
         a.pur_ord_stat,
+        a.created_at,
+        a.mem_id,
         b.ord_ttl,
         d.mem_name AS admin_name,
         c.mem_name AS mem_name,
@@ -239,31 +242,70 @@
                 AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'purchaseOrderId'">
+                        ORDER BY a.pur_ord_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.pur_ord_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.pur_ord_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productName'">
+                        ORDER BY f.prod_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY c.mem_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'createdAt'">
+                        ORDER BY a.created_at ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
-    <select id="findSearchPurchaseOrderCount" resultType="Integer" parameterType="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO">
+    <select id="findSearchPurchaseOrderCount" resultType="int">
         SELECT
         COUNT(*) AS cnt
         FROM tb_purchase_order a
         <where>
             a.active = TRUE
-            <if test="title != null">
-                AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
             </if>
-            <if test="status != null">
-                AND a.ord_stat = #{status}
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTO.status}
             </if>
-            <if test="adminId != null">
-                AND a.admin_id = #{adminId}
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
             </if>
-            <if test="searchMemberId != null">
-                AND a.mem_id = #{searchMemberId}
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
-            <if test="startDate != null and endDate != null">
-                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
             </if>
         </where>
+    </select>
+
+    <select id="findPurchaseOrderForExcel" resultMap="purchaseOrderExcel">
+        SELECT
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        a.pur_ord_id,
+        a.created_at
     </select>
 </mapper>

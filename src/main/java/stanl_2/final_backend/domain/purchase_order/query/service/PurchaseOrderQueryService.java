@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.purchase_order.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO;
@@ -18,4 +19,6 @@ public interface PurchaseOrderQueryService {
     Page<PurchaseOrderSelectAllDTO> selectAllPurchaseOrder(Pageable pageable, PurchaseOrderSelectAllDTO purchaseOrderSelectAllDTO);
 
     PurchaseOrderSelectIdDTO selectDetailPurchaseOrder(PurchaseOrderSelectIdDTO purchaseOrderSelectIdDTO);
+
+    void exportPurchaseOrder(HttpServletResponse response);
 }

@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.purchase_order.command.domain.service;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import stanl_2.final_backend.domain.purchase_order.command.domain.aggregate.enti
 import stanl_2.final_backend.domain.purchase_order.command.domain.repository.PurchaseOrderRepository;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -29,13 +31,15 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     private final OrderRepository orderRepository;
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
+    private final S3FileService s3FileService;
 
     @Autowired
-    public PurchaseOrderCommandServiceImpl(PurchaseOrderRepository purchaseOrderRepository, OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper) {
+    public PurchaseOrderCommandServiceImpl(PurchaseOrderRepository purchaseOrderRepository, OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper, S3FileService s3FileService) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
+        this.s3FileService = s3FileService;
     }
 
     private String  getCurrentTime() {
@@ -88,6 +92,10 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
             throw new OrderCommonException(OrderErrorCode.ORDER_STATUS_NOT_APPROVED);
         }
 
+        String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderModifyDTO.getContent());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderModifyDTO.getTitle());
+        purchaseOrderModifyDTO.setContent(updatedS3Url);
+
         PurchaseOrder updatePurchaseOrder = modelMapper.map(purchaseOrderModifyDTO, PurchaseOrder.class);
         updatePurchaseOrder.setCreatedAt(purchaseOrder.getCreatedAt());
         updatePurchaseOrder.setUpdatedAt(purchaseOrder.getUpdatedAt());
@@ -126,6 +134,10 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(purchaseOrderStatusModifyDTO.getPurchaseOrderId())
                 .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
 
+        String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderStatusModifyDTO.getContent());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderStatusModifyDTO.getTitle());
+
+        purchaseOrder.setContent(updatedS3Url);
         purchaseOrder.setStatus(purchaseOrderStatusModifyDTO.getStatus());
         purchaseOrder.setAdminId(adminId);
 

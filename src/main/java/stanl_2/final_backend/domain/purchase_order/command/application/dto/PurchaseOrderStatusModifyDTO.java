@@ -8,6 +8,8 @@ import lombok.*;
 @Getter
 public class PurchaseOrderStatusModifyDTO {
     private String purchaseOrderId;
+    private String title;
     private String status;
+    private String content;
     private String adminId;
 }
