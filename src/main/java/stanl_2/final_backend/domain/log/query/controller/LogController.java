@@ -74,8 +74,6 @@ public class LogController {
     @GetMapping("excel")
     public void exportCustomer(HttpServletResponse response){
 
-        log.info("!!!!!");
-
         logQueryService.exportLogToExcel(response);
     }
 }

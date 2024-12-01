@@ -48,20 +48,11 @@ public class LogQueryServiceImpl implements LogQueryService {
     @Override
     public void exportLogToExcel(HttpServletResponse response) {
 
-        log.info("222");
         List<LogExcelDTO> logExcels = logMapper.findLogForExcel();
 
-        log.info("2lkjlasdjfjskdfj");
         if(logExcels == null) {
             throw new LogCommonException(LogErrorCode.LOG_NOT_FOUND);
         }
-
-        log.info("$$$$$$$$$$$$$$$$$$$$$");
-
-        for(int i=0;i<logExcels.size();i++){
-            System.out.println(logExcels.get(i));
-        }
-
 
         excelUtilsV1.download(LogExcelDTO.class, logExcels, "logExcel", response);
     }
