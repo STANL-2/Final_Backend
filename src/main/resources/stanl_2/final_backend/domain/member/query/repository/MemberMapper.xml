@@ -24,6 +24,7 @@
         <result property="account" column="MEM_ACC"/>
         <result property="centerId" column="CENTER_ID"/>
         <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
     </resultMap>
 
     <select id="findMemberInfoById" resultMap="Member" parameterType="String">
@@ -45,7 +46,9 @@
                a.mem_mil,
                a.mem_bank_name,
                a.mem_acc,
-               a.center_id
+               a.center_id,
+               a.created_at,
+               a.updated_at
           FROM tb_member a
          WHERE a.mem_login_id = #{ loginId }
     </select>

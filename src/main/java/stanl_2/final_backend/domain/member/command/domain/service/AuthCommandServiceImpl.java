@@ -133,7 +133,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 accessToken, refreshToken,
                 aesUtils.decrypt(memberDetails.getMember().getName()),
                 memberDetails.getMember().getPosition(),
-                firstRole
+                firstRole,
+                aesUtils.decrypt(memberDetails.getMember().getImageUrl())
         );
     }
 
