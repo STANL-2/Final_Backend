@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.sales_history.command.domain.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,20 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandService {
 
     private final SalesHistoryRepository salesHistoryRepository;
     private final ContractQueryService contractQueryService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public SalesHistoryCommandServiceImpl(SalesHistoryRepository salesHistoryRepository,ContractQueryService contractQueryService) {
+    public SalesHistoryCommandServiceImpl(SalesHistoryRepository salesHistoryRepository, ContractQueryService contractQueryService, ModelMapper modelMapper) {
         this.salesHistoryRepository = salesHistoryRepository;
         this.contractQueryService = contractQueryService;
+        this.modelMapper = modelMapper;
     }
 
     private String getCurrentTime() {
@@ -38,6 +42,7 @@ public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandServic
     @Override
     @Transactional
     public void registerSalesHistory(String contractId) {
+
         ContractSeletIdDTO salesHistoryDTO = new ContractSeletIdDTO();
         SalesHistoryRegistDTO salesHistoryRegistDTO = new SalesHistoryRegistDTO();
 
@@ -66,6 +71,10 @@ public class SalesHistoryCommandServiceImpl implements SalesHistoryCommandServic
         }else if(customerPurchaseCondition.equals("LEASE")){
             salesHistoryRegistDTO.setIncentive(responseContract.getTotalSales() * 0.045);
         }
+
+        SalesHistory salesHistory = modelMapper.map(salesHistoryRegistDTO, SalesHistory.class);
+
+        salesHistoryRepository.save(salesHistory);
     }
 
     @Override
