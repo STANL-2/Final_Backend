@@ -62,6 +62,8 @@
         <result property="averageTotalSales" column="average_total_sales"/>
         <result property="averageTotalIncentive" column="average_total_incentive"/>
         <result property="averageTotalPerformance" column="average_total_performance"/>
+        <result property="year" column="year"/>
+        <result property="month" column="month"/>
     </resultMap>
 
 
@@ -79,7 +81,47 @@
         a.created_at
         FROM tb_sales_history a
         WHERE a.active = TRUE AND a.mem_id = #{searcherId}
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'salesHistoryId'">
+                        ORDER BY a.sal_hist_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryIncentive'">
+                        ORDER BY a.sal_hist_ince ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                        ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryTotalSales'">
+                        ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -119,7 +161,47 @@
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'salesHistoryId'">
+                        ORDER BY a.sal_hist_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryIncentive'">
+                        ORDER BY a.sal_hist_ince ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                        ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryTotalSales'">
+                        ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -167,7 +249,47 @@
             </if>
             AND a.active = TRUE
         </where>
-        ORDER BY a.created_at desc
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'salesHistoryId'">
+                        ORDER BY a.sal_hist_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryIncentive'">
+                        ORDER BY a.sal_hist_ince ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                        ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryTotalSales'">
+                        ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -209,7 +331,47 @@
         a.created_at
         FROM tb_sales_history a
         WHERE a.active = TRUE
-        ORDER BY a.created_at DESC
+     <choose>
+         <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+         <when test="sortField != null and sortOrder != null">
+             <choose>
+                 <when test="sortField == 'salesHistoryId'">
+                     ORDER BY a.sal_hist_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'salesHistoryIncentive'">
+                     ORDER BY a.sal_hist_ince ${sortOrder}
+                 </when>
+                 <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                     ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                 </when>
+                 <when test="sortField == 'salesHistoryTotalSales'">
+                     ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                 </when>
+                 <when test="sortField == 'contractId'">
+                     ORDER BY a.conr_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'customerId'">
+                     ORDER BY a.cust_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'productId'">
+                     ORDER BY a.prod_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'memberId'">
+                     ORDER BY a.mem_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'centerId'">
+                     ORDER BY a.cent_id ${sortOrder}
+                 </when>
+                 <otherwise>
+                     ORDER BY a.created_at DESC
+                 </otherwise>
+             </choose>
+         </when>
+         <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+         <otherwise>
+             ORDER BY a.created_at DESC
+         </otherwise>
+     </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -404,6 +566,12 @@
 
     <select id="findStatisticsAverageBySearch" resultMap="SalesHistoryAverageResultMap">
         SELECT
+        <if test="salesHistoryRankedDataDTO.month != null">
+            SUMMARY.MONTH AS MONTH,
+        </if>
+        <if test="salesHistoryRankedDataDTO.year != null">
+            SUMMARY.YEAR AS YEAR,
+        </if>
         AVG(total_incentive) AS average_total_incentive,
         AVG(total_performance) AS average_total_performance,
         AVG(total_sales) AS average_total_sales
@@ -411,7 +579,15 @@
         SELECT
         SUM(a.sal_hist_ince) AS total_incentive,
         SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales
+        SUM(a.sal_hist_tota_sale) AS total_sales,
+        <choose>
+            <when test="salesHistoryRankedDataDTO.month != null">
+                LEFT(a.created_at, 7) AS MONTH
+            </when>
+            <when test="salesHistoryRankedDataDTO.year != null">
+                LEFT(a.created_at, 4) AS YEAR
+            </when>
+        </choose>
         FROM tb_sales_history a
         <where>
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
@@ -427,8 +603,21 @@
                 GROUP BY a.cent_id
             </otherwise>
         </choose>
-        ) AS summary
+        <if test="salesHistoryRankedDataDTO.month != null">
+            , LEFT(a.created_at, 7)
+        </if>
+        <if test="salesHistoryRankedDataDTO.year != null">
+            , LEFT(a.created_at, 7)
+        </if>
+        ) AS SUMMARY
+        <if test="salesHistoryRankedDataDTO.month != null">
+            GROUP BY SUMMARY.MONTH
+        </if>
+        <if test="salesHistoryRankedDataDTO.year != null">
+            GROUP BY SUMMARY.YEAR
+        </if>
     </select>
+
 
     <select id="findStatisticsBySearchCount" resultType="int">
         SELECT

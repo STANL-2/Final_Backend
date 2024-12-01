@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,10 +42,17 @@ public class SalesHistoryController {
     })
     @GetMapping("/employee")
     public ResponseEntity<SalesHistoryResponseMessage> getAllSalesHistoryByEmployee(Principal principal,
-                                                                                    @PageableDefault(size = 20) Pageable pageable){
+                                                                                    @PageableDefault(size = 20) Pageable pageable,
+                                                                                    @RequestParam(required = false) String sortField,
+                                                                                    @RequestParam(required = false) String sortOrder){
         SalesHistorySelectDTO salesHistorySelectDTO = new SalesHistorySelectDTO();
 
         salesHistorySelectDTO.setSearcherName(principal.getName());
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<SalesHistorySelectDTO> responseSalesHistory = salesHistoryQueryService.selectAllSalesHistoryByEmployee(salesHistorySelectDTO, pageable);
 
@@ -62,7 +71,14 @@ public class SalesHistoryController {
                     content = @Content(mediaType = "application/json"))
     })
     @GetMapping("")
-    public ResponseEntity<SalesHistoryResponseMessage> getAllSalesHistory(@PageableDefault(size = 20) Pageable pageable){
+    public ResponseEntity<SalesHistoryResponseMessage> getAllSalesHistory(@PageableDefault(size = 20) Pageable pageable,
+                                                                          @RequestParam(required = false) String sortField,
+                                                                          @RequestParam(required = false) String sortOrder){
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<SalesHistorySelectDTO> responseSalesHistory = salesHistoryQueryService.selectAllSalesHistory(pageable);
 
@@ -106,10 +122,17 @@ public class SalesHistoryController {
     @PostMapping("/employee/search")
     public ResponseEntity<SalesHistoryResponseMessage> getSalesHistorySearchByEmployee(@RequestBody SalesHistorySearchDTO salesHistorySearchDTO
                                                                                            ,Principal principal,
-                                                                                    @PageableDefault(size = 20) Pageable pageable){
+                                                                                    @PageableDefault(size = 20) Pageable pageable,
+                                                                                       @RequestParam(required = false) String sortField,
+                                                                                       @RequestParam(required = false) String sortOrder){
 
         salesHistorySearchDTO.setSearcherName(principal.getName());
 
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
         Page<SalesHistorySelectDTO> responseSalesHistory = salesHistoryQueryService.selectSalesHistorySearchByEmployee(salesHistorySearchDTO, pageable);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
@@ -128,8 +151,15 @@ public class SalesHistoryController {
     })
     @PostMapping("/search")
     public ResponseEntity<SalesHistoryResponseMessage> getSalesHistoryBySearch(@RequestBody SalesHistorySearchDTO salesHistorySearchDTO,
-                                                                                       @PageableDefault(size = 20) Pageable pageable){
+                                                                                       @PageableDefault(size = 20) Pageable pageable,
+                                                                               @RequestParam(required = false) String sortField,
+                                                                               @RequestParam(required = false) String sortOrder){
 
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
         Page<SalesHistorySelectDTO> responseSalesHistory = salesHistoryQueryService.selectSalesHistoryBySearch(salesHistorySearchDTO, pageable);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
@@ -440,7 +470,7 @@ public class SalesHistoryController {
         salesHistoryQueryService.exportSalesHistoryToExcel(response);
     }
 
-    @Operation(summary = "전체 통계(실적,수당,매출액) 월별 검색(전체)")
+    @Operation(summary = "전체 통계(실적,수당,매출액) 월별 검색(관리자, 담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
@@ -456,12 +486,12 @@ public class SalesHistoryController {
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
-                .msg("전체 통계(실적,수당,매출액) 월별 검색(전체) 성공")
+                .msg("전체 통계(실적,수당,매출액) 월별 검색(관리자, 담당자) 성공")
                 .result(responseSalesHistory)
                 .build());
     }
 
-    @Operation(summary = "전체 통계(실적,수당,매출액) 연도 별 검색(전체)")
+    @Operation(summary = "전체 통계(실적,수당,매출액) 연도 별 검색(관리자, 담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
@@ -477,12 +507,12 @@ public class SalesHistoryController {
         Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectAllStatisticsByYear(salesHistoryRankedDataDTO, pageable);
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
-                .msg("전체 통계(실적,수당,매출액) 연도 별 검색(전체)")
+                .msg("전체 통계(실적,수당,매출액) 연도 별 검색(관리자, 담당자)")
                 .result(responseSalesHistory)
                 .build());
     }
 
-    @Operation(summary = "전체 통계(실적,수당,매출액) 조회기간 별 검색(전체)")
+    @Operation(summary = "전체 통계(실적,수당,매출액) 조회기간 별 검색(관리자, 담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
@@ -498,7 +528,7 @@ public class SalesHistoryController {
         Page<SalesHistoryRankedDataDTO> responseSalesHistory = salesHistoryQueryService.selectAllStatisticsBySearch(salesHistoryRankedDataDTO, pageable);
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
-                .msg("전체 통계(실적,수당,매출액) 조회기간 별 검색(전체)")
+                .msg("전체 통계(실적,수당,매출액) 조회기간 별 검색(관리자, 담당자)")
                 .result(responseSalesHistory)
                 .build());
     }

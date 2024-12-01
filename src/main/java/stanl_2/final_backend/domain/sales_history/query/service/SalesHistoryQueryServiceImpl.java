@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
@@ -49,9 +50,17 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
         String searcherId = authQueryService.selectMemberIdByLoginId(salesHistorySelectDTO.getSearcherName());
 
-        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistoryByEmployee(size,offset, searcherId);
+        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistoryByEmployee(size,offset, searcherId, sortField, sortOrder);
 
         int total = salesHistoryMapper.findSalesHistoryCountByEmployee(searcherId);
 
@@ -100,9 +109,19 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        System.out.println("sortField & sortOrder: " + sortField + " & " + sortOrder);
+
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
 
-        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistorySearchByEmployee(size,offset, salesHistorySearchDTO);
+        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistorySearchByEmployee(size,offset, salesHistorySearchDTO, sortField, sortOrder);
 
         int total = salesHistoryMapper.findSalesHistorySearchCountByEmployee(salesHistorySearchDTO);
 
@@ -136,7 +155,15 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistoryBySearch(size,offset, salesHistorySearchDTO);
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistoryBySearch(size,offset, salesHistorySearchDTO, sortField, sortOrder);
 
         int total = salesHistoryMapper.findSalesHistoryCountBySearch(salesHistorySearchDTO);
 
@@ -171,7 +198,15 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findAllSalesHistory(size,offset);
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findAllSalesHistory(size,offset, sortField, sortOrder);
 
         int total = salesHistoryMapper.findSalesHistoryCount();
 

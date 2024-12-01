@@ -116,8 +116,9 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
         CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoById(customerId);
 
-        String customerName = aesUtils.decrypt(customerInfoDTO.getName());
+//        String customerName = aesUtils.decrypt(customerInfoDTO.getName());
 
-        return customerName;
+//        return customerName;
+        return customerInfoDTO.getName();
     }
 }
