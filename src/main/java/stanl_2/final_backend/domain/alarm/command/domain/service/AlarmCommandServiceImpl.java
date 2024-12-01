@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -142,13 +144,34 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
     @Transactional
     public void sendNoticeAlarm(NoticeAlarmDTO noticeAlarmDTO){
 
-        List<String> memberIdList = memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag());
+        List<String> memberIdList = new ArrayList<>();
+
+        if(noticeAlarmDTO.getTag().equals("all")){
+            // 결과 합치기
+            memberIdList.addAll(memberQueryService.selectMemberByRole("employee"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("admin"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
+            // 중복 제거
+            memberIdList = new ArrayList<>(new HashSet<>(memberIdList));
+        } else {
+            memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag());
+        }
 
         memberIdList.forEach(member -> {
             String memberId = member;
             String type = "NOTICE";
             String tag = noticeAlarmDTO.getClassification();
-            String message = "[" + tag + "] 영업 관리자 대상 공지사항이 등록되었습니다.";
+
+            String target = null;
+            if(noticeAlarmDTO.getTag().equals("all")){
+                target = "전체";
+            } else if(noticeAlarmDTO.getTag().equals("admin")) {
+                target = "영업관리자";
+            } else {
+                target = "영업담당자";
+            }
+
+            String message =  target + " 대상 공지사항이 등록되었습니다.";
             String redirectUrl = "/api/v1/notice/" + noticeAlarmDTO.getNoticeId();
             String createdAt = getCurrentTime();
 

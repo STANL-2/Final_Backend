@@ -93,7 +93,7 @@ public class PurchaseOrderController {
     })
     @PutMapping("status/{purchaseOrderId}")
     public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrderStatus(@PathVariable String purchaseOrderId,
-                                                                               PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO,
+                                                                               @RequestBody PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO,
                                                                                Principal principal) {
 
         purchaseOrderStatusModifyDTO.setPurchaseOrderId(purchaseOrderId);
