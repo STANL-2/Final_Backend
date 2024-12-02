@@ -1,20 +1,26 @@
 package stanl_2.final_backend.domain.order.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
+import stanl_2.final_backend.domain.order.query.dto.OrderExcelDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectAllDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import stanl_2.final_backend.domain.order.query.repository.OrderMapper;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 @Service
@@ -22,13 +28,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
     private final OrderMapper orderMapper;
     private final AuthQueryService authQueryService;
+    private final MemberQueryService memberQueryService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ExcelUtilsV1 excelUtilsV1;
 
     @Autowired
-    public OrderQueryServiceImpl(OrderMapper orderMapper, AuthQueryService authQueryService, RedisTemplate redisTemplate) {
+    public OrderQueryServiceImpl(OrderMapper orderMapper, AuthQueryService authQueryService, MemberQueryService memberQueryService, RedisTemplate redisTemplate, ExcelUtilsV1 excelUtilsV1) {
         this.orderMapper = orderMapper;
         this.authQueryService = authQueryService;
+        this.memberQueryService = memberQueryService;
         this.redisTemplate = redisTemplate;
+        this.excelUtilsV1 = excelUtilsV1;
     }
 
     // 영업사원 조회
@@ -147,19 +157,48 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) {
+    public Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException {
 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrder(offset, pageSize, orderSelectSearchDTO);
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrder(offset, pageSize, orderSelectSearchDTO, sortField, sortOrder);
 
         if (orders == null || orders.isEmpty()) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        for (OrderSelectSearchDTO order : orders) {
+            if (order.getMemberId() != null) {
+                String memberName = memberQueryService.selectNameById(order.getMemberId());
+                order.setMemberName(memberName);
+            }
         }
 
         Integer count = orderMapper.findOrderSearchCount(orderSelectSearchDTO);
         int totalOrder = (count != null) ? count : 0;
 
         return new PageImpl<>(orders, pageable, totalOrder);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void exportOrder(HttpServletResponse response) {
+        List<OrderExcelDTO> orderExcels = orderMapper.findOrderForExcel();
+
+        if (orderExcels == null) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        excelUtilsV1.download(OrderExcelDTO.class, orderExcels, "orderExcel", response);
     }
 }

@@ -286,6 +286,7 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void exportContractToExcel(HttpServletResponse response) {
         List<ContractExcelDTO> contractExcels = contractMapper.findContractForExcel();
 
