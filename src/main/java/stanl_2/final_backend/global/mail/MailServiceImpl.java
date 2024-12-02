@@ -67,6 +67,27 @@ public class MailServiceImpl implements MailService {
         return templateEngine.process("mail", context);
     }
 
+    private String setPwdContext(String newPwd) {
+
+        // thymeleaf 기반의 html 파일에 값을 넣고 연결
+        Context context = new Context();
+        // templateengine과 classloadertemplateresolver를 활용하여 resource/template에 위치한 mail.html 연결
+        TemplateEngine templateEngine = new TemplateEngine();
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+
+        // 매개변수 저장
+        context.setVariable("tempPassword", newPwd);
+
+        templateResolver.setPrefix("templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCacheable(false);
+
+        templateEngine.setTemplateResolver(templateResolver);
+
+        return templateEngine.process("pwdMail", context);
+    }
+
     private MimeMessage createEmailForm(String email) throws MessagingException {
 
         String authCode = createCode();
@@ -91,7 +112,7 @@ public class MailServiceImpl implements MailService {
         message.addRecipients(MimeMessage.RecipientType.TO, email);
         message.setSubject("STANL2 본인 확인");
         message.setFrom(configEmail);
-        message.setText(setContext(newPwd), "utf-8", "html");
+        message.setText(setPwdContext(newPwd), "utf-8", "html");
 
         return message;
     }
