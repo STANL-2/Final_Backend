@@ -58,6 +58,7 @@
         <result property="redirectUrl" column="ALR_URL"/>
         <result property="readStatus" column="ALR_READ_STAT"/>
         <result property="createdAt" column="CREATED_AT"/>
+        <result property="memberId" column="MEM_ID"/>
     </resultMap>
     <select id="findAllAlarmsByType" resultMap="allAlarmsByType" parameterType="hashmap">
         SELECT
@@ -67,7 +68,8 @@
                a.alr_type,
                a.alr_url,
                a.alr_read_stat,
-               a.created_at
+               a.created_at,
+               a.mem_id
           FROM tb_alarm a
          WHERE a.mem_id = #{memberId}
            AND a.alr_type = #{type}
