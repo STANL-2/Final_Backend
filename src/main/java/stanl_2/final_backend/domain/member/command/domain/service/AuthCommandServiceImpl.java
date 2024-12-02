@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Member;
@@ -22,8 +23,10 @@ import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Membe
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRoleRepository;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
+import stanl_2.final_backend.global.mail.MailService;
 import stanl_2.final_backend.global.security.service.MemberDetails;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -31,9 +34,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Date;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,6 +50,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final AuthenticationManager authenticationManager;
     private final AuthQueryService authQueryService;
     private final AESUtils aesUtils;
+    private final S3FileService s3FileService;
+    private final MailService mailService;
 
     @Autowired
     public AuthCommandServiceImpl(MemberRepository memberRepository,
@@ -58,7 +60,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                                   ModelMapper modelMapper,
                                   AuthenticationManager authenticationManager,
                                   AuthQueryService authQueryService,
-                                  AESUtils aesUtils) {
+                                  AESUtils aesUtils,
+                                  S3FileService s3FileService,
+                                  MailService mailService) {
         this.memberRepository = memberRepository;
         this.memberRoleRepository = memberRoleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -66,11 +70,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         this.authenticationManager = authenticationManager;
         this.authQueryService = authQueryService;
         this.aesUtils = aesUtils;
+        this.s3FileService = s3FileService;
+        this.mailService = mailService;
     }
 
     @Override
     @Transactional
-    public void signup(SignupDTO signupDTO) throws GeneralSecurityException {
+    public void signup(SignupDTO signupDTO, MultipartFile imageUrl) throws GeneralSecurityException {
+
+        // 이미지 업로드 및 암호화
+        signupDTO.setImageUrl(aesUtils.encrypt(s3FileService.uploadOneFile(imageUrl)));
 
         String hashPwd = passwordEncoder.encode(signupDTO.getPassword());
         signupDTO.setPassword(hashPwd);
@@ -128,8 +137,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 accessToken, refreshToken,
                 aesUtils.decrypt(memberDetails.getMember().getName()),
                 memberDetails.getMember().getPosition(),
-                firstRole
+                firstRole,
+                aesUtils.decrypt(memberDetails.getMember().getImageUrl())
         );
+    }
+
+    @Override
+    @Transactional
+    public void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException {
+        String email = authQueryService.findEmail(checkMailDTO);
+
+
+
     }
 
     private String generateAccessToken(String username, String authorities, SecretKey secretKey) {

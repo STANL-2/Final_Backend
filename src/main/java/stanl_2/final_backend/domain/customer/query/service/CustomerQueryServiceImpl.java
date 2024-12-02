@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.customer.common.exception.CustomerCommonException;
@@ -78,9 +79,17 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
     @Override
     @Transactional(readOnly = true)
     public Page<CustomerSearchDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException {
-        int page = pageable.getPageNumber();
+        int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
-        int offset = page*size;
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
 
         Map<String, Object> params = new HashMap<>();
         params.put("offset", offset);
@@ -89,6 +98,9 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         params.put("name", customerSearchDTO.getName());
         params.put("sex", customerSearchDTO.getSex());
         params.put("phone", aesUtils.encrypt(customerSearchDTO.getPhone()));
+
+        params.put("sortField", sortField);
+        params.put("sortOrder", sortOrder);
 
         List<CustomerSearchDTO> customerList = customerMapper.findCustomerByConditions(params);
 
