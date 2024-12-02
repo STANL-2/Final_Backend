@@ -19,6 +19,7 @@ import stanl_2.final_backend.domain.sales_history.common.response.SalesHistoryRe
 import stanl_2.final_backend.domain.sales_history.query.dto.*;
 import stanl_2.final_backend.domain.sales_history.query.service.SalesHistoryQueryService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class SalesHistoryController {
     public ResponseEntity<SalesHistoryResponseMessage> getSalesHistoryBySearch(@RequestBody SalesHistorySearchDTO salesHistorySearchDTO,
                                                                                        @PageableDefault(size = 20) Pageable pageable,
                                                                                @RequestParam(required = false) String sortField,
-                                                                               @RequestParam(required = false) String sortOrder){
+                                                                               @RequestParam(required = false) String sortOrder) throws GeneralSecurityException {
 
 
         if (sortField != null && sortOrder != null) {
@@ -283,7 +284,7 @@ public class SalesHistoryController {
             @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
                     content = @Content(mediaType = "application/json"))
     })
-    @GetMapping("statistics")
+    @PostMapping("statistics")
     public ResponseEntity<SalesHistoryResponseMessage> getStatistics(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
                                                               @PageableDefault(size = 20) Pageable pageable){
 

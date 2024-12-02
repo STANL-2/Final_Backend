@@ -19,6 +19,7 @@ import stanl_2.final_backend.domain.sales_history.query.repository.SalesHistoryM
 import org.springframework.data.redis.core.RedisTemplate;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.List;
 
@@ -151,7 +152,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
     }
 
     @Override
-    public Page<SalesHistorySelectDTO> selectSalesHistoryBySearch(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable) {
+    public Page<SalesHistorySelectDTO> selectSalesHistoryBySearch(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable) throws GeneralSecurityException {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
@@ -161,6 +162,13 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         if (sort.isSorted()) {
             sortField = sort.iterator().next().getProperty();
             sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        if(salesHistorySearchDTO.getCustomerName() != null){
+            System.out.println("고객 리스트1: " + salesHistorySearchDTO.getCustomerList() + "검색어\n" + salesHistorySearchDTO.getCustomerName());
+
+            salesHistorySearchDTO.setCustomerList(customerQueryService.selectCustomerId(salesHistorySearchDTO.getCustomerName()));
+            System.out.println("고객 리스트: " + salesHistorySearchDTO.getCustomerList() + "검색어\n" + salesHistorySearchDTO.getCustomerName());
         }
 
         List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistoryBySearch(size,offset, salesHistorySearchDTO, sortField, sortOrder);

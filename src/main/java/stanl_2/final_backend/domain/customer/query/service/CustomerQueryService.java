@@ -13,6 +13,8 @@ import java.util.List;
 public interface CustomerQueryService {
     CustomerDTO selectCustomerInfo(String customerId) throws GeneralSecurityException;
 
+    List<String> selectCustomerId(String customerName) throws GeneralSecurityException;
+
     Page<CustomerDTO> selectCustomerList(Pageable pageable) throws GeneralSecurityException;
 
     Page<CustomerSearchDTO> findCustomerByCondition(Pageable pageable, CustomerSearchDTO customerSearchDTO) throws GeneralSecurityException;

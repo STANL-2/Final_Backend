@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.sales_history.query.dto.*;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 public interface SalesHistoryQueryService {
@@ -38,7 +39,7 @@ public interface SalesHistoryQueryService {
 
     Page<SalesHistorySelectDTO> selectSalesHistorySearchByEmployee(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable);
 
-    Page<SalesHistorySelectDTO> selectSalesHistoryBySearch(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable);
+    Page<SalesHistorySelectDTO> selectSalesHistoryBySearch(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable) throws GeneralSecurityException;
 
     Page<SalesHistoryStatisticsAverageDTO> selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 

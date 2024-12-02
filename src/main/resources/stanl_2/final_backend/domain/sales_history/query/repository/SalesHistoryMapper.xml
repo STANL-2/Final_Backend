@@ -232,22 +232,28 @@
         a.created_at
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
             <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
-                a.cent_id IN
+                AND a.cent_id IN
                 <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
                     #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
                 </foreach>
             </if>
             <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
         <choose>
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
@@ -298,22 +304,28 @@
         COUNT(*) AS cnt
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
             <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
-                a.cent_id IN
+                AND a.cent_id IN
                 <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
                     #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
                 </foreach>
             </if>
             <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
     </select>
 

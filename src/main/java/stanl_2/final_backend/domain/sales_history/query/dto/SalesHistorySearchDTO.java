@@ -18,4 +18,6 @@ public class SalesHistorySearchDTO {
     private List<String> memberList;
     private List<String> centerList;
     private String orderBy;
+    private String customerName;
+    private List<String> customerList;
 }

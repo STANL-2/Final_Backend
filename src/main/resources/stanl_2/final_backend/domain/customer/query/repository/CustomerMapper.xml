@@ -195,4 +195,22 @@
                a.mem_id
           FROM tb_customer_info a
     </select>
+
+    <select id="findCustomerInfoByName" resultMap="Customer" parameterType="String">
+        SELECT
+        a.cust_id,
+        a.cust_name,
+        a.cust_age,
+        a.cust_sex,
+        a.cust_pho,
+        a.cust_emer_pho,
+        a.cust_ema,
+        a.mem_id,
+        a.active,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at
+        FROM tb_customer_info a
+        WHERE a.cust_name = #{ customerName }
+    </select>
 </mapper>

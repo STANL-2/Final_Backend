@@ -69,8 +69,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         List<MemberDTO> memberList = memberMapper.findMembersByCenterId(centerId);
 
-
-
         memberList.forEach(dto -> {
             try {
                 dto.setName(selectNameById(dto.getMemberId()));
