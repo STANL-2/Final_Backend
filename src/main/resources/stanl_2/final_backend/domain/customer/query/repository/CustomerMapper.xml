@@ -114,7 +114,32 @@
                 AND a.cust_id = #{ customerId }
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.cust_name ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'sex'">
+                        ORDER BY a.cust_sex ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'phone'">
+                        ORDER BY a.cust_pho ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${ sortOrder }
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{ size } OFFSET #{ offset }
     </select>
 
