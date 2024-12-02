@@ -22,4 +22,5 @@ public class PurchaseOrderSelectSearchDTO {
     private String searchMemberId;
     private String startDate;
     private String endDate;
+    private String createdAt;
 }

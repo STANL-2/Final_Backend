@@ -10,6 +10,7 @@ public class SignupDTO {
     private String loginId;
     private String password;
     private String name;
+    private String imageUrl;
     private String email;
     private Integer age;
     private String sex;

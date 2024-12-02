@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface AuthMapper {
     String selectIdByMemberName(@Param("loginId") String loginId);
+
+    String findEmailByLoginId(@Param("loginId") String loginId);
 }
