@@ -27,9 +27,11 @@ public class NoticeController {
     private final AuthQueryService authQueryService;
 
     private final S3FileServiceImpl s3FileService;
+    private final NoticeModifyDTO noticeModifyDTO;
 
     @Autowired
-    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService){
+    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, NoticeModifyDTO noticeModifyDTO){
+        this.noticeModifyDTO = noticeModifyDTO;
         this.noticeCommandService = noticeCommandService;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
@@ -42,11 +44,20 @@ public class NoticeController {
     })
     @PostMapping(value = "")
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("dto") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
-                                                            @RequestPart("file") MultipartFile file,
+                                                            @RequestPart(value = "file", required = false)  MultipartFile file,
                                                             Principal principal){
         String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
         noticeRegistDTO.setMemberId(memberId);
-        noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        if (file != null && !file.isEmpty()) {
+            noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+            System.out.println("response:1");
+        }else if(file==null || file.isEmpty()){
+            System.out.println("response:2");
+            noticeRegistDTO.setFileUrl(null);
+        } else {
+            System.out.println("response:3");
+            noticeRegistDTO.setFileUrl(null);
+        }
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
@@ -63,13 +74,23 @@ public class NoticeController {
     @PutMapping("{noticeId}")
     public ResponseEntity<NoticeResponseMessage> modifyNotice(Principal principal,
                                                               @PathVariable String noticeId,
-                                                              @RequestBody NoticeModifyDTO noticeModifyRequestDTO){
+                                                              @RequestPart("dto") NoticeModifyDTO noticeModifyDTO, // JSON 데이터
+                                                              @RequestPart(value = "file", required = false)  MultipartFile file){
         String memberLoginId = principal.getName();
-        noticeModifyRequestDTO.setMemberLoginId(memberLoginId);
-        noticeModifyRequestDTO.setNoticeId(noticeId);
+        noticeModifyDTO.setMemberId(memberLoginId);
+        noticeModifyDTO.setContent(noticeModifyDTO.getContent());
 
-        NoticeModifyDTO noticeModifyDTO = noticeCommandService.modifyNotice(noticeId,noticeModifyRequestDTO,principal);
-
+        if (file != null && !file.isEmpty()) {
+            noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+            System.out.println("1");
+        }else if(file==null || file.isEmpty()) {
+            System.out.println("2");
+            noticeModifyDTO.setFileUrl(null);
+        } else {
+            System.out.println("3");
+            noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }
+        noticeCommandService.modifyNotice(noticeId,noticeModifyDTO, principal);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                         .httpStatus(200)
                         .msg("성공")
