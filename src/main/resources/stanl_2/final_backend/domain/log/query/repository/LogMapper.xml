@@ -75,7 +75,38 @@
                 AND a.uri LIKE CONCAT('%', #{ searchLogDTO.uri }, '%')
             </if>
         </where>
-        ORDER BY a.request_time DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'logId'">
+                        ORDER BY a.log_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'ipAddress'">
+                        ORDER BY a.ip_address ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'requestTime'">
+                        ORDER BY a.request_time ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.status ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'method'">
+                        ORDER BY a.method ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'uri'">
+                        ORDER BY a.uri ${ sortOrder }
+                    </when>
+                    <otherwise>
+                        ORDER BY a.request_time DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.request_time DESC
+            </otherwise>
+        </choose>
         LIMIT #{ size } OFFSET #{ offset }
     </select>
 
