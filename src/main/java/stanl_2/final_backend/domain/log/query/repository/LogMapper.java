@@ -18,7 +18,7 @@ public interface LogMapper {
             @Param("sortOrder") String sortOrder
     );
 
-    int findLogsCnt();
+    int findLogsCnt(@Param("searchLogDTO") LogSearchDTO searchLogDTO);
 
     List<LogExcelDTO> findLogForExcel();
 }

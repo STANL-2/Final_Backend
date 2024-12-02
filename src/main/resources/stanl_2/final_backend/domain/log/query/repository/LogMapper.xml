@@ -37,6 +37,29 @@
         SELECT
          COUNT(*) AS cnt
           FROM tb_log a
+        <where>
+            <if test="searchLogDTO.logId != null and searchLogDTO.logId != ''">
+                AND a.log_id LIKE CONCAT('%', #{ searchLogDTO.logId }, '%')
+            </if>
+            <if test="searchLogDTO.ipAddress != null and searchLogDTO.ipAddress != ''">
+                AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
+            </if>
+            <if test="searchLogDTO.requestTime_start != null and searchLogDTO.requestTime_start != ''">
+                AND a.request_time &gt;= #{ searchLogDTO.requestTime_start }
+            </if>
+            <if test="searchLogDTO.requestTime_end != null and searchLogDTO.requestTime_end != ''">
+                AND a.request_time &lt;= #{ searchLogDTO.requestTime_end }
+            </if>
+            <if test="searchLogDTO.status != null and searchLogDTO.status != ''">
+                AND a.status LIKE CONCAT('%', #{ searchLogDTO.status }, '%')
+            </if>
+            <if test="searchLogDTO.method != null and searchLogDTO.method != ''">
+                AND a.method LIKE CONCAT('%', #{ searchLogDTO.method }, '%')
+            </if>
+            <if test="searchLogDTO.uri != null and searchLogDTO.uri != ''">
+                AND a.uri LIKE CONCAT('%', #{ searchLogDTO.uri }, '%')
+            </if>
+        </where>
     </select>
 
     <select id="findLogs" resultMap="Log" parameterType="String">
@@ -62,8 +85,11 @@
             <if test="searchLogDTO.ipAddress != null">
                 AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
             </if>
-            <if test="searchLogDTO.requestTime_start != null and searchLogDTO.requestTime_end != null">
-                AND a.request_time BETWEEN #{ searchLogDTO.requestTime_start } AND #{ searchLogDTO.requestTime_end }
+            <if test="searchLogDTO.requestTime_start != null">
+                AND a.request_time &gt;= #{ searchLogDTO.requestTime_start }
+            </if>
+            <if test="searchLogDTO.requestTime_end != null">
+                AND a.request_time &lt;= #{ searchLogDTO.requestTime_end }
             </if>
             <if test="searchLogDTO.status != null">
                 AND a.status LIKE CONCAT('%', #{ searchLogDTO.status }, '%')
