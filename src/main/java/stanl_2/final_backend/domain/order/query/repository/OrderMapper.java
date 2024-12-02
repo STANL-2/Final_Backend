@@ -38,4 +38,6 @@ public interface OrderMapper {
     int findOrderSearchCount(OrderSelectSearchDTO orderSelectSearchDTO);
 
     List<OrderExcelDTO> findOrderForExcel();
+
+    String selectByContractId(String orderId);
 }

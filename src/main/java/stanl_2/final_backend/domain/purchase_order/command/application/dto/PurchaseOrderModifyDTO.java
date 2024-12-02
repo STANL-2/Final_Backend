@@ -10,6 +10,5 @@ public class PurchaseOrderModifyDTO {
     private String purchaseOrderId;
     private String title;
     private String content;
-    private String orderId;
     private String memberId;
 }

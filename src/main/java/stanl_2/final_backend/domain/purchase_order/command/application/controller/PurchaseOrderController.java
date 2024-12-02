@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderModifyDTO;
@@ -14,6 +16,7 @@ import stanl_2.final_backend.domain.purchase_order.command.application.dto.Purch
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderStatusModifyDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.service.PurchaseOrderCommandService;
 import stanl_2.final_backend.domain.purchase_order.common.response.PurchaseOrderResponseMessage;
+import stanl_2.final_backend.domain.purchase_order.query.service.PurchaseOrderQueryService;
 
 import java.security.Principal;
 
@@ -23,10 +26,12 @@ import java.security.Principal;
 public class PurchaseOrderController {
 
     private final PurchaseOrderCommandService purchaseOrderCommandService;
+    private final PurchaseOrderQueryService purchaseOrderQueryService;
 
     @Autowired
-    public PurchaseOrderController(PurchaseOrderCommandService purchaseOrderCommandService) {
+    public PurchaseOrderController(PurchaseOrderCommandService purchaseOrderCommandService, @Qualifier("purchaseOrderQueryService") PurchaseOrderQueryService purchaseOrderQueryService) {
         this.purchaseOrderCommandService = purchaseOrderCommandService;
+        this.purchaseOrderQueryService = purchaseOrderQueryService;
     }
 
     @Operation(summary = "발주서 등록(영업관리자)")
@@ -107,5 +112,4 @@ public class PurchaseOrderController {
                                                             .result(null)
                                                             .build());
     }
-
 }
