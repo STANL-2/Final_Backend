@@ -5,9 +5,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import stanl_2.final_backend.domain.order.query.service.OrderQueryService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @RestController("queryOrderController")
@@ -151,12 +155,16 @@ public class OrderController {
     })
     @GetMapping("search")
     public ResponseEntity<OrderResponseMessage> getSearchOrder(@RequestParam(required = false) String title,
+                                                               @RequestParam(required = false) String orderId,
                                                                @RequestParam(required = false) String status,
                                                                @RequestParam(required = false) String adminId,
                                                                @RequestParam(required = false) String searchMemberId,
                                                                @RequestParam(required = false) String startDate,
                                                                @RequestParam(required = false) String endDate,
-                                                               @PageableDefault(size = 10) Pageable pageable) {
+                                                               @RequestParam(required = false) String sortField,
+                                                               @RequestParam(required = false) String sortOrder,
+                                                               @RequestParam(required = false) String productName,
+                                                               @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
 
         OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
         orderSelectSearchDTO.setTitle(title);
@@ -165,6 +173,13 @@ public class OrderController {
         orderSelectSearchDTO.setSearchMemberId(searchMemberId);
         orderSelectSearchDTO.setStartDate(startDate);
         orderSelectSearchDTO.setEndDate(endDate);
+        orderSelectSearchDTO.setProductName(productName);
+        orderSelectSearchDTO.setOrderId(orderId);
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<OrderSelectSearchDTO> responseOrders = orderQueryService.selectSearchOrders(orderSelectSearchDTO, pageable);
 
@@ -173,5 +188,16 @@ public class OrderController {
                 .msg("수주서 검색 조회 성공")
                 .result(responseOrders)
                 .build());
+    }
+
+    @Operation(summary = "수주서 엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 엑셀 다운로드 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("excel")
+    public void exportOrder(HttpServletResponse response) {
+
+        orderQueryService.exportOrder(response);
     }
 }
