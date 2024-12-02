@@ -90,10 +90,9 @@ public class MailServiceImpl implements MailService {
         if(redisService.getKey(toEmail) != null) {
             redisService.clearMailCache(toEmail);
         }
-        System.out.println("!!!!!!2");
 
         MimeMessage emailForm = createEmailForm(toEmail);
-        System.out.println("!!!!!!3");
+
         mailSender.send(emailForm);
     }
 

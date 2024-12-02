@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
+import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
+import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
 import java.security.GeneralSecurityException;
@@ -153,11 +155,28 @@ public class AuthController {
         authCommandService.sendEmail(checkMailDTO);
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                        .httpStatus(200)
-                        .msg("성공")
-                        .result(null)
-                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
     }
 
+
+    @Operation(summary = "임시 비밀번호 재발급")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
+    })
+    @PostMapping("checknum")
+    public ResponseEntity<MemberResponseMessage> checkMail(@RequestBody CheckNumDTO checkNumDTO) throws GeneralSecurityException, MessagingException {
+
+        authCommandService.checkNum(checkNumDTO);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
+    }
 
 }

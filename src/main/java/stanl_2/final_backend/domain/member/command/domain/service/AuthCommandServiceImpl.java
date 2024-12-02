@@ -23,6 +23,8 @@ import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Membe
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.MemberRole;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRoleRepository;
+import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
+import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
@@ -42,6 +44,7 @@ import java.util.stream.Collectors;
 @Service("commandAuthService")
 public class AuthCommandServiceImpl implements AuthCommandService {
 
+    private final RedisService redisService;
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
@@ -64,7 +67,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                                   AuthQueryService authQueryService,
                                   AESUtils aesUtils,
                                   S3FileService s3FileService,
-                                  MailService mailService) {
+                                  MailService mailService, RedisService redisService) {
         this.memberRepository = memberRepository;
         this.memberRoleRepository = memberRoleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -74,6 +77,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         this.aesUtils = aesUtils;
         this.s3FileService = s3FileService;
         this.mailService = mailService;
+        this.redisService = redisService;
     }
 
     @Override
@@ -147,9 +151,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException, MessagingException {
-        String email = authQueryService.findEmail(checkMailDTO);
+        String email = authQueryService.findEmail(checkMailDTO.getLoginId());
 
         mailService.sendEmail(email);
+    }
+
+    @Override
+    public void checkNum(CheckNumDTO checkNumDTO) throws GeneralSecurityException {
+        String email = authQueryService.findEmail(checkNumDTO.getLoginId());
+
+        if (checkNumDTO.getNumber() != null && !checkNumDTO.getNumber().equals(String.valueOf(redisService.getKey(email)))) {
+            throw new MemberCommonException(MemberErrorCode.NUMBER_NOT_FOUND);
+        }
     }
 
     private String generateAccessToken(String username, String authorities, SecretKey secretKey) {
