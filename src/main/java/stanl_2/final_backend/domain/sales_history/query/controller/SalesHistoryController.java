@@ -328,7 +328,7 @@ public class SalesHistoryController {
     public ResponseEntity<SalesHistoryResponseMessage> getStatisticsEmployeeAverageBySearch(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
                                                                              @PageableDefault(size = 20) Pageable pageable){
 
-        SalesHistoryStatisticsAverageDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsAverageBySearch(salesHistoryRankedDataDTO,pageable);
+        Page<SalesHistoryStatisticsAverageDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsAverageBySearch(salesHistoryRankedDataDTO,pageable);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
@@ -348,7 +348,7 @@ public class SalesHistoryController {
     public ResponseEntity<SalesHistoryResponseMessage> getStatisticsCenterAverageBySearch(@RequestBody SalesHistoryRankedDataDTO salesHistoryRankedDataDTO,
                                                                                     @PageableDefault(size = 20) Pageable pageable){
 
-        SalesHistoryStatisticsAverageDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsAverageBySearch(salesHistoryRankedDataDTO,pageable);
+        Page<SalesHistoryStatisticsAverageDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsAverageBySearch(salesHistoryRankedDataDTO,pageable);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)

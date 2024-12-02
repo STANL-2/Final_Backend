@@ -577,15 +577,21 @@
         AVG(total_sales) AS average_total_sales
         FROM (
         SELECT
+        <if test="salesHistoryRankedDataDTO.month != null">
+            LEFT(a.created_at, 7) AS MONTH,
+        </if>
+        <if test="salesHistoryRankedDataDTO.year != null">
+            LEFT(a.created_at, 4) AS YEAR,
+        </if>
         SUM(a.sal_hist_ince) AS total_incentive,
         SUM(a.sal_hist_no_of_veh) AS total_performance,
         SUM(a.sal_hist_tota_sale) AS total_sales,
         <choose>
             <when test="salesHistoryRankedDataDTO.month != null">
-                LEFT(a.created_at, 7) AS MONTH
+                LEFT(a.created_at, 7)
             </when>
             <when test="salesHistoryRankedDataDTO.year != null">
-                LEFT(a.created_at, 4) AS YEAR
+                LEFT(a.created_at, 4)
             </when>
         </choose>
         FROM tb_sales_history a
@@ -607,7 +613,7 @@
             , LEFT(a.created_at, 7)
         </if>
         <if test="salesHistoryRankedDataDTO.year != null">
-            , LEFT(a.created_at, 7)
+            , LEFT(a.created_at, 4)
         </if>
         ) AS SUMMARY
         <if test="salesHistoryRankedDataDTO.month != null">
@@ -616,6 +622,7 @@
         <if test="salesHistoryRankedDataDTO.year != null">
             GROUP BY SUMMARY.YEAR
         </if>
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
 
@@ -954,7 +961,20 @@
             </if>
             AND a.active = TRUE
         </where>
-        GROUP BY LEFT(a.created_at, 7)
+        <choose>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                GROUP BY a.mem_id
+            </when>
+            <otherwise>
+                GROUP BY a.cent_id
+            </otherwise>
+        </choose>
+        <if test="salesHistoryRankedDataDTO.month != null">
+            , LEFT(a.created_at, 7)
+        </if>
+        <if test="salesHistoryRankedDataDTO.year != null">
+            , LEFT(a.created_at, 4)
+        </if>
         <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
@@ -985,7 +1005,20 @@
             </if>
             AND a.active = TRUE
         </where>
-        GROUP BY LEFT(a.created_at, 4)
+        <choose>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                GROUP BY a.mem_id
+            </when>
+            <otherwise>
+                GROUP BY a.cent_id
+            </otherwise>
+        </choose>
+        <if test="salesHistoryRankedDataDTO.month != null">
+            , LEFT(a.created_at, 7)
+        </if>
+        <if test="salesHistoryRankedDataDTO.year != null">
+            , LEFT(a.created_at, 4)
+        </if>
         <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
@@ -1017,6 +1050,14 @@
             AND a.active = TRUE
         </where>
         <choose>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                GROUP BY a.mem_id
+            </when>
+            <otherwise>
+                GROUP BY a.cent_id
+            </otherwise>
+        </choose>
+        <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
             </when>
@@ -1032,5 +1073,7 @@
         </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
+
+
 
 </mapper>

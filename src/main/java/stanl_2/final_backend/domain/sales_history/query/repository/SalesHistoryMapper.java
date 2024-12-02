@@ -92,7 +92,9 @@ public interface SalesHistoryMapper {
 
     int findSalesHistoryCountBySearch(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
-    SalesHistoryStatisticsAverageDTO findStatisticsAverageBySearch(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
+    List<SalesHistoryStatisticsAverageDTO> findStatisticsAverageBySearch(@Param("size") int size
+            , @Param("offset") int offset
+            ,@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     List<SalesHistoryExcelDownload> findSalesHistoryForExcel();
 
@@ -107,6 +109,7 @@ public interface SalesHistoryMapper {
     List<SalesHistoryRankedDataDTO> findAllStatisticsBySearch(@Param("size") int size
             , @Param("offset") int offset,
                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
+
 }
 
 

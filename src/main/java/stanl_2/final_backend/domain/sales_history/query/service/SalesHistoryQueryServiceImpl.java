@@ -339,15 +339,19 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public SalesHistoryStatisticsAverageDTO selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+    public Page<SalesHistoryStatisticsAverageDTO> selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
 
-        SalesHistoryStatisticsAverageDTO salesHistoryStatisticsAverageDTO = salesHistoryMapper.findStatisticsAverageBySearch(salesHistoryRankedDataDTO);
+        List<SalesHistoryStatisticsAverageDTO> salesHistoryStatisticsAverageList = salesHistoryMapper.findStatisticsAverageBySearch(size,offset,salesHistoryRankedDataDTO);
 
-        if(salesHistoryStatisticsAverageDTO == null){
+        int total = salesHistoryMapper.findStatisticsBySearchCount(salesHistoryRankedDataDTO);
+
+        if(salesHistoryStatisticsAverageList == null){
             throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
         }
 
-        return salesHistoryStatisticsAverageDTO;
+        return new PageImpl<>(salesHistoryStatisticsAverageList, pageable, total);
     }
 
     @Override

@@ -40,7 +40,7 @@ public interface SalesHistoryQueryService {
 
     Page<SalesHistorySelectDTO> selectSalesHistoryBySearch(SalesHistorySearchDTO salesHistorySearchDTO, Pageable pageable);
 
-    SalesHistoryStatisticsAverageDTO selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+    Page<SalesHistoryStatisticsAverageDTO> selectStatisticsAverageBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 
     void exportSalesHistoryToExcel(HttpServletResponse response);
 
@@ -49,4 +49,5 @@ public interface SalesHistoryQueryService {
     Page<SalesHistoryRankedDataDTO> selectAllStatisticsByYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 
     Page<SalesHistoryRankedDataDTO> selectAllStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
 }
