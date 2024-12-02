@@ -141,4 +141,22 @@ public class AuthController {
     }
 
 
+    @Operation(summary = "임시 비밀번호 재발급")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
+    })
+    @PostMapping("checkmail")
+    public ResponseEntity<MemberResponseMessage> checkMail(@RequestBody CheckMailDTO checkMailDTO) throws GeneralSecurityException {
+
+        authCommandService.sendEmail(checkMailDTO);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                        .httpStatus(200)
+                        .msg("성공")
+                        .result(null)
+                .build());
+    }
+
+
 }

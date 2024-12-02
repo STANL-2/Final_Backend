@@ -13,4 +13,6 @@ public interface AuthCommandService {
     void grantAuthority(GrantDTO grantDTO);
 
     SigninResponseDTO signin(SigninRequestDTO signinRequestDTO) throws GeneralSecurityException;
+
+    void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException;
 }

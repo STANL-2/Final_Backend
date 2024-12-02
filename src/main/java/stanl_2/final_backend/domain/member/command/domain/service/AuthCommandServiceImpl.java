@@ -26,6 +26,7 @@ import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
+import stanl_2.final_backend.global.mail.MailService;
 import stanl_2.final_backend.global.security.service.MemberDetails;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -50,6 +51,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final AuthQueryService authQueryService;
     private final AESUtils aesUtils;
     private final S3FileService s3FileService;
+    private final MailService mailService;
 
     @Autowired
     public AuthCommandServiceImpl(MemberRepository memberRepository,
@@ -59,7 +61,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                                   AuthenticationManager authenticationManager,
                                   AuthQueryService authQueryService,
                                   AESUtils aesUtils,
-                                  S3FileService s3FileService) {
+                                  S3FileService s3FileService,
+                                  MailService mailService) {
         this.memberRepository = memberRepository;
         this.memberRoleRepository = memberRoleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -68,6 +71,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         this.authQueryService = authQueryService;
         this.aesUtils = aesUtils;
         this.s3FileService = s3FileService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -136,6 +140,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 firstRole,
                 aesUtils.decrypt(memberDetails.getMember().getImageUrl())
         );
+    }
+
+    @Override
+    @Transactional
+    public void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException {
+        String email = authQueryService.findEmail(checkMailDTO);
+
+
+
     }
 
     private String generateAccessToken(String username, String authorities, SecretKey secretKey) {
