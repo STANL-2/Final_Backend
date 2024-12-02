@@ -1,9 +1,6 @@
 package stanl_2.final_backend.domain.order.query.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,4 +19,5 @@ public class OrderSelectSearchDTO {
     private String productName;
     private String startDate;
     private String endDate;
+    private String createdAt;
 }

@@ -260,19 +260,33 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<ContractSearchDTO> contracts = contractMapper.findContractBySearch(offset, pageSize, contractSearchDTO);
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<ContractSearchDTO> contracts = contractMapper.findContractBySearch(offset, pageSize, contractSearchDTO, sortField, sortOrder);
 
         if (contracts == null) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
-        Integer count = contractMapper.findContractBySearchCount(contractSearchDTO);
-        int totalContract = (count != null) ? count : 0;
+        int totalContract = contractMapper.findContractBySearchCount(contractSearchDTO);
+
+        if (totalContract == 0) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
 
         return new PageImpl<>(contracts, pageable, totalContract);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void exportContractToExcel(HttpServletResponse response) {
         List<ContractExcelDTO> contractExcels = contractMapper.findContractForExcel();
 

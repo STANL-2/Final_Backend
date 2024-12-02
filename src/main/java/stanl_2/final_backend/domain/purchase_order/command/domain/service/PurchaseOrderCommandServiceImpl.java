@@ -129,6 +129,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         purchaseOrder.setStatus(purchaseOrderStatusModifyDTO.getStatus());
         purchaseOrder.setAdminId(adminId);
 
+
         purchaseOrderRepository.save(purchaseOrder);
     }
 }

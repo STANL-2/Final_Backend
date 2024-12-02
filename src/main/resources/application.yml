@@ -41,6 +41,10 @@ logging:
     org:
       springframework:
         security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
+      apache.ibatis: DEBUG
+      mybatis: DEBUG
+    jdbc.sqltiming: DEBUG
+    jdbc.resultsettable: TRACE
 
 cloud:
   aws:
@@ -53,3 +57,7 @@ cloud:
       static: ${S3_REGION}
     stack:
       auto: false
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
