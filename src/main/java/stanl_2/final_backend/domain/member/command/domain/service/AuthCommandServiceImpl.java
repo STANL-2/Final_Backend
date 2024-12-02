@@ -168,6 +168,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
+    @Transactional
     public void checkNum(CheckNumDTO checkNumDTO) throws GeneralSecurityException {
         String email = authQueryService.findEmail(checkNumDTO.getLoginId());
 
