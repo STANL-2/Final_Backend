@@ -10,8 +10,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import stanl_2.final_backend.global.exception.GlobalCommonException;
-import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.redis.RedisService;
 
 import java.security.SecureRandom;
@@ -129,16 +127,6 @@ public class MailServiceImpl implements MailService {
         MimeMessage emailForm = createEmailForm(toEmail);
 
         mailSender.send(emailForm);
-    }
-
-
-    @Override
-    public Boolean verifyEmailCode(String email, String code) {
-        if(!code.equals(redisService.getKey(email))){
-            throw new GlobalCommonException(GlobalErrorCode.NUMBER_VALIDATION_FAIL);
-        }
-
-        return true;
     }
 
     @Override
