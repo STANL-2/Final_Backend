@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.purchase_order.command.domain.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Service
 public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandService {
 
@@ -64,7 +66,13 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
             throw new OrderCommonException(OrderErrorCode.ORDER_STATUS_NOT_APPROVED);
         }
 
+        String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderRegistDTO.getContent());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderRegistDTO.getTitle());
+
+
         PurchaseOrder purchaseOrder = modelMapper.map(purchaseOrderRegistDTO, PurchaseOrder.class);
+        purchaseOrder.setMemberId(memberId);
+        purchaseOrder.setContent(updatedS3Url);
 
         purchaseOrderRepository.save(purchaseOrder);
     }
@@ -81,8 +89,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
                 .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
 
         // 수주서가 존재하는지 확인
-        Order order = orderRepository.findByOrderIdAndMemberId(
-                purchaseOrderModifyDTO.getOrderId(), purchaseOrderModifyDTO.getMemberId());
+        Order order = orderRepository.findByOrderIdAndMemberId(purchaseOrder.getOrderId(), memberId);
         if (order == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
@@ -94,13 +101,15 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
         String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderModifyDTO.getContent());
         String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderModifyDTO.getTitle());
-        purchaseOrderModifyDTO.setContent(updatedS3Url);
 
         PurchaseOrder updatePurchaseOrder = modelMapper.map(purchaseOrderModifyDTO, PurchaseOrder.class);
         updatePurchaseOrder.setCreatedAt(purchaseOrder.getCreatedAt());
         updatePurchaseOrder.setUpdatedAt(purchaseOrder.getUpdatedAt());
         updatePurchaseOrder.setStatus(purchaseOrder.getStatus());
         updatePurchaseOrder.setActive(purchaseOrder.getActive());
+        updatePurchaseOrder.setContent(updatedS3Url);
+        updatePurchaseOrder.setOrderId(purchaseOrder.getOrderId());
+        updatePurchaseOrder.setMemberId(memberId);
 
         purchaseOrderRepository.save(updatePurchaseOrder);
 
@@ -134,10 +143,6 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(purchaseOrderStatusModifyDTO.getPurchaseOrderId())
                 .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
 
-        String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderStatusModifyDTO.getContent());
-        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderStatusModifyDTO.getTitle());
-
-        purchaseOrder.setContent(updatedS3Url);
         purchaseOrder.setStatus(purchaseOrderStatusModifyDTO.getStatus());
         purchaseOrder.setAdminId(adminId);
 

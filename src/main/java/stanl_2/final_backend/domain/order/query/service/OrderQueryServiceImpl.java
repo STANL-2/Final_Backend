@@ -191,6 +191,14 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     @Override
+    public String selectByContractId(String orderId) {
+
+        String contractId = orderMapper.selectByContractId(orderId);
+
+        return contractId;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public void exportOrder(HttpServletResponse response) {
         List<OrderExcelDTO> orderExcels = orderMapper.findOrderForExcel();

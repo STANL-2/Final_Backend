@@ -112,16 +112,4 @@ public class PurchaseOrderController {
                                                             .result(null)
                                                             .build());
     }
-
-    @Operation(summary = "엑셀 다운로드")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "엑셀 다운로드 성공",
-                    content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
-    })
-    @PutMapping("excel")
-    public ResponseEntity<PurchaseOrderResponseMessage> exportPurchaseOrder(HttpServletResponse response) {
-
-        purchaseOrderQueryService.exportPurchaseOrder(response);
-    }
-
 }

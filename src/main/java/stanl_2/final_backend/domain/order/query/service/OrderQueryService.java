@@ -23,5 +23,7 @@ public interface OrderQueryService {
 
     Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException;
 
+    String selectByContractId(String orderId);
+
     void exportOrder(HttpServletResponse response);
 }

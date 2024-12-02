@@ -1,10 +1,12 @@
-package stanl_2.final_backend.domain.purchase_order.command.application.dto;
+package stanl_2.final_backend.domain.purchase_order.query.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import stanl_2.final_backend.global.excel.ExcelColumnName;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class PurchaseOrderExcelDTO {
 

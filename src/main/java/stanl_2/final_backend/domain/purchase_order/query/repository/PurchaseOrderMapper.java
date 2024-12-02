@@ -2,7 +2,7 @@ package stanl_2.final_backend.domain.purchase_order.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderExcelDTO;
+import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderExcelDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectAllDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectIdDTO;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO;
@@ -27,9 +27,13 @@ public interface PurchaseOrderMapper {
                                                                @Param("sortField") String sortField,
                                                                @Param("sortOrder") String sortOrder);
 
-    List<PurchaseOrderSelectSearchDTO> findSearchPurchaseOrderMemberId(int offset, int pageSize, PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO);
+    List<PurchaseOrderSelectSearchDTO> findSearchPurchaseOrderMemberId(@Param("offset") int offset,
+                                                                       @Param("pageSize") int pageSize,
+                                                                       @Param("PurchaseOrderSelectSearchDTO") PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO,
+                                                                       @Param("sortField") String sortField,
+                                                                       @Param("sortOrder") String sortOrder);
 
-    Integer findSearchPurchaseOrderCountMemberId(PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO);
+    int findSearchPurchaseOrderCountMemberId(@Param("PurchaseOrderSelectSearchDTO") PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO);
 
     PurchaseOrderSelectIdDTO findPurchaseOrderByPurchaseOrderId(String purchaseOrderId);
 
