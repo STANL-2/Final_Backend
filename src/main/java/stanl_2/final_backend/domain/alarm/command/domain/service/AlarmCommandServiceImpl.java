@@ -114,10 +114,11 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public void send(String memberId, String adminId, String message, String redirectUrl, String tag, String type,
-                     String createdAt){
+    public void send(String memberId, String adminId, String contentId, String message, String redirectUrl, String tag,
+                     String type, String createdAt){
 
-        Alarm alarm = alarmRepository.save(createAlarm(memberId, adminId, message, redirectUrl, tag, type, createdAt));
+        Alarm alarm = alarmRepository.save(createAlarm(memberId, adminId, contentId, message, redirectUrl,
+                tag, type, createdAt));
 
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByMemberId(memberId);
         sseEmitters.forEach(
@@ -130,12 +131,13 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public Alarm createAlarm(String memberId, String adminId, String message, String redirectUrl, String tag, String type,
-                             String createdAt) {
+    public Alarm createAlarm(String memberId, String adminId, String contentId, String message, String redirectUrl
+            , String tag, String type, String createdAt) {
 
         Alarm alarm = new Alarm();
         alarm.setMemberId(memberId);
         alarm.setAdminId(adminId);
+        alarm.setContentId(contentId);
         alarm.setMessage(message);
         alarm.setRedirectUrl(redirectUrl);
         alarm.setTag(tag);
@@ -188,7 +190,7 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
                     + "&noticeId=" + noticeAlarmDTO.getNoticeId();
             String createdAt = getCurrentTime();
 
-            send(targetId, noticeAlarmDTO.getMemberId(), message, redirectUrl, tag, type, createdAt);
+            send(targetId, noticeAlarmDTO.getMemberId(), noticeAlarmDTO.getNoticeId(), message, redirectUrl, tag, type, createdAt);
         });
     }
 
@@ -202,7 +204,8 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
         String redirectUrl = "/contract/list";
         String createdAt = getCurrentTime();
 
-        send(contractAlarmDTO.getMemberId(), contractAlarmDTO.getAdminId(), message, redirectUrl, tag, type, createdAt);
+        send(contractAlarmDTO.getMemberId(), contractAlarmDTO.getAdminId(),contractAlarmDTO.getContractId(), message,
+                redirectUrl, tag, type, createdAt);
     }
 
     @Override
@@ -215,8 +218,8 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
         String redirectUrl = "/purchase-order/list";
         String createdAt = getCurrentTime();
 
-        send(purchaseOrderAlarmDTO.getMemberId(), purchaseOrderAlarmDTO.getAdminId(), message, redirectUrl,
-                tag, type, createdAt);
+        send(purchaseOrderAlarmDTO.getMemberId(), purchaseOrderAlarmDTO.getAdminId(), purchaseOrderAlarmDTO.getPurchaseOrderId(),
+                message, redirectUrl, tag, type, createdAt);
     }
 
     @Override
@@ -229,7 +232,8 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
         String redirectUrl = "/order/list";
         String createdAt = getCurrentTime();
 
-        send(orderAlarmDTO.getMemberId(), orderAlarmDTO.getAdminId(), message, redirectUrl, tag, type, createdAt);
+        send(orderAlarmDTO.getMemberId(), orderAlarmDTO.getAdminId(),orderAlarmDTO.getOrderId(), message, redirectUrl,
+                tag, type, createdAt);
     }
 
     @Override

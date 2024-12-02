@@ -33,7 +33,7 @@ public class AlarmScheduler {
     }
 
 //    @Scheduled(cron = "0 0 2 * * *")  // 매일 새벽 2시에 실행)
-    @Scheduled(cron = "0 59 23 * * *")
+    @Scheduled(cron = "0 31 20 * * *")
     @Transactional
     public void alarmTodaySchedule(){
 
@@ -64,7 +64,7 @@ public class AlarmScheduler {
             String redirectUrl = "/schedule";
             String createdAt = getCurrentTime();
 
-            alarmCommandService.send(memberId, memberId, message, redirectUrl, tag, type, createdAt);
+            alarmCommandService.send(memberId, memberId, schedule.getScheduleId(), message, redirectUrl, tag, type, createdAt);
         });
     }
 }

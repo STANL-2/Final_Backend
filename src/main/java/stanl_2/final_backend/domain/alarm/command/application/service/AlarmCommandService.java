@@ -17,9 +17,11 @@ public interface AlarmCommandService {
 
     void sendToClient(SseEmitter emitter, String emitterId, Object data);
 
-    void send(String memberId, String adminId, String message, String redirectUrl, String tag, String type, String createdAt);
+    void send(String memberId, String adminId, String contentId, String message, String redirectUrl, String tag,
+              String type, String createdAt);
 
-    Alarm createAlarm(String memberId, String adminId, String message, String redirectUrl, String tag, String type, String createdAt);
+    Alarm createAlarm(String memberId, String adminId,String contentId, String message, String redirectUrl, String tag,
+                      String type, String createdAt);
 
     void sendNoticeAlarm(NoticeAlarmDTO noticeAlarmDTO);
 

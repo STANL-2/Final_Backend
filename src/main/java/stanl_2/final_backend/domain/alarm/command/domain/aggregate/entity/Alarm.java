@@ -44,6 +44,9 @@ public class Alarm {
     @Column(name = "CREATED_AT", nullable = false)
     private String createdAt;
 
+    @Column(name = "CONT_ID", nullable = false)
+    private String contentId;
+
     @Column(name = "ADMIN_ID", nullable = false)
     private String adminId;
 
