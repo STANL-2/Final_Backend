@@ -41,7 +41,7 @@ public class PromotionController {
     })
     @PostMapping("")
     public ResponseEntity<PromotionResponseMessage> postNotice(@RequestPart("dto") PromotionRegistDTO promotionRegistDTO, // JSON 데이터
-                                                               @RequestPart("file") MultipartFile file,
+                                                               @RequestPart(value = "file", required = false)  MultipartFile file,
                                                                Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
         promotionRegistDTO.setMemberId(memberId);
@@ -70,14 +70,12 @@ public class PromotionController {
     })
     @PutMapping("{promotionId}")
     public ResponseEntity<PromotionResponseMessage> modifyNotice(
-                                                                Principal principal,
                                                                 @PathVariable String promotionId,
-                                                                @RequestBody PromotionModifyDTO promotionModifyRequestDTO,
-                                                                @RequestPart(value = "file", required = false)  MultipartFile file){
-        System.out.println("==============================");
+                                                                @RequestPart("dto") PromotionModifyDTO promotionModifyDTO,
+                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
+                                                                Principal principal){
         String memberLoginId = principal.getName();
         promotionModifyDTO.setMemberId(memberLoginId);
-        System.out.println("==============================");
         promotionModifyDTO.setContent(promotionModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {
             System.out.println("response:1");
@@ -89,7 +87,7 @@ public class PromotionController {
             System.out.println("response:3");
             promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }
-        promotionCommandService.modifyPromotion(promotionId,promotionModifyRequestDTO,principal);
+        promotionCommandService.modifyPromotion(promotionId,promotionModifyDTO,principal);
 
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)

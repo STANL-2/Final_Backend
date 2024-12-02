@@ -72,15 +72,13 @@ public class NoticeController {
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
     @PutMapping("{noticeId}")
-    public ResponseEntity<NoticeResponseMessage> modifyNotice(Principal principal,
-                                                              @PathVariable String noticeId,
-                                                              @RequestPart("dto") NoticeModifyDTO noticeModifyDTO, // JSON 데이터
-                                                              @RequestPart(value = "file", required = false)  MultipartFile file){
-        System.out.println("==============================");
+    public ResponseEntity<NoticeResponseMessage> modifyNotice(
+                                                                @PathVariable String noticeId,
+                                                                @RequestPart("dto") NoticeModifyDTO noticeModifyDTO, // JSON 데이터
+                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
+                                                                Principal principal){
         String memberLoginId = principal.getName();
-        System.out.println("==============================");
         noticeModifyDTO.setMemberId(memberLoginId);
-        System.out.println("==============================");
         noticeModifyDTO.setContent(noticeModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {
             System.out.println("response:1");
