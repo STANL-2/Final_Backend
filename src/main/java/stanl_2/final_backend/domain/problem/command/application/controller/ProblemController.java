@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 import stanl_2.final_backend.domain.problem.command.application.dto.ProblemModifyDTO;
 import stanl_2.final_backend.domain.problem.command.application.dto.ProblemRegistDTO;
 import stanl_2.final_backend.domain.problem.command.application.service.ProblemCommandService;
@@ -25,11 +24,13 @@ public class ProblemController {
     private final ProblemCommandService problemCommandService;
     private final AuthQueryService authQueryService;
     private final S3FileServiceImpl s3FileService;
+    private final ProblemModifyDTO problemModifyDTO;
     @Autowired
-    public ProblemController(ProblemCommandService problemCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService) {
+    public ProblemController(ProblemCommandService problemCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService,ProblemModifyDTO problemModifyDTO ) {
         this.problemCommandService = problemCommandService;
         this.authQueryService = authQueryService;
         this.s3FileService = s3FileService;
+        this.problemModifyDTO =problemModifyDTO;
     }
 
     @Operation(summary = "문제사항 작성")
@@ -43,7 +44,16 @@ public class ProblemController {
                                                               Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
         problemRegistDTO.setMemberId(memberId);
-        problemRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        if (file != null && !file.isEmpty()) {
+            problemRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+            System.out.println("response:1");
+        }else if(file==null || file.isEmpty()){
+            System.out.println("response:2");
+            problemRegistDTO.setFileUrl(null);
+        } else {
+            System.out.println("response:3");
+            problemRegistDTO.setFileUrl(null);
+        }
         problemCommandService.registerProblem(problemRegistDTO,principal);
         return ResponseEntity.ok(ProblemResponseMessage.builder()
                                                 .httpStatus(200)
@@ -59,9 +69,26 @@ public class ProblemController {
     })
     @PutMapping("{problemId}")
     public ResponseEntity<ProblemResponseMessage> modifyProblem(@PathVariable String problemId,
-                                                              @RequestBody ProblemModifyDTO problemModifyRequestDTO, Principal principal){
-
-        ProblemModifyDTO problemModifyDTO = problemCommandService.modifyProblem(problemId,problemModifyRequestDTO,principal);
+                                                              @RequestBody ProblemModifyDTO problemModifyRequestDTO,
+                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
+                                                                Principal principal){
+        System.out.println("==============================");
+        String memberLoginId = principal.getName();
+        System.out.println("==============================");
+        problemModifyRequestDTO.setMemberId(memberLoginId);
+        System.out.println("==============================");
+        problemModifyRequestDTO.setContent(problemModifyRequestDTO.getContent());
+        if (file != null && !file.isEmpty()) {
+            System.out.println("response:1");
+            problemModifyRequestDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()) {
+            System.out.println("response:2");
+            problemModifyRequestDTO.setFileUrl(null);
+        } else {
+            System.out.println("response:3");
+            problemModifyRequestDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }
+         problemCommandService.modifyProblem(problemId,problemModifyRequestDTO,principal);
 
         return ResponseEntity.ok(ProblemResponseMessage.builder()
                 .httpStatus(200)
