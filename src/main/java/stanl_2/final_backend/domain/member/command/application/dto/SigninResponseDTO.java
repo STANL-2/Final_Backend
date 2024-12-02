@@ -12,4 +12,5 @@ public class SigninResponseDTO {
     private String name;
     private String role;
     private String auth;
+    private String imageUrl;
 }

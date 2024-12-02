@@ -49,6 +49,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         memberInfo.setAddress(aesUtils.decrypt(memberInfo.getAddress()));
         memberInfo.setBankName(aesUtils.decrypt(memberInfo.getBankName()));
         memberInfo.setAccount(aesUtils.decrypt(memberInfo.getAccount()));
+        memberInfo.setImageUrl(aesUtils.decrypt(memberInfo.getImageUrl()));
         memberInfo.setCenterId(memberInfo.getCenterId());
 
         return memberInfo;
@@ -125,5 +126,14 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         }
 
         return memberList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberDTO selectMemberInfoById(String memberId) {
+
+        MemberDTO memberDTO = memberMapper.findMemberInfoBymemberId(memberId);
+
+        return memberDTO;
     }
 }

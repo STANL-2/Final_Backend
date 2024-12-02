@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
@@ -86,15 +88,21 @@ public class CustomerController {
     })
     @GetMapping("/search")
     public ResponseEntity<CustomerResponseMessage> searchCustomer(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String customerId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String sex,
-            @RequestParam(required = false) String phone
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(required = false) String sortOrder,
+            @PageableDefault(size = 10) Pageable pageable
     ) throws GeneralSecurityException {
 
-        Pageable pageable = PageRequest.of(page, size);
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
+
         CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(customerId , name, sex, phone);
         Page<CustomerSearchDTO> customerDTOPage = customerQueryService.findCustomerByCondition(pageable, customerSearchDTO);
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.log.common.exception.LogCommonException;
@@ -39,9 +40,18 @@ public class LogQueryServiceImpl implements LogQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
 
-        List<LogDTO> logs = logMapper.findLogs(offset, size, searchLogDTO);
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
 
-        int totalElements = logMapper.findLogsCnt();
+        List<LogDTO> logs = logMapper.findLogs(offset, size, searchLogDTO, sortField, sortOrder);
+
+        int totalElements = logMapper.findLogsCnt(searchLogDTO);
         return new PageImpl<>(logs, pageable, totalElements);
     }
 
