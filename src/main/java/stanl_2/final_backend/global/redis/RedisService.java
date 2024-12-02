@@ -49,7 +49,9 @@ public class RedisService {
         } else {
             System.out.println("No keys found for pattern 'PromotionCache*'.");
         }
-    }public void clearProblemCache() {
+    }
+
+    public void clearProblemCache() {
         Set<String> keys = redisTemplate.keys("ProblemCache*");
         if (keys != null && !keys.isEmpty()) {
             redisTemplate.delete(keys); // Delete all matching keys
@@ -57,6 +59,14 @@ public class RedisService {
         } else {
             System.out.println("No keys found for pattern 'ProblemCache*'.");
         }
+    }
+
+    public void clearMailCache(String key) {
+        //
+        System.out.println("1캐시 삭제!!");
+        System.out.println(redisTemplate.delete(key));
+
+
     }
 
 }

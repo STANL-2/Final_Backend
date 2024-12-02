@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.order.command.domain.service;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.order.command.domain.repository.OrderRepository;
 import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -24,13 +26,15 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final OrderRepository orderRepository;
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
+    private final S3FileService s3FileService;
     private final AlarmCommandService alarmCommandService;
 
-    public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService,
-                                   ModelMapper modelMapper, AlarmCommandService alarmCommandService) {
+    public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper,
+                                   S3FileService s3FileService ,AlarmCommandService alarmCommandService) {
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
+        this.s3FileService = s3FileService;
         this.alarmCommandService = alarmCommandService;
     }
 
@@ -45,7 +49,11 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         String memberId = authQueryService.selectMemberIdByLoginId(orderRegistDTO.getMemberId());
 
+        String unescapedHtml = StringEscapeUtils.unescapeJson(orderRegistDTO.getContent());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, orderRegistDTO.getTitle());
+
         orderRegistDTO.setMemberId(memberId);
+        orderRegistDTO.setContent(updatedS3Url);
 
         Order order = modelMapper.map(orderRegistDTO, Order.class);
 
@@ -63,6 +71,11 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         if (order == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
+
+        String unescapedHtml = StringEscapeUtils.unescapeJson(orderModifyDTO.getContent());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, orderModifyDTO.getTitle());
+
+        orderModifyDTO.setContent(updatedS3Url);
 
         Order updateOrder = modelMapper.map(orderModifyDTO, Order.class);
         updateOrder.setCreatedAt(order.getCreatedAt());
