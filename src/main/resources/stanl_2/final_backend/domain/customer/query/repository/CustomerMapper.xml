@@ -88,7 +88,7 @@
         SELECT
                COUNT(*)
           FROM tb_customer_info a
-         WHERE a.active != 'false';
+         WHERE a.active != 'true';
     </select>
 
     <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="String">
@@ -100,7 +100,7 @@
                a.mem_id
           FROM tb_customer_info a
         <where>
-            a.active != 'false'
+            a.active != 'true'
             <if test="name != null">
                 AND a.cust_name LIKE CONCAT('%', #{ name }, '%')
             </if>
@@ -149,17 +149,17 @@
          COUNT(*) AS CNT
           FROM tb_customer_info a
         <where>
-            a.active != 'false'
-            <if test="name != null">
+            a.active != 'true'
+            <if test="name != null and name != ''">
                 AND a.cust_name = #{ name }
             </if>
-            <if test="sex != null">
+            <if test="sex != null and sex != ''">
                 AND a.cust_sex = #{ sex }
             </if>
-            <if test="phone != null">
+            <if test="phone != null and phone != ''">
                 AND a.cust_pho = #{ phone }
             </if>
-            <if test="customerId != null">
+            <if test="customerId != null and customerId != ''">
                 AND a.cust_id= #{ customerId }
             </if>
         </where>
