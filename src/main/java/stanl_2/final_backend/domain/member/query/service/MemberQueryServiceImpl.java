@@ -127,4 +127,13 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         return memberList;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberDTO selectMemberInfoById(String memberId) {
+
+        MemberDTO memberDTO = memberMapper.findMemberInfoBymemberId(memberId);
+
+        return memberDTO;
+    }
 }
