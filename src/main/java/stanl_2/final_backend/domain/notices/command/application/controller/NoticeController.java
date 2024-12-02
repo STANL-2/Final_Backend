@@ -76,21 +76,24 @@ public class NoticeController {
                                                               @PathVariable String noticeId,
                                                               @RequestPart("dto") NoticeModifyDTO noticeModifyDTO, // JSON 데이터
                                                               @RequestPart(value = "file", required = false)  MultipartFile file){
+        System.out.println("==============================");
         String memberLoginId = principal.getName();
+        System.out.println("==============================");
         noticeModifyDTO.setMemberId(memberLoginId);
+        System.out.println("==============================");
         noticeModifyDTO.setContent(noticeModifyDTO.getContent());
-
         if (file != null && !file.isEmpty()) {
+            System.out.println("response:1");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
-            System.out.println("1");
         }else if(file==null || file.isEmpty()) {
-            System.out.println("2");
+            System.out.println("response:2");
             noticeModifyDTO.setFileUrl(null);
         } else {
-            System.out.println("3");
+            System.out.println("response:3");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }
         noticeCommandService.modifyNotice(noticeId,noticeModifyDTO, principal);
+
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                         .httpStatus(200)
                         .msg("성공")
