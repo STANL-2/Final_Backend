@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.domain.problem.command.application.dto.ProblemRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionModifyDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.service.PromotionCommandService;
@@ -25,12 +24,14 @@ public class PromotionController {
     private final PromotionCommandService promotionCommandService;
     private final AuthQueryService authQueryService;
     private final S3FileServiceImpl s3FileService;
+    private final PromotionModifyDTO promotionModifyDTO;
 
     @Autowired
-    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService) {
+    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, PromotionModifyDTO promotionModifyDTO) {
         this.promotionCommandService = promotionCommandService;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
+        this.promotionModifyDTO = promotionModifyDTO;
     }
 
     @Operation(summary = "프로모션 작성")
@@ -44,7 +45,16 @@ public class PromotionController {
                                                                Principal principal){
         String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
         promotionRegistDTO.setMemberId(memberId);
-        promotionRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        if (file != null && !file.isEmpty()) {
+            promotionRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+            System.out.println("response:1");
+        }else if(file==null || file.isEmpty()){
+            System.out.println("response:2");
+            promotionRegistDTO.setFileUrl(null);
+        } else {
+            System.out.println("response:3");
+            promotionRegistDTO.setFileUrl(null);
+        }
         promotionCommandService.registerPromotion(promotionRegistDTO,principal);
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)
@@ -59,10 +69,27 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @PutMapping("{promotionId}")
-    public ResponseEntity<PromotionResponseMessage> modifyNotice(@PathVariable String promotionId,
-                                                              @RequestBody PromotionModifyDTO promotionModifyRequestDTO, Principal principal){
-
-        PromotionModifyDTO promotionModifyDTO = promotionCommandService.modifyPromotion(promotionId,promotionModifyRequestDTO,principal);
+    public ResponseEntity<PromotionResponseMessage> modifyNotice(
+                                                                Principal principal,
+                                                                @PathVariable String promotionId,
+                                                                @RequestBody PromotionModifyDTO promotionModifyRequestDTO,
+                                                                @RequestPart(value = "file", required = false)  MultipartFile file){
+        System.out.println("==============================");
+        String memberLoginId = principal.getName();
+        promotionModifyDTO.setMemberId(memberLoginId);
+        System.out.println("==============================");
+        promotionModifyDTO.setContent(promotionModifyDTO.getContent());
+        if (file != null && !file.isEmpty()) {
+            System.out.println("response:1");
+            promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()) {
+            System.out.println("response:2");
+            promotionModifyDTO.setFileUrl(null);
+        } else {
+            System.out.println("response:3");
+            promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }
+        promotionCommandService.modifyPromotion(promotionId,promotionModifyRequestDTO,principal);
 
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)
