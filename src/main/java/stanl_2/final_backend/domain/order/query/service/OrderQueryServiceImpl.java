@@ -191,6 +191,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String selectByContractId(String orderId) {
 
         String contractId = orderMapper.selectByContractId(orderId);

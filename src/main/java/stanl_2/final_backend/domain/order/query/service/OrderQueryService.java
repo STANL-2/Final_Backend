@@ -8,7 +8,6 @@ import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 
 import java.security.GeneralSecurityException;
-import java.util.Map;
 
 public interface OrderQueryService {
     Page<OrderSelectAllDTO> selectAllEmployee(String loginId, Pageable pageable);
