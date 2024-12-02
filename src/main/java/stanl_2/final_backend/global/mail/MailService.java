@@ -9,4 +9,7 @@ public interface MailService {
 
     // 보낸 이메일과 인증번호 일치하는지 확인
     Boolean verifyEmailCode(String email, String code);
+
+
+    void sendPwdEmail(String decrypt, StringBuilder password) throws MessagingException;
 }

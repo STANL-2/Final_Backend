@@ -172,6 +172,8 @@ public class AuthController {
 
         authCommandService.checkNum(checkNumDTO);
 
+        authCommandService.sendNewPwd(checkNumDTO.getLoginId());
+
         return ResponseEntity.ok(MemberResponseMessage.builder()
                                                       .httpStatus(200)
                                                       .msg("성공")

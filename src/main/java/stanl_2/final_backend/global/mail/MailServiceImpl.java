@@ -10,6 +10,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import stanl_2.final_backend.global.exception.GlobalCommonException;
+import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.redis.RedisService;
 
 import java.security.SecureRandom;
@@ -82,6 +84,18 @@ public class MailServiceImpl implements MailService {
         return message;
     }
 
+    private MimeMessage createNewPwdEmailForm(String email, String newPwd) throws MessagingException {
+
+        // MimeMessage에 코드, 송신 이메일, 내용 보관
+        MimeMessage message = mailSender.createMimeMessage();
+        message.addRecipients(MimeMessage.RecipientType.TO, email);
+        message.setSubject("STANL2 본인 확인");
+        message.setFrom(configEmail);
+        message.setText(setContext(newPwd), "utf-8", "html");
+
+        return message;
+    }
+
     /* 만든 메일 전송 */
     @Override
     public void sendEmail(String toEmail) throws MessagingException {
@@ -100,9 +114,17 @@ public class MailServiceImpl implements MailService {
     @Override
     public Boolean verifyEmailCode(String email, String code) {
         if(!code.equals(redisService.getKey(email))){
-            System.out.println("시바련ㄴ아 틀렸어");
+            throw new GlobalCommonException(GlobalErrorCode.NUMBER_VALIDATION_FAIL);
         }
 
         return true;
+    }
+
+    @Override
+    public void sendPwdEmail(String email, StringBuilder password) throws MessagingException {
+
+        MimeMessage emailForm = createNewPwdEmailForm(email, password.toString());
+
+        mailSender.send(emailForm);
     }
 }

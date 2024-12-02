@@ -18,4 +18,6 @@ public interface AuthCommandService {
     void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException, MessagingException;
 
     void checkNum(CheckNumDTO checkNumDTO) throws GeneralSecurityException;
+
+    void sendNewPwd(String loginId) throws MessagingException, GeneralSecurityException;
 }
