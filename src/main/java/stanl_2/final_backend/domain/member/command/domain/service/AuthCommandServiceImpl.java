@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.member.command.domain.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import stanl_2.final_backend.domain.s3.command.application.service.S3FileService
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.mail.MailService;
+import stanl_2.final_backend.global.redis.RedisService;
 import stanl_2.final_backend.global.security.service.MemberDetails;
 import stanl_2.final_backend.global.utils.AESUtils;
 
@@ -144,11 +146,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException {
+    public void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException, MessagingException {
         String email = authQueryService.findEmail(checkMailDTO);
 
-
-
+        mailService.sendEmail(email);
     }
 
     private String generateAccessToken(String username, String authorities, SecretKey secretKey) {

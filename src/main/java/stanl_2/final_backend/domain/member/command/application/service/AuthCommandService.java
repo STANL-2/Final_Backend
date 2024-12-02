@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.member.command.application.service;
 
+import jakarta.mail.MessagingException;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
 
@@ -14,5 +15,5 @@ public interface AuthCommandService {
 
     SigninResponseDTO signin(SigninRequestDTO signinRequestDTO) throws GeneralSecurityException;
 
-    void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException;
+    void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException, MessagingException;
 }

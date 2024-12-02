@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -147,7 +148,7 @@ public class AuthController {
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     @PostMapping("checkmail")
-    public ResponseEntity<MemberResponseMessage> checkMail(@RequestBody CheckMailDTO checkMailDTO) throws GeneralSecurityException {
+    public ResponseEntity<MemberResponseMessage> checkMail(@RequestBody CheckMailDTO checkMailDTO) throws GeneralSecurityException, MessagingException {
 
         authCommandService.sendEmail(checkMailDTO);
 

@@ -45,6 +45,7 @@ public class MailServiceImpl implements MailService {
 
     /* Thymeleaf 기반의 html 파일에 값 넣고 연결하는 메소드 */
     private String setContext(String code) {
+
         // thymeleaf 기반의 html 파일에 값을 넣고 연결
         Context context = new Context();
         // templateengine과 classloadertemplateresolver를 활용하여 resource/template에 위치한 mail.html 연결
@@ -65,6 +66,7 @@ public class MailServiceImpl implements MailService {
     }
 
     private MimeMessage createEmailForm(String email) throws MessagingException {
+
         String authCode = createCode();
 
         // MimeMessage에 코드, 송신 이메일, 내용 보관
@@ -83,12 +85,15 @@ public class MailServiceImpl implements MailService {
     /* 만든 메일 전송 */
     @Override
     public void sendEmail(String toEmail) throws MessagingException {
+
         // redis에 해당 이메일이 있으면 db에서 삭제
         if(redisService.getKey(toEmail) != null) {
             redisService.clearMailCache(toEmail);
         }
+        System.out.println("!!!!!!2");
 
         MimeMessage emailForm = createEmailForm(toEmail);
+        System.out.println("!!!!!!3");
         mailSender.send(emailForm);
     }
 
