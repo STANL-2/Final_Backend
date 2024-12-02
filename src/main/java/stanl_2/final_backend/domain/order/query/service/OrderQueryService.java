@@ -8,7 +8,6 @@ import stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 
 import java.security.GeneralSecurityException;
-import java.util.Map;
 
 public interface OrderQueryService {
     Page<OrderSelectAllDTO> selectAllEmployee(String loginId, Pageable pageable);
@@ -22,6 +21,8 @@ public interface OrderQueryService {
     OrderSelectIdDTO selectDetailOrder(OrderSelectIdDTO orderSelectIdDTO);
 
     Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException;
+
+    String selectByContractId(String orderId);
 
     void exportOrder(HttpServletResponse response);
 }

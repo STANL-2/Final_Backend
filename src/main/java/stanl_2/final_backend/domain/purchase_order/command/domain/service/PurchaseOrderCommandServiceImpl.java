@@ -1,6 +1,8 @@
 package stanl_2.final_backend.domain.purchase_order.command.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringEscapeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +22,14 @@ import stanl_2.final_backend.domain.purchase_order.command.domain.aggregate.enti
 import stanl_2.final_backend.domain.purchase_order.command.domain.repository.PurchaseOrderRepository;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderCommonException;
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Service
 @Slf4j
+@Service
 public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
@@ -34,15 +37,18 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
     private final AlarmCommandService alarmCommandService;
+    private final S3FileService s3FileService;
 
     @Autowired
     public PurchaseOrderCommandServiceImpl(PurchaseOrderRepository purchaseOrderRepository, OrderRepository orderRepository,
-                                           AuthQueryService authQueryService, ModelMapper modelMapper, AlarmCommandService alarmCommandService) {
+                                           AuthQueryService authQueryService, ModelMapper modelMapper,
+                                           AlarmCommandService alarmCommandService,S3FileService s3FileService) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
         this.alarmCommandService = alarmCommandService;
+        this.s3FileService = s3FileService;
     }
 
     private String  getCurrentTime() {
@@ -67,7 +73,13 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
             throw new OrderCommonException(OrderErrorCode.ORDER_STATUS_NOT_APPROVED);
         }
 
+        String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderRegistDTO.getContent());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderRegistDTO.getTitle());
+
+
         PurchaseOrder purchaseOrder = modelMapper.map(purchaseOrderRegistDTO, PurchaseOrder.class);
+        purchaseOrder.setMemberId(memberId);
+        purchaseOrder.setContent(updatedS3Url);
 
         purchaseOrderRepository.save(purchaseOrder);
     }
@@ -84,8 +96,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
                 .orElseThrow(() -> new PurchaseOrderCommonException(PurchaseOrderErrorCode.PURCHASE_ORDER_NOT_FOUND));
 
         // 수주서가 존재하는지 확인
-        Order order = orderRepository.findByOrderIdAndMemberId(
-                purchaseOrderModifyDTO.getOrderId(), purchaseOrderModifyDTO.getMemberId());
+        Order order = orderRepository.findByOrderIdAndMemberId(purchaseOrder.getOrderId(), memberId);
         if (order == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
@@ -95,11 +106,17 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
             throw new OrderCommonException(OrderErrorCode.ORDER_STATUS_NOT_APPROVED);
         }
 
+        String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderModifyDTO.getContent());
+        String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderModifyDTO.getTitle());
+
         PurchaseOrder updatePurchaseOrder = modelMapper.map(purchaseOrderModifyDTO, PurchaseOrder.class);
         updatePurchaseOrder.setCreatedAt(purchaseOrder.getCreatedAt());
         updatePurchaseOrder.setUpdatedAt(purchaseOrder.getUpdatedAt());
         updatePurchaseOrder.setStatus(purchaseOrder.getStatus());
         updatePurchaseOrder.setActive(purchaseOrder.getActive());
+        updatePurchaseOrder.setContent(updatedS3Url);
+        updatePurchaseOrder.setOrderId(purchaseOrder.getOrderId());
+        updatePurchaseOrder.setMemberId(memberId);
 
         purchaseOrderRepository.save(updatePurchaseOrder);
 
@@ -145,4 +162,3 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         alarmCommandService.sendPurchaseOrderAlarm(purchaseOrderAlarmDTO);
     }
 }
-

@@ -41,9 +41,9 @@ public class AuthQueryServiceImpl implements AuthQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public String findEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException {
+    public String findEmail(String loginId) throws GeneralSecurityException {
 
-        String email = authMapper.findEmailByLoginId(checkMailDTO.getLoginId());
+        String email = authMapper.findEmailByLoginId(loginId);
 
         email = aesUtils.decrypt(email);
 
