@@ -261,7 +261,10 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
         contractRepository.save(contract);
 
-        alarmCommandService.sendContractAlarm(contract);
+        ContractAlarmDTO contractAlarmDTO = new ContractAlarmDTO(contract.getContractId(), contract.getCustomerName(),
+                                                                 contract.getMemberId(), contract.getAdminId());
+
+        alarmCommandService.sendContractAlarm(contractAlarmDTO);
 
         if (contractStatusModifyDTO.getStatus().equals("APPROVED")) {
             // 판매 내역 등록

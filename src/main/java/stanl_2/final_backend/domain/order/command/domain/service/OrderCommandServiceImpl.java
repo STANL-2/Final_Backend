@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.order.command.application.dto.OrderAlarmDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderStatusModifyDTO;
@@ -124,6 +125,9 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         orderRepository.save(order);
 
-        alarmCommandService.sendOrderAlarm(order);
+        OrderAlarmDTO orderAlarmDTO = new OrderAlarmDTO(order.getOrderId(), order.getTitle(), order.getMemberId(),
+                                                        order.getAdminId());
+
+        alarmCommandService.sendOrderAlarm(orderAlarmDTO);
     }
 }

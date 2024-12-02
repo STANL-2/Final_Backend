@@ -11,6 +11,7 @@ import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.order.command.domain.repository.OrderRepository;
 import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
+import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderAlarmDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderModifyDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderRegistDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderStatusModifyDTO;
@@ -138,7 +139,10 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
         purchaseOrderRepository.save(purchaseOrder);
 
-        alarmCommandService.sendPurchaseOrderAlarm(purchaseOrder);
+        PurchaseOrderAlarmDTO purchaseOrderAlarmDTO = new PurchaseOrderAlarmDTO(purchaseOrder.getPurchaseOrderId(),
+                purchaseOrder.getTitle(), purchaseOrder.getMemberId(), purchaseOrder.getAdminId());
+
+        alarmCommandService.sendPurchaseOrderAlarm(purchaseOrderAlarmDTO);
     }
 }
 

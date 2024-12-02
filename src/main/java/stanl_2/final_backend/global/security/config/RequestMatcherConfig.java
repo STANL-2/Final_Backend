@@ -79,7 +79,7 @@ public class RequestMatcherConfig {
 
                 // Member API
                 .requestMatchers(HttpMethod.GET, "/api/v1/member/authorities").hasAnyRole("GOD") // CHECK (시스템관리자)
-                .requestMatchers(HttpMethod.GET, "/api/v1/member").hasAnyRole("member-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 정보 조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasAnyRole("member-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 정보 조회 (전체)
 
                 // Log API
                 .requestMatchers(HttpMethod.GET, "/api/v1/log").hasAnyRole("log-get", "GOD") // 로그 조회 (시스템 관리자)

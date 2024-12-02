@@ -130,9 +130,12 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public MemberDTO selectMemberInfoById(String memberId) {
+    public MemberDTO selectMemberInfoById(String memberId) throws GeneralSecurityException {
 
         MemberDTO memberDTO = memberMapper.findMemberInfoBymemberId(memberId);
+
+        memberDTO.setName(aesUtils.decrypt(memberDTO.getName()));
+        memberDTO.setImageUrl(aesUtils.decrypt(memberDTO.getImageUrl()));
 
         return memberDTO;
     }

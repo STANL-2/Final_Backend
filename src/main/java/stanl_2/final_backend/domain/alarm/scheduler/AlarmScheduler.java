@@ -64,7 +64,7 @@ public class AlarmScheduler {
             String redirectUrl = "/schedule";
             String createdAt = getCurrentTime();
 
-            alarmCommandService.send(memberId, message, redirectUrl, tag, type, createdAt);
+            alarmCommandService.send(memberId, memberId, message, redirectUrl, tag, type, createdAt);
         });
     }
 }
