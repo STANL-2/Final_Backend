@@ -22,4 +22,5 @@ public class AlarmSelectDTO {
     private String memberLoginId;
     private String memberId;
     private String adminId;
+    private String contentId;
 }
