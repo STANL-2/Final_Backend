@@ -21,6 +21,7 @@ public enum GlobalErrorCode {
             "데이터 무결성 위반입니다. 필수 값이 누락되었거나 유효하지 않습니다."),
     REGISTER_FAIL(40006, HttpStatus.BAD_REQUEST, "회원 가입 실패!"),
     VALIDATION_FAIL(40007, HttpStatus.BAD_REQUEST, "유효성 검사 실패"),
+    NUMBER_VALIDATION_FAIL(40008, HttpStatus.BAD_REQUEST, "인증번호 인증 실패"),
 
 
     /**
