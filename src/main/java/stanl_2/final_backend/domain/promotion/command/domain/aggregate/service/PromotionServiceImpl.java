@@ -69,7 +69,7 @@ public class PromotionServiceImpl implements PromotionCommandService {
         String memberId= principal.getName();
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
-        if(!promotion.getMemberId().equals(memberId)){
+        if(promotion.getMemberId().equals(memberId)){
             throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
         }
         try {

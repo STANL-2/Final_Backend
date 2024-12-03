@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Setter
 @Getter
-@Component
 public class PromotionModifyDTO {
 
     private String title;

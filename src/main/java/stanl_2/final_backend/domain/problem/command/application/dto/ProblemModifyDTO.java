@@ -10,9 +10,8 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Setter
 @Getter
-@Component
 public class ProblemModifyDTO {
-
+    private String problemId;
     private String title;
     private String content;
     private String memberId;

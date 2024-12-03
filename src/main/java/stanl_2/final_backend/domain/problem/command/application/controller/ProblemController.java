@@ -24,13 +24,11 @@ public class ProblemController {
     private final ProblemCommandService problemCommandService;
     private final AuthQueryService authQueryService;
     private final S3FileServiceImpl s3FileService;
-    private final ProblemModifyDTO problemModifyDTO;
     @Autowired
-    public ProblemController(ProblemCommandService problemCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService,ProblemModifyDTO problemModifyDTO ) {
+    public ProblemController(ProblemCommandService problemCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService) {
         this.problemCommandService = problemCommandService;
         this.authQueryService = authQueryService;
         this.s3FileService = s3FileService;
-        this.problemModifyDTO =problemModifyDTO;
     }
 
     @Operation(summary = "문제사항 작성")
