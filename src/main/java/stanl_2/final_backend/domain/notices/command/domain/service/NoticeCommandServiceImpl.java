@@ -58,7 +58,6 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Transactional
     public void registerNotice(NoticeRegistDTO noticeRegistDTO,
                                Principal principal) {
-
         redisService.clearNoticeCache();
         String memberId = authQueryService.selectMemberIdByLoginId(noticeRegistDTO.getMemberLoginId());
         noticeRegistDTO.setMemberId(memberId);
@@ -66,11 +65,8 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
             Notice newNotice = noticeRepository.save(notice);
-
             NoticeAlarmDTO noticeAlarmDTO = modelMapper.map(newNotice, NoticeAlarmDTO.class);
-
             alarmCommandService.sendNoticeAlarm(noticeAlarmDTO);
-
         } catch (DataIntegrityViolationException e){
             // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
             throw new NoticeCommonException(NoticeErrorCode.DATA_INTEGRITY_VIOLATION);
