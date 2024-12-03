@@ -10,12 +10,12 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.career.command.domain.aggregate.entity.Career;
 import stanl_2.final_backend.domain.career.command.domain.repository.CareerRepository;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistDTO;
+import stanl_2.final_backend.domain.center.command.application.service.CenterCommandService;
 import stanl_2.final_backend.domain.certification.command.domain.aggregate.entity.Certification;
 import stanl_2.final_backend.domain.certification.command.domain.repository.CertificationRepository;
 import stanl_2.final_backend.domain.customer.command.application.dto.CustomerRegistDTO;
 import stanl_2.final_backend.domain.customer.command.application.service.CustomerCommandService;
-import stanl_2.final_backend.domain.customer.command.domain.aggregate.entity.Customer;
-import stanl_2.final_backend.domain.customer.command.domain.repository.CustomerRepository;
 import stanl_2.final_backend.domain.education.command.domain.aggregate.entity.Education;
 import stanl_2.final_backend.domain.education.command.domain.repository.EducationRepository;
 import stanl_2.final_backend.domain.family.command.domain.aggregate.entity.Family;
@@ -51,6 +51,7 @@ public class Initializer implements ApplicationRunner {
     private final FamilyRepository familyRepository;
     private final OrganizationRepository organizationRepository;
     private final CustomerCommandService customerCommandService;
+    private final CenterCommandService centerCommandService;
 
 
     @Override
@@ -515,7 +516,7 @@ public class Initializer implements ApplicationRunner {
 
         // 고객 인당 100명 씩
         for (int i = 1; i <= 100; i++) {
-            String memberId = String.format("M%09d", i);
+            String memberId = String.format("MEM_%09d", i);
             for (int j = 0; j < 100; j++) {
                 String sex = genders[i % 2];
                 String name = lastNames[random.nextInt(lastNames.length)] + firstNames[random.nextInt(firstNames.length)];
@@ -535,9 +536,42 @@ public class Initializer implements ApplicationRunner {
             }
         }
 
+        String[][] carDealershipsInfo = {
+                {"서울 중앙 영업점", "서울특별시 중구 세종대로 123"},
+                {"부산 서면 영업점", "부산광역시 부산진구 중앙대로 456"},
+                {"인천 남동구 영업점", "인천광역시 남동구 인주대로 789"},
+                {"대전 둔산 영업점", "대전광역시 서구 둔산로 101"},
+                {"광주 광산구 영업점", "광주광역시 광산구 상무대로 202"},
+                {"대구 동구 영업점", "대구광역시 동구 아양로 303"},
+                {"울산 중구 영업점", "울산광역시 중구 태화로 404"},
+                {"수원 영통구 영업점", "경기도 수원시 영통구 매탄로 505"},
+                {"성남 분당 영업점", "경기도 성남시 분당구 정자일로 606"},
+                {"제주 서귀포 영업점", "제주특별자치도 서귀포시 태평로 707"}
+        };
+
+        // 매장 등록
+        CenterRegistDTO newCenter1 = new CenterRegistDTO("서울 중앙 영업점", "서울특별시 중구 세종대로 123", "02-123-4567", 25, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter1, loadImage("default.png"));
+        CenterRegistDTO newCenter2 = new CenterRegistDTO("부산 서면 영업점", "부산광역시 부산진구 중앙대로 456", "051-123-4567", 20, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter2, loadImage("default.png"));
+        CenterRegistDTO newCenter3 = new CenterRegistDTO("인천 남동구 영업점", "인천광역시 남동구 인주대로 789", "032-123-4567", 18, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter3, loadImage("default.png"));
+        CenterRegistDTO newCenter4 = new CenterRegistDTO("대전 둔산 영업점", "대전광역시 서구 둔산로 101", "042-123-4567", 15, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter4, loadImage("default.png"));
+        CenterRegistDTO newCenter5 = new CenterRegistDTO("광주 광산구 영업점", "광주광역시 광산구 상무대로 202", "062-123-4567", 17, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter5, loadImage("default.png"));
+        CenterRegistDTO newCenter6 = new CenterRegistDTO("대구 동구 영업점", "대구광역시 동구 아양로 303", "053-123-4567", 22, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter6, loadImage("default.png"));
+        CenterRegistDTO newCenter7 = new CenterRegistDTO("울산 중구 영업점", "울산광역시 중구 태화로 404", "052-123-4567", 13, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter7, loadImage("default.png"));
+        CenterRegistDTO newCenter8 = new CenterRegistDTO("수원 영통구 영업점", "경기도 수원시 영통구 매탄로 505", "031-123-4567", 19, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter8, loadImage("default.png"));
+        CenterRegistDTO newCenter9 = new CenterRegistDTO("성남 분당 영업점", "경기도 성남시 분당구 정자일로 606", "031-234-5678", 21, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter9, loadImage("default.png"));
+        CenterRegistDTO newCenter10 = new CenterRegistDTO("제주 서귀포 영업점", "제주특별자치도 서귀포시 태평로 707", "064-123-4567", 12, "09:00 - 18:00", null);
+        centerCommandService.registCenter(newCenter10, loadImage("default.png"));
 
 
-        
     }
 
     private String getRandomEmploymentDate() {
