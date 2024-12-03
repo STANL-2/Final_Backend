@@ -20,4 +20,6 @@ public interface MemberMapper {
     List<MemberDTO> findMembersByOrganizationId(@Param("organizationId") String organizationId);
 
     MemberDTO findMemberInfoBymemberId(String memberId);
+
+    List<MemberDTO> findMemberByName(String memberName);
 }
