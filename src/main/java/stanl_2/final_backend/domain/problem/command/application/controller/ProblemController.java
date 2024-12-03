@@ -42,8 +42,8 @@ public class ProblemController {
     public ResponseEntity<ProblemResponseMessage> postProblem(@RequestPart("dto") ProblemRegistDTO problemRegistDTO, // JSON 데이터
                                                               @RequestPart(value = "file", required = false)  MultipartFile file,
                                                               Principal principal){
-        String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
-        problemRegistDTO.setMemberId(memberId);
+        String memberLoginId = principal.getName();
+        problemRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
             problemRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
             System.out.println("response:1");

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
 import stanl_2.final_backend.domain.problem.command.application.dto.ProblemModifyDTO;
@@ -29,14 +30,19 @@ import java.time.format.DateTimeFormatter;
 public class ProblemServiceImpl implements ProblemCommandService {
 
     private final ProblemRepository problemRepository;
+    private final AuthQueryService authQueryService;
     private final RedisService redisService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProblemServiceImpl(ProblemRepository problemRepository, ModelMapper modelMapper, RedisService redisService) {
+    public ProblemServiceImpl(ProblemRepository problemRepository,
+                              AuthQueryService authQueryService,
+                              ModelMapper modelMapper,
+                              RedisService redisService) {
         this.problemRepository = problemRepository;
         this.modelMapper = modelMapper;
         this.redisService = redisService;
+        this.authQueryService =authQueryService;
     }
     private String getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -45,10 +51,12 @@ public class ProblemServiceImpl implements ProblemCommandService {
 
     @Transactional
     @Override
-    public void registerProblem(ProblemRegistDTO problemRegistDTO, Principal principal) {
+    public void registerProblem(ProblemRegistDTO problemRegistDTO,
+                                Principal principal) {
         redisService.clearProblemCache();
-        String memberId =principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(problemRegistDTO.getMemberLoginId());
         problemRegistDTO.setMemberId(memberId);
+        System.out.println("memberId"+memberId);
         try {
             Problem problem = modelMapper.map(problemRegistDTO, Problem.class);
             problemRepository.save(problem);
