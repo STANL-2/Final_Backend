@@ -63,7 +63,8 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
         String memberId = authQueryService.selectMemberIdByLoginId(purchaseOrderRegistDTO.getMemberId());
 
         // 수주서가 존재하는지 확인
-        Order order = orderRepository.findByOrderIdAndMemberId(purchaseOrderRegistDTO.getOrderId(), memberId);
+        Order order = orderRepository.findByOrderId(purchaseOrderRegistDTO.getOrderId());
+
         if (order == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
@@ -75,7 +76,6 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
         String unescapedHtml = StringEscapeUtils.unescapeJson(purchaseOrderRegistDTO.getContent());
         String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, purchaseOrderRegistDTO.getTitle());
-
 
         PurchaseOrder purchaseOrder = modelMapper.map(purchaseOrderRegistDTO, PurchaseOrder.class);
         purchaseOrder.setMemberId(memberId);

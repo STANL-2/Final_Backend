@@ -19,5 +19,7 @@ public interface MemberQueryService {
 
     MemberDTO selectMemberInfoById(String memberId) throws GeneralSecurityException;
 
+    List<MemberDTO> selectMemberByName(String name) throws GeneralSecurityException;
+
 //    MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException;
 }
