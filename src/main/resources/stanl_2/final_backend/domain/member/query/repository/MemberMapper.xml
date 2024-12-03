@@ -121,7 +121,7 @@
         a.created_at,
         a.updated_at
         FROM tb_member a
-        WHERE a.mem_name = #{ name }
+        WHERE a.mem_id = #{ memberId }
     </select>
 
     <select id="findMemberByName" resultMap="Member" parameterType="String">
