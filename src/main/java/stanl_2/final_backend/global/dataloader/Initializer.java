@@ -1,6 +1,5 @@
 package stanl_2.final_backend.global.dataloader;
 
-import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -28,9 +27,9 @@ import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Membe
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
 import stanl_2.final_backend.domain.organization.command.domain.aggregate.entity.Organization;
 import stanl_2.final_backend.domain.organization.command.domain.repository.OrganizationRepository;
-import stanl_2.final_backend.domain.product.command.application.command.dto.ProductRegistDTO;
-import stanl_2.final_backend.domain.product.command.application.command.service.ProductCommandService;
 import stanl_2.final_backend.domain.product.command.application.domain.aggregate.entity.Product;
+import stanl_2.final_backend.domain.product.command.application.domain.aggregate.entity.ProductOption;
+import stanl_2.final_backend.domain.product.command.application.domain.repository.ProductOptionRepository;
 import stanl_2.final_backend.domain.product.command.application.domain.repository.ProductRepository;
 
 import java.io.File;
@@ -58,6 +57,7 @@ public class Initializer implements ApplicationRunner {
     private final CustomerCommandService customerCommandService;
     private final CenterCommandService centerCommandService;
     private final ProductRepository productRepository;
+    private final ProductOptionRepository productOptionRepository;
 
 
     @Override
@@ -156,14 +156,14 @@ public class Initializer implements ApplicationRunner {
         );
 
         Random random = new Random();
-        String[] positions = {"Staff", "Manager", "Director", "Executive"};
+        String[] positions = {"EMPOLYEE", "ADMIN", "DIRECTOR"};
         String[] grades = {"A", "B", "C", "D"};
         String[] jobTypes = {"REGULAR", "TEMPORARY"};
         String[] militaryStatus = {"fulfilled", "exemption", "unfulfilled"};
         String[] genders = {"MALE", "FEMALE"};
         String[] roles = {"EMPLOYEE", "ADMIN", "DIRECTOR"};
-        String[] lastNames = {"김", "이", "박", "최", "정", "강", "조", "윤", "장", "임"};
-        String[] firstNames = {"민수", "지훈", "서연", "예준", "하은", "도현", "지원", "유진", "현우", "수아"};
+        String[] lastNames = {"김", "이", "박", "최", "정", "강", "조", "유", "윤", "장", "임", "기", "방", "하", "도", "한", "손", "송", "오", "조", "서", "배", "홍", "류", "신", "권", "곽"};
+        String[] firstNames = {"민수", "지훈", "서연", "예준", "하은", "도현", "지원", "유진", "현우", "수아", "수빈", "주희", "지아", "준호", "혜린", "지민", "은지", "시우", "다영", "태현", "연우"};
         String[] addresses = {
                 "서울특별시 강남구 테헤란로",
                 "부산광역시 해운대구 센텀중앙로",
@@ -579,109 +579,309 @@ public class Initializer implements ApplicationRunner {
 
 
         // Product 제품 등록
-        Product newProduct1 = new Product("KIA15-S001", 20000, "기아 소렌토 2015", 10);
+        Product newProduct1 = new Product("KIA15-S001", 20000000, "기아 소렌토 2015", 10);
         productRepository.save(newProduct1);
-        Product newProduct2 = new Product("KIA15-S002", 18000, "기아 스포티지 2015", 8);
+
+        Product newProduct2 = new Product("KIA15-S002", 18000000, "기아 스포티지 2015", 8);
         productRepository.save(newProduct2);
-        Product newProduct3 = new Product("KIA16-S003", 22000, "기아 소렌토 2016", 12);
+
+        Product newProduct3 = new Product("KIA16-S003", 22000000, "기아 소렌토 2016", 12);
         productRepository.save(newProduct3);
-        Product newProduct4 = new Product("KIA16-S004", 19500, "기아 옵티마 2016", 5);
+
+        Product newProduct4 = new Product("KIA16-S004", 19500000, "기아 옵티마 2016", 5);
         productRepository.save(newProduct4);
-        Product newProduct5 = new Product("KIA17-S005", 25000, "기아 스팅어 2017", 7);
+
+        Product newProduct5 = new Product("KIA17-S005", 25000000, "기아 스팅어 2017", 7);
         productRepository.save(newProduct5);
-        Product newProduct6 = new Product("KIA17-S006", 21000, "기아 스포티지 2017", 9);
+
+        Product newProduct6 = new Product("KIA17-S006", 21000000, "기아 스포티지 2017", 9);
         productRepository.save(newProduct6);
-        Product newProduct7 = new Product("KIA18-S007", 23000, "기아 소렌토 2018", 6);
+
+        Product newProduct7 = new Product("KIA18-S007", 23000000, "기아 소렌토 2018", 6);
         productRepository.save(newProduct7);
-        Product newProduct8 = new Product("KIA18-S008", 20000, "기아 리오 2018", 11);
+
+        Product newProduct8 = new Product("KIA18-S008", 20000000, "기아 리오 2018", 11);
         productRepository.save(newProduct8);
-        Product newProduct9 = new Product("KIA19-S009", 27000, "기아 스팅어 2019", 4);
+
+        Product newProduct9 = new Product("KIA19-S009", 27000000, "기아 스팅어 2019", 4);
         productRepository.save(newProduct9);
-        Product newProduct10 = new Product("KIA19-S010", 21500, "기아 포르테 2019", 3);
+
+        Product newProduct10 = new Product("KIA19-S010", 21500000, "기아 포르테 2019", 3);
         productRepository.save(newProduct10);
-        Product newProduct11 = new Product("KIA20-S011", 29000, "기아 텔루라이드 2020", 10);
+
+        Product newProduct11 = new Product("KIA20-S011", 29000000, "기아 텔루라이드 2020", 10);
         productRepository.save(newProduct11);
-        Product newProduct12 = new Product("KIA20-S012", 25000, "기아 옵티마 2020", 7);
+
+        Product newProduct12 = new Product("KIA20-S012", 25000000, "기아 옵티마 2020", 7);
         productRepository.save(newProduct12);
-        Product newProduct13 = new Product("KIA21-S013", 30000, "기아 소렌토 2021", 12);
+
+        Product newProduct13 = new Product("KIA21-S013", 30000000, "기아 소렌토 2021", 12);
         productRepository.save(newProduct13);
-        Product newProduct14 = new Product("KIA21-S014", 27000, "기아 카니발 2021", 5);
+
+        Product newProduct14 = new Product("KIA21-S014", 27000000, "기아 카니발 2021", 5);
         productRepository.save(newProduct14);
-        Product newProduct15 = new Product("KIA22-S015", 32000, "기아 EV6 2022", 6);
+
+        Product newProduct15 = new Product("KIA22-S015", 32000000, "기아 EV6 2022", 6);
         productRepository.save(newProduct15);
-        Product newProduct16 = new Product("KIA22-S016", 28000, "기아 셀토스 2022", 8);
+
+        Product newProduct16 = new Product("KIA22-S016", 28000000, "기아 셀토스 2022", 8);
         productRepository.save(newProduct16);
-        Product newProduct17 = new Product("KIA23-S017", 33000, "기아 소렌토 2023", 9);
+
+        Product newProduct17 = new Product("KIA23-S017", 33000000, "기아 소렌토 2023", 9);
         productRepository.save(newProduct17);
-        Product newProduct18 = new Product("KIA23-S018", 29000, "기아 스포티지 2023", 4);
+
+        Product newProduct18 = new Product("KIA23-S018", 29000000, "기아 스포티지 2023", 4);
         productRepository.save(newProduct18);
-        Product newProduct19 = new Product("KIA24-S019", 35000, "기아 EV9 2024", 3);
+
+        Product newProduct19 = new Product("KIA24-S019", 35000000, "기아 EV9 2024", 3);
         productRepository.save(newProduct19);
-        Product newProduct20 = new Product("KIA24-S020", 31000, "기아 스팅어 2024", 5);
+
+        Product newProduct20 = new Product("KIA24-S020", 31000000, "기아 스팅어 2024", 5);
         productRepository.save(newProduct20);
-        Product newProduct21 = new Product("KIA15-S021", 17000, "기아 리오 2015", 6);
+
+        Product newProduct21 = new Product("KIA15-S021", 17000000, "기아 리오 2015", 6);
         productRepository.save(newProduct21);
-        Product newProduct22 = new Product("KIA16-S022", 21000, "기아 포르테 2016", 4);
+
+        Product newProduct22 = new Product("KIA16-S022", 21000000, "기아 포르테 2016", 4);
         productRepository.save(newProduct22);
-        Product newProduct23 = new Product("KIA17-S023", 24000, "기아 옵티마 2017", 8);
+
+        Product newProduct23 = new Product("KIA17-S023", 24000000, "기아 옵티마 2017", 8);
         productRepository.save(newProduct23);
-        Product newProduct24 = new Product("KIA18-S024", 22500, "기아 소울 2018", 7);
+
+        Product newProduct24 = new Product("KIA18-S024", 22500000, "기아 소울 2018", 7);
         productRepository.save(newProduct24);
-        Product newProduct25 = new Product("KIA19-S025", 28000, "기아 텔루라이드 2019", 5);
+
+        Product newProduct25 = new Product("KIA19-S025", 28000000, "기아 텔루라이드 2019", 5);
         productRepository.save(newProduct25);
-        Product newProduct26 = new Product("KIA20-S026", 26000, "기아 니로 2020", 9);
+
+        Product newProduct26 = new Product("KIA20-S026", 26000000, "기아 니로 2020", 9);
         productRepository.save(newProduct26);
-        Product newProduct27 = new Product("KIA21-S027", 29500, "기아 카니발 2021", 3);
+
+        Product newProduct27 = new Product("KIA21-S027", 29500000, "기아 카니발 2021", 3);
         productRepository.save(newProduct27);
-        Product newProduct28 = new Product("KIA22-S028", 31000, "기아 소렌토 2022", 10);
+
+        Product newProduct28 = new Product("KIA22-S028", 31000000, "기아 소렌토 2022", 10);
         productRepository.save(newProduct28);
-        Product newProduct29 = new Product("KIA23-S029", 34000, "기아 EV6 2023", 6);
+
+        Product newProduct29 = new Product("KIA23-S029", 34000000, "기아 EV6 2023", 6);
         productRepository.save(newProduct29);
-        Product newProduct30 = new Product("KIA24-S030", 32000, "기아 셀토스 2024", 4);
+
+        Product newProduct30 = new Product("KIA24-S030", 32000000, "기아 셀토스 2024", 4);
         productRepository.save(newProduct30);
-        Product newProduct31 = new Product("KIA15-S031", 18500, "기아 소울 2015", 7);
+
+        Product newProduct31 = new Product("KIA15-S031", 18500000, "기아 소울 2015", 7);
         productRepository.save(newProduct31);
-        Product newProduct32 = new Product("KIA16-S032", 22000, "기아 소렌토 2016", 6);
+
+        Product newProduct32 = new Product("KIA16-S032", 22000000, "기아 소렌토 2016", 6);
         productRepository.save(newProduct32);
-        Product newProduct33 = new Product("KIA17-S033", 25000, "기아 포르테 2017", 5);
+
+        Product newProduct33 = new Product("KIA17-S033", 25000000, "기아 포르테 2017", 5);
         productRepository.save(newProduct33);
-        Product newProduct34 = new Product("KIA18-S034", 23000, "기아 리오 2018", 8);
+
+        Product newProduct34 = new Product("KIA18-S034", 23000000, "기아 리오 2018", 8);
         productRepository.save(newProduct34);
-        Product newProduct35 = new Product("KIA19-S035", 27000, "기아 스포티지 2019", 4);
+
+        Product newProduct35 = new Product("KIA19-S035", 27000000, "기아 스포티지 2019", 4);
         productRepository.save(newProduct35);
-        Product newProduct36 = new Product("KIA20-S036", 29500, "기아 텔루라이드 2020", 9);
+
+        Product newProduct36 = new Product("KIA20-S036", 29500000, "기아 텔루라이드 2020", 9);
         productRepository.save(newProduct36);
-        Product newProduct37 = new Product("KIA21-S037", 28000, "기아 셀토스 2021", 6);
+
+        Product newProduct37 = new Product("KIA21-S037", 28000000, "기아 셀토스 2021", 6);
         productRepository.save(newProduct37);
-        Product newProduct38 = new Product("KIA22-S038", 31500, "기아 스포티지 2022", 10);
+
+        Product newProduct38 = new Product("KIA22-S038", 31500000, "기아 스포티지 2022", 10);
         productRepository.save(newProduct38);
-        Product newProduct39 = new Product("KIA23-S039", 33000, "기아 스팅어 2023", 7);
+
+        Product newProduct39 = new Product("KIA23-S039", 33000000, "기아 스팅어 2023", 7);
         productRepository.save(newProduct39);
-        Product newProduct40 = new Product("KIA24-S040", 35500, "기아 EV9 2024", 3);
+
+        Product newProduct40 = new Product("KIA24-S040", 35500000, "기아 EV9 2024", 3);
         productRepository.save(newProduct40);
-        Product newProduct41 = new Product("KIA15-S041", 19500, "기아 옵티마 2015", 6);
+
+        Product newProduct41 = new Product("KIA15-S041", 19500000, "기아 옵티마 2015", 6);
         productRepository.save(newProduct41);
-        Product newProduct42 = new Product("KIA16-S042", 22500, "기아 소울 2016", 5);
+
+        Product newProduct42 = new Product("KIA16-S042", 22500000, "기아 소울 2016", 5);
         productRepository.save(newProduct42);
-        Product newProduct43 = new Product("KIA17-S043", 25500, "기아 니로 2017", 9);
+
+        Product newProduct43 = new Product("KIA17-S043", 25500000, "기아 니로 2017", 9);
         productRepository.save(newProduct43);
-        Product newProduct44 = new Product("KIA18-S044", 24000, "기아 포르테 2018", 4);
+
+        Product newProduct44 = new Product("KIA18-S044", 24000000, "기아 포르테 2018", 4);
         productRepository.save(newProduct44);
-        Product newProduct45 = new Product("KIA19-S045", 28500, "기아 텔루라이드 2019", 8);
+
+        Product newProduct45 = new Product("KIA19-S045", 28500000, "기아 텔루라이드 2019", 8);
         productRepository.save(newProduct45);
-        Product newProduct46 = new Product("KIA20-S046", 26500, "기아 소렌토 2020", 7);
+
+        Product newProduct46 = new Product("KIA20-S046", 26500000, "기아 소렌토 2020", 7);
         productRepository.save(newProduct46);
-        Product newProduct47 = new Product("KIA21-S047", 30000, "기아 스팅어 2021", 3);
+
+        Product newProduct47 = new Product("KIA21-S047", 30000000, "기아 스팅어 2021", 3);
         productRepository.save(newProduct47);
-        Product newProduct48 = new Product("KIA22-S048", 32500, "기아 EV6 2022", 6);
+
+        Product newProduct48 = new Product("KIA22-S048", 32500000, "기아 EV6 2022", 6);
         productRepository.save(newProduct48);
-        Product newProduct49 = new Product("KIA23-S049", 34000, "기아 카니발 2023", 10);
+
+        Product newProduct49 = new Product("KIA23-S049", 34000000, "기아 카니발 2023", 10);
         productRepository.save(newProduct49);
-        Product newProduct50 = new Product("KIA24-S050", 36000, "기아 EV9 2024", 5);
+
+        Product newProduct50 = new Product("KIA24-S050", 36000000, "기아 EV9 2024", 5);
         productRepository.save(newProduct50);
 
 
-        
+        // 제품 옵션 등록
+        ProductOption newProductOption1 = new ProductOption('K', 'N', 'A', 'A', 'L', '4', '2', 'A', 'P', 'A', 'U', '1', '0', '1', 'B', 'W', '1', '1', '1', '1', '1', '0', '1', '1', '1');
+        productOptionRepository.save(newProductOption1);
+
+        ProductOption newProductOption2 = new ProductOption('K', 'N', 'H', 'B', 'L', '4', '4', 'B', 'R', 'B', 'Z', '1', '1', '0', 'G', 'B', '0', '1', '0', '1', '0', '1', '0', '0', '1');
+        productOptionRepository.save(newProductOption2);
+
+        ProductOption newProductOption3 = new ProductOption('K', 'M', 'H', 'C', 'M', '6', '3', 'C', 'P', 'C', 'A', '0', '1', '1', 'R', 'G', '1', '1', '1', '0', '1', '1', '0', '1', '0');
+        productOptionRepository.save(newProductOption3);
+
+        ProductOption newProductOption4 = new ProductOption('K', 'N', 'J', 'D', 'L', '2', '4', 'A', 'R', 'D', 'C', '1', '0', '0', 'B', 'R', '0', '0', '0', '1', '0', '0', '1', '0', '1');
+        productOptionRepository.save(newProductOption4);
+
+        ProductOption newProductOption5 = new ProductOption('K', 'M', 'F', 'B', 'S', '5', '2', 'D', 'O', 'B', 'A', '1', '1', '1', 'Y', 'S', '0', '1', '1', '1', '0', '0', '0', '1', '0');
+        productOptionRepository.save(newProductOption5);
+
+        ProductOption newProductOption6 = new ProductOption('K', 'N', 'A', 'F', 'L', '3', '3', 'F', 'B', 'Y', 'S', '2', '0', '1', 'T', 'B', '1', '1', '0', '0', '0', '1', '1', '1', '1');
+        productOptionRepository.save(newProductOption6);
+
+        ProductOption newProductOption7 = new ProductOption('K', 'M', 'F', 'A', 'J', '4', '2', 'D', 'S', 'C', 'V', '1', '0', '0', 'A', 'Q', '1', '1', '1', '0', '0', '0', '1', '0', '1');
+        productOptionRepository.save(newProductOption7);
+
+        ProductOption newProductOption8 = new ProductOption('K', 'N', 'A', 'B', 'F', '5', '4', 'S', 'M', 'A', 'R', '0', '1', '0', 'T', 'S', '1', '1', '1', '0', '0', '1', '0', '1', '1');
+        productOptionRepository.save(newProductOption8);
+
+        ProductOption newProductOption9 = new ProductOption('K', 'M', 'B', 'R', 'K', '2', '3', 'C', 'F', 'G', 'W', '1', '0', '0', 'A', 'F', '1', '1', '0', '1', '0', '0', '1', '0', '1');
+        productOptionRepository.save(newProductOption9);
+
+        ProductOption newProductOption10 = new ProductOption('K', 'N', 'F', 'Y', 'L', '4', '3', 'B', 'Y', 'C', 'Z', '1', '1', '1', 'X', 'S', '0', '1', '0', '0', '1', '1', '1', '0', '1');
+        productOptionRepository.save(newProductOption10);
+
+        ProductOption newProductOption11 = new ProductOption('K', 'M', 'E', 'Z', 'S', '3', '2', 'F', 'M', 'A', 'B', '0', '1', '0', 'A', 'N', '1', '0', '1', '0', '0', '1', '1', '0', '1');
+        productOptionRepository.save(newProductOption11);
+
+        ProductOption newProductOption12 = new ProductOption('K', 'N', 'A', 'F', 'J', '2', '3', 'F', 'R', 'B', 'S', '1', '0', '1', 'Y', 'G', '1', '1', '0', '1', '1', '1', '0', '0', '0');
+        productOptionRepository.save(newProductOption12);
+
+        ProductOption newProductOption13 = new ProductOption('K', 'M', 'D', 'T', 'K', '5', '4', 'S', 'A', 'V', 'L', '0', '1', '1', 'B', 'M', '0', '1', '1', '0', '0', '0', '1', '1', '1');
+        productOptionRepository.save(newProductOption13);
+
+        ProductOption newProductOption14 = new ProductOption('K', 'M', 'A', 'Z', 'P', '4', '2', 'D', 'P', 'S', 'B', '1', '1', '1', 'Y', 'Q', '1', '0', '0', '1', '1', '0', '0', '0', '1');
+        productOptionRepository.save(newProductOption14);
+
+        ProductOption newProductOption15 = new ProductOption('K', 'M', 'F', 'W', 'J', '6', '3', 'B', 'R', 'V', 'Z', '0', '0', '1', 'B', 'R', '1', '1', '0', '0', '1', '1', '0', '1', '0');
+        productOptionRepository.save(newProductOption15);
+
+        ProductOption newProductOption16 = new ProductOption('K', 'N', 'A', 'C', 'L', '3', '5', 'S', 'Q', 'M', 'R', '1', '1', '0', 'Y', 'B', '0', '1', '1', '0', '0', '0', '0', '0', '1');
+        productOptionRepository.save(newProductOption16);
+
+        ProductOption newProductOption17 = new ProductOption('K', 'M', 'F', 'A', 'J', '4', '2', 'D', 'S', 'C', 'V', '1', '0', '1', 'A', 'Q', '1', '1', '0', '0', '1', '0', '1', '1', '0');
+        productOptionRepository.save(newProductOption17);
+
+        ProductOption newProductOption18 = new ProductOption('K', 'N', 'F', 'B', 'S', '3', '3', 'S', 'M', 'A', 'R', '0', '1', '0', 'T', 'S', '1', '1', '0', '1', '0', '1', '0', '1', '1');
+        productOptionRepository.save(newProductOption18);
+
+        ProductOption newProductOption19 = new ProductOption('K', 'M', 'F', 'C', 'T', '5', '3', 'F', 'Q', 'C', 'Z', '0', '1', '1', 'B', 'R', '0', '1', '1', '1', '0', '1', '0', '0', '1');
+        productOptionRepository.save(newProductOption19);
+
+        ProductOption newProductOption20 = new ProductOption('K', 'N', 'F', 'A', 'P', '4', '4', 'D', 'P', 'S', 'B', '1', '0', '0', 'Y', 'Q', '0', '1', '0', '1', '0', '0', '1', '1', '0');
+        productOptionRepository.save(newProductOption20);
+
+        ProductOption newProductOption21 = new ProductOption('K', 'M', 'F', 'B', 'L', '3', '2', 'F', 'R', 'M', 'A', '1', '0', '1', 'G', 'Y', '0', '1', '0', '1', '1', '0', '0', '1', '1');
+        productOptionRepository.save(newProductOption21);
+
+        ProductOption newProductOption22 = new ProductOption('K', 'N', 'F', 'A', 'J', '5', '3', 'D', 'S', 'C', 'W', '0', '1', '1', 'A', 'F', '1', '0', '1', '1', '0', '0', '0', '0', '1');
+        productOptionRepository.save(newProductOption22);
+
+        ProductOption newProductOption23 = new ProductOption('K', 'M', 'F', 'C', 'S', '4', '3', 'B', 'Q', 'A', 'Z', '1', '0', '0', 'Y', 'R', '1', '0', '1', '0', '1', '1', '1', '0', '0');
+        productOptionRepository.save(newProductOption23);
+
+        ProductOption newProductOption24 = new ProductOption('K', 'N', 'F', 'D', 'T', '2', '4', 'F', 'P', 'B', 'A', '1', '1', '0', 'Y', 'Q', '0', '1', '1', '1', '0', '1', '1', '0', '1');
+        productOptionRepository.save(newProductOption24);
+
+        ProductOption newProductOption25 = new ProductOption('K', 'M', 'F', 'B', 'J', '3', '5', 'S', 'M', 'Z', 'Y', '0', '0', '1', 'A', 'T', '1', '1', '0', '1', '0', '0', '0', '0', '1');
+        productOptionRepository.save(newProductOption25);
+
+        ProductOption newProductOption26 = new ProductOption('K', 'N', 'F', 'A', 'L', '4', '2', 'D', 'S', 'C', 'V', '1', '0', '1', 'G', 'Y', '0', '1', '1', '1', '1', '1', '0', '0', '1');
+        productOptionRepository.save(newProductOption26);
+
+        ProductOption newProductOption27 = new ProductOption('K', 'M', 'F', 'C', 'S', '2', '3', 'F', 'Q', 'B', 'A', '0', '1', '0', 'T', 'R', '0', '1', '1', '0', '0', '1', '1', '1', '0');
+        productOptionRepository.save(newProductOption27);
+
+        ProductOption newProductOption28 = new ProductOption('K', 'N', 'F', 'B', 'M', '5', '4', 'B', 'R', 'D', 'S', '1', '0', '1', 'X', 'Q', '1', '1', '0', '0', '1', '0', '0', '1', '1');
+        productOptionRepository.save(newProductOption28);
+
+        ProductOption newProductOption29 = new ProductOption('K', 'M', 'F', 'A', 'J', '3', '2', 'C', 'P', 'Z', 'V', '0', '1', '1', 'G', 'S', '1', '0', '0', '1', '0', '1', '0', '1', '0');
+        productOptionRepository.save(newProductOption29);
+
+        ProductOption newProductOption30 = new ProductOption('K', 'N', 'F', 'C', 'L', '6', '4', 'S', 'Q', 'M', 'Z', '1', '0', '0', 'A', 'T', '1', '1', '0', '1', '1', '0', '0', '1', '1');
+        productOptionRepository.save(newProductOption30);
+
+        ProductOption newProductOption31 = new ProductOption('K', 'M', 'F', 'A', 'S', '2', '3', 'F', 'M', 'B', 'R', '0', '1', '1', 'Y', 'Q', '1', '1', '0', '0', '1', '0', '1', '1', '0');
+        productOptionRepository.save(newProductOption31);
+
+        ProductOption newProductOption32 = new ProductOption('K', 'N', 'F', 'B', 'P', '4', '2', 'S', 'R', 'A', 'Q', '1', '0', '0', 'T', 'S', '0', '1', '1', '1', '0', '0', '1', '1', '0');
+        productOptionRepository.save(newProductOption32);
+
+        ProductOption newProductOption33 = new ProductOption('K', 'M', 'F', 'C', 'L', '3', '5', 'B', 'S', 'V', 'Z', '1', '0', '1', 'A', 'R', '1', '0', '0', '0', '1', '0', '0', '1', '0');
+        productOptionRepository.save(newProductOption33);
+
+        ProductOption newProductOption34 = new ProductOption('K', 'N', 'F', 'A', 'J', '2', '3', 'D', 'P', 'W', 'R', '0', '1', '0', 'G', 'Y', '1', '0', '1', '1', '0', '1', '0', '1', '0');
+        productOptionRepository.save(newProductOption34);
+
+        ProductOption newProductOption35 = new ProductOption('K', 'M', 'F', 'B', 'S', '4', '2', 'C', 'F', 'Z', 'V', '1', '0', '0', 'T', 'R', '0', '1', '0', '1', '0', '1', '0', '1', '1');
+        productOptionRepository.save(newProductOption35);
+
+        ProductOption newProductOption36 = new ProductOption('K', 'N', 'F', 'C', 'L', '3', '3', 'S', 'Q', 'M', 'Y', '1', '1', '0', 'A', 'T', '1', '0', '0', '1', '0', '1', '1', '1', '0');
+        productOptionRepository.save(newProductOption36);
+
+        ProductOption newProductOption37 = new ProductOption('K', 'M', 'F', 'A', 'T', '5', '4', 'F', 'P', 'S', 'A', '0', '1', '1', 'G', 'R', '1', '1', '0', '1', '0', '1', '0', '0', '0');
+        productOptionRepository.save(newProductOption37);
+
+        ProductOption newProductOption38 = new ProductOption('K', 'N', 'F', 'B', 'L', '2', '3', 'C', 'M', 'B', 'Z', '1', '1', '0', 'Y', 'P', '0', '0', '1', '1', '1', '1', '0', '0', '0');
+        productOptionRepository.save(newProductOption38);
+
+        ProductOption newProductOption39 = new ProductOption('K', 'M', 'F', 'C', 'S', '4', '2', 'D', 'Q', 'A', 'R', '1', '0', '1', 'T', 'Y', '0', '1', '0', '1', '1', '0', '0', '0', '1');
+        productOptionRepository.save(newProductOption39);
+
+        ProductOption newProductOption40 = new ProductOption('K', 'N', 'F', 'A', 'J', '3', '5', 'S', 'M', 'B', 'A', '0', '1', '0', 'Y', 'S', '1', '0', '1', '1', '1', '0', '0', '1', '0');
+        productOptionRepository.save(newProductOption40);
+
+        ProductOption newProductOption41 = new ProductOption('K', 'M', 'F', 'B', 'T', '5', '3', 'D', 'F', 'S', 'Q', '1', '1', '0', 'A', 'M', '0', '1', '0', '0', '1', '1', '1', '0', '1');
+        productOptionRepository.save(newProductOption41);
+
+        ProductOption newProductOption42 = new ProductOption('K', 'N', 'F', 'C', 'L', '4', '2', 'B', 'R', 'M', 'Z', '1', '0', '1', 'Y', 'S', '0', '1', '1', '1', '0', '1', '0', '1', '0');
+        productOptionRepository.save(newProductOption42);
+
+        ProductOption newProductOption43 = new ProductOption('K', 'M', 'F', 'A', 'S', '3', '5', 'S', 'Q', 'B', 'C', '0', '1', '1', 'G', 'P', '1', '0', '0', '1', '1', '0', '0', '1', '0');
+        productOptionRepository.save(newProductOption43);
+
+        ProductOption newProductOption44 = new ProductOption('K', 'N', 'F', 'B', 'M', '6', '4', 'F', 'R', 'L', 'Y', '1', '0', '1', 'B', 'T', '0', '1', '1', '1', '0', '0', '1', '1', '0');
+        productOptionRepository.save(newProductOption44);
+
+        ProductOption newProductOption45 = new ProductOption('K', 'M', 'F', 'C', 'L', '5', '3', 'D', 'M', 'B', 'R', '0', '1', '0', 'Y', 'P', '1', '0', '1', '1', '1', '1', '0', '1', '0');
+        productOptionRepository.save(newProductOption45);
+
+        ProductOption newProductOption46 = new ProductOption('K', 'N', 'F', 'A', 'T', '4', '2', 'S', 'Q', 'P', 'W', '0', '1', '1', 'T', 'S', '1', '1', '0', '1', '0', '0', '0', '0', '1');
+        productOptionRepository.save(newProductOption46);
+
+        ProductOption newProductOption47 = new ProductOption('K', 'M', 'F', 'B', 'J', '3', '5', 'C', 'M', 'Z', 'R', '0', '1', '0', 'Y', 'Q', '1', '0', '1', '0', '0', '0', '1', '1', '1');
+        productOptionRepository.save(newProductOption47);
+
+        ProductOption newProductOption48 = new ProductOption('K', 'N', 'F', 'C', 'S', '5', '3', 'D', 'F', 'P', 'A', '1', '0', '1', 'A', 'T', '0', '1', '0', '1', '0', '1', '1', '0', '0');
+        productOptionRepository.save(newProductOption48);
+
+        ProductOption newProductOption49 = new ProductOption('K', 'M', 'F', 'A', 'R', '2', '4', 'C', 'Q', 'B', 'M', '1', '0', '1', 'Y', 'P', '0', '1', '0', '0', '1', '1', '0', '0', '1');
+        productOptionRepository.save(newProductOption49);
+
+        ProductOption newProductOption50 = new ProductOption('K', 'M', 'F', 'L', 'P', '3', '4', 'C', 'F', 'A', 'R', '1', '0', '1', 'G', 'Y', '0', '1', '0', '1', '1', '0', '0', '1', '0');
+        productOptionRepository.save(newProductOption50);
+
+
 
     }
 
