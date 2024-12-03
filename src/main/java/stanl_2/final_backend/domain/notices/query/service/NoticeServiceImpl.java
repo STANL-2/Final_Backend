@@ -45,6 +45,7 @@ public class NoticeServiceImpl implements NoticeService{
         List<NoticeDTO> notices = (List<NoticeDTO>) redisTemplate.opsForValue().get(cacheKey);
         if (notices == null) {
             System.out.println("데이터베이스에서 데이터 조회 중...");
+            System.out.println(searchDTO.getMemberId());
             notices = noticeMapper.findNotices(offset, size, searchDTO);
             if (notices != null && !notices.isEmpty()) { // 데이터가 있을 때만 캐싱
                 redisService.setKeyWithTTL(cacheKey, notices, 30 * 60); // 캐싱 시 동일 키 사용
