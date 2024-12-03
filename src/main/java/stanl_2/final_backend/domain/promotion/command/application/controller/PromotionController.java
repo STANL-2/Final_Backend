@@ -43,8 +43,8 @@ public class PromotionController {
     public ResponseEntity<PromotionResponseMessage> postNotice(@RequestPart("dto") PromotionRegistDTO promotionRegistDTO, // JSON 데이터
                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
                                                                Principal principal){
-        String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
-        promotionRegistDTO.setMemberId(memberId);
+        String memberLoginId = principal.getName();
+        promotionRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
             promotionRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
             System.out.println("response:1");
