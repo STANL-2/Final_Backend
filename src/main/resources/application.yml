@@ -74,3 +74,8 @@ cloud:
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+claude:
+  api:
+    key: ${CLAUDE_API_KEY}
+    url: https://api.claude.ai/v1/summary
