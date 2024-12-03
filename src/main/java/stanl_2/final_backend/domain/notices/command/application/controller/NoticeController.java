@@ -46,8 +46,8 @@ public class NoticeController {
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("dto") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
                                                             @RequestPart(value = "file", required = false)  MultipartFile file,
                                                             Principal principal){
-        String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
-        noticeRegistDTO.setMemberId(memberId);
+        String memberLoginId = principal.getName();
+        noticeRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
             noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
             System.out.println("response:1");

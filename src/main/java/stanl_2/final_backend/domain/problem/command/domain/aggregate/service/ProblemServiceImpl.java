@@ -107,7 +107,6 @@ public class ProblemServiceImpl implements ProblemCommandService {
         if(!problem.getMemberId().equals(memberId)){
             throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
         }
-        System.out.println("==========test==================");
         try {
             problem.setStatus("DONE");
             problem.setUpdatedAt(getCurrentTimestamp());

@@ -58,8 +58,9 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Transactional
     public void registerNotice(NoticeRegistDTO noticeRegistDTO,
                                Principal principal) {
+
         redisService.clearNoticeCache();
-        String memberId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeRegistDTO.getMemberLoginId());
         noticeRegistDTO.setMemberId(memberId);
 
         try {
