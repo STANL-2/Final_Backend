@@ -50,12 +50,9 @@ public class NoticeController {
         noticeRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
             noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
-            System.out.println("response:1");
         }else if(file==null || file.isEmpty()){
-            System.out.println("response:2");
             noticeRegistDTO.setFileUrl(null);
         } else {
-            System.out.println("response:3");
             noticeRegistDTO.setFileUrl(null);
         }
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
@@ -81,13 +78,10 @@ public class NoticeController {
         noticeModifyDTO.setMemberLoginId(memberLoginId);
         noticeModifyDTO.setContent(noticeModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {
-            System.out.println("response:1");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }else if(file==null || file.isEmpty()) {
-            System.out.println("response:2");
             noticeModifyDTO.setFileUrl(null);
         } else {
-            System.out.println("response:3");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }
         noticeCommandService.modifyNotice(noticeId,noticeModifyDTO, principal);
