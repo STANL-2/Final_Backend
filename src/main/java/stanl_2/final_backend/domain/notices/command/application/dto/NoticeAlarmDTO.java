@@ -21,4 +21,6 @@ public class NoticeAlarmDTO {
     private String memberLoginId;
 
     private String memberId;
+
+    private String adminId;
 }

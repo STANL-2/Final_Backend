@@ -29,17 +29,26 @@ public class Alarm {
     @Column(name = "ALR_MSG", nullable = false)
     private String message;
 
-    @Column(name = "ALR_URL", nullable = false)
+    @Column(columnDefinition = "TEXT", name = "ALR_URL", nullable = false)
     private String redirectUrl;
 
     @Column(name = "ALR_TYPE", nullable = false)
     private String type = "NOTICE";
+
+    @Column(name = "ALR_TAG", nullable = false)
+    private String tag;
 
     @Column(name = "ALR_READ_STAT", nullable = false)
     private Boolean readStatus;
 
     @Column(name = "CREATED_AT", nullable = false)
     private String createdAt;
+
+    @Column(name = "CONT_ID", nullable = false)
+    private String contentId;
+
+    @Column(name = "ADMIN_ID", nullable = false)
+    private String adminId;
 
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
