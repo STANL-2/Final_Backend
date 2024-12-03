@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class SalesHistoryStatisticsAverageDTO {
-    private Double averageTotalSales;
-    private Double averageTotalIncentive;
-    private Double averageTotalPerformance;
+    private BigDecimal averageTotalSales;
+    private BigDecimal averageTotalIncentive;
+    private BigDecimal averageTotalPerformance;
+    private String month;
+    private String year;
 }
