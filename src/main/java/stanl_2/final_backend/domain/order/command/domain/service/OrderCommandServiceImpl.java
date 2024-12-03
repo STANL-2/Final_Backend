@@ -4,7 +4,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.order.command.application.dto.OrderAlarmDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderStatusModifyDTO;
@@ -26,12 +28,15 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
     private final S3FileService s3FileService;
+    private final AlarmCommandService alarmCommandService;
 
-    public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper, S3FileService s3FileService) {
+    public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper,
+                                   S3FileService s3FileService ,AlarmCommandService alarmCommandService) {
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
         this.s3FileService = s3FileService;
+        this.alarmCommandService = alarmCommandService;
     }
 
     private String  getCurrentTime() {
@@ -119,5 +124,10 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         order.setAdminId(adminId);
 
         orderRepository.save(order);
+
+        OrderAlarmDTO orderAlarmDTO = new OrderAlarmDTO(order.getOrderId(), order.getTitle(), order.getMemberId(),
+                                                        order.getAdminId());
+
+        alarmCommandService.sendOrderAlarm(orderAlarmDTO);
     }
 }

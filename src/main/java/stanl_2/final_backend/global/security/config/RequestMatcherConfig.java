@@ -15,11 +15,14 @@ public class RequestMatcherConfig {
                         "/webjars/**",
                         "/api/v1/auth/signin",
                         "/api/v1/auth/signup",
-                        "/api/v1/auth/refresh"
+                        "/api/v1/auth/refresh",
+                        "/api/v1/auth/checkmail",
+                        "/api/v1/auth/checknum"
                 ).permitAll()
 
                 // Alarm API
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm").hasAnyRole("alarm-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 알림창 전체 조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/alarm/**").hasAnyRole("alarm-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 태그별 알림창 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm/read/**").hasAnyRole("alarm-read-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 읽은 알림 상세 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm/unread/**").hasAnyRole("alarm-unread-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 읽지 않은 알림 상세 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/alarm/connect").hasAnyRole("alarm-connect-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // sse 연결 (전체)
@@ -47,7 +50,9 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/contract").hasAnyRole("contract-post", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 등록 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/search").hasAnyRole("contract-search-get", "GOD", "DIRECTOR", "ADMIN") // 계약서 검색 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee").hasAnyRole("contract-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 전체 조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/{contractId}").hasAnyRole("contract-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/**").hasAnyRole("contract-employee-id-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 상세조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/center/{contractId}").hasAnyRole("contract-employee-id-get", "GOD", "DIRECTOR", "ADMIN") // 계약서 상세조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/search").hasAnyRole("contract-employee-search-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 검색 조회 (전체)
 
                 // Customer API
@@ -78,7 +83,7 @@ public class RequestMatcherConfig {
 
                 // Member API
                 .requestMatchers(HttpMethod.GET, "/api/v1/member/authorities").hasAnyRole("GOD") // CHECK (시스템관리자)
-                .requestMatchers(HttpMethod.GET, "/api/v1/member").hasAnyRole("member-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 정보 조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/member/**").hasAnyRole("member-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 회원 정보 조회 (전체)
 
                 // Log API
                 .requestMatchers(HttpMethod.GET, "/api/v1/log").hasAnyRole("log-get", "GOD") // 로그 조회 (시스템 관리자)
@@ -96,6 +101,7 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/order").hasAnyRole("order-get", "GOD", "DIRECTOR", "ADMIN") // 수주서 전체 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee").hasAnyRole("order-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 수주서 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR", "ADMIN") // 수주서 상세 조회 (영업관리자, 영업담당자)
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/center/{orderId}").hasAnyRole("order-center-id-get", "GOD", "DIRECTOR", "ADMIN") // 수주서 상세 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee/{orderId}").hasAnyRole("order-employee-id-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 수주서 상세 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/search").hasAnyRole("order-search", "GOD", "DIRECTOR", "ADMIN") // 수주서 검색 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee/search").hasAnyRole("order-employee-search", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 수주서 검색 조회 (전체)
@@ -141,7 +147,6 @@ public class RequestMatcherConfig {
                 // Sample API
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/sample/{id}").hasAnyRole("sample-delete", "GOD") // 샘플 삭제 테스트 (시스템관리자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/sample/detail/{id}").hasAnyRole("sample-detail-get", "GOD") // 샘플 상세 조회 테스트 (시스템관리자)
-                .requestMatchers(HttpMethod.GET, "/api/v1/schedule/{scheduleId}").hasAnyRole("sample-schedule-get", "GOD") // 샘플 조회 테스트 (시스템관리자)
                 .requestMatchers(HttpMethod.POST, "/api/v1/sample").hasAnyRole("sample-create", "GOD") // 샘플 요청 테스트 (시스템관리자)
                 .requestMatchers(HttpMethod.PUT, "/api/v1/sample/{id}").hasAnyRole("sample-update", "GOD") // 샘플 수정 테스트 (시스템관리자)
 

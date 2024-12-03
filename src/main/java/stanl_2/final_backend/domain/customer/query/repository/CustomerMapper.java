@@ -29,4 +29,6 @@ public interface CustomerMapper {
     int selectCustomerContractCnt(String customerId);
 
     List<CustomerExcelDTO> findCustomerForExcel();
+
+    List<CustomerDTO> findCustomerInfoByName(String customerName);
 }

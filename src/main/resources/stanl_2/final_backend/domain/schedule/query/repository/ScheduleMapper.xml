@@ -89,6 +89,7 @@
     </resultMap>
     <select id="findAllSchedulesByDay" resultMap="AllSchedulesByDay" parameterType="string">
         SELECT
+               a.sch_id,
                a.sch_name,
                a.sch_tag,
                a.sch_srt_at,

@@ -21,6 +21,7 @@ import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,9 +141,23 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
 
         CustomerDTO customerInfoDTO = customerMapper.selectCustomerInfoById(customerId);
 
-        String customerName = aesUtils.decrypt(customerInfoDTO.getName());
+//        String customerName = aesUtils.decrypt(customerInfoDTO.getName());
 
-        return customerName;
+//        return customerName;
+        return customerInfoDTO.getName();
+    }
+
+    @Override
+    public List<String> selectCustomerId(String customerName) throws GeneralSecurityException {
+        List<CustomerDTO> customerInfoDTO = customerMapper.findCustomerInfoByName(customerName);
+
+        List<String> customerIds = new ArrayList<>();
+
+        customerInfoDTO.forEach(customerInfo -> {
+            customerIds.add(customerInfo.getCustomerId());
+        });
+
+        return customerIds;
     }
 
     @Override
