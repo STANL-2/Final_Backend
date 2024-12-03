@@ -110,6 +110,7 @@ public interface SalesHistoryMapper {
             , @Param("offset") int offset,
                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
+    String findSalesHistoryIdByContractId(@Param("contractId") String contractId);
 }
 
 

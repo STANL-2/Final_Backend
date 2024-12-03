@@ -579,4 +579,17 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
         return new PageImpl<>(salesHistoryList, pageable, total);
     }
+
+    @Override
+    @Transactional
+    public String selectSalesHistoryIdByContractId(String contractId) {
+
+        String salesHistoryId = salesHistoryMapper.findSalesHistoryIdByContractId(contractId);
+
+        if(salesHistoryId == null){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return salesHistoryId;
+    }
 }

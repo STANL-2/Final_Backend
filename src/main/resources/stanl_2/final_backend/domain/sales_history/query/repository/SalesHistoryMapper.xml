@@ -251,6 +251,15 @@
                     #{cust_id}
                 </foreach>
             </if>
+            <if test="salesHistorySearchDTO.productList != null and salesHistorySearchDTO.productList.size() > 0">
+                AND a.prod_id IN
+                <foreach collection="salesHistorySearchDTO.productList" item="prod_id" open="(" separator="," close=")">
+                    #{prod_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.contractId != null">
+                AND a.conr_id = #{salesHistorySearchDTO.contractId}
+            </if>
             <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
@@ -1086,6 +1095,11 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
-
+    <select id="findSalesHistoryIdByContractId" resultType="String">
+        SELECT
+              a.sal_hist_id
+          FROM tb_sales_history a
+         WHERE a.conr_id = #{contractId}
+    </select>
 
 </mapper>
