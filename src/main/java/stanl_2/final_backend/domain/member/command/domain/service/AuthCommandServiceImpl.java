@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.member.command.domain.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,33 +16,48 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Member;
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.MemberRole;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRoleRepository;
+import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
+import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
+import stanl_2.final_backend.global.mail.MailService;
+import stanl_2.final_backend.global.redis.RedisService;
 import stanl_2.final_backend.global.security.service.MemberDetails;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.util.Date;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service("commandAuthService")
 public class AuthCommandServiceImpl implements AuthCommandService {
 
+    private final RedisService redisService;
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
+
+    private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String DIGITS = "0123456789";
+    private static final String SPECIAL_CHARACTERS = "!@#$%^&*()-_=+<>?";
+
+    // 임시 비밀번호의 최소 길이
+    private static final int MIN_LENGTH = 12;
+
+    private SecureRandom secureRandom = new SecureRandom();
 
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
@@ -50,6 +66,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final AuthenticationManager authenticationManager;
     private final AuthQueryService authQueryService;
     private final AESUtils aesUtils;
+    private final S3FileService s3FileService;
+    private final MailService mailService;
 
     @Autowired
     public AuthCommandServiceImpl(MemberRepository memberRepository,
@@ -58,7 +76,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                                   ModelMapper modelMapper,
                                   AuthenticationManager authenticationManager,
                                   AuthQueryService authQueryService,
-                                  AESUtils aesUtils) {
+                                  AESUtils aesUtils,
+                                  S3FileService s3FileService,
+                                  MailService mailService, RedisService redisService) {
         this.memberRepository = memberRepository;
         this.memberRoleRepository = memberRoleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -66,11 +86,17 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         this.authenticationManager = authenticationManager;
         this.authQueryService = authQueryService;
         this.aesUtils = aesUtils;
+        this.s3FileService = s3FileService;
+        this.mailService = mailService;
+        this.redisService = redisService;
     }
 
     @Override
     @Transactional
-    public void signup(SignupDTO signupDTO) throws GeneralSecurityException {
+    public void signup(SignupDTO signupDTO, MultipartFile imageUrl) throws GeneralSecurityException {
+
+        // 이미지 업로드 및 암호화
+        signupDTO.setImageUrl(aesUtils.encrypt(s3FileService.uploadOneFile(imageUrl)));
 
         String hashPwd = passwordEncoder.encode(signupDTO.getPassword());
         signupDTO.setPassword(hashPwd);
@@ -128,8 +154,60 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 accessToken, refreshToken,
                 aesUtils.decrypt(memberDetails.getMember().getName()),
                 memberDetails.getMember().getPosition(),
-                firstRole
+                firstRole,
+                aesUtils.decrypt(memberDetails.getMember().getImageUrl())
         );
+    }
+
+    @Override
+    @Transactional
+    public void sendEmail(CheckMailDTO checkMailDTO) throws GeneralSecurityException, MessagingException {
+        String email = authQueryService.findEmail(checkMailDTO.getLoginId());
+
+        mailService.sendEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public void checkNum(CheckNumDTO checkNumDTO) throws GeneralSecurityException {
+        String email = authQueryService.findEmail(checkNumDTO.getLoginId());
+
+        if (checkNumDTO.getNumber() != null && !checkNumDTO.getNumber().equals(redisService.getKey(email))) {
+            throw new MemberCommonException(MemberErrorCode.NUMBER_NOT_FOUND);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void sendNewPwd(String loginId) throws MessagingException, GeneralSecurityException {
+        StringBuilder password = new StringBuilder();
+
+        // 반드시 포함할 문자들
+        password.append(randomChar(LOWERCASE));  // 소문자
+        password.append(randomChar(UPPERCASE));  // 대문자
+        password.append(randomChar(DIGITS));     // 숫자
+        password.append(randomChar(SPECIAL_CHARACTERS)); // 특수문자
+
+        // 나머지 비밀번호 길이 채우기 (MIN_LENGTH 까지)
+        String allChars = LOWERCASE + UPPERCASE + DIGITS + SPECIAL_CHARACTERS;
+        for (int i = password.length(); i < MIN_LENGTH; i++) {
+            password.append(randomChar(allChars));
+        }
+
+        String hashPwd = passwordEncoder.encode(password);
+
+        Member newPwdMem = memberRepository.findByLoginId(loginId);
+
+        mailService.sendPwdEmail(aesUtils.decrypt(newPwdMem.getEmail()), password);
+
+        newPwdMem.setPassword(hashPwd);
+
+        memberRepository.save(newPwdMem);
+    }
+
+    private char randomChar(String charSet) {
+        int randomIndex = secureRandom.nextInt(charSet.length());
+        return charSet.charAt(randomIndex);
     }
 
     private String generateAccessToken(String username, String authorities, SecretKey secretKey) {

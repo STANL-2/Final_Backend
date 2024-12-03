@@ -5,9 +5,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelect
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO;
 import stanl_2.final_backend.domain.purchase_order.query.service.PurchaseOrderQueryService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @RestController("PurchaseOrderQueryController")
@@ -80,13 +84,21 @@ public class PurchaseOrderController {
     })
     @GetMapping("admin/search")
     public ResponseEntity<PurchaseOrderResponseMessage> getSearchPurchaseOrdersAdmin(@RequestParam(required = false) String title,
-                                                                                @RequestParam(required = false) String status,
-                                                                                @RequestParam(required = false) String adminId,
-                                                                                @RequestParam(required = false) String searchMemberId,
-                                                                                @RequestParam(required = false) String startDate,
-                                                                                @RequestParam(required = false) String endDate,
+                                                                                    @RequestParam(required = false) String status,
+                                                                                    @RequestParam(required = false) String adminId,
+                                                                                    @RequestParam(required = false) String searchMemberId,
+                                                                                    @RequestParam(required = false) String startDate,
+                                                                                    @RequestParam(required = false) String endDate,
+                                                                                     @RequestParam(required = false) String sortField,
+                                                                                     @RequestParam(required = false) String sortOrder,
                                                                                 Principal principal,
-                                                                                @PageableDefault(size = 10) Pageable pageable) {
+                                                                                @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
         purchaseOrderSelectSearchDTO.setTitle(title);
@@ -157,7 +169,15 @@ public class PurchaseOrderController {
                                                                                      @RequestParam(required = false) String searchMemberId,
                                                                                      @RequestParam(required = false) String startDate,
                                                                                      @RequestParam(required = false) String endDate,
-                                                                                     @PageableDefault(size = 10) Pageable pageable) {
+                                                                                    @RequestParam(required = false) String sortField,
+                                                                                    @RequestParam(required = false) String sortOrder,
+                                                                                     @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
         purchaseOrderSelectSearchDTO.setTitle(title);
@@ -174,6 +194,17 @@ public class PurchaseOrderController {
                 .msg("발주서 검색 조회 성공")
                 .result(responsePurchaseOrder)
                 .build());
+    }
+
+    @Operation(summary = "엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "엑셀 다운로드 성공",
+                    content = {@Content(schema = @Schema(implementation = PurchaseOrderResponseMessage.class))})
+    })
+    @GetMapping("excel")
+    public void exportPurchaseOrder(HttpServletResponse response) throws GeneralSecurityException {
+
+        purchaseOrderQueryService.exportPurchaseOrder(response);
     }
 }
 

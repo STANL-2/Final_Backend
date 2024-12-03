@@ -17,7 +17,8 @@ spring:
 logging:
   level:
     org.springframework.security: WARN
-    org.mybatis: DEBUG
+    org.mybatis: debug
+
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -13,10 +13,12 @@ public interface LogMapper {
     List<LogDTO> findLogs(
             @Param("offset") int offset,
             @Param("size") int size,
-            @Param("searchLogDTO") LogSearchDTO searchLogDTO
+            @Param("searchLogDTO") LogSearchDTO searchLogDTO,
+            @Param("sortField") String sortField,
+            @Param("sortOrder") String sortOrder
     );
 
-    int findLogsCnt();
+    int findLogsCnt(@Param("searchLogDTO") LogSearchDTO searchLogDTO);
 
     List<LogExcelDTO> findLogForExcel();
 }

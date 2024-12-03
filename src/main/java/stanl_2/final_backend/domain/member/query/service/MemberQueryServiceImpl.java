@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
+import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
@@ -20,13 +21,15 @@ import java.util.List;
 public class MemberQueryServiceImpl implements MemberQueryService {
 
     private final MemberMapper memberMapper;
+    private final CenterQueryService centerQueryService;
     private final AESUtils aesUtils;
     private final MemberRoleMapper memberRoleMapper;
 
     @Autowired
-    public MemberQueryServiceImpl(MemberMapper memberMapper, AESUtils aesUtils,
+    public MemberQueryServiceImpl(MemberMapper memberMapper, CenterQueryService centerQueryService, AESUtils aesUtils,
                                   MemberRoleMapper memberRoleMapper) {
         this.memberMapper = memberMapper;
+        this.centerQueryService = centerQueryService;
         this.aesUtils = aesUtils;
         this.memberRoleMapper = memberRoleMapper;
     }
@@ -49,6 +52,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         memberInfo.setAddress(aesUtils.decrypt(memberInfo.getAddress()));
         memberInfo.setBankName(aesUtils.decrypt(memberInfo.getBankName()));
         memberInfo.setAccount(aesUtils.decrypt(memberInfo.getAccount()));
+        memberInfo.setImageUrl(aesUtils.decrypt(memberInfo.getImageUrl()));
         memberInfo.setCenterId(memberInfo.getCenterId());
 
         return memberInfo;
@@ -122,6 +126,41 @@ public class MemberQueryServiceImpl implements MemberQueryService {
             memberList.set(i, member);
         }
 
+        return memberList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberDTO selectMemberInfoById(String memberId) {
+
+        MemberDTO memberDTO = memberMapper.findMemberInfoBymemberId(memberId);
+
+        return memberDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberDTO> selectMemberByName(String name) throws GeneralSecurityException {
+
+        String memberName = aesUtils.encrypt(name);
+        List<MemberDTO> memberList = memberMapper.findMemberByName(memberName);
+
+        if(memberList == null){
+            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        for(int i=0;i<memberList.size();i++){
+            memberList.get(i).getName();
+            MemberDTO member = memberList.get(i);
+            member.setName(aesUtils.decrypt(member.getName()));
+
+            if (member.getCenterId() != null) {
+                String centerName = centerQueryService.selectNameById(member.getCenterId());
+                member.setCenterName(centerName);
+            }
+
+            memberList.set(i, member);
+        }
         return memberList;
     }
 }

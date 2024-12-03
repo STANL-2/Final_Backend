@@ -338,4 +338,11 @@
              ON b.prod_id = c.prod_id
     </select>
 
+    <select id="selectByContractId" resultType="string">
+        SELECT
+               a.conr_id
+          FROM tb_order
+         WHERE a.active = true
+    </select>
+
 </mapper>

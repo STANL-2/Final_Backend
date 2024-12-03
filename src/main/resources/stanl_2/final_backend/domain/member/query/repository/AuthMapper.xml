@@ -10,4 +10,12 @@
           FROM tb_member a
          WHERE a.mem_login_id = #{ loginId }
     </select>
+
+
+    <select id="findEmailByLoginId" resultType="String" parameterType="String">
+        SELECT
+               a.mem_ema
+          FROM tb_member a
+         WHERE a.mem_login_id = #{ loginId }
+    </select>
 </mapper>

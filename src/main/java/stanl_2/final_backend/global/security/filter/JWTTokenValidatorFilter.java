@@ -169,6 +169,8 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         return path.equals("/api/v1/auth/signin") ||
                 path.equals("/api/v1/auth/signup") ||
+                path.equals("/api/v1/auth/checkmail") ||
+                path.equals("/api/v1/auth/checknum") ||
                 path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-resources") ||
