@@ -12,6 +12,10 @@ import stanl_2.final_backend.domain.career.command.domain.aggregate.entity.Caree
 import stanl_2.final_backend.domain.career.command.domain.repository.CareerRepository;
 import stanl_2.final_backend.domain.certification.command.domain.aggregate.entity.Certification;
 import stanl_2.final_backend.domain.certification.command.domain.repository.CertificationRepository;
+import stanl_2.final_backend.domain.customer.command.application.dto.CustomerRegistDTO;
+import stanl_2.final_backend.domain.customer.command.application.service.CustomerCommandService;
+import stanl_2.final_backend.domain.customer.command.domain.aggregate.entity.Customer;
+import stanl_2.final_backend.domain.customer.command.domain.repository.CustomerRepository;
 import stanl_2.final_backend.domain.education.command.domain.aggregate.entity.Education;
 import stanl_2.final_backend.domain.education.command.domain.repository.EducationRepository;
 import stanl_2.final_backend.domain.family.command.domain.aggregate.entity.Family;
@@ -46,6 +50,7 @@ public class Initializer implements ApplicationRunner {
     private final EducationRepository educationRepository;
     private final FamilyRepository familyRepository;
     private final OrganizationRepository organizationRepository;
+    private final CustomerCommandService customerCommandService;
 
 
     @Override
@@ -174,9 +179,8 @@ public class Initializer implements ApplicationRunner {
             String name = lastNames[random.nextInt(lastNames.length)] + firstNames[random.nextInt(firstNames.length)];
             String address = addresses[random.nextInt(addresses.length)];
 
-
             createOrUpdateMember(
-                    "user" + i,
+                    String.format("M%09d", i),
                     "pass" + i,
                     name,
                     "user" + i + "@example.com",
@@ -255,7 +259,7 @@ public class Initializer implements ApplicationRunner {
 
         // Career(경력) 저장
         for (int i = 1; i <= 100; i++) {
-            String memberId = String.format("M%09d", i);
+            String memberId = String.format("MEM_%09d", i);
             for (int j = 0; j < 4; j++) {
                 Career newCareer = new Career();
                 newCareer.setEmplDate(getRandomEmploymentDate());
@@ -321,7 +325,7 @@ public class Initializer implements ApplicationRunner {
 
         // Certification(자격증) 저장
         for (int i = 1; i <= 100; i++) {
-            String memberId = String.format("M%09d", i);
+            String memberId = String.format("MEM_%09d", i);
             for (int j = 0; j < 4; j++) {
                 Certification newCertification = new Certification();
                 newCertification.setAcquisitionDate(getRandomEmploymentDate());
@@ -414,7 +418,7 @@ public class Initializer implements ApplicationRunner {
 
         // Education(학력) 저장
         for (int i = 1; i < 100; i++) {
-            String memberId = String.format("M%09d", i);
+            String memberId = String.format("MEM_%09d", i);
             Education newEducation = new Education();
             newEducation.setEntranceDate(getRandomEmploymentDate());
             newEducation.setGraduationDate(getRandomResignationDate(LocalDate.parse(newEducation.getEntranceDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
@@ -451,7 +455,7 @@ public class Initializer implements ApplicationRunner {
 
         // Family(가족) 저장
         for (int i = 1; i <= 100; i++) {
-            String memberId = String.format("M%09d", i);
+            String memberId = String.format("MEM_%09d", i);
             for (int j = 0; j < 4; j++) {
                 // 주민등록번호 생성
                 String birthDateStr = randomBirthDate.format(DateTimeFormatter.ofPattern("yyMMdd")); // YYMMDD 형식
@@ -509,6 +513,31 @@ public class Initializer implements ApplicationRunner {
         organizationRepository.save(org14);
 
 
+        // 고객 인당 100명 씩
+        for (int i = 1; i <= 100; i++) {
+            String memberId = String.format("M%09d", i);
+            for (int j = 0; j < 100; j++) {
+                String sex = genders[i % 2];
+                String name = lastNames[random.nextInt(lastNames.length)] + firstNames[random.nextInt(firstNames.length)];
+                int randomAge = ThreadLocalRandom.current().nextInt(20, 71);
+                String randomName = "user" + ThreadLocalRandom.current().nextInt(1000, 10000);
+                String randomEmail = randomName + "@example.com";
+
+                CustomerRegistDTO newCustomer = new CustomerRegistDTO();
+                newCustomer.setName(name);
+                newCustomer.setAge(randomAge);
+                newCustomer.setPhone(randomPhone);
+                newCustomer.setEmergePhone(randomPhone);
+                newCustomer.setEmail(randomEmail);
+                newCustomer.setSex(sex);
+                newCustomer.setMemberId(memberId);
+                customerCommandService.registerCustomerInfo(newCustomer);
+            }
+        }
+
+
+
+        
     }
 
     private String getRandomEmploymentDate() {
