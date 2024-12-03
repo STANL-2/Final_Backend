@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 import stanl_2.final_backend.domain.problem.command.application.dto.ProblemModifyDTO;
 import stanl_2.final_backend.domain.problem.command.application.dto.ProblemRegistDTO;
 import stanl_2.final_backend.domain.problem.command.application.service.ProblemCommandService;
@@ -39,11 +38,17 @@ public class ProblemController {
     })
     @PostMapping("")
     public ResponseEntity<ProblemResponseMessage> postProblem(@RequestPart("dto") ProblemRegistDTO problemRegistDTO, // JSON 데이터
-                                                              @RequestPart("file") MultipartFile file,
+                                                              @RequestPart(value = "file", required = false)  MultipartFile file,
                                                               Principal principal){
-        String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
-        problemRegistDTO.setMemberId(memberId);
-        problemRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        String memberLoginId = principal.getName();
+        problemRegistDTO.setMemberLoginId(memberLoginId);
+        if (file != null && !file.isEmpty()) {
+            problemRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()){
+            problemRegistDTO.setFileUrl(null);
+        } else {
+            problemRegistDTO.setFileUrl(null);
+        }
         problemCommandService.registerProblem(problemRegistDTO,principal);
         return ResponseEntity.ok(ProblemResponseMessage.builder()
                                                 .httpStatus(200)
@@ -59,9 +64,20 @@ public class ProblemController {
     })
     @PutMapping("{problemId}")
     public ResponseEntity<ProblemResponseMessage> modifyProblem(@PathVariable String problemId,
-                                                              @RequestBody ProblemModifyDTO problemModifyRequestDTO, Principal principal){
-
-        ProblemModifyDTO problemModifyDTO = problemCommandService.modifyProblem(problemId,problemModifyRequestDTO,principal);
+                                                                @RequestPart("dto") ProblemModifyDTO problemModifyDTO,
+                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
+                                                                Principal principal){
+        String memberLoginId = principal.getName();
+        problemModifyDTO.setMemberId(memberLoginId);
+        problemModifyDTO.setContent(problemModifyDTO.getContent());
+        if (file != null && !file.isEmpty()) {
+            problemModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()) {
+            problemModifyDTO.setFileUrl(null);
+        } else {
+            problemModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }
+         problemCommandService.modifyProblem(problemId,problemModifyDTO,principal);
 
         return ResponseEntity.ok(ProblemResponseMessage.builder()
                 .httpStatus(200)

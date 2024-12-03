@@ -19,6 +19,8 @@ public class ProblemRegistDTO {
 
     private String memberId;
 
+    private String memberLoginId;
+
     private String productId;
 
     private String fileUrl;
