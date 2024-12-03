@@ -16,8 +16,13 @@ import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 @Getter
 public class ProductOption {
 
-    @Id
-    private String productId;
+    @Id  // @Id를 명시적으로 선언합니다.
+    @GeneratedValue(generator = "PrefixGeneratorConfig")
+    @GenericGenerator(name = "PrefixGeneratorConfig",
+            type = PrefixGeneratorConfig.class,
+            parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "PRO")
+    )
+    private String productId;  // 옵션을 위한 식별자 필드
 
     @Column(name ="OPT_CNTY", nullable = false)
     private Character country;
@@ -94,11 +99,59 @@ public class ProductOption {
     @Column(name ="OPT_SOND", nullable = false)
     private Character sound;
 
-    @Column(name ="Active")
+    @Column(name ="ACTIVE")
     private Boolean active = true;
 
-    @MapsId
-    @OneToOne
-    @JoinColumn(name="PROD_ID")
-    private Product product;
+    public ProductOption(Character country,
+                         Character manufacturer,
+                         Character vehicleType,
+                         Character chassis,
+                         Character detailType,
+                         Character bodyType,
+                         Character safetyDevice,
+                         Character engineCapacity,
+                         Character secretCode,
+                         Character productYear,
+                         Character productPlant,
+                         Character engine,
+                         Character mission,
+                         Character trim,
+                         Character externalColor,
+                         Character internalColor,
+                         Character headUpDisplay,
+                         Character navigation,
+                         Character driveWise,
+                         Character smartConnect,
+                         Character style,
+                         Character myComfortPackage,
+                         Character outdoorPackage,
+                         Character sunRoof,
+                         Character sound) {
+
+        this.country = country;
+        this.manufacturer = manufacturer;
+        this.vehicleType = vehicleType;
+        this.chassis = chassis;
+        this.detailType = detailType;
+        this.bodyType = bodyType;
+        this.safetyDevice = safetyDevice;
+        this.engineCapacity = engineCapacity;
+        this.secretCode = secretCode;
+        this.productYear = productYear;
+        this.productPlant = productPlant;
+        this.engine = engine;
+        this.mission = mission;
+        this.trim = trim;
+        this.externalColor = externalColor;
+        this.internalColor = internalColor;
+        this.headUpDisplay = headUpDisplay;
+        this.navigation = navigation;
+        this.driveWise = driveWise;
+        this.smartConnect = smartConnect;
+        this.style = style;
+        this.myComfortPackage = myComfortPackage;
+        this.outdoorPackage = outdoorPackage;
+        this.sunRoof = sunRoof;
+        this.sound = sound;
+    }
 }
