@@ -78,7 +78,7 @@ public class NoticeController {
                                                                 @RequestPart(value = "file", required = false)  MultipartFile file,
                                                                 Principal principal){
         String memberLoginId = principal.getName();
-        noticeModifyDTO.setMemberId(memberLoginId);
+        noticeModifyDTO.setMemberLoginId(memberLoginId);
         noticeModifyDTO.setContent(noticeModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {
             System.out.println("response:1");

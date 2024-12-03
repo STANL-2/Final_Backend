@@ -85,11 +85,13 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
 
         redisService.clearNoticeCache();
-        String memberId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeModifyDTO.getMemberLoginId());
+        System.out.println("memberId"+memberId);
+
 
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
-
+        System.out.println("writer:"+notice.getMemberId());
         if(!notice.getMemberId().equals(memberId)){
             // 권한 오류
             throw new NoticeCommonException(NoticeErrorCode.AUTHORIZATION_VIOLATION);
@@ -121,6 +123,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     public void deleteNotice(NoticeDeleteDTO noticeDeleteDTO, Principal principal) {
         redisService.clearNoticeCache();
         String memberId = principal.getName();
+        System.out.println(memberId);
 
         Notice notice = noticeRepository.findByNoticeId(noticeDeleteDTO.getNoticeId())
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
