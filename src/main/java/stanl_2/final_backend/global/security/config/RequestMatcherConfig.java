@@ -48,7 +48,9 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/contract").hasAnyRole("contract-post", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 등록 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/search").hasAnyRole("contract-search-get", "GOD", "DIRECTOR", "ADMIN") // 계약서 검색 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee").hasAnyRole("contract-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 전체 조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/{contractId}").hasAnyRole("contract-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/**").hasAnyRole("contract-employee-id-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 상세조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/center/{contractId}").hasAnyRole("contract-employee-id-get", "GOD", "DIRECTOR", "ADMIN") // 계약서 상세조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/search").hasAnyRole("contract-employee-search-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 검색 조회 (전체)
 
                 // Customer API
@@ -97,6 +99,7 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/order").hasAnyRole("order-get", "GOD", "DIRECTOR", "ADMIN") // 수주서 전체 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee").hasAnyRole("order-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 수주서 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR", "ADMIN") // 수주서 상세 조회 (영업관리자, 영업담당자)
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/center/{orderId}").hasAnyRole("order-center-id-get", "GOD", "DIRECTOR", "ADMIN") // 수주서 상세 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee/{orderId}").hasAnyRole("order-employee-id-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 수주서 상세 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/search").hasAnyRole("order-search", "GOD", "DIRECTOR", "ADMIN") // 수주서 검색 조회 (영업관리자, 영업담당자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee/search").hasAnyRole("order-employee-search", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 수주서 검색 조회 (전체)
@@ -142,7 +145,6 @@ public class RequestMatcherConfig {
                 // Sample API
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/sample/{id}").hasAnyRole("sample-delete", "GOD") // 샘플 삭제 테스트 (시스템관리자)
                 .requestMatchers(HttpMethod.GET, "/api/v1/sample/detail/{id}").hasAnyRole("sample-detail-get", "GOD") // 샘플 상세 조회 테스트 (시스템관리자)
-                .requestMatchers(HttpMethod.GET, "/api/v1/schedule/{scheduleId}").hasAnyRole("sample-schedule-get", "GOD") // 샘플 조회 테스트 (시스템관리자)
                 .requestMatchers(HttpMethod.POST, "/api/v1/sample").hasAnyRole("sample-create", "GOD") // 샘플 요청 테스트 (시스템관리자)
                 .requestMatchers(HttpMethod.PUT, "/api/v1/sample/{id}").hasAnyRole("sample-update", "GOD") // 샘플 수정 테스트 (시스템관리자)
 
