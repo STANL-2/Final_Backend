@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Random;
 
 @Slf4j
 @Component
@@ -36,93 +37,152 @@ public class MemberInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        createOrUpdateMember(
-                "employee",
-                "employee",
-                "영업 관리자",
-                "employee@stanl.com",
-                3,
-                "FEMALE",
-                "000000-0000003",
-                "010-0000-0003",
-                "신대방삼거리",
-                "영업 관리자",
-                "고졸",
-                "백엔드 개발자",
-                "미필",
-                "한국은행",
-                "000-0000-000000-00003",
-                "CEN_000000001",
-                "ORG_000000001",
-                "EMPLOYEE",
-                loadImage("employee.png")
-        );
-
-        createOrUpdateMember(
-                "admin",
-                "admin",
-                "영업 관리자",
-                "admin@stanl.com",
-                2,
-                "FEMALE",
-                "000000-0000002",
-                "010-0000-0002",
-                "신대방삼거리",
-                "영업 관리자",
-                "고졸",
-                "백엔드 개발자",
-                "미필",
-                "한국은행",
-                "000-0000-000000-00000",
-                "CEN_000000001",
-                "ORG_000000001",
-                "ADMIN",
-                loadImage("admin.png")
-        );
-
-        createOrUpdateMember(
-                "director",
-                "director",
-                "영업 담당자",
-                "director@stanl.com",
-                1,
-                "MALE",
-                "000000-0000001",
-                "010-0000-0001",
-                "STANL2",
-                "영업담당자",
-                "고졸",
-                "영업 담당자",
-                "미필",
-                "한국은행",
-                "000-0000-000000-00000",
-                "CEN_000000001",
-                "ORG_000000001",
-                "DIRECTOR",
-                loadImage("director.png")
-        );
-
+        // 우리 계정
         createOrUpdateMember(
                 "god",
                 "god",
-                "시스템관리자",
+                "신하늘",
                 "god@stanl.com",
                 0,
                 "MALE",
                 "000000-0000000",
                 "010-0000-0000",
-                "신대방삼거리",
-                "시스템관리자",
+                "서울 동작구 보라매로 87",
+                "시스템 관리자",
                 "중졸",
-                "백엔드 개발자",
+                "REGULAR",
                 "미필",
                 "한국은행",
                 "000-0000-000000-00000",
-                "CEN_000000001",
-                "ORG_000000001",
+                "CEN_000000000",
+                "ORG_000000000",
                 "GOD",
                 loadImage("god.png")
         );
+
+        // 심사위원 1 계정
+        createOrUpdateMember(
+                "god1",
+                "god1",
+                "이름1",
+                "god@stanl.com",
+                0,
+                "MALE",
+                "000000-0000000",
+                "010-0000-0000",
+                "서울 동작구 보라매로 87",
+                "심사위원",
+                "중졸",
+                "TEMPORARY",
+                "미필",
+                "한국은행",
+                "000-0000-000000-00000",
+                "CEN_000000000",
+                "ORG_000000000",
+                "GOD",
+                loadImage("god.png")
+        );
+
+        // 심사위원 2 계정
+        createOrUpdateMember(
+                "god2",
+                "god2",
+                "이름2",
+                "god@stanl.com",
+                0,
+                "MALE",
+                "000000-0000000",
+                "010-0000-0000",
+                "서울 동작구 보라매로 87",
+                "심사위원",
+                "중졸",
+                "TEMPORARY",
+                "미필",
+                "한국은행",
+                "000-0000-000000-00000",
+                "CEN_000000000",
+                "ORG_000000000",
+                "GOD",
+                loadImage("god.png")
+        );
+
+        // 심사위원 3 계정
+        createOrUpdateMember(
+                "god3",
+                "god3",
+                "이름3",
+                "god@stanl.com",
+                0,
+                "MALE",
+                "000000-0000000",
+                "010-0000-0000",
+                "서울 동작구 보라매로 87",
+                "심사위원",
+                "중졸",
+                "TEMPORARY",
+                "미필",
+                "한국은행",
+                "000-0000-000000-00000",
+                "CEN_000000000",
+                "ORG_000000000",
+                "GOD",
+                loadImage("god.png")
+        );
+
+        Random random = new Random();
+        String[] positions = {"Staff", "Manager", "Director", "Executive"};
+        String[] grades = {"A", "B", "C", "D"};
+        String[] jobTypes = {"REGULAR", "TEMPORARY"};
+        String[] militaryStatus = {"fulfilled", "exemption", "unfulfilled"};
+        String[] genders = {"MALE", "FEMALE"};
+        String[] roles = {"EMPLOYEE", "ADMIN", "DIRECTOR"};
+        String[] lastNames = {"김", "이", "박", "최", "정", "강", "조", "윤", "장", "임"};
+        String[] firstNames = {"민수", "지훈", "서연", "예준", "하은", "도현", "지원", "유진", "현우", "수아"};
+        String[] addresses = {
+                "서울특별시 강남구 테헤란로",
+                "부산광역시 해운대구 센텀중앙로",
+                "대구광역시 수성구 범어로",
+                "인천광역시 남동구 미래로",
+                "광주광역시 서구 상무대로",
+                "대전광역시 유성구 대덕대로",
+                "울산광역시 남구 번영로",
+                "경기도 성남시 분당구 판교로",
+                "강원도 춘천시 중앙로",
+                "충청북도 청주시 상당구 상당로"
+        };
+
+
+        for (int i = 1; i <= 100; i++) {
+            int centerId = random.nextInt(10) + 1; // Center ID between 0-10
+            int orgId = random.nextInt(10) + 1; // Org ID between 0-10
+            String sex = genders[i % 2];
+            String name = lastNames[random.nextInt(lastNames.length)] + firstNames[random.nextInt(firstNames.length)];
+            String address = addresses[random.nextInt(addresses.length)];
+
+
+            createOrUpdateMember(
+                    "user" + i,
+                    "pass" + i,
+                    name,
+                    "user" + i + "@example.com",
+                    20 + random.nextInt(30), // Random age between 20-49
+                    sex,
+                    String.format("123456-%07d", 1000000 + random.nextInt(9000000)),
+                    "010-1234-567" + i,
+                    address,
+                    positions[random.nextInt(positions.length)], // Random position
+                    grades[random.nextInt(grades.length)], // Random grade
+                    jobTypes[random.nextInt(jobTypes.length)], // Random job type
+                    militaryStatus[random.nextInt(militaryStatus.length)], // Random military status
+                    "Bank" + centerId,
+                    "123456789" + i,
+                    String.format("CEN_%09d", centerId),
+                    String.format("ORG_%09d", orgId),
+                    roles[random.nextInt(roles.length)], // Random role
+                    loadImage("default.png")
+            );
+        }
+
     }
 
     private MultipartFile loadImage(String fileName) throws IOException {
