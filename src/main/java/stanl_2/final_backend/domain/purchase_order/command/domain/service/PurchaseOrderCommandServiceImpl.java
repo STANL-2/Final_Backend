@@ -2,15 +2,18 @@ package stanl_2.final_backend.domain.purchase_order.command.domain.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.order.command.domain.repository.OrderRepository;
 import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
+import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderAlarmDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderModifyDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderRegistDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderStatusModifyDTO;
@@ -33,14 +36,18 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
     private final OrderRepository orderRepository;
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
+    private final AlarmCommandService alarmCommandService;
     private final S3FileService s3FileService;
 
     @Autowired
-    public PurchaseOrderCommandServiceImpl(PurchaseOrderRepository purchaseOrderRepository, OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper, S3FileService s3FileService) {
+    public PurchaseOrderCommandServiceImpl(PurchaseOrderRepository purchaseOrderRepository, OrderRepository orderRepository,
+                                           AuthQueryService authQueryService, ModelMapper modelMapper,
+                                           AlarmCommandService alarmCommandService,S3FileService s3FileService) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
+        this.alarmCommandService = alarmCommandService;
         this.s3FileService = s3FileService;
     }
 
@@ -148,5 +155,10 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
 
         purchaseOrderRepository.save(purchaseOrder);
+
+        PurchaseOrderAlarmDTO purchaseOrderAlarmDTO = new PurchaseOrderAlarmDTO(purchaseOrder.getPurchaseOrderId(),
+                purchaseOrder.getTitle(), purchaseOrder.getMemberId(), purchaseOrder.getAdminId());
+
+        alarmCommandService.sendPurchaseOrderAlarm(purchaseOrderAlarmDTO);
     }
 }
