@@ -172,7 +172,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public void checkNum(CheckNumDTO checkNumDTO) throws GeneralSecurityException {
         String email = authQueryService.findEmail(checkNumDTO.getLoginId());
 
-        if (checkNumDTO.getNumber() != null && !checkNumDTO.getNumber().equals(String.valueOf(redisService.getKey(email)))) {
+        if (checkNumDTO.getNumber() != null && !checkNumDTO.getNumber().equals(redisService.getKey(email))) {
             throw new MemberCommonException(MemberErrorCode.NUMBER_NOT_FOUND);
         }
     }
