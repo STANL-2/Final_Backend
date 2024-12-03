@@ -21,6 +21,8 @@ import stanl_2.final_backend.domain.member.command.application.dto.SignupDTO;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Member;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
+import stanl_2.final_backend.domain.organization.command.domain.aggregate.entity.Organization;
+import stanl_2.final_backend.domain.organization.command.domain.repository.OrganizationRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +45,7 @@ public class Initializer implements ApplicationRunner {
     private final CertificationRepository certificationRepository;
     private final EducationRepository educationRepository;
     private final FamilyRepository familyRepository;
+    private final OrganizationRepository organizationRepository;
 
 
     @Override
@@ -164,9 +167,9 @@ public class Initializer implements ApplicationRunner {
 
 
         // 회원 및 역할 생성 로직
-        for (int i = 1; i <= 94; i++) {
+        for (int i = 1; i <= 96; i++) {
             int centerId = random.nextInt(10) + 1;
-            int orgId = random.nextInt(10) + 1;
+            int orgId = random.nextInt(10) + 5;
             String sex = genders[i % 2];
             String name = lastNames[random.nextInt(lastNames.length)] + firstNames[random.nextInt(firstNames.length)];
             String address = addresses[random.nextInt(addresses.length)];
@@ -442,8 +445,8 @@ public class Initializer implements ApplicationRunner {
         );
 
         String randomPhone = String.format("010-%04d-%04d",
-                (int)(Math.random() * 10000),
-                (int)(Math.random() * 10000)
+                (int) (Math.random() * 10000),
+                (int) (Math.random() * 10000)
         );
 
         // Family(가족) 저장
@@ -453,8 +456,8 @@ public class Initializer implements ApplicationRunner {
                 // 주민등록번호 생성
                 String birthDateStr = randomBirthDate.format(DateTimeFormatter.ofPattern("yyMMdd")); // YYMMDD 형식
                 String genderDigit = Math.random() < 0.5 ? "1" : "2"; // 성별은 1(남) 또는 2(여)
-                String randomNumbers = String.format("%04d", (int)(Math.random() * 10000)); // 임의의 4자리 번호
-                String checkDigit = String.format("%d", (int)(Math.random() * 10)); // 검증용 마지막 자리는 0~9
+                String randomNumbers = String.format("%04d", (int) (Math.random() * 10000)); // 임의의 4자리 번호
+                String checkDigit = String.format("%d", (int) (Math.random() * 10)); // 검증용 마지막 자리는 0~9
 
                 // 주민등록번호 만들기
                 String identNo = birthDateStr + genderDigit + randomNumbers + checkDigit;
@@ -473,6 +476,37 @@ public class Initializer implements ApplicationRunner {
                 familyRepository.save(newFamily);
             }
         }
+
+
+        // 부서 저장
+        Organization org1 = new Organization("ORG_000000001", "서울 지사", null);
+        organizationRepository.save(org1);
+        Organization org2 = new Organization("ORG_000000002", "부산 지사", null);
+        organizationRepository.save(org2);
+        Organization org3 = new Organization("ORG_000000003", "인천 지사", null);
+        organizationRepository.save(org3);
+        Organization org4 = new Organization("ORG_000000004", "대전 지사", null);
+        organizationRepository.save(org4);
+        Organization org5 = new Organization("ORG_000000005", "영업부(서울 1팀)", "ORG_000000001");
+        organizationRepository.save(org5);
+        Organization org6 = new Organization("ORG_000000006", "영업부(서울 2팀)", "ORG_000000001");
+        organizationRepository.save(org6);
+        Organization org7 = new Organization("ORG_000000007", "영업부(부산 1팀)", "ORG_000000002");
+        organizationRepository.save(org7);
+        Organization org8 = new Organization("ORG_000000008", "영업부(부산 2팀)", "ORG_000000002");
+        organizationRepository.save(org8);
+        Organization org9 = new Organization("ORG_000000009", "영업부(인천 1팀)", "ORG_000000003");
+        organizationRepository.save(org9);
+        Organization org10 = new Organization("ORG_000000010", "영업부(인천 2팀)", "ORG_000000003");
+        organizationRepository.save(org10);
+        Organization org11 = new Organization("ORG_000000011", "영업부(대전 1팀)", "ORG_000000004");
+        organizationRepository.save(org11);
+        Organization org12 = new Organization("ORG_000000012", "영업부(대전 2팀)", "ORG_000000004");
+        organizationRepository.save(org12);
+        Organization org13 = new Organization("ORG_000000013", "마케팅부", "ORG_000000001");
+        organizationRepository.save(org13);
+        Organization org14 = new Organization("ORG_000000014", "기술부", "ORG_000000001");
+        organizationRepository.save(org14);
 
 
     }
