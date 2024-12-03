@@ -46,12 +46,9 @@ public class ProblemController {
         problemRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
             problemRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
-            System.out.println("response:1");
         }else if(file==null || file.isEmpty()){
-            System.out.println("response:2");
             problemRegistDTO.setFileUrl(null);
         } else {
-            System.out.println("response:3");
             problemRegistDTO.setFileUrl(null);
         }
         problemCommandService.registerProblem(problemRegistDTO,principal);
@@ -76,13 +73,10 @@ public class ProblemController {
         problemModifyDTO.setMemberId(memberLoginId);
         problemModifyDTO.setContent(problemModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {
-            System.out.println("response:1");
             problemModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }else if(file==null || file.isEmpty()) {
-            System.out.println("response:2");
             problemModifyDTO.setFileUrl(null);
         } else {
-            System.out.println("response:3");
             problemModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }
          problemCommandService.modifyProblem(problemId,problemModifyDTO,principal);

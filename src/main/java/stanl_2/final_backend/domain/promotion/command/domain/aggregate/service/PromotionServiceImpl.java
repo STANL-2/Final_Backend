@@ -98,12 +98,10 @@ public class PromotionServiceImpl implements PromotionCommandService {
     public void deletePromotion(String promotionId, Principal principal) {
         redisService.clearPromotionCache();
         String memberId= principal.getName();
-        System.out.println(memberId);
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(()-> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
 
         if(promotion.getMemberId().equals(memberId)){
-            System.out.println(promotion.getMemberId());
             // 권한 오류
             throw new PromotionCommonException(PromotionErrorCode.AUTHORIZATION_VIOLATION);
         }

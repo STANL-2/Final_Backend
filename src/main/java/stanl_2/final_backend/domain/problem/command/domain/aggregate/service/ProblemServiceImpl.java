@@ -56,7 +56,6 @@ public class ProblemServiceImpl implements ProblemCommandService {
         redisService.clearProblemCache();
         String memberId = authQueryService.selectMemberIdByLoginId(problemRegistDTO.getMemberLoginId());
         problemRegistDTO.setMemberId(memberId);
-        System.out.println("memberId"+memberId);
         try {
             Problem problem = modelMapper.map(problemRegistDTO, Problem.class);
             problemRepository.save(problem);

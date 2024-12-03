@@ -47,12 +47,9 @@ public class PromotionController {
         promotionRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
             promotionRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
-            System.out.println("response:1");
         }else if(file==null || file.isEmpty()){
-            System.out.println("response:2");
             promotionRegistDTO.setFileUrl(null);
         } else {
-            System.out.println("response:3");
             promotionRegistDTO.setFileUrl(null);
         }
         promotionCommandService.registerPromotion(promotionRegistDTO,principal);
@@ -78,13 +75,10 @@ public class PromotionController {
         promotionModifyDTO.setMemberId(memberLoginId);
         promotionModifyDTO.setContent(promotionModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {
-            System.out.println("response:1");
             promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }else if(file==null || file.isEmpty()) {
-            System.out.println("response:2");
             promotionModifyDTO.setFileUrl(null);
         } else {
-            System.out.println("response:3");
             promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }
         promotionCommandService.modifyPromotion(promotionId,promotionModifyDTO,principal);
