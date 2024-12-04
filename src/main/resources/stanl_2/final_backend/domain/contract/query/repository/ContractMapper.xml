@@ -284,8 +284,8 @@
             <if test="contractSearchDTO.customerPurchaseCondition != null">
                 AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
             </if>
-            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null">
-                AND a.created_at BETWEEN #{contractSearchDTO.startAt} AND #{contractSearchDTO.endAt}
+            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{contractSearchDTO.} AND #{contractSearchDTO.endDate}
             </if>
             <if test="contractSearchDTO.productId != null">
                 AND b.prod_name LIKE CONCAT('%', #{contractSearchDTO.productId}, '%')
@@ -341,7 +341,8 @@
         a.conr_ttl,
         a.conr_stat,
         a.conr_cust_pur_cond,
-        a.conr_cust_cla
+        a.conr_cust_cla,
+        a.created_at
         FROM tb_contract a
         <where>
             a.active = TRUE
@@ -369,8 +370,8 @@
             <if test="contractSearchDTO.customerPurchaseCondition != null and contractSearchDTO.customerPurchaseCondition != ''">
                 AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
             </if>
-            <if test="contractSearchDTO.startAt != null and contractSearchDTO.endAt != null and contractSearchDTO.startAt != '' and contractSearchDTO.endAt != ''">
-                AND a.created_at BETWEEN #{contractSearchDTO.startAt} AND #{contractSearchDTO.endAt}
+            <if test="contractSearchDTO.startDate != null and contractSearchDTO.startDate != null and contractSearchDTO.endDate != '' and contractSearchDTO.endAt != ''">
+                AND a.created_at BETWEEN #{contractSearchDTO.startDate} AND #{contractSearchDTO.endDate}
             </if>
             <if test="contractSearchDTO.carName != null and contractSearchDTO.carName != ''">
                 AND a.conr_car_name LIKE CONCAT('%', #{contractSearchDTO.carName}, '%')
@@ -459,8 +460,8 @@
             <if test="customerPurchaseCondition != null">
                 AND a.conr_cust_pur_cond LIKE CONCAT('%', #{customerPurchaseCondition}, '%')
             </if>
-            <if test="startAt != null and endAt != null">
-                AND a.created_at BETWEEN #{startAt} AND #{endAt}
+            <if test="startDate != null and endDate != null">
+                AND a.created_at BETWEEN #{startDate} AND #{endDate}
             </if>
             <if test="productId != null">
                 AND b.prod_name LIKE CONCAT('%', #{productId}, '%')
@@ -498,11 +499,8 @@
             <if test="contractSearchDTO.customerPurchaseCondition != null and contractSearchDTO.customerPurchaseCondition != ''">
                 AND a.conr_cust_pur_cond LIKE CONCAT('%', #{contractSearchDTO.customerPurchaseCondition}, '%')
             </if>
-            <if test="contractSearchDTO.startAt != null and contractSearchDTO.startAt != ''">
-                AND a.created_at &gt;= #{contractSearchDTO.startAt}
-            </if>
-            <if test="contractSearchDTO.endAt != null and contractSearchDTO.endAt != ''">
-                AND a.created_at &lt;= #{contractSearchDTO.endAt}
+            <if test="contractSearchDTO.startDate != null and contractSearchDTO.startDate != null and contractSearchDTO.endDate != '' and contractSearchDTO.endAt != ''">
+                AND a.created_at BETWEEN #{contractSearchDTO.startDate} AND #{contractSearchDTO.endDate}
             </if>
             <if test="contractSearchDTO.carName != null and contractSearchDTO.carName != ''">
                 AND a.conr_car_name LIKE CONCAT('%', #{contractSearchDTO.carName}, '%')
