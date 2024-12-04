@@ -46,6 +46,7 @@
         <result property="createdAt" column="CREATED_AT"/>
         <result property="year" column="YEAR"/>
         <result property="month" column="MONTH"/>
+        <result property="period" column="PERIOD"/>
     </resultMap>
 
     <resultMap id="SalesHistoryRankedDataCenterResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO">
@@ -59,11 +60,12 @@
     </resultMap>
 
     <resultMap id="SalesHistoryAverageResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsAverageDTO">
-        <result property="averageTotalSales" column="average_total_sales"/>
-        <result property="averageTotalIncentive" column="average_total_incentive"/>
-        <result property="averageTotalPerformance" column="average_total_performance"/>
-        <result property="year" column="year"/>
-        <result property="month" column="month"/>
+        <result property="averageTotalSales" column="AVERAGE_TOTAL_SALES"/>
+        <result property="averageTotalIncentive" column="AVERAGE_TOTAL_INCENTIVE"/>
+        <result property="averageTotalPerformance" column="AVERAGE_TOTAL_PERFORMANCE"/>
+        <result property="year" column="YEAR"/>
+        <result property="month" column="MONTH"/>
+        <result property="period" column="PERIOD"/>
     </resultMap>
 
 
@@ -548,43 +550,6 @@
          GROUP BY MEM_ID) AS A
     </select>
 
-<!--    <select id="findStatisticsBySearch" resultMap="SalesHistoryRankedDataResultMap">-->
-<!--        SELECT-->
-<!--        a.mem_id,-->
-<!--        SUM(a.sal_hist_ince) AS total_incentive,-->
-<!--        SUM(a.sal_hist_no_of_veh) AS total_performance,-->
-<!--        SUM(a.sal_hist_tota_sale) AS total_sales-->
-<!--        FROM tb_sales_history a-->
-<!--        <where>-->
-<!--            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">-->
-<!--                a.mem_id IN-->
-<!--                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">-->
-<!--                    #{mem_id}-->
-<!--                </foreach>-->
-<!--            </if>-->
-<!--            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">-->
-<!--                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}-->
-<!--            </if>-->
-<!--            AND a.active = TRUE-->
-<!--        </where>-->
-<!--        GROUP BY a.mem_id-->
-<!--        <choose>-->
-<!--            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">-->
-<!--                ORDER BY total_incentive DESC-->
-<!--            </when>-->
-<!--            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">-->
-<!--                ORDER BY total_performance DESC-->
-<!--            </when>-->
-<!--            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">-->
-<!--                ORDER BY total_sales DESC-->
-<!--            </when>-->
-<!--            <otherwise>-->
-<!--                ORDER BY a.created_at desc-->
-<!--            </otherwise>-->
-<!--        </choose>-->
-<!--        LIMIT #{size} OFFSET #{offset}-->
-<!--    </select>-->
-
     <select id="findStatisticsBySearch" resultMap="SalesHistoryRankedDataResultMap">
         SELECT
         <choose>
@@ -613,15 +578,16 @@
         SUM(a.sal_hist_tota_sale) AS total_sales
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <!-- 사원 조건 -->
             <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
             <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
-                a.cent_id IN
+                AND a.cent_id IN
                 <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
                     #{cent_id}
                 </foreach>
@@ -630,7 +596,6 @@
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
         <choose>
             <!-- 분기별 + 그룹별 집계 -->
@@ -662,6 +627,20 @@
                     </when>
                 </choose>
             </when>
+            <otherwise>
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10)  <!-- 일별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7)  <!-- 월별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4)  <!-- 연도별 -->
+                    </when>
+                </choose>
+            </otherwise>
         </choose>
         <!-- 정렬 조건 -->
         <choose>
@@ -684,65 +663,64 @@
 
     <select id="findStatisticsAverageBySearch" resultMap="SalesHistoryAverageResultMap">
         SELECT
-        <if test="salesHistoryRankedDataDTO.month != null">
-            SUMMARY.MONTH AS MONTH,
-        </if>
-        <if test="salesHistoryRankedDataDTO.year != null">
-            SUMMARY.YEAR AS YEAR,
-        </if>
-        AVG(total_incentive) AS average_total_incentive,
-        AVG(total_performance) AS average_total_performance,
-        AVG(total_sales) AS average_total_sales
+        <choose>
+            <!-- 분기별 처리 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                COALESCE(LEFT(SUMMARY.created_at, 10), 'Unknown Period') AS period -- 일별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                COALESCE(LEFT(SUMMARY.created_at, 7), 'Unknown Period') AS period -- 월별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                COALESCE(LEFT(SUMMARY.created_at, 4), 'Unknown Period') AS period -- 연도별
+            </when>
+        </choose>,
+        COALESCE(AVG(SUMMARY.total_incentive), 0) AS average_total_incentive,
+        COALESCE(AVG(SUMMARY.total_performance), 0) AS average_total_performance,
+        COALESCE(AVG(SUMMARY.total_sales), 0) AS average_total_sales
         FROM (
         SELECT
-        <if test="salesHistoryRankedDataDTO.month != null">
-            LEFT(a.created_at, 7) AS MONTH,
-        </if>
-        <if test="salesHistoryRankedDataDTO.year != null">
-            LEFT(a.created_at, 4) AS YEAR,
-        </if>
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales,
+        a.created_at,
         <choose>
-            <when test="salesHistoryRankedDataDTO.month != null">
-                LEFT(a.created_at, 7)
+            <!-- 그룹화 처리 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
             </when>
-            <when test="salesHistoryRankedDataDTO.year != null">
-                LEFT(a.created_at, 4)
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
             </when>
-        </choose>
+            <otherwise>
+                'Unknown Group' AS group_key
+            </otherwise>
+        </choose>,
+        COALESCE(SUM(a.sal_hist_ince), 0) AS total_incentive,
+        COALESCE(SUM(a.sal_hist_no_of_veh), 0) AS total_performance,
+        COALESCE(SUM(a.sal_hist_tota_sale), 0) AS total_sales
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
+            <!-- 날짜 조건 -->
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
+        GROUP BY
         <choose>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
-                GROUP BY a.mem_id
+            <!-- 분기별 그룹화 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                LEFT(a.created_at, 10), group_key -- 일별 + 그룹별
             </when>
-            <otherwise>
-                GROUP BY a.cent_id
-            </otherwise>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                LEFT(a.created_at, 7), group_key -- 월별 + 그룹별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                LEFT(a.created_at, 4), group_key -- 연도별 + 그룹별
+            </when>
         </choose>
-        <if test="salesHistoryRankedDataDTO.month != null">
-            , LEFT(a.created_at, 7)
-        </if>
-        <if test="salesHistoryRankedDataDTO.year != null">
-            , LEFT(a.created_at, 4)
-        </if>
         ) AS SUMMARY
-        <if test="salesHistoryRankedDataDTO.month != null">
-            GROUP BY SUMMARY.MONTH
-        </if>
-        <if test="salesHistoryRankedDataDTO.year != null">
-            GROUP BY SUMMARY.YEAR
-        </if>
+        GROUP BY period
         LIMIT #{size} OFFSET #{offset}
     </select>
-
 
     <select id="findStatisticsBySearchCount" resultType="int">
         SELECT
@@ -775,15 +753,16 @@
         SUM(a.sal_hist_tota_sale) AS total_sales
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <!-- 사원 조건 -->
             <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
             <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
-                a.cent_id IN
+                AND a.cent_id IN
                 <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
                     #{cent_id}
                 </foreach>
@@ -792,7 +771,6 @@
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
         <choose>
             <!-- 분기별 + 그룹별 집계 -->
@@ -824,7 +802,22 @@
                     </when>
                 </choose>
             </when>
-        </choose>) AS subquery
+            <otherwise>
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10)  <!-- 일별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7)  <!-- 월별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4)  <!-- 연도별 -->
+                    </when>
+                </choose>
+            </otherwise>
+        </choose>
+        ) AS subquery
     </select>
 
     <select id="findStatisticsBySearchMonth" resultMap="SalesHistoryRankedDataResultMap">
@@ -1253,6 +1246,67 @@
               a.sal_hist_id
           FROM tb_sales_history a
          WHERE a.conr_id = #{contractId}
+    </select>
+
+    <select id="findStatisticsBestBySearch" resultMap="SalesHistoryRankedDataResultMap">
+        SELECT
+        <choose>
+            <!-- 분기별 처리 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                COALESCE(LEFT(SUMMARY.created_at, 10), 'Unknown Period') AS period -- 일별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                COALESCE(LEFT(SUMMARY.created_at, 7), 'Unknown Period') AS period -- 월별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                COALESCE(LEFT(SUMMARY.created_at, 4), 'Unknown Period') AS period -- 연도별
+            </when>
+        </choose>,
+        COALESCE(MAX(SUMMARY.total_incentive), 0) AS total_incentive,
+        COALESCE(MAX(SUMMARY.total_performance), 0) AS total_performance,
+        COALESCE(MAX(SUMMARY.total_sales), 0) AS total_sales
+        FROM (
+        SELECT
+        a.created_at,
+        <choose>
+            <!-- 그룹화 처리 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
+            </when>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
+            </when>
+            <otherwise>
+                'Unknown Group' AS group_key
+            </otherwise>
+        </choose>,
+        COALESCE(SUM(a.sal_hist_ince), 0) AS total_incentive,
+        COALESCE(SUM(a.sal_hist_no_of_veh), 0) AS total_performance,
+        COALESCE(SUM(a.sal_hist_tota_sale), 0) AS total_sales
+        FROM tb_sales_history a
+        <where>
+            a.active = TRUE
+            <!-- 날짜 조건 -->
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+        </where>
+        GROUP BY
+        <choose>
+            <!-- 분기별 그룹화 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                LEFT(a.created_at, 10), group_key -- 일별 + 그룹별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                LEFT(a.created_at, 7), group_key -- 월별 + 그룹별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                LEFT(a.created_at, 4), group_key -- 연도별 + 그룹별
+            </when>
+        </choose>
+        ) AS SUMMARY
+        GROUP BY period
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
 </mapper>

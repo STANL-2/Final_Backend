@@ -111,6 +111,10 @@ public interface SalesHistoryMapper {
                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     String findSalesHistoryIdByContractId(@Param("contractId") String contractId);
+
+    List<SalesHistoryRankedDataDTO> findStatisticsBestBySearch(@Param("size") int size
+            , @Param("offset") int offset,
+                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 }
 
 

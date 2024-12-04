@@ -371,6 +371,23 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
             throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
         }
 
+        salesHistoryList.forEach(salesHistory -> {
+            try {
+                if(salesHistory.getMemberId() != null) {
+                    salesHistory.setMemberId(memberQueryService.selectNameById(salesHistory.getMemberId()));
+                }
+            } catch (Exception e) {
+                throw new SalesHistoryCommonException(SalesHistoryErrorCode.MEMBER_NOT_FOUND);
+            }
+            try {
+                if(salesHistory.getCenterId() != null) {
+                    salesHistory.setCenterId(centerQueryService.selectNameById(salesHistory.getCenterId()));
+                }
+            } catch (Exception e) {
+                throw new SalesHistoryCommonException(SalesHistoryErrorCode.CENTER_NOT_FOUND);
+            }
+        });
+
         return new PageImpl<>(salesHistoryList, pageable, total);
     }
 
@@ -586,5 +603,23 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         }
 
         return salesHistoryId;
+    }
+
+    @Override
+    @Transactional
+    public Page<SalesHistoryRankedDataDTO> selectStatisticsBestBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBestBySearch(size,offset, salesHistoryRankedDataDTO);
+
+        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+
     }
 }
