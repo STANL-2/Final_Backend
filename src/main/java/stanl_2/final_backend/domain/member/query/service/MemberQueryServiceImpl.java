@@ -201,6 +201,12 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         params.put("sortField", sortField);
         params.put("sortOrder", sortOrder);
 
+        // 암호화 시켜서 검색
+        memberSearchDTO.setLoginId(aesUtils.encrypt(memberSearchDTO.getLoginId()));
+        memberSearchDTO.setMemberName(aesUtils.encrypt(memberSearchDTO.getMemberName()));
+        memberSearchDTO.setPhone(aesUtils.encrypt(memberSearchDTO.getPhone()));
+        memberSearchDTO.setEmail(aesUtils.encrypt(memberSearchDTO.getEmail()));
+
         params.put("loginId", memberSearchDTO.getLoginId());
         params.put("memberName", memberSearchDTO.getMemberName());
         params.put("phone", memberSearchDTO.getPhone());

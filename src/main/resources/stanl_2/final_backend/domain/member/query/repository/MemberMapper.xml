@@ -193,13 +193,13 @@
                 AND b.mem_login_id = #{ loginId }
             </if>
             <if test="memberName != null">
-                AND b.mem_name LIKE CONCAT('%', #{ memberName }, '%')
+                AND b.mem_name = #{ memberName }
             </if>
             <if test="phone != null">
-                AND b.mem_pho LIKE CONCAT('%', #{ phone }, '%')
+                AND b.mem_pho = #{ phone }
             </if>
             <if test="email != null">
-                AND b.mem_ema LIKE CONCAT('%', #{ email }, '%')
+                AND b.mem_ema = #{ email }
             </if>
             <if test="centerName != null">
                 AND a.cent_name LIKE CONCAT('%', #{ centerName }, '%')
@@ -255,13 +255,13 @@
                 AND b.mem_login_id = #{ loginId }
             </if>
             <if test="memberName != null and memberName != ''">
-                AND b.mem_name LIKE CONCAT('%', #{ memberName }, '%')
+                AND b.mem_name = #{ memberName }
             </if>
             <if test="phone != null and phone != ''">
-                AND b.mem_pho LIKE CONCAT('%', #{ phone }, '%')
+                AND b.mem_pho = #{ phone }
             </if>
             <if test="email != null and email != ''">
-                AND b.mem_ema LIKE CONCAT('%', #{ email }, '%')
+                AND b.mem_ema = #{ email }
             </if>
             <if test="centerName != null and centerName != ''">
                 AND a.cent_name LIKE CONCAT('%', #{ centerName }, '%')
