@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.member.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
@@ -25,6 +26,8 @@ public interface MemberQueryService {
     List<MemberDTO> selectMemberByName(String name) throws GeneralSecurityException;
 
     Page<MemberSearchDTO> selectMemberBySearch(Pageable pageable, MemberSearchDTO memberSearchDTO) throws GeneralSecurityException;
+
+    void exportCustomerToExcel(HttpServletResponse response) throws GeneralSecurityException;
 
 //    MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException;
 }

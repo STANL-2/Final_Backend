@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 import stanl_2.final_backend.domain.member.query.dto.MemberCenterListDTO;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
@@ -208,6 +210,19 @@ public class MemberController {
                                                       .build());
     }
 
+
+    @Operation(summary = "엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("excel")
+    public void exportCustomer(HttpServletResponse response) throws GeneralSecurityException {
+
+        memberQueryService.exportCustomerToExcel(response);
+    }
 
 
 }

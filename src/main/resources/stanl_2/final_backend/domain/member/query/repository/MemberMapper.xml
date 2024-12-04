@@ -36,6 +36,24 @@
         <result property="organizationName" column="ORG_CHA_NAME"/>
     </resultMap>
 
+    <resultMap id="memberExcel" type="stanl_2.final_backend.domain.member.query.dto.MemberExcelDTO">
+        <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="name" column="MEM_NAME"/>
+        <result property="email" column="MEM_EMA"/>
+        <result property="age" column="MEM_AGE"/>
+        <result property="sex" column="MEM_SEX"/>
+        <result property="phone" column="MEM_PHO"/>
+        <result property="emergePhone" column="MEM_EMER_PHO"/>
+        <result property="address" column="MEM_ADR"/>
+        <result property="note" column="MEM_NOTE"/>
+        <result property="position" column="MEM_POS"/>
+        <result property="grade" column="MEM_GRD"/>
+        <result property="jobType" column="MEM_JOB_TYPE"/>
+        <result property="military" column="MEM_MIL"/>
+        <result property="bankName" column="MEM_BANK_NAME"/>
+        <result property="account" column="MEM_ACC"/>
+    </resultMap>
+
     <select id="findMemberInfoById" resultMap="Member" parameterType="String">
         SELECT
                a.mem_login_id,
@@ -253,4 +271,25 @@
             </if>
         </where>
     </select>
+
+    <select id="findMemberForExcel" resultMap="memberExcel">
+        SELECT
+               a.mem_login_id,
+               a.mem_name,
+               a.mem_ema,
+               a.mem_age,
+               a.mem_sex,
+               a.mem_pho,
+               a.mem_emer_pho,
+               a.mem_adr,
+               a.mem_note,
+               a.mem_pos,
+               a.mem_grd,
+               a.mem_job_type,
+               a.mem_mil,
+               a.mem_bank_name,
+               a.mem_acc
+          FROM tb_member a
+    </select>
+
 </mapper>

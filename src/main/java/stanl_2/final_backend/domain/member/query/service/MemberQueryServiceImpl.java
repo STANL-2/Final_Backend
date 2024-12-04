@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.member.query.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,9 +15,11 @@ import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
+import stanl_2.final_backend.domain.member.query.dto.MemberExcelDTO;
 import stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO;
 import stanl_2.final_backend.domain.member.query.repository.MemberMapper;
 import stanl_2.final_backend.domain.member.query.repository.MemberRoleMapper;
+import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
@@ -32,14 +35,16 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final CenterQueryService centerQueryService;
     private final AESUtils aesUtils;
     private final MemberRoleMapper memberRoleMapper;
+    private final ExcelUtilsV1 excelUtilsV1;
 
     @Autowired
     public MemberQueryServiceImpl(MemberMapper memberMapper, CenterQueryService centerQueryService, AESUtils aesUtils,
-                                  MemberRoleMapper memberRoleMapper) {
+                                  MemberRoleMapper memberRoleMapper, ExcelUtilsV1 excelUtilsV1) {
         this.memberMapper = memberMapper;
         this.centerQueryService = centerQueryService;
         this.aesUtils = aesUtils;
         this.memberRoleMapper = memberRoleMapper;
+        this.excelUtilsV1 = excelUtilsV1;
     }
 
     @Override
@@ -215,5 +220,26 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         }
 
         return new PageImpl<>(memberList, pageable, count);
+    }
+
+    @Override
+    public void exportCustomerToExcel(HttpServletResponse response) throws GeneralSecurityException {
+        List<MemberExcelDTO> memberExcels = memberMapper.findMemberForExcel();
+
+        if(memberExcels == null){
+            throw new MemberCommonException(MemberErrorCode.MEMBER_NOT_FOUND);
+        }
+
+        for(int i=0;i<memberExcels.size();i++){
+            memberExcels.get(i).setName(aesUtils.decrypt(memberExcels.get(i).getName()));
+            memberExcels.get(i).setEmail(aesUtils.decrypt(memberExcels.get(i).getEmail()));
+            memberExcels.get(i).setPhone(aesUtils.decrypt(memberExcels.get(i).getPhone()));
+            memberExcels.get(i).setEmergePhone(aesUtils.decrypt(memberExcels.get(i).getEmergePhone()));
+            memberExcels.get(i).setAddress(aesUtils.decrypt(memberExcels.get(i).getAddress()));
+            memberExcels.get(i).setBankName(aesUtils.decrypt(memberExcels.get(i).getBankName()));
+            memberExcels.get(i).setAccount(aesUtils.decrypt(memberExcels.get(i).getAccount()));
+        }
+
+        excelUtilsV1.download(MemberExcelDTO.class, memberExcels, "employeeExcel", response);
     }
 }
