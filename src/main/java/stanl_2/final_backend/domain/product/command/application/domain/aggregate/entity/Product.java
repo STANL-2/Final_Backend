@@ -8,6 +8,10 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import stanl_2.final_backend.global.config.PrefixGeneratorConfig;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Entity
 @Table(name="TB_PRODUCT")
 @AllArgsConstructor
@@ -50,4 +54,21 @@ public class Product {
 
     @Column(name ="IMAGE_URL")
     private String imageUrl;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = getCurrentTime();
+        this.updatedAt = this.createdAt;
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.updatedAt = getCurrentTime();
+    }
+
+    private String  getCurrentTime() {
+        ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
 }

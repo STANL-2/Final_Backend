@@ -118,8 +118,6 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
             sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
         }
 
-        System.out.println("sortField & sortOrder: " + sortField + " & " + sortOrder);
-
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
 
         List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistorySearchByEmployee(size,offset, salesHistorySearchDTO, sortField, sortOrder);
@@ -165,10 +163,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         }
 
         if(salesHistorySearchDTO.getCustomerName() != null){
-            System.out.println("고객 리스트1: " + salesHistorySearchDTO.getCustomerList() + "검색어\n" + salesHistorySearchDTO.getCustomerName());
-
             salesHistorySearchDTO.setCustomerList(customerQueryService.selectCustomerId(salesHistorySearchDTO.getCustomerName()));
-            System.out.println("고객 리스트: " + salesHistorySearchDTO.getCustomerList() + "검색어\n" + salesHistorySearchDTO.getCustomerName());
         }
 
         List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistoryBySearch(size,offset, salesHistorySearchDTO, sortField, sortOrder);
@@ -310,7 +305,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         String parseEndDate = salesHistorySearchDTO.getEndDate();
 
         parseStartDate = parseStartDate.substring(0,4);
-        parseEndDate = parseStartDate.substring(0,4);
+        parseEndDate = parseEndDate.substring(0,4);
 
         SalesHistoryStatisticsDTO salesHistoryStatisticsDTO = salesHistoryMapper.findStatisticsSearchYearByEmployee(salesHistorySearchDTO);
 
@@ -389,7 +384,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
 
         parseStartDate = parseStartDate.substring(0,7);
-        parseEndDate = parseStartDate.substring(0,7);
+        parseEndDate = parseEndDate.substring(0,7);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearchMonth(size,offset, salesHistoryRankedDataDTO);
 
@@ -412,7 +407,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
 
         parseStartDate = parseStartDate.substring(0,4);
-        parseEndDate = parseStartDate.substring(0,4);
+        parseEndDate = parseEndDate.substring(0,4);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearchYear(size,offset, salesHistoryRankedDataDTO);
 
@@ -451,7 +446,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
 
         parseStartDate = parseStartDate.substring(0,7);
-        parseEndDate = parseStartDate.substring(0,7);
+        parseEndDate = parseEndDate.substring(0,7);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearchMonth(size,offset, salesHistoryRankedDataDTO);
 
@@ -473,7 +468,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
 
         parseStartDate = parseStartDate.substring(0,4);
-        parseEndDate = parseStartDate.substring(0,4);
+        parseEndDate = parseEndDate.substring(0,4);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearchYear(size,offset, salesHistoryRankedDataDTO);
 
@@ -527,7 +522,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
 
         parseStartDate = parseStartDate.substring(0,7);
-        parseEndDate = parseStartDate.substring(0,7);
+        parseEndDate = parseEndDate.substring(0,7);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsByMonth(size,offset, salesHistoryRankedDataDTO);
 
@@ -550,7 +545,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
 
         parseStartDate = parseStartDate.substring(0,4);
-        parseEndDate = parseStartDate.substring(0,4);
+        parseEndDate = parseEndDate.substring(0,4);
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsByYear(size,offset, salesHistoryRankedDataDTO);
 
