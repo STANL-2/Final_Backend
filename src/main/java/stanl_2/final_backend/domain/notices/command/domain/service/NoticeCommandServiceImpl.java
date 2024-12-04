@@ -59,17 +59,14 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     public void registerNotice(NoticeRegistDTO noticeRegistDTO,
                                Principal principal) {
         redisService.clearNoticeCache();
-        String memberId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeRegistDTO.getMemberLoginId());
         noticeRegistDTO.setMemberId(memberId);
 
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
             Notice newNotice = noticeRepository.save(notice);
-
             NoticeAlarmDTO noticeAlarmDTO = modelMapper.map(newNotice, NoticeAlarmDTO.class);
-
             alarmCommandService.sendNoticeAlarm(noticeAlarmDTO);
-
         } catch (DataIntegrityViolationException e){
             // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
             throw new NoticeCommonException(NoticeErrorCode.DATA_INTEGRITY_VIOLATION);
@@ -84,11 +81,11 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
 
         redisService.clearNoticeCache();
-        String memberId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeModifyDTO.getMemberLoginId());
+
 
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
-
         if(!notice.getMemberId().equals(memberId)){
             // 권한 오류
             throw new NoticeCommonException(NoticeErrorCode.AUTHORIZATION_VIOLATION);

@@ -1,4 +1,4 @@
-package stanl_2.final_backend.domain.promotion.command.application.dto;
+package stanl_2.final_backend.domain.purchase_order.command.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,15 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class PromotionRegistDTO {
+public class PurchaseOrderAlarmDTO {
 
+    private String purchaseOrderId;
     private String title;
-
-    private String content;
-
     private String memberId;
-
-    private String memberLoginId;
-
-    private String fileUrl;
+    private String adminId;
 }

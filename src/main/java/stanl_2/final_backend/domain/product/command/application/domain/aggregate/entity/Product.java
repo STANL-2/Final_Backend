@@ -55,6 +55,13 @@ public class Product {
     @Column(name ="IMAGE_URL")
     private String imageUrl;
 
+    public Product(String serialNumber, Integer cost, String name, Integer stock) {
+        this.serialNumber = serialNumber;
+        this.cost = cost;
+        this.name = name;
+        this.stock = stock;
+    }
+
     @PrePersist
     private void prePersist() {
         this.createdAt = getCurrentTime();
@@ -66,9 +73,8 @@ public class Product {
         this.updatedAt = getCurrentTime();
     }
 
-    private String  getCurrentTime() {
+    private String getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
-
 }

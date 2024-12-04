@@ -12,17 +12,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 import stanl_2.final_backend.domain.notices.query.service.NoticeService;
 
+
 @RestController("queryNoticeController")
 @RequestMapping("/api/v1/notice")
 public class NoticeController {
     private final NoticeService noticeService;
-
     @Autowired
     public NoticeController(NoticeService noticeService) {
         this.noticeService = noticeService;
@@ -43,11 +42,11 @@ public class NoticeController {
             @RequestParam(required = false) String classification,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate
-
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        SearchDTO searchDTO = new SearchDTO(title,tag,memberId,classification,startDate,endDate);
-        Page<NoticeDTO> noticeDTOPage = noticeService.findNotices(pageable,searchDTO);
+        SearchDTO searchDTO = new SearchDTO(title, tag, memberId, classification, startDate, endDate);
+
+        Page<NoticeDTO> noticeDTOPage = noticeService.findNotices(pageable, searchDTO);
 
         return ResponseEntity.ok(noticeDTOPage);
     }
