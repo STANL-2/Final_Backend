@@ -8,10 +8,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeExcelDownload;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 import stanl_2.final_backend.domain.notices.query.repository.NoticeMapper;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryCommonException;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryErrorCode;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import stanl_2.final_backend.global.redis.RedisService;
 
@@ -24,12 +27,14 @@ public class NoticeServiceImpl implements NoticeService{
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisService redisService;
     private final ExcelUtilsV1 excelUtilsV1;
+    private final MemberQueryService memberQueryService;
     @Autowired
-    public NoticeServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1) {
+    public NoticeServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1,MemberQueryService memberQueryService) {
         this.noticeMapper = noticeMapper;
         this.redisTemplate = redisTemplate;
         this.redisService =redisService;
         this.excelUtilsV1 =excelUtilsV1;
+        this.memberQueryService =memberQueryService;
     }
 
     @Transactional
@@ -52,6 +57,13 @@ public class NoticeServiceImpl implements NoticeService{
         } else {
             System.out.println("캐시에서 데이터 조회 중...");
         }
+        notices.forEach(notice -> {
+            try {
+                notice.setMemberId(memberQueryService.selectNameById(notice.getMemberId()));
+            } catch (Exception e) {
+                throw new SalesHistoryCommonException(SalesHistoryErrorCode.MEMBER_NOT_FOUND);
+            }
+        });
         int totalElements = noticeMapper.findNoticeCount(); // 총 개수 조회
         return new PageImpl<>(notices, pageable, totalElements);
     }
@@ -68,5 +80,6 @@ public class NoticeServiceImpl implements NoticeService{
 
         excelUtilsV1.download(NoticeExcelDownload.class, noticeList, "noticeExcel", response);
     }
+
 
 }

@@ -277,6 +277,9 @@
             <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
             </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name = #{productName}
+            </if>
         </where>
         <choose>
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
