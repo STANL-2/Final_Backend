@@ -214,7 +214,7 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
         String type = "CONTRACT";
         String tag = "발주서";
-        String message = purchaseOrderAlarmDTO.getTitle() +"  발주서가 승인되었습니다.";
+        String message = purchaseOrderAlarmDTO.getTitle() +"  가 승인되었습니다.";
         String redirectUrl = "/purchase-order/list";
         String createdAt = getCurrentTime();
 
@@ -228,7 +228,7 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
         String type = "CONTRACT";
         String tag = "수주서";
-        String message = orderAlarmDTO.getTitle() +" 수주서가 승인되었습니다.";
+        String message = orderAlarmDTO.getTitle() +" 가 승인되었습니다.";
         String redirectUrl = "/order/list";
         String createdAt = getCurrentTime();
 

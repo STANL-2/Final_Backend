@@ -33,7 +33,7 @@ public class AlarmScheduler {
     }
 
 //    @Scheduled(cron = "0 0 2 * * *")  // 매일 새벽 2시에 실행)
-    @Scheduled(cron = "0 2 14 * * *")
+    @Scheduled(cron = "0 45 21 * * *")
     @Transactional
     public void alarmTodaySchedule(){
 
@@ -60,7 +60,7 @@ public class AlarmScheduler {
                 tag = "교육";
             }
 
-            String message =  "금일 " + Hour + "시 " + Minute + "분에 '" + schedule.getName() + "' 일정이 있습니다";
+            String message = "금일 " + Hour + "시 " + Minute + "분에 '" + tag + "' 일정이 있습니다";
             String redirectUrl = "/schedule";
             String createdAt = getCurrentTime();
 
