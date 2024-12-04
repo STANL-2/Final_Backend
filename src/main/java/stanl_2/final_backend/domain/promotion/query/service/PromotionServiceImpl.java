@@ -8,12 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.problem.query.dto.ProblemDTO;
 import stanl_2.final_backend.domain.problem.query.dto.ProblemExcelDownload;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionExcelDownload;
 import stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO;
 import stanl_2.final_backend.domain.promotion.query.repository.PromotionMapper;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryCommonException;
+import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryErrorCode;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import stanl_2.final_backend.global.redis.RedisService;
 
@@ -25,10 +28,12 @@ public class PromotionServiceImpl implements PromotionService{
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisService redisService;
     private final ExcelUtilsV1 excelUtilsV1;
+    private final MemberQueryService memberQueryService;
     @Autowired
-    public PromotionServiceImpl(PromotionMapper promotionMapper, RedisTemplate<String, Object> redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1) {
+    public PromotionServiceImpl(PromotionMapper promotionMapper, RedisTemplate<String, Object> redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1, MemberQueryService memberQueryService) {
         this.promotionMapper = promotionMapper;
         this.redisTemplate = redisTemplate;
+        this.memberQueryService = memberQueryService;
         this.redisService = redisService;
         this.excelUtilsV1 =excelUtilsV1;
     }
@@ -48,6 +53,13 @@ public class PromotionServiceImpl implements PromotionService{
         } else {
             System.out.println("캐시에서 프로모션 데이터 조회 중...");
         }
+        promotions.forEach(promotion -> {
+            try {
+                promotion.setMemberId(memberQueryService.selectNameById(promotion.getMemberId()));
+            } catch (Exception e) {
+                throw new SalesHistoryCommonException(SalesHistoryErrorCode.MEMBER_NOT_FOUND);
+            }
+        });
         Integer totalElements = promotionMapper.findPromotionsCount(promotionSearchDTO);
         return new PageImpl<>(promotions, pageable, totalElements);
     }

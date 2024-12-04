@@ -33,6 +33,8 @@ import stanl_2.final_backend.domain.product.command.application.domain.aggregate
 import stanl_2.final_backend.domain.product.command.application.domain.aggregate.entity.ProductOption;
 import stanl_2.final_backend.domain.product.command.application.domain.repository.ProductOptionRepository;
 import stanl_2.final_backend.domain.product.command.application.domain.repository.ProductRepository;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleRegistDTO;
+import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +65,7 @@ public class Initializer implements ApplicationRunner {
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
 
+    private final ScheduleCommandService scheduleCommandService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -768,6 +771,54 @@ public class Initializer implements ApplicationRunner {
         }
 
 
+        // 일정 저장
+        // 2024년 9월
+        ScheduleRegistDTO newSchedule1 = new ScheduleRegistDTO("자동차 영업 정책 교육", "영업 전략 및 판매 방향성 교육", "TRAINING", "2024-09-04 10:00:00", "2024-09-06 12:30:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule1);
+        ScheduleRegistDTO newSchedule2 = new ScheduleRegistDTO("기우석 고객님 미팅", "신형 ME25 차량 견적 관련 미팅", "MEETING", "2024-09-10 14:00:00", "2024-09-10 16:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule2);
+        ScheduleRegistDTO newSchedule3 = new ScheduleRegistDTO("팀별 정기 회의", "사내 불편사항 및 개선점 여부 회의", "SESSION", "2024-09-15 09:00:00", "2024-09-15 11:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule3);
+
+// 2024년 10월
+        ScheduleRegistDTO newSchedule4 = new ScheduleRegistDTO("영업 전략 워크샵", "판매 방법론 교육 일정 (서초)", "TRAINING", "2024-10-16 10:00:00", "2024-10-18 18:30:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule4);
+        ScheduleRegistDTO newSchedule5 = new ScheduleRegistDTO("휴가", "가족과 함께하는 휴가", "VACATION", "2024-10-07 00:00:00", "2024-10-10 23:59:59", "god", null);
+        scheduleCommandService.registSchedule(newSchedule5);
+        ScheduleRegistDTO newSchedule6 = new ScheduleRegistDTO("김민석 고객님 미팅", "KM7 차량 견적 상담 미팅", "MEETING", "2024-10-14 13:00:00", "2024-10-14 15:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule6);
+
+// 2024년 11월
+        ScheduleRegistDTO newSchedule7 = new ScheduleRegistDTO("영업 기술 교육", "상담 스킬 강화 교육", "TRAINING", "2024-11-05 10:00:00", "2024-11-05 12:30:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule7);
+        ScheduleRegistDTO newSchedule8 = new ScheduleRegistDTO("내부 회의", "성과 리뷰 회의", "SESSION", "2024-11-10 09:00:00", "2024-11-10 11:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule8);
+        ScheduleRegistDTO newSchedule9 = new ScheduleRegistDTO("고객 미팅", "중요 고객과의 미팅", "MEETING", "2024-11-15 14:00:00", "2024-11-15 16:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule9);
+
+// 2024년 12월
+        ScheduleRegistDTO newSchedule10 = new ScheduleRegistDTO("영업 전략 교육", "판매 방법론 및 전략 교육", "TRAINING", "2024-12-02 10:00:00", "2024-12-02 12:30:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule10);
+        ScheduleRegistDTO newSchedule11 = new ScheduleRegistDTO("휴가", "연말 휴가", "VACATION", "2024-12-10 00:00:00", "2024-12-12 23:59:59", "god", null);
+        scheduleCommandService.registSchedule(newSchedule11);
+        ScheduleRegistDTO newSchedule12 = new ScheduleRegistDTO("내부 회의", "팀워크 강화 미팅", "SESSION", "2024-12-20 10:00:00", "2024-12-20 12:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule12);
+
+// 2025년 1월
+        ScheduleRegistDTO newSchedule13 = new ScheduleRegistDTO("고객 미팅", "새해 첫 고객 미팅", "MEETING", "2025-01-05 13:00:00", "2025-01-05 15:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule13);
+        ScheduleRegistDTO newSchedule14 = new ScheduleRegistDTO("영업 정책 교육", "새로운 영업 정책 교육", "TRAINING", "2025-01-10 10:00:00", "2025-01-10 12:30:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule14);
+        ScheduleRegistDTO newSchedule15 = new ScheduleRegistDTO("내부 회의", "전략 회의", "SESSION", "2025-01-15 09:00:00", "2025-01-15 11:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule15);
+
+// 2025년 2월
+        ScheduleRegistDTO newSchedule16 = new ScheduleRegistDTO("고객 미팅", "고객 니즈 분석 미팅", "MEETING", "2025-02-03 13:00:00", "2025-02-03 15:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule16);
+        ScheduleRegistDTO newSchedule17 = new ScheduleRegistDTO("휴가", "겨울 휴가", "VACATION", "2025-02-07 00:00:00", "2025-02-10 23:59:59", "god", null);
+        scheduleCommandService.registSchedule(newSchedule17);
+        ScheduleRegistDTO newSchedule18 = new ScheduleRegistDTO("영업 회의", "전략 회의 및 피드백", "SESSION", "2025-02-15 10:00:00", "2025-02-15 12:00:00", "god", null);
+        scheduleCommandService.registSchedule(newSchedule18);
 
         // 제품 옵션 등록
         if(productOptionRepository.count() == 0){

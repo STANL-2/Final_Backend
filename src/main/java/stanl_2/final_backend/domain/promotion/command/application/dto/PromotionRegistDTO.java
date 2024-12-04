@@ -17,5 +17,7 @@ public class PromotionRegistDTO {
 
     private String memberId;
 
+    private String memberLoginId;
+
     private String fileUrl;
 }

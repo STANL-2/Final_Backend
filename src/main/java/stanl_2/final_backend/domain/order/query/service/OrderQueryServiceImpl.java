@@ -1,6 +1,7 @@
 package stanl_2.final_backend.domain.order.query.service;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,6 +24,7 @@ import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+@Slf4j
 @Service
 public class OrderQueryServiceImpl implements OrderQueryService {
 
@@ -159,6 +161,16 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     @Transactional(readOnly = true)
     public Page<OrderSelectSearchDTO> selectSearchOrders(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException {
 
+        if ("대기".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("WAIT");
+        }
+        if ("승인".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("APPROVED");
+        }
+        if ("취소".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("CANCEL");
+        }
+
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
@@ -178,9 +190,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         }
 
         for (OrderSelectSearchDTO order : orders) {
+            log.info("dasdas: " + order.getProductName());
             if (order.getMemberId() != null) {
                 String memberName = memberQueryService.selectNameById(order.getMemberId());
                 order.setMemberName(memberName);
+            }
+
+            if (order.getAdminId() != null) {
+                String adminName = memberQueryService.selectNameById(order.getAdminId());
+                order.setAdminName(adminName);
+            } else {
+                order.setAdminName("-");
             }
         }
 
