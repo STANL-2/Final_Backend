@@ -33,7 +33,7 @@ public class AlarmScheduler {
     }
 
 //    @Scheduled(cron = "0 0 2 * * *")  // 매일 새벽 2시에 실행)
-    @Scheduled(cron = "0 45 21 * * *")
+    @Scheduled(cron = "0 27 14 * * *")
     @Transactional
     public void alarmTodaySchedule(){
 

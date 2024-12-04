@@ -161,8 +161,11 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
             memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
             // 중복 제거
             memberIdList = new ArrayList<>(new HashSet<>(memberIdList));
-        } else {
-            memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag());
+        } else if (noticeAlarmDTO.getTag().equals("admin")){
+            memberIdList.addAll(memberQueryService.selectMemberByRole("admin"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
+        }else {
+            memberIdList.addAll(memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag()));
         }
 
         memberIdList.forEach(member -> {
