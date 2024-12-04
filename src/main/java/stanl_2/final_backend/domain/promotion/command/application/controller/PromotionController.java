@@ -24,14 +24,12 @@ public class PromotionController {
     private final PromotionCommandService promotionCommandService;
     private final AuthQueryService authQueryService;
     private final S3FileServiceImpl s3FileService;
-    private final PromotionModifyDTO promotionModifyDTO;
 
     @Autowired
-    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, PromotionModifyDTO promotionModifyDTO) {
+    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService) {
         this.promotionCommandService = promotionCommandService;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
-        this.promotionModifyDTO = promotionModifyDTO;
     }
 
     @Operation(summary = "프로모션 작성")
@@ -58,7 +56,6 @@ public class PromotionController {
                 .msg("성공")
                 .result(null)
                 .build());
-
     }
     @Operation(summary = "프로모션 수정")
     @ApiResponses(value = {
