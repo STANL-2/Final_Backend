@@ -52,7 +52,7 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee").hasAnyRole("contract-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/{contractId}").hasAnyRole("contract-employee-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 전체 조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/**").hasAnyRole("contract-employee-id-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 상세조회 (전체)
-                .requestMatchers(HttpMethod.GET, "/api/v1/contract/center/{contractId}").hasAnyRole("contract-employee-id-get", "GOD", "DIRECTOR", "ADMIN") // 계약서 상세조회 (전체)
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/center/{contractId}").hasAnyRole("contract-admin-id-get", "GOD", "DIRECTOR", "ADMIN") // 계약서 상세조회 (전체)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/search").hasAnyRole("contract-employee-search-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN") // 계약서 검색 조회 (전체)
 
                 // Customer API
