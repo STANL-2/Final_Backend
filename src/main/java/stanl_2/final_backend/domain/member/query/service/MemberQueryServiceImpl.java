@@ -2,19 +2,27 @@ package stanl_2.final_backend.domain.member.query.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
+import stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO;
 import stanl_2.final_backend.domain.member.query.repository.MemberMapper;
 import stanl_2.final_backend.domain.member.query.repository.MemberRoleMapper;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service(value = "queryMemberService")
@@ -165,5 +173,47 @@ public class MemberQueryServiceImpl implements MemberQueryService {
             memberList.set(i, member);
         }
         return memberList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MemberSearchDTO> selectMemberBySearch(Pageable pageable, MemberSearchDTO memberSearchDTO) throws GeneralSecurityException {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("offset", offset);
+        params.put("size", size);
+        params.put("sortField", sortField);
+        params.put("sortOrder", sortOrder);
+
+        params.put("loginId", memberSearchDTO.getLoginId());
+        params.put("memberName", memberSearchDTO.getMemberName());
+        params.put("phone", memberSearchDTO.getPhone());
+        params.put("email", memberSearchDTO.getEmail());
+        params.put("centerName", memberSearchDTO.getCenterName());
+        params.put("organizationName", memberSearchDTO.getOrganizationName());
+
+        List<MemberSearchDTO> memberList = memberMapper.findMemberByConditions(params);
+
+        Integer count = memberMapper.findMemberCnt(params);
+
+        // 암호화 풀기
+        for(int i=0;i<memberList.size();i++){
+            memberList.get(i).setMemberName(aesUtils.decrypt(memberList.get(i).getMemberName()));
+            memberList.get(i).setPhone(aesUtils.decrypt(memberList.get(i).getPhone()));
+            memberList.get(i).setEmail(aesUtils.decrypt(memberList.get(i).getEmail()));
+        }
+
+        return new PageImpl<>(memberList, pageable, count);
     }
 }

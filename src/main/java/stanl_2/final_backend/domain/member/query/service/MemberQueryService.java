@@ -1,6 +1,9 @@
 package stanl_2.final_backend.domain.member.query.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
+import stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO;
 
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -20,6 +23,8 @@ public interface MemberQueryService {
     MemberDTO selectMemberInfoById(String memberId) throws GeneralSecurityException;
 
     List<MemberDTO> selectMemberByName(String name) throws GeneralSecurityException;
+
+    Page<MemberSearchDTO> selectMemberBySearch(Pageable pageable, MemberSearchDTO memberSearchDTO) throws GeneralSecurityException;
 
 //    MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException;
 }

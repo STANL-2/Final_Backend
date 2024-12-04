@@ -27,6 +27,15 @@
         <result property="updatedAt" column="UPDATED_AT"/>
     </resultMap>
 
+    <resultMap id="SearchMember" type="stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO">
+        <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="memberName" column="MEM_NAME"/>
+        <result property="phone" column="MEM_PHO"/>
+        <result property="email" column="MEM_EMA"/>
+        <result property="centerName" column="CENT_NAME"/>
+        <result property="organizationName" column="ORG_CHA_NAME"/>
+    </resultMap>
+
     <select id="findMemberInfoById" resultMap="Member" parameterType="String">
         SELECT
                a.mem_login_id,
@@ -148,4 +157,100 @@
         WHERE a.mem_name LIKE CONCAT('%', #{ memberName }, '%')
     </select>
 
+
+    <select id="findMemberByConditions" resultMap="SearchMember" parameterType="String">
+        SELECT
+               b.mem_login_id,
+               b.mem_name,
+               b.mem_pho,
+               b.mem_ema,
+               a.cent_name,
+               c.org_cha_name
+          FROM tb_center a
+          JOIN tb_member b ON(a.cent_id = b.center_id)
+          JOIN tb_organization_chart c ON(b.org_cha_id = c.org_id)
+        <where>
+            b.active != 'true'
+            <if test="loginId != null">
+                AND b.mem_login_id = #{ loginId }
+            </if>
+            <if test="memberName != null">
+                AND b.mem_name LIKE CONCAT('%', #{ memberName }, '%')
+            </if>
+            <if test="phone != null">
+                AND b.mem_pho LIKE CONCAT('%', #{ phone }, '%')
+            </if>
+            <if test="email != null">
+                AND b.mem_ema LIKE CONCAT('%', #{ email }, '%')
+            </if>
+            <if test="centerName != null">
+                AND a.cent_name LIKE CONCAT('%', #{ centerName }, '%')
+            </if>
+            <if test="organizationName != null">
+                AND c.org_cha_name LIKE CONCAT('%', #{ organizationName }, '%')
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'loginId'">
+                        ORDER BY b.mem_login_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY b.mem_name ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'phone'">
+                        ORDER BY b.mem_pho ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'email'">
+                        ORDER BY b.mem_ema ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'centerName'">
+                        ORDER BY b.cent_name ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'organizationName'">
+                        ORDER BY c.org_cha_name ${ sortOrder }
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY b.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+    <select id="findMemberCnt" resultType="_int" parameterType="String">
+        SELECT
+         COUNT(*) AS CNT
+          FROM tb_center a
+          JOIN tb_member b ON(a.cent_id = b.center_id)
+          JOIN tb_organization_chart c ON(b.org_cha_id = c.org_id)
+        <where>
+            b.active != 'true'
+            <if test="loginId != null and loginId != ''">
+                AND b.mem_login_id = #{ loginId }
+            </if>
+            <if test="memberName != null and memberName != ''">
+                AND b.mem_name LIKE CONCAT('%', #{ memberName }, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND b.mem_pho LIKE CONCAT('%', #{ phone }, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND b.mem_ema LIKE CONCAT('%', #{ email }, '%')
+            </if>
+            <if test="centerName != null and centerName != ''">
+                AND a.cent_name LIKE CONCAT('%', #{ centerName }, '%')
+            </if>
+            <if test="organizationName != null and organizationName != ''">
+                AND c.org_cha_name LIKE CONCAT('%', #{ organizationName }, '%')
+            </if>
+        </where>
+    </select>
 </mapper>
