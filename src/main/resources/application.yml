@@ -79,3 +79,7 @@ claude:
   api:
     key: ${CLAUDE_API_KEY}
     url: https://api.claude.ai/v1/summary
+
+naver:
+  client-id: CdxW72qcvZLVTHrViB20
+  client-secret: ZjP2cbXlfU

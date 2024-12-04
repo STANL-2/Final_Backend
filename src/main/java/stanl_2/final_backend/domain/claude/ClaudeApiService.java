@@ -21,7 +21,7 @@ public class ClaudeApiService {
     }
 
     public String getSummary(String comment) {
-        
+
         String requestBody = String.format("{\"text\": \"%s\"}", comment);
 
         HttpHeaders headers = new HttpHeaders();

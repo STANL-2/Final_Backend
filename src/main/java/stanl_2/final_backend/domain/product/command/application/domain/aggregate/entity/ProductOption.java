@@ -22,6 +22,7 @@ public class ProductOption {
             type = PrefixGeneratorConfig.class,
             parameters = @org.hibernate.annotations.Parameter(name = "prefix", value = "PRO")
     )
+    @Column(name ="PROD_ID")
     private String productId;  // 옵션을 위한 식별자 필드
 
     @Column(name ="OPT_CNTY", nullable = false)
