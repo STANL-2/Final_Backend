@@ -15,6 +15,7 @@ jobs:
       APPLICATION_NAME: "motive-frontend"
       ENVIRONMENT_NAME: "Motive-frontend-env"
 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
