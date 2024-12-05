@@ -162,6 +162,74 @@ public class Initializer implements ApplicationRunner {
                 loadImage("god.png")
         );
 
+
+        createOrUpdateMember(
+                "eee",
+                "eee",
+                "사원1",
+                "employee@stanl.com",
+                0,
+                "MALE",
+                "000000-0000000",
+                "010-0000-0000",
+                "서울 동작구 보라매로 87",
+                "사원",
+                "중졸",
+                "TEMPORARY",
+                "미필",
+                "한국은행",
+                "000-0000-000000-00000",
+                "CEN_000000000",
+                "ORG_000000000",
+                "EMPLOYEE",
+                loadImage("default.png")
+        );
+
+        createOrUpdateMember(
+                "aaa",
+                "aaa",
+                "관리자1",
+                "admin@stanl.com",
+                0,
+                "MALE",
+                "000000-0000000",
+                "010-0000-0000",
+                "서울 동작구 보라매로 87",
+                "영업 관리자",
+                "중졸",
+                "TEMPORARY",
+                "미필",
+                "한국은행",
+                "000-0000-000000-00000",
+                "CEN_000000000",
+                "ORG_000000000",
+                "ADMIN",
+                loadImage("default.png")
+        );
+
+        createOrUpdateMember(
+                "ddd",
+                "ddd",
+                "담당자1",
+                "director@stanl.com",
+                0,
+                "MALE",
+                "000000-0000000",
+                "010-0000-0000",
+                "서울 동작구 보라매로 87",
+                "영업 담당자",
+                "중졸",
+                "TEMPORARY",
+                "미필",
+                "한국은행",
+                "000-0000-000000-00000",
+                "CEN_000000000",
+                "ORG_000000000",
+                "DIRECTOR",
+                loadImage("default.png")
+        );
+
+
         Random random = new Random();
         String[] positions = {"영업 사원", "영업 관리자", "영업 담당자"};
         String[] grades = {"A", "B", "C", "D"};
@@ -186,7 +254,7 @@ public class Initializer implements ApplicationRunner {
 
 
         // 회원 및 역할 생성 로직
-        for (int i = 1; i <= 96; i++) {
+        for (int i = 1; i <= 93; i++) {
             int centerId = random.nextInt(10) + 1;
             int orgId = random.nextInt(10) + 5;
             String sex = genders[i % 2];
