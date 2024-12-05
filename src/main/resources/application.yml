@@ -39,6 +39,7 @@ jwt:
   secret-key: s4G7tL9qH8vI2eP0j5W1uF3bM6nK8rXc
   header: Authorization
 
+
 encryption:
   algorithm: AES
   transformation: AES/ECB/PKCS5Padding
