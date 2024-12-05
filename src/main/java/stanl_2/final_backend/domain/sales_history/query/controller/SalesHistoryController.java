@@ -268,11 +268,11 @@ public class SalesHistoryController {
         salesHistorySearchDTO.setStartDate(params.get("startDate"));
         salesHistorySearchDTO.setEndDate(params.get("endDate"));
 
-        SalesHistoryStatisticsDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchYearByEmployee(salesHistorySearchDTO);
+        List<SalesHistoryStatisticsDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchYearByEmployee(salesHistorySearchDTO);
 
         return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
                 .httpStatus(200)
-                .msg("사원 통계(실적,수당,매출액) 월 별 검색 성공")
+                .msg("사원 통계(실적,수당,매출액) 연도 별 검색 성공")
                 .result(responseSalesHistory)
                 .build());
     }

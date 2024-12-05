@@ -35,6 +35,8 @@
         <result property="performance" column="PERFORMANCE"/>
         <result property="totalSales" column="TOTAL_SALES"/>
         <result property="month" column="MONTH"/>
+        <result property="year" column="YEAR"/>
+        <result property="createdAt" column="CREATED_AT"/>
     </resultMap>
 
     <resultMap id="SalesHistoryRankedDataResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO">
@@ -425,6 +427,7 @@
 
     <select id="findStatisticsSearchByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
         SELECT
+        LEFT(a.created_at, 10) as CREATED_AT,
         SUM(a.sal_hist_ince) as INCENTIVE,
         SUM(a.sal_hist_no_of_veh) as PERFORMANCE,
         SUM(a.sal_hist_tota_sale) as TOTAL_SALES
@@ -482,12 +485,12 @@
         </choose>
     </select>
 
-    <select id="findStatisticsSearchYearByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+    <select id="findStatisticsSearchYearByEmployee" resultMap="salesHistoryAggregatedDataResultMap">
         SELECT
         LEFT(a.created_at, 4) AS YEAR,
-        SUM(a.sal_hist_ince) AS INCENTIVE,
-        SUM(a.sal_hist_no_of_veh) AS PERFORMANCE,
-        SUM(a.sal_hist_tota_sale) AS TOTAL_SALES
+        COALESCE(SUM(a.sal_hist_ince), 0) AS INCENTIVE,
+        COALESCE(SUM(a.sal_hist_no_of_veh), 0) AS PERFORMANCE,
+        COALESCE(SUM(a.sal_hist_tota_sale), 0) AS TOTAL_SALES
         FROM tb_sales_history a
         <where>
             a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
@@ -498,13 +501,13 @@
         GROUP BY LEFT(a.created_at, 4)
         <choose>
             <when test="salesHistorySearchDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
+                ORDER BY INCENTIVE DESC
             </when>
             <when test="salesHistorySearchDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
+                ORDER BY PERFORMANCE DESC
             </when>
             <when test="salesHistorySearchDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
+                ORDER BY TOTAL_SALES DESC
             </when>
             <otherwise>
                 ORDER BY YEAR ASC

@@ -21,7 +21,7 @@ public interface SalesHistoryQueryService {
 
     List<SalesHistoryStatisticsDTO> selectStatisticsSearchMonthByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
 
-    SalesHistoryStatisticsDTO selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
+    List<SalesHistoryStatisticsDTO> selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO);
 
     Page<SalesHistoryRankedDataDTO> selectStatistics(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 

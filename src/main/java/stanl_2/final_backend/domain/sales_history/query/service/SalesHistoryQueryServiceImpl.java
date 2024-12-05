@@ -280,7 +280,6 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
     public List<SalesHistoryStatisticsDTO> selectStatisticsSearchMonthByEmployee(SalesHistorySearchDTO salesHistorySearchDTO) {
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
 
-        System.out.println(salesHistorySearchDTO.getSearcherName());
 
         String parseStartDate = salesHistorySearchDTO.getStartDate();
         String parseEndDate = salesHistorySearchDTO.getEndDate();
@@ -298,7 +297,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public SalesHistoryStatisticsDTO selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO) {
+    public List<SalesHistoryStatisticsDTO> selectStatisticsSearchYearByEmployee(SalesHistorySearchDTO salesHistorySearchDTO) {
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
 
         String parseStartDate = salesHistorySearchDTO.getStartDate();
@@ -307,12 +306,17 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         parseStartDate = parseStartDate.substring(0,4);
         parseEndDate = parseEndDate.substring(0,4);
 
-        SalesHistoryStatisticsDTO salesHistoryStatisticsDTO = salesHistoryMapper.findStatisticsSearchYearByEmployee(salesHistorySearchDTO);
+        salesHistorySearchDTO.setStartDate(parseStartDate);
+        salesHistorySearchDTO.setEndDate(parseEndDate);
 
-        if(salesHistoryStatisticsDTO == null){
+        List<SalesHistoryStatisticsDTO> salesHistoryStatisticsDTOList = salesHistoryMapper.findStatisticsSearchYearByEmployee(salesHistorySearchDTO);
+
+        System.out.println("check: " + salesHistoryStatisticsDTOList);
+
+        if(salesHistoryStatisticsDTOList == null){
             throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
         }
-        return salesHistoryStatisticsDTO;
+        return salesHistoryStatisticsDTOList;
     }
 
     @Override
