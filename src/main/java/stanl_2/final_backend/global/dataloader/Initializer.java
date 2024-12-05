@@ -234,7 +234,7 @@ public class Initializer implements ApplicationRunner {
         String[] positions = {"영업 사원", "영업 관리자", "영업 담당자"};
         String[] grades = {"A", "B", "C", "D"};
         String[] jobTypes = {"REGULAR", "TEMPORARY"};
-        String[] militaryStatus = {"fulfilled", "exemption", "unfulfilled"};
+        String[] militaryStatus = {"FULFILLED", "EXEMPTION", "UNFULFILLED"};
         String[] genders = {"MALE", "FEMALE"};
         String[] roles = {"EMPLOYEE", "ADMIN", "DIRECTOR"};
         String[] lastNames = {"김", "이", "박", "최", "정", "강", "조", "유", "윤", "장", "임", "기", "방", "하", "도", "한", "손", "송", "오", "조", "서", "배", "홍", "류", "신", "권", "곽"};
