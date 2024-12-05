@@ -161,8 +161,11 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
             memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
             // 중복 제거
             memberIdList = new ArrayList<>(new HashSet<>(memberIdList));
-        } else {
-            memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag());
+        } else if (noticeAlarmDTO.getTag().equals("admin")){
+            memberIdList.addAll(memberQueryService.selectMemberByRole("admin"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
+        }else {
+            memberIdList.addAll(memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag()));
         }
 
         memberIdList.forEach(member -> {
@@ -214,7 +217,7 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
         String type = "CONTRACT";
         String tag = "발주서";
-        String message = purchaseOrderAlarmDTO.getTitle() +"  발주서가 승인되었습니다.";
+        String message = purchaseOrderAlarmDTO.getTitle() +"  가 승인되었습니다.";
         String redirectUrl = "/purchase-order/list";
         String createdAt = getCurrentTime();
 
@@ -228,7 +231,7 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
         String type = "CONTRACT";
         String tag = "수주서";
-        String message = orderAlarmDTO.getTitle() +" 수주서가 승인되었습니다.";
+        String message = orderAlarmDTO.getTitle() +" 가 승인되었습니다.";
         String redirectUrl = "/order/list";
         String createdAt = getCurrentTime();
 

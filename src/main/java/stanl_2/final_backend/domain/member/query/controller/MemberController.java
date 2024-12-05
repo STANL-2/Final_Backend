@@ -5,13 +5,21 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 import stanl_2.final_backend.domain.member.query.dto.MemberCenterListDTO;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
+import stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 
 import java.security.GeneralSecurityException;
@@ -164,5 +172,57 @@ public class MemberController {
                 .result(memberList)
                 .build());
     }
+
+
+    @Operation(summary = "회원 정보 검색 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("search/list")
+    public ResponseEntity<MemberResponseMessage> getMemberByName(
+            @RequestParam(required = false) String loginId,
+            @RequestParam(required = false) String memberName,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String centerName,
+            @RequestParam(required = false) String organizationName,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(required = false) String sortOrder,
+            @PageableDefault(size = 10) Pageable pageable
+    ) throws GeneralSecurityException {
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
+
+        MemberSearchDTO memberSearchDTO = new MemberSearchDTO(loginId, memberName, phone, email, centerName, organizationName);
+        Page<MemberSearchDTO> memberDTOPage = memberQueryService.selectMemberBySearch(pageable, memberSearchDTO);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(memberDTOPage)
+                                                      .build());
+    }
+
+
+    @Operation(summary = "엑셀 다운로드")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("excel")
+    public void exportCustomer(HttpServletResponse response) throws GeneralSecurityException {
+
+        memberQueryService.exportCustomerToExcel(response);
+    }
+
 
 }
