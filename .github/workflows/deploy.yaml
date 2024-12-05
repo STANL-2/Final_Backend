@@ -12,8 +12,8 @@ jobs:
 
     env:
       AWS_REGION: ap-northeast-2
-      APPLICATION_NAME: "motive-backend"
-      ENVIRONMENT_NAME: "Motive-backend-env"
+      APPLICATION_NAME: "motive-frontend"
+      ENVIRONMENT_NAME: "Motive-frontend-env"
 
     steps:
       - name: Checkout code
