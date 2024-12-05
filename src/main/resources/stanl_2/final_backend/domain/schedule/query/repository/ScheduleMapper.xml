@@ -13,13 +13,14 @@
         <result property="active" column="ACTIVE"/>
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
-    <select id="findSchedulesByMemberIdAndStartAt" resultMap="AllSchedules" parameterType="hashmap">
+    <select id="findSchedulesByMemberIdAndStartAt" resultMap="AllSchedules" parameterTy
+            pe="hashmap">
         SELECT
                a.sch_id,
                a.sch_name,
                a.sch_cont,
                a.sch_tag,
-               a.sch_srt_at,
+               a.sch_srt_at,z
                a.sch_end_at,
                a.mem_id
           FROM tb_schedule a

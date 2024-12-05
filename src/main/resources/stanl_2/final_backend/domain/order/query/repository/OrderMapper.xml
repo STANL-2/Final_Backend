@@ -25,6 +25,7 @@
         <result property="createdAt" column="CREATED_AT"/>
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
+        <result property="statusUpdatedAt" column="STAT_UPDATED_AT"/>
         <result property="status" column="ORD_STAT"/>
         <result property="contractId" column="CONR_ID"/>
         <result property="adminId" column="ADMIN_ID"/>
@@ -79,6 +80,7 @@
         a.created_at,
         a.updated_at,
         a.deleted_at,
+        a.stat_updated_at,
         a.ord_stat,
         a.conr_id,
         a.admin_id,
@@ -204,6 +206,7 @@
         a.created_at,
         a.updated_at,
         a.deleted_at,
+        a.stat_updated_at,
         a.ord_stat,
         a.conr_id,
         a.admin_id,

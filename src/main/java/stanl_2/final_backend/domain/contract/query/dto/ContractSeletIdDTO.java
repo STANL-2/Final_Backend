@@ -38,6 +38,7 @@ public class ContractSeletIdDTO {
     private String createdAt;
     private String updatedAt;
     private String deletedAt;
+    private String statusUpdatedAt;
     private String memberId;
     private String centerId;
     private String customerId;

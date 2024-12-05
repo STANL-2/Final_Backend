@@ -119,6 +119,9 @@ public class Contract {
     @Column(name = "DELETED_AT")
     private String deletedAt;
 
+    @Column(name = "STAT_UPDATED_AT")
+    private String statusUpdatedAt;
+
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 

@@ -18,6 +18,7 @@ public class OrderSelectIdDTO {
     private String createdAt;
     private String updatedAt;
     private String deletedAt;
+    private String statusUpdatedAt;
     private String contractId;
     private String adminId;
     private String memberId;

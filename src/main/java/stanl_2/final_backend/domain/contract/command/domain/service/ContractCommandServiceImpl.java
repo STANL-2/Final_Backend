@@ -293,6 +293,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         }
         contract.setStatus(contractStatusModifyDTO.getStatus());
         contract.setAdminId(adminId);
+        contract.setStatusUpdatedAt(getCurrentTime());
 
         contractRepository.save(contract);
 

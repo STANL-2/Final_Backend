@@ -122,6 +122,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         order.setStatus(orderStatusModifyDTO.getStatus());
         order.setAdminId(adminId);
+        order.setStatusUpdatedAt(getCurrentTime());
 
         orderRepository.save(order);
 

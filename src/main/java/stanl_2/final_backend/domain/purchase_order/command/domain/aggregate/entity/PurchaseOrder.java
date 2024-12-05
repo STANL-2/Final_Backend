@@ -48,6 +48,9 @@ public class PurchaseOrder {
     @Column(name = "DELETED_AT")
     private String deletedAt;
 
+    @Column(name = "STAT_UPDATED_AT")
+    private String statusUpdatedAt;
+
     @Column(name = "PUR_ORD_STAT", nullable = false)
     private String status = "WAIT";
 
