@@ -232,7 +232,6 @@ public class Initializer implements ApplicationRunner {
 
         Random random = new Random();
         String[] positions = {"영업 사원", "영업 관리자", "영업 담당자"};
-        String[] grades = {"A", "B", "C", "D"};
         String[] jobTypes = {"REGULAR", "TEMPORARY"};
         String[] militaryStatus = {"FULFILLED", "EXEMPTION", "UNFULFILLED"};
         String[] genders = {"MALE", "FEMALE"};
@@ -272,7 +271,7 @@ public class Initializer implements ApplicationRunner {
                     String.format("010-1234-%04d", i),
                     address,
                     positions[n], // Random position
-                    grades[random.nextInt(grades.length)], // Random grade
+                    "대학 졸업",
                     jobTypes[random.nextInt(jobTypes.length)], // Random job type
                     militaryStatus[random.nextInt(militaryStatus.length)], // Random military status
                     "Bank" + centerId,
@@ -557,10 +556,10 @@ public class Initializer implements ApplicationRunner {
                     String birthDateStr2 = randomBirthDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")); // YYMMDD 형식
                     String genderDigit = Math.random() < 0.5 ? "1" : "2"; // 성별은 1(남) 또는 2(여)
                     String randomNumbers = String.format("%04d", (int) (Math.random() * 10000)); // 임의의 4자리 번호
-                    String checkDigit = String.format("%d", (int) (Math.random() * 10)); // 검증용 마지막 자리는 0~9
+                    String checkDigit = String.format("%02d", (int) (Math.random() * 10)); // 검증용 마지막 자리는 0~9
 
                     // 주민등록번호 만들기
-                    String identNo = birthDateStr + genderDigit + "-" + randomNumbers + checkDigit;
+                    String identNo = birthDateStr + "-" + genderDigit + randomNumbers + checkDigit;
 
                     Family newFamily = new Family();
                     newFamily.setName(lastNames[random.nextInt(lastNames.length)] + firstNames[random.nextInt(firstNames.length)]);
@@ -568,8 +567,8 @@ public class Initializer implements ApplicationRunner {
                     newFamily.setSex(Math.random() < 0.5 ? "MALE" : "FEMALE");
                     newFamily.setBirth(birthDateStr2);
                     newFamily.setPhone(randomPhone);
-                    newFamily.setDie(Math.random() < 0.5 ? true : false);
-                    newFamily.setDisability(Math.random() < 0.5 ? true : false);
+                    newFamily.setDie(Math.random() < 0.1 ? true : false);
+                    newFamily.setDisability(Math.random() < 0.1 ? true : false);
                     newFamily.setIdentNo(identNo);
                     newFamily.setMemId(memberId);
 
