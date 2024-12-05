@@ -40,6 +40,9 @@ public class Member {
     @Column(name = "MEM_NAME", nullable = false)
     private String name;
 
+    @Column(name = "MEM_IMAGEURL", nullable = false)
+    private String imageUrl;
+
     @Column(name = "MEM_EMA", nullable = false)
     private String email;
 

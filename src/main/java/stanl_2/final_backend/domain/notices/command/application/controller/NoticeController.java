@@ -16,9 +16,7 @@ import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegist
 import stanl_2.final_backend.domain.notices.command.application.service.NoticeCommandService;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
-import stanl_2.final_backend.global.config.datasource.ReplicationRoutingDataSource;
 
-import javax.sql.DataSource;
 import java.security.Principal;
 
 @RestController("commandNoticeController")
@@ -27,13 +25,14 @@ public class NoticeController {
 
     private final NoticeCommandService noticeCommandService;
     private final AuthQueryService authQueryService;
-    private final ReplicationRoutingDataSource replicationRoutingDataSource;
+
     private final S3FileServiceImpl s3FileService;
+    private final NoticeModifyDTO noticeModifyDTO;
 
     @Autowired
-    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService,ReplicationRoutingDataSource replicationRoutingDataSource){
+    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, NoticeModifyDTO noticeModifyDTO){
+        this.noticeModifyDTO = noticeModifyDTO;
         this.noticeCommandService = noticeCommandService;
-        this.replicationRoutingDataSource =replicationRoutingDataSource;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
     }
@@ -45,14 +44,18 @@ public class NoticeController {
     })
     @PostMapping(value = "")
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("dto") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
-                                                            @RequestPart("file") MultipartFile file,
+                                                            @RequestPart(value = "file", required = false)  MultipartFile file,
                                                             Principal principal){
-        String memberId =authQueryService.selectMemberIdByLoginId(principal.getName());
-        noticeRegistDTO.setMemberId(memberId);
-        noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        String memberLoginId = principal.getName();
+        noticeRegistDTO.setMemberLoginId(memberLoginId);
+        if (file != null && !file.isEmpty()) {
+            noticeRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()){
+            noticeRegistDTO.setFileUrl(null);
+        } else {
+            noticeRegistDTO.setFileUrl(null);
+        }
         noticeCommandService.registerNotice(noticeRegistDTO, principal);
-        String dbUrl = getCurrentDbUrl();
-        System.out.println("Current DB URL: " + dbUrl);
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
@@ -66,14 +69,22 @@ public class NoticeController {
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
     @PutMapping("{noticeId}")
-    public ResponseEntity<NoticeResponseMessage> modifyNotice(Principal principal,
-                                                              @PathVariable String noticeId,
-                                                              @RequestBody NoticeModifyDTO noticeModifyRequestDTO){
+    public ResponseEntity<NoticeResponseMessage> modifyNotice(
+                                                                @PathVariable String noticeId,
+                                                                @RequestPart("dto") NoticeModifyDTO noticeModifyDTO, // JSON 데이터
+                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
+                                                                Principal principal){
         String memberLoginId = principal.getName();
-        noticeModifyRequestDTO.setMemberLoginId(memberLoginId);
-        noticeModifyRequestDTO.setNoticeId(noticeId);
-
-        NoticeModifyDTO noticeModifyDTO = noticeCommandService.modifyNotice(noticeId,noticeModifyRequestDTO,principal);
+        noticeModifyDTO.setMemberLoginId(memberLoginId);
+        noticeModifyDTO.setContent(noticeModifyDTO.getContent());
+        if (file != null && !file.isEmpty()) {
+            noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()) {
+            noticeModifyDTO.setFileUrl(null);
+        } else {
+            noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }
+        noticeCommandService.modifyNotice(noticeId,noticeModifyDTO, principal);
 
         return ResponseEntity.ok(NoticeResponseMessage.builder()
                         .httpStatus(200)
@@ -103,20 +114,6 @@ public class NoticeController {
                 .msg("성공")
                 .result(null)
                 .build());
-    }
-
-    private String getCurrentDbUrl() {
-        try {
-            // DataSource에서 커넥션을 가져와 URL 확인
-            DataSource dataSource = replicationRoutingDataSource;
-            return dataSource.unwrap(javax.sql.DataSource.class)
-                    .getConnection()
-                    .getMetaData()
-                    .getURL();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Failed to fetch DB URL";
-        }
     }
 
 }

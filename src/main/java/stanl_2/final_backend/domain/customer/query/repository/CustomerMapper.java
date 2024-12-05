@@ -2,7 +2,10 @@ package stanl_2.final_backend.domain.customer.query.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO;
 import stanl_2.final_backend.domain.customer.query.dto.CustomerDTO;
+import stanl_2.final_backend.domain.customer.query.dto.CustomerExcelDTO;
+import stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +18,17 @@ public interface CustomerMapper {
 
     int selectCustomerCount();
 
-    List<CustomerDTO> findCustomerByConditions(Map<String, Object> map);
+    List<CustomerSearchDTO> findCustomerByConditions(Map<String, Object> map);
 
     int findCustomerCnt(Map<String, Object> map);
 
     CustomerDTO selectCustomerInfoByPhone(String customerPhone);
+
+    List<CustomerContractDTO> findCustomerContractById(Map<String, Object> map);
+
+    int selectCustomerContractCnt(String customerId);
+
+    List<CustomerExcelDTO> findCustomerForExcel();
+
+    List<CustomerDTO> findCustomerInfoByName(String customerName);
 }

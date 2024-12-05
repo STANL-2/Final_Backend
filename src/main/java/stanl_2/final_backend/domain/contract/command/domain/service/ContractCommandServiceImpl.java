@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.contract.command.application.dto.*;
 import stanl_2.final_backend.domain.contract.command.application.service.ContractCommandService;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
@@ -49,9 +50,15 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     private final ModelMapper modelMapper;
     private final AESUtils aesUtils;
     private final S3FileService s3FileService;
+    private final AlarmCommandService alarmCommandService;
 
     @Autowired
-    public ContractCommandServiceImpl(ContractRepository contractRepository, UpdateHistoryRepository updateHistoryRepository, AuthQueryService authQueryService, CustomerQueryService customerQueryService, MemberQueryService memberQueryService, CustomerCommandService customerCommandService, ProductQueryService productQueryService, ProductCommandService productCommandService, SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper, AESUtils aesUtils, S3FileService s3FileService) {
+    public ContractCommandServiceImpl(ContractRepository contractRepository, UpdateHistoryRepository updateHistoryRepository,
+                                      AuthQueryService authQueryService, CustomerQueryService customerQueryService,
+                                      MemberQueryService memberQueryService, CustomerCommandService customerCommandService,
+                                      ProductQueryService productQueryService, ProductCommandService productCommandService,
+                                      SalesHistoryCommandService salesHistoryCommandService, ModelMapper modelMapper,
+                                      AESUtils aesUtils, S3FileService s3FileService, AlarmCommandService alarmCommandService) {
         this.contractRepository = contractRepository;
         this.updateHistoryRepository = updateHistoryRepository;
         this.authQueryService = authQueryService;
@@ -64,6 +71,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         this.modelMapper = modelMapper;
         this.aesUtils = aesUtils;
         this.s3FileService = s3FileService;
+        this.alarmCommandService = alarmCommandService;
     }
 
     private String  getCurrentTime() {
@@ -156,6 +164,23 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         String centerId = memberQueryService.selectMemberInfo(contractRegistRequestDTO.getMemberId()).getCenterId();
 
         // 계약 생성
+        String customerPurchaseCondition = contractRegistRequestDTO.getCustomerPurchaseCondition();
+        String customerClassifcation = contractRegistRequestDTO.getCustomerClassifcation();
+
+        if (customerPurchaseCondition.equals("현금")) {
+            contractRegistRequestDTO.setCustomerPurchaseCondition("CASH");
+        } else if (customerPurchaseCondition.equals("할부")) {
+            contractRegistRequestDTO.setCustomerPurchaseCondition("INSTALLMENT");
+        } else if (customerPurchaseCondition.equals("리스")) {
+            contractRegistRequestDTO.setCustomerPurchaseCondition("LEASE");
+        }
+
+        if (customerClassifcation.equals("개인")) {
+            contractRegistRequestDTO.setCustomerClassifcation("PERSONAL");
+        } else if (customerClassifcation.equals("법인")) {
+            contractRegistRequestDTO.setCustomerClassifcation("BUSINESS");
+        }
+
         Contract contract = modelMapper.map(contractRegistRequestDTO, Contract.class);
         contract.setMemberId(memberId);
         contract.setCenterId(centerId);
@@ -192,6 +217,24 @@ public class ContractCommandServiceImpl implements ContractCommandService {
                 .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
 
         // 계약 생성
+
+        String customerPurchaseCondition = contractModifyRequestDTO.getCustomerPurchaseCondition();
+        String customerClassifcation = contractModifyRequestDTO.getCustomerClassifcation();
+
+        if (customerPurchaseCondition.equals("현금")) {
+            contractModifyRequestDTO.setCustomerPurchaseCondition("CASH");
+        } else if (customerPurchaseCondition.equals("할부")) {
+            contractModifyRequestDTO.setCustomerPurchaseCondition("INSTALLMENT");
+        } else if (customerPurchaseCondition.equals("리스")) {
+            contractModifyRequestDTO.setCustomerPurchaseCondition("LEASE");
+        }
+
+        if (customerClassifcation.equals("개인")) {
+            contractModifyRequestDTO.setCustomerClassifcation("PERSONAL");
+        } else if (customerClassifcation.equals("법인")) {
+            contractModifyRequestDTO.setCustomerClassifcation("BUSINESS");
+        }
+
         Contract updateContract = modelMapper.map(contractModifyRequestDTO, Contract.class);
         updateContract.setMemberId(memberId);
         updateContract.setCenterId(centerId);
@@ -252,6 +295,11 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         contract.setAdminId(adminId);
 
         contractRepository.save(contract);
+
+        ContractAlarmDTO contractAlarmDTO = new ContractAlarmDTO(contract.getContractId(), contract.getCustomerName(),
+                                                                 contract.getMemberId(), contract.getAdminId());
+
+        alarmCommandService.sendContractAlarm(contractAlarmDTO);
 
         if (contractStatusModifyDTO.getStatus().equals("APPROVED")) {
             // 판매 내역 등록

@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
-import stanl_2.final_backend.domain.problem.command.application.dto.ProblemRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionModifyDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.service.PromotionCommandService;
@@ -40,18 +39,23 @@ public class PromotionController {
     })
     @PostMapping("")
     public ResponseEntity<PromotionResponseMessage> postNotice(@RequestPart("dto") PromotionRegistDTO promotionRegistDTO, // JSON 데이터
-                                                               @RequestPart("file") MultipartFile file,
+                                                               @RequestPart(value = "file", required = false)  MultipartFile file,
                                                                Principal principal){
-        String memberId = authQueryService.selectMemberIdByLoginId(principal.getName());
-        promotionRegistDTO.setMemberId(memberId);
-        promotionRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        String memberLoginId = principal.getName();
+        promotionRegistDTO.setMemberLoginId(memberLoginId);
+        if (file != null && !file.isEmpty()) {
+            promotionRegistDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()){
+            promotionRegistDTO.setFileUrl(null);
+        } else {
+            promotionRegistDTO.setFileUrl(null);
+        }
         promotionCommandService.registerPromotion(promotionRegistDTO,principal);
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
                 .result(null)
                 .build());
-
     }
     @Operation(summary = "프로모션 수정")
     @ApiResponses(value = {
@@ -59,10 +63,22 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @PutMapping("{promotionId}")
-    public ResponseEntity<PromotionResponseMessage> modifyNotice(@PathVariable String promotionId,
-                                                              @RequestBody PromotionModifyDTO promotionModifyRequestDTO, Principal principal){
-
-        PromotionModifyDTO promotionModifyDTO = promotionCommandService.modifyPromotion(promotionId,promotionModifyRequestDTO,principal);
+    public ResponseEntity<PromotionResponseMessage> modifyNotice(
+                                                                @PathVariable String promotionId,
+                                                                @RequestPart("dto") PromotionModifyDTO promotionModifyDTO,
+                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
+                                                                Principal principal){
+        String memberLoginId = principal.getName();
+        promotionModifyDTO.setMemberId(memberLoginId);
+        promotionModifyDTO.setContent(promotionModifyDTO.getContent());
+        if (file != null && !file.isEmpty()) {
+            promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }else if(file==null || file.isEmpty()) {
+            promotionModifyDTO.setFileUrl(null);
+        } else {
+            promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
+        }
+        promotionCommandService.modifyPromotion(promotionId,promotionModifyDTO,principal);
 
         return ResponseEntity.ok(PromotionResponseMessage.builder()
                 .httpStatus(200)

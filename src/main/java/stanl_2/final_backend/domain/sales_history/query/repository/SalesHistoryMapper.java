@@ -11,12 +11,16 @@ public interface SalesHistoryMapper {
 
     List<SalesHistorySelectDTO> findSalesHistoryByEmployee(@Param("size") int size
             , @Param("offset") int offset
-            , @Param("searcherId") String searcherId);
+            , @Param("searcherId") String searcherId,
+                                                           @Param("sortField") String sortField,
+                                                           @Param("sortOrder") String sortOrder);
 
     int findSalesHistoryCountByEmployee(@Param("searcherId") String searcherId);
 
     List<SalesHistorySelectDTO> findAllSalesHistory(@Param("size") int size
-            , @Param("offset") int offset);
+            , @Param("offset") int offset,
+                                                    @Param("sortField") String sortField,
+                                                    @Param("sortOrder") String sortOrder);
 
     SalesHistorySelectDTO findSalesHistoryDetail(@Param("salesHistorySelectDTO") SalesHistorySelectDTO salesHistorySelectDTO);
 
@@ -28,7 +32,7 @@ public interface SalesHistoryMapper {
 
     List<SalesHistoryStatisticsDTO> findStatisticsSearchMonthByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
-    SalesHistoryStatisticsDTO findStatisticsSearchYearByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+    List<SalesHistoryStatisticsDTO> findStatisticsSearchYearByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
     List<SalesHistoryRankedDataDTO> findAllRank(@Param("salesHistoryRankedDataDTO")SalesHistoryRankedDataDTO salesHistoryRankedDataDTO
             , @Param("size") int size
@@ -74,17 +78,23 @@ public interface SalesHistoryMapper {
 
     List<SalesHistorySelectDTO> findSalesHistorySearchByEmployee(@Param("size") int size
                                                                 , @Param("offset") int offset,
-                                                                 @Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+                                                                 @Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO,
+                                                                 @Param("sortField") String sortField,
+                                                                 @Param("sortOrder") String sortOrder);
 
     int findSalesHistorySearchCountByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
     List<SalesHistorySelectDTO> findSalesHistoryBySearch(@Param("size") int size
                                                         , @Param("offset") int offset,
-                                                         @Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+                                                         @Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO,
+                                                         @Param("sortField") String sortField,
+                                                         @Param("sortOrder") String sortOrder);
 
     int findSalesHistoryCountBySearch(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
-    SalesHistoryStatisticsAverageDTO findStatisticsAverageBySearch(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
+    List<SalesHistoryStatisticsAverageDTO> findStatisticsAverageBySearch(@Param("size") int size
+            , @Param("offset") int offset
+            ,@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     List<SalesHistoryExcelDownload> findSalesHistoryForExcel();
 
@@ -99,6 +109,12 @@ public interface SalesHistoryMapper {
     List<SalesHistoryRankedDataDTO> findAllStatisticsBySearch(@Param("size") int size
             , @Param("offset") int offset,
                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
+
+    String findSalesHistoryIdByContractId(@Param("contractId") String contractId);
+
+    List<SalesHistoryRankedDataDTO> findStatisticsBestBySearch(@Param("size") int size
+            , @Param("offset") int offset,
+                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 }
 
 

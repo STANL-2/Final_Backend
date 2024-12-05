@@ -18,7 +18,7 @@
         <result property="fileUrl" column="FILE_URL"/>
     </resultMap>
 
-    <resultMap id="SearchNotice" type="stanl_2.final_backend.domain.notices.query.dto.SearchDTO">
+    <resultMap id="SearchNotice" type="stanl_2.final_backend.domain.notices.query.dto.NoticeDTO">
         <id property="noticeId" column="NOT_ID"/>
         <result property="title" column="NOT_TTL"/>
         <result property="tag" column="NOT_TAG"/>

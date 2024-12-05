@@ -40,6 +40,7 @@ public enum MemberErrorCode {
      */
     MEMBER_NOT_FOUND(404001, HttpStatus.NOT_FOUND, "회원 데이터를 찾지 못했습니다"),
     MEMBER_ID_NOT_FOUND(404002, HttpStatus.NOT_FOUND, "회원 pk값을 찾지 못했습니다."),
+    NUMBER_NOT_FOUND(40403, HttpStatus.NOT_FOUND, "인증번호가 맞지 않습니다."),
 
 
     /**

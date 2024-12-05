@@ -35,6 +35,8 @@
         <result property="performance" column="PERFORMANCE"/>
         <result property="totalSales" column="TOTAL_SALES"/>
         <result property="month" column="MONTH"/>
+        <result property="year" column="YEAR"/>
+        <result property="createdAt" column="CREATED_AT"/>
     </resultMap>
 
     <resultMap id="SalesHistoryRankedDataResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO">
@@ -46,6 +48,7 @@
         <result property="createdAt" column="CREATED_AT"/>
         <result property="year" column="YEAR"/>
         <result property="month" column="MONTH"/>
+        <result property="period" column="PERIOD"/>
     </resultMap>
 
     <resultMap id="SalesHistoryRankedDataCenterResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO">
@@ -59,9 +62,12 @@
     </resultMap>
 
     <resultMap id="SalesHistoryAverageResultMap" type="stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsAverageDTO">
-        <result property="averageTotalSales" column="average_total_sales"/>
-        <result property="averageTotalIncentive" column="average_total_incentive"/>
-        <result property="averageTotalPerformance" column="average_total_performance"/>
+        <result property="averageTotalSales" column="AVERAGE_TOTAL_SALES"/>
+        <result property="averageTotalIncentive" column="AVERAGE_TOTAL_INCENTIVE"/>
+        <result property="averageTotalPerformance" column="AVERAGE_TOTAL_PERFORMANCE"/>
+        <result property="year" column="YEAR"/>
+        <result property="month" column="MONTH"/>
+        <result property="period" column="PERIOD"/>
     </resultMap>
 
 
@@ -79,7 +85,47 @@
         a.created_at
         FROM tb_sales_history a
         WHERE a.active = TRUE AND a.mem_id = #{searcherId}
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'salesHistoryId'">
+                        ORDER BY a.sal_hist_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryIncentive'">
+                        ORDER BY a.sal_hist_ince ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                        ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryTotalSales'">
+                        ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -119,7 +165,47 @@
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'salesHistoryId'">
+                        ORDER BY a.sal_hist_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryIncentive'">
+                        ORDER BY a.sal_hist_ince ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                        ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryTotalSales'">
+                        ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -150,24 +236,79 @@
         a.created_at
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
             <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
-                a.cent_id IN
+                AND a.cent_id IN
                 <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
                     #{cent_id}
                 </foreach>
             </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.productList != null and salesHistorySearchDTO.productList.size() > 0">
+                AND a.prod_id IN
+                <foreach collection="salesHistorySearchDTO.productList" item="prod_id" open="(" separator="," close=")">
+                    #{prod_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.contractId != null">
+                AND a.conr_id = #{salesHistorySearchDTO.contractId}
+            </if>
             <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
-        ORDER BY a.created_at desc
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'salesHistoryId'">
+                        ORDER BY a.sal_hist_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryIncentive'">
+                        ORDER BY a.sal_hist_ince ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                        ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                    </when>
+                    <when test="sortField == 'salesHistoryTotalSales'">
+                        ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                    </when>
+                    <when test="sortField == 'contractId'">
+                        ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -176,22 +317,28 @@
         COUNT(*) AS cnt
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
             <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
-                a.cent_id IN
+                AND a.cent_id IN
                 <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
                     #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
                 </foreach>
             </if>
             <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
     </select>
 
@@ -209,7 +356,47 @@
         a.created_at
         FROM tb_sales_history a
         WHERE a.active = TRUE
-        ORDER BY a.created_at DESC
+     <choose>
+         <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+         <when test="sortField != null and sortOrder != null">
+             <choose>
+                 <when test="sortField == 'salesHistoryId'">
+                     ORDER BY a.sal_hist_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'salesHistoryIncentive'">
+                     ORDER BY a.sal_hist_ince ${sortOrder}
+                 </when>
+                 <when test="sortField == 'salesHistoryNumberOfVehicles'">
+                     ORDER BY a.sal_hist_no_of_veh ${sortOrder}
+                 </when>
+                 <when test="sortField == 'salesHistoryTotalSales'">
+                     ORDER BY a.sal_hist_tota_sale ${sortOrder}
+                 </when>
+                 <when test="sortField == 'contractId'">
+                     ORDER BY a.conr_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'customerId'">
+                     ORDER BY a.cust_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'productId'">
+                     ORDER BY a.prod_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'memberId'">
+                     ORDER BY a.mem_id ${sortOrder}
+                 </when>
+                 <when test="sortField == 'centerId'">
+                     ORDER BY a.cent_id ${sortOrder}
+                 </when>
+                 <otherwise>
+                     ORDER BY a.created_at DESC
+                 </otherwise>
+             </choose>
+         </when>
+         <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+         <otherwise>
+             ORDER BY a.created_at DESC
+         </otherwise>
+     </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -240,6 +427,7 @@
 
     <select id="findStatisticsSearchByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
         SELECT
+        LEFT(a.created_at, 10) as CREATED_AT,
         SUM(a.sal_hist_ince) as INCENTIVE,
         SUM(a.sal_hist_no_of_veh) as PERFORMANCE,
         SUM(a.sal_hist_tota_sale) as TOTAL_SALES
@@ -297,12 +485,12 @@
         </choose>
     </select>
 
-    <select id="findStatisticsSearchYearByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+    <select id="findStatisticsSearchYearByEmployee" resultMap="salesHistoryAggregatedDataResultMap">
         SELECT
         LEFT(a.created_at, 4) AS YEAR,
-        SUM(a.sal_hist_ince) AS INCENTIVE,
-        SUM(a.sal_hist_no_of_veh) AS PERFORMANCE,
-        SUM(a.sal_hist_tota_sale) AS TOTAL_SALES
+        COALESCE(SUM(a.sal_hist_ince), 0) AS INCENTIVE,
+        COALESCE(SUM(a.sal_hist_no_of_veh), 0) AS PERFORMANCE,
+        COALESCE(SUM(a.sal_hist_tota_sale), 0) AS TOTAL_SALES
         FROM tb_sales_history a
         <where>
             a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
@@ -313,13 +501,13 @@
         GROUP BY LEFT(a.created_at, 4)
         <choose>
             <when test="salesHistorySearchDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
+                ORDER BY INCENTIVE DESC
             </when>
             <when test="salesHistorySearchDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
+                ORDER BY PERFORMANCE DESC
             </when>
             <when test="salesHistorySearchDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
+                ORDER BY TOTAL_SALES DESC
             </when>
             <otherwise>
                 ORDER BY YEAR ASC
@@ -367,24 +555,97 @@
 
     <select id="findStatisticsBySearch" resultMap="SalesHistoryRankedDataResultMap">
         SELECT
-        a.mem_id,
+        <choose>
+            <!-- 분기별 집계 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                LEFT(a.created_at, 10) AS period,  <!-- 일별 -->
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                LEFT(a.created_at, 7) AS period,  <!-- 월별 -->
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                LEFT(a.created_at, 4) AS period,  <!-- 연도별 -->
+            </when>
+        </choose>
+        <choose>
+            <!-- 그룹별 집계 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                a.mem_id,
+            </when>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                a.cent_id,
+            </when>
+        </choose>
         SUM(a.sal_hist_ince) AS total_incentive,
         SUM(a.sal_hist_no_of_veh) AS total_performance,
         SUM(a.sal_hist_tota_sale) AS total_sales
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
+            <!-- 사원 조건 -->
             <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
+            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
+                AND a.cent_id IN
+                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <!-- 날짜 조건 -->
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
-        GROUP BY a.mem_id
+        <choose>
+            <!-- 분기별 + 그룹별 집계 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee' ">
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10), a.mem_id  <!-- 일별, 사원별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7), a.mem_id  <!-- 월별, 사원별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4), a.mem_id  <!-- 연도별, 사원별 -->
+                    </when>
+                </choose>
+            </when>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10), a.cent_id  <!-- 일별, 매장별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7), a.cent_id  <!-- 월별, 매장별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4), a.cent_id  <!-- 연도별, 매장별 -->
+                    </when>
+                </choose>
+            </when>
+            <otherwise>
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10)  <!-- 일별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7)  <!-- 월별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4)  <!-- 연도별 -->
+                    </when>
+                </choose>
+            </otherwise>
+        </choose>
+        <!-- 정렬 조건 -->
         <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
@@ -396,60 +657,170 @@
                 ORDER BY total_sales DESC
             </when>
             <otherwise>
-                ORDER BY a.created_at desc
+                ORDER BY period ASC
             </otherwise>
         </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
+
     <select id="findStatisticsAverageBySearch" resultMap="SalesHistoryAverageResultMap">
         SELECT
-        AVG(total_incentive) AS average_total_incentive,
-        AVG(total_performance) AS average_total_performance,
-        AVG(total_sales) AS average_total_sales
+        <choose>
+            <!-- 분기별 처리 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                COALESCE(LEFT(SUMMARY.created_at, 10), 'Unknown Period') AS period -- 일별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                COALESCE(LEFT(SUMMARY.created_at, 7), 'Unknown Period') AS period -- 월별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                COALESCE(LEFT(SUMMARY.created_at, 4), 'Unknown Period') AS period -- 연도별
+            </when>
+        </choose>,
+        COALESCE(AVG(SUMMARY.total_incentive), 0) AS average_total_incentive,
+        COALESCE(AVG(SUMMARY.total_performance), 0) AS average_total_performance,
+        COALESCE(AVG(SUMMARY.total_sales), 0) AS average_total_sales
         FROM (
         SELECT
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales
+        a.created_at,
+        <choose>
+            <!-- 그룹화 처리 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
+            </when>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
+            </when>
+            <otherwise>
+                'Unknown Group' AS group_key
+            </otherwise>
+        </choose>,
+        COALESCE(SUM(a.sal_hist_ince), 0) AS total_incentive,
+        COALESCE(SUM(a.sal_hist_no_of_veh), 0) AS total_performance,
+        COALESCE(SUM(a.sal_hist_tota_sale), 0) AS total_sales
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
+            <!-- 날짜 조건 -->
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
+        GROUP BY
         <choose>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
-                GROUP BY a.mem_id
+            <!-- 분기별 그룹화 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                LEFT(a.created_at, 10), group_key -- 일별 + 그룹별
             </when>
-            <otherwise>
-                GROUP BY a.cent_id
-            </otherwise>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                LEFT(a.created_at, 7), group_key -- 월별 + 그룹별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                LEFT(a.created_at, 4), group_key -- 연도별 + 그룹별
+            </when>
         </choose>
-        ) AS summary
+        ) AS SUMMARY
+        GROUP BY period
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findStatisticsBySearchCount" resultType="int">
         SELECT
         COUNT(*) AS rank_count
-        FROM(
+        FROM (
         SELECT
-        COUNT(*)
+        <choose>
+            <!-- 분기별 집계 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                LEFT(a.created_at, 10) AS period,  <!-- 일별 -->
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                LEFT(a.created_at, 7) AS period,  <!-- 월별 -->
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                LEFT(a.created_at, 4) AS period,  <!-- 연도별 -->
+            </when>
+        </choose>
+        <choose>
+            <!-- 그룹별 집계 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                a.mem_id,
+            </when>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                a.cent_id,
+            </when>
+        </choose>
+        SUM(a.sal_hist_ince) AS total_incentive,
+        SUM(a.sal_hist_no_of_veh) AS total_performance,
+        SUM(a.sal_hist_tota_sale) AS total_sales
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
+            <!-- 사원 조건 -->
             <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
+                AND a.mem_id IN
                 <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
                     #{mem_id}
                 </foreach>
             </if>
+            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
+                AND a.cent_id IN
+                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <!-- 날짜 조건 -->
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
-        GROUP BY a.mem_id) AS A
+        <choose>
+            <!-- 분기별 + 그룹별 집계 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee' ">
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10), a.mem_id  <!-- 일별, 사원별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7), a.mem_id  <!-- 월별, 사원별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4), a.mem_id  <!-- 연도별, 사원별 -->
+                    </when>
+                </choose>
+            </when>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10), a.cent_id  <!-- 일별, 매장별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7), a.cent_id  <!-- 월별, 매장별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4), a.cent_id  <!-- 연도별, 매장별 -->
+                    </when>
+                </choose>
+            </when>
+            <otherwise>
+                GROUP BY
+                <choose>
+                    <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                        LEFT(a.created_at, 10)  <!-- 일별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'month'">
+                        LEFT(a.created_at, 7)  <!-- 월별 -->
+                    </when>
+                    <when test="salesHistoryRankedDataDTO.period == 'year'">
+                        LEFT(a.created_at, 4)  <!-- 연도별 -->
+                    </when>
+                </choose>
+            </otherwise>
+        </choose>
+        ) AS subquery
     </select>
 
     <select id="findStatisticsBySearchMonth" resultMap="SalesHistoryRankedDataResultMap">
@@ -760,12 +1131,20 @@
         LEFT(a.created_at, 7) AS MONTH
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
-        GROUP BY LEFT(a.created_at, 7)
+        <choose>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                GROUP BY a.mem_id
+            </when>
+            <otherwise>
+                GROUP BY a.cent_id
+            </otherwise>
+        </choose>
+            , LEFT(a.created_at, 7)
         <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
@@ -796,7 +1175,20 @@
             </if>
             AND a.active = TRUE
         </where>
-        GROUP BY LEFT(a.created_at, 4)
+        <choose>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                GROUP BY a.mem_id
+            </when>
+            <otherwise>
+                GROUP BY a.cent_id
+            </otherwise>
+        </choose>
+        <if test="salesHistoryRankedDataDTO.month != null">
+            , LEFT(a.created_at, 7)
+        </if>
+        <if test="salesHistoryRankedDataDTO.year != null">
+            , LEFT(a.created_at, 4)
+        </if>
         <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
@@ -828,6 +1220,14 @@
             AND a.active = TRUE
         </where>
         <choose>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                GROUP BY a.mem_id
+            </when>
+            <otherwise>
+                GROUP BY a.cent_id
+            </otherwise>
+        </choose>
+        <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
             </when>
@@ -841,6 +1241,74 @@
                 ORDER BY a.created_at DESC
             </otherwise>
         </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findSalesHistoryIdByContractId" resultType="String">
+        SELECT
+              a.sal_hist_id
+          FROM tb_sales_history a
+         WHERE a.conr_id = #{contractId}
+    </select>
+
+    <select id="findStatisticsBestBySearch" resultMap="SalesHistoryRankedDataResultMap">
+        SELECT
+        <choose>
+            <!-- 분기별 처리 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                COALESCE(LEFT(SUMMARY.created_at, 10), 'Unknown Period') AS period -- 일별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                COALESCE(LEFT(SUMMARY.created_at, 7), 'Unknown Period') AS period -- 월별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                COALESCE(LEFT(SUMMARY.created_at, 4), 'Unknown Period') AS period -- 연도별
+            </when>
+        </choose>,
+        COALESCE(MAX(SUMMARY.total_incentive), 0) AS total_incentive,
+        COALESCE(MAX(SUMMARY.total_performance), 0) AS total_performance,
+        COALESCE(MAX(SUMMARY.total_sales), 0) AS total_sales
+        FROM (
+        SELECT
+        a.created_at,
+        <choose>
+            <!-- 그룹화 처리 -->
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+                COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
+            </when>
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+                COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
+            </when>
+            <otherwise>
+                'Unknown Group' AS group_key
+            </otherwise>
+        </choose>,
+        COALESCE(SUM(a.sal_hist_ince), 0) AS total_incentive,
+        COALESCE(SUM(a.sal_hist_no_of_veh), 0) AS total_performance,
+        COALESCE(SUM(a.sal_hist_tota_sale), 0) AS total_sales
+        FROM tb_sales_history a
+        <where>
+            a.active = TRUE
+            <!-- 날짜 조건 -->
+            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
+            </if>
+        </where>
+        GROUP BY
+        <choose>
+            <!-- 분기별 그룹화 -->
+            <when test="salesHistoryRankedDataDTO.period == 'daily' || salesHistoryRankedDataDTO.period == null">
+                LEFT(a.created_at, 10), group_key -- 일별 + 그룹별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'month'">
+                LEFT(a.created_at, 7), group_key -- 월별 + 그룹별
+            </when>
+            <when test="salesHistoryRankedDataDTO.period == 'year'">
+                LEFT(a.created_at, 4), group_key -- 연도별 + 그룹별
+            </when>
+        </choose>
+        ) AS SUMMARY
+        GROUP BY period
         LIMIT #{size} OFFSET #{offset}
     </select>
 

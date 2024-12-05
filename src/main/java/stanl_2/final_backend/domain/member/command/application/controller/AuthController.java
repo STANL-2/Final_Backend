@@ -5,16 +5,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.command.application.dto.*;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
+import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
+import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.common.response.MemberResponseMessage;
 
 import java.security.GeneralSecurityException;
-import java.security.Principal;
 
 @Slf4j
 @RestController("commandAuthController")
@@ -58,15 +61,17 @@ public class AuthController {
                     content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
     })
     @PostMapping("signup")
-    public ResponseEntity<MemberResponseMessage> signup(@RequestBody SignupDTO signupDTO) throws GeneralSecurityException {
+    public ResponseEntity<MemberResponseMessage> signup(@RequestPart("dto") SignupDTO signupDTO,
+                                                        @RequestPart("file") MultipartFile imageUrl)
+                                                        throws GeneralSecurityException {
 
-        authCommandService.signup(signupDTO);
+        authCommandService.signup(signupDTO, imageUrl);
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                                                .httpStatus(200)
-                                                .msg("성공")
-                                                .result(null)
-                                                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
     }
 
     /**
@@ -88,10 +93,10 @@ public class AuthController {
         authCommandService.grantAuthority(grantDTO);
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                                                .httpStatus(200)
-                                                .msg("성공")
-                                                .result(null)
-                                                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
     }
 
 
@@ -114,10 +119,10 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 MemberResponseMessage.builder()
-                        .httpStatus(200)
-                        .msg("성공")
-                        .result(responseDTO)
-                        .build()
+                                     .httpStatus(200)
+                                     .msg("성공")
+                                     .result(responseDTO)
+                                     .build()
         );
     }
 
@@ -132,11 +137,48 @@ public class AuthController {
         RefreshDTO newAccessToken = authCommandService.refreshAccessToken(refreshDTO.getRefreshToken());
 
         return ResponseEntity.ok(MemberResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(newAccessToken)
-                .build());
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(newAccessToken)
+                                                      .build());
     }
 
+
+    @Operation(summary = "임시 비밀번호 재발급")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
+    })
+    @PostMapping("checkmail")
+    public ResponseEntity<MemberResponseMessage> checkMail(@RequestBody CheckMailDTO checkMailDTO) throws GeneralSecurityException, MessagingException {
+
+        authCommandService.sendEmail(checkMailDTO);
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
+    }
+
+
+    @Operation(summary = "임시 비밀번호 재발급")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = MemberResponseMessage.class))})
+    })
+    @PostMapping("checknum")
+    public ResponseEntity<MemberResponseMessage> checkMail(@RequestBody CheckNumDTO checkNumDTO) throws GeneralSecurityException, MessagingException {
+
+        authCommandService.checkNum(checkNumDTO);
+
+        authCommandService.sendNewPwd(checkNumDTO.getLoginId());
+
+        return ResponseEntity.ok(MemberResponseMessage.builder()
+                                                      .httpStatus(200)
+                                                      .msg("성공")
+                                                      .result(null)
+                                                      .build());
+    }
 
 }

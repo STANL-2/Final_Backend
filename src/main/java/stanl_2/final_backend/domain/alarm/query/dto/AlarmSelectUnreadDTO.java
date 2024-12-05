@@ -10,6 +10,7 @@ public class AlarmSelectUnreadDTO {
 
     private String message;
     private String type;
+    private String tag;
     private String redirectUrl;
     private Boolean readStatus;
 

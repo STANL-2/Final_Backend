@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.alarm.common.response.AlarmResponseMessage;
+import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectDTO;
 import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectReadDTO;
 import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectTypeDTO;
 import stanl_2.final_backend.domain.alarm.query.dto.AlarmSelectUnreadDTO;
@@ -53,53 +54,28 @@ public class AlarmController {
                 .build());
     }
 
-    @Operation(summary = "회원 읽은 알림 상세 조회")
+    @Operation(summary = "회원 알림 상세 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 읽은 알림 상세 조회 완료",
+            @ApiResponse(responseCode = "200", description = "회원 알림 상세 조회 완료",
                     content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
     })
-    @GetMapping("/read/{type}")
+    @GetMapping("/{type}")
     public ResponseEntity<AlarmResponseMessage> selectReadAlarm(Principal principal,
                                                                 @PathVariable String type,
                                                                 @PageableDefault(size = 8) Pageable pageable){
 
         String memberLoginId = principal.getName();
-        AlarmSelectReadDTO alarmSelectReadDTO = new AlarmSelectReadDTO();
-        alarmSelectReadDTO.setMemberLoginId(memberLoginId);
-        alarmSelectReadDTO.setType(type);
+        AlarmSelectDTO alarmSelectDTO = new AlarmSelectDTO();
+        alarmSelectDTO.setMemberLoginId(memberLoginId);
+        alarmSelectDTO.setType(type);
 
-        Page<AlarmSelectReadDTO> allReadAlarms
-                = alarmQueryService.selectReadAlarmByType(alarmSelectReadDTO , pageable);
-
-        return ResponseEntity.ok(AlarmResponseMessage.builder()
-                .httpStatus(200)
-                .msg("성공")
-                .result(allReadAlarms)
-                .build());
-    }
-
-    @Operation(summary = "회원 읽지 않은 알림 상세 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 읽은 알림 상세 조회 완료",
-                    content = {@Content(schema = @Schema(implementation = ScheduleResponseMessage.class))})
-    })
-    @GetMapping("/unread/{type}")
-    public ResponseEntity<AlarmResponseMessage> selectUnreadAlarm(Principal principal,
-                                                                  @PathVariable String type,
-                                                                  @PageableDefault(size = 8) Pageable pageable){
-        String memberLoginId = principal.getName();
-        AlarmSelectUnreadDTO alarmSelectUnreadDTO = new AlarmSelectUnreadDTO();
-        alarmSelectUnreadDTO.setMemberLoginId(memberLoginId);
-        alarmSelectUnreadDTO.setType(type);
-
-        Page<AlarmSelectUnreadDTO> allUnreadAlarms
-                = alarmQueryService.selectUnreadAlarmByType(alarmSelectUnreadDTO, pageable);
+        Page<AlarmSelectDTO> allAlarms
+                = alarmQueryService.selectAlarmByType(alarmSelectDTO , pageable);
 
         return ResponseEntity.ok(AlarmResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(allUnreadAlarms)
+                .result(allAlarms)
                 .build());
     }
-
 }

@@ -12,4 +12,6 @@ public class SalesHistoryStatisticsDTO {
     private int totalSales;
     private String orderBy;
     private String month;
+    private String year;
+    private String createdAt;
 }

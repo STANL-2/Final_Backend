@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stanl_2.final_backend.domain.order.query.repository.OrderMapper">
 
-    <resultMap id="orderResultMap" type="stanl_2.final_backend.domain.order.query.dto.OrderSelectAllDTO">
+    <resultMap id="orderResultMap" type="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         <result property="orderId" column="ORD_ID"/>
         <result property="title" column="ORD_TTL"/>
         <result property="status" column="ORD_STAT"/>
@@ -12,6 +12,9 @@
         <result property="adminName" column="ADMIN_NAME"/>
         <result property="memberName" column="MEM_NAME"/>
         <result property="productName" column="PROD_NAME"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="memberId" column="MEM_ID"/>
+        <result property="adminId" column="ADMIN_ID"/>
     </resultMap>
 
     <resultMap id="orderDetailResultMap" type="stanl_2.final_backend.domain.order.query.dto.OrderSelectIdDTO">
@@ -28,14 +31,21 @@
         <result property="memberId" column="MEM_ID"/>
     </resultMap>
 
+    <resultMap id="orderExcel" type="stanl_2.final_backend.domain.order.query.dto.OrderExcelDTO">
+        <result property="orderId" column="ORD_ID"/>
+        <result property="title" column="ORD_TTL"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="status" column="ORD_STAT"/>
+        <result property="adminId" column="ADMIN_ID"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
     <select id="findAllOrderByMemberId" resultMap="orderResultMap">
         SELECT
                a.ord_id,
                a.ord_ttl,
                a.ord_stat,
                b.conr_ttl,
-               d.mem_name AS admin_name,
-               c.mem_name AS mem_name,
                e.prod_name
           FROM tb_order a
           LEFT JOIN tb_contract b
@@ -211,24 +221,21 @@
         AND a.ord_id = #{orderId};
     </select>
 
-    <select id="findSearchOrder" resultMap="orderResultMap" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
+    <select id="findSearchOrder" resultMap="orderResultMap">
         SELECT
         a.ord_id,
         a.ord_ttl,
         a.ord_stat,
+        a.created_at,
+        a.mem_id,
+        a.admin_id,
         b.conr_ttl,
-        d.mem_name AS admin_name,
-        c.mem_name AS mem_name,
-        e.prod_name
+        c.prod_name
         FROM tb_order a
         LEFT JOIN tb_contract b
         ON a.conr_id = b.conr_id
-        LEFT JOIN tb_member c
-        ON a.mem_id = c.mem_id
-        LEFT JOIN tb_member d
-        ON a.admin_id = d.mem_id
-        LEFT JOIN tb_product e
-        ON b.prod_id = e.prod_id
+        LEFT JOIN tb_product c
+        ON b.prod_id = c.prod_id
         <where>
             a.active = TRUE
             <if test="orderSelectSearchDTO.title != null">
@@ -243,11 +250,48 @@
             <if test="orderSelectSearchDTO.searchMemberId != null">
                 AND a.mem_id = #{searchMemberId}
             </if>
+            <if test="orderSelectSearchDTO.productName != null">
+                AND c.prod_name LIKE CONCAT('%', #{productName}, '%');
+            </if>
             <if test="orderSelectSearchDTO.startDate != null and orderSelectSearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate} AND #{orderSelectSearchDTO.endDate}
             </if>
         </where>
-        ORDER BY a.created_at DESC
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.ord_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.ord_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'orderId'">
+                        ORDER BY a.ord_id ${orderId}
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${memberId}
+                    </when>
+                    <when test="sortField == 'adminId'">
+                        ORDER BY a.admin_id ${adminId}
+                    </when>
+                    <when test="sortField == 'createdAt'">
+                        ORDER BY a.created_at ${createdAt}
+                    </when>
+                    <when test="sortField == 'creproductNameatedAt'">
+                        ORDER BY e.prod_name ${productName}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
@@ -273,6 +317,28 @@
                 AND a.created_at BETWEEN #{startDate} AND #{endDate}
             </if>
         </where>
+    </select>
+
+    <select id="findOrderForExcel" resultMap="orderExcel">
+        SELECT
+                a.ord_id,
+                a.ord_ttl,
+                a.created_at,
+                a.mem_id,
+                a.ord_stat,
+                c.prod_name
+           FROM tb_order a
+           LEFT JOIN tb_contract b
+             ON a.conr_id = b.conr_id
+           LEFT JOIN tb_product c
+             ON b.prod_id = c.prod_id
+    </select>
+
+    <select id="selectByContractId" resultType="string">
+        SELECT
+               a.conr_id
+          FROM tb_order
+         WHERE a.active = true
     </select>
 
 </mapper>

@@ -117,6 +117,16 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         String memberId = authQueryService.selectMemberIdByLoginId(contractSearchDTO.getMemberId());
         contractSearchDTO.setMemberId(memberId);
 
+        if ("대기".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("WAIT");
+        }
+        if ("승인".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("APPROVED");
+        }
+        if ("취소".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("CANCEL");
+        }
+
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
         List<ContractSearchDTO> contracts = contractMapper.findContractBySearchAndMemberId(offset, pageSize, contractSearchDTO);
@@ -188,6 +198,30 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     public Page<ContractSearchDTO> selectBySearchAdmin(ContractSearchDTO contractSearchDTO, Pageable pageable) throws GeneralSecurityException {
         String centerId = memberQueryService.selectMemberInfo(contractSearchDTO.getMemberId()).getCenterId();
 
+        if ("대기".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("WAIT");
+        }
+        if ("승인".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("APPROVED");
+        }
+        if ("취소".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("CANCEL");
+        }
+
+        if ("현금".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("CASH");
+        } else if ("할부".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("INSTALLMENT");
+        } else if ("리스".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("CANCEL");
+        }
+
+        if (contractSearchDTO.getCustomerClassifcation().equals("개인")) {
+            contractSearchDTO.setCustomerClassifcation("PERSONAL");
+        } else if (contractSearchDTO.getCustomerClassifcation().equals("법인")) {
+            contractSearchDTO.setCustomerClassifcation("BUSINESS");
+        }
+
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
         List<ContractSearchDTO> contracts = contractMapper.findContractBySearchAndCenterId(offset, pageSize, contractSearchDTO, centerId);
@@ -258,21 +292,57 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     @Transactional(readOnly = true)
     public Page<ContractSearchDTO> selectBySearch(ContractSearchDTO contractSearchDTO, Pageable pageable) {
 
+        if ("대기".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("WAIT");
+        } else if ("승인".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("APPROVED");
+        } else if ("취소".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("LEASE");
+        }
+
+        if ("현금".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("CASH");
+        } else if ("할부".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("INSTALLMENT");
+        } else if ("리스".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("CANCEL");
+        }
+
+        if ("개인".equals(contractSearchDTO.getCustomerClassifcation())) {
+            contractSearchDTO.setCustomerClassifcation("PERSONAL");
+        } else if ("법인".equals(contractSearchDTO.getCustomerClassifcation())) {
+            contractSearchDTO.setCustomerClassifcation("BUSINESS");
+        }
+
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<ContractSearchDTO> contracts = contractMapper.findContractBySearch(offset, pageSize, contractSearchDTO);
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<ContractSearchDTO> contracts = contractMapper.findContractBySearch(offset, pageSize, contractSearchDTO, sortField, sortOrder);
 
         if (contracts == null) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
-        Integer count = contractMapper.findContractBySearchCount(contractSearchDTO);
-        int totalContract = (count != null) ? count : 0;
+        int totalContract = contractMapper.findContractBySearchCount(contractSearchDTO);
+
+        if (totalContract == 0) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
 
         return new PageImpl<>(contracts, pageable, totalContract);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void exportContractToExcel(HttpServletResponse response) {
         List<ContractExcelDTO> contractExcels = contractMapper.findContractForExcel();
 

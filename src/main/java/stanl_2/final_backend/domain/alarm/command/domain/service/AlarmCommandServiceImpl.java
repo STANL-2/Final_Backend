@@ -14,9 +14,15 @@ import stanl_2.final_backend.domain.alarm.command.domain.repository.AlarmReposit
 import stanl_2.final_backend.domain.alarm.command.domain.repository.EmitterRepository;
 import stanl_2.final_backend.domain.alarm.common.exception.AlarmCommonException;
 import stanl_2.final_backend.domain.alarm.common.exception.AlarmErrorCode;
+import stanl_2.final_backend.domain.contract.command.application.dto.ContractAlarmDTO;
+import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
+import stanl_2.final_backend.domain.order.command.application.dto.OrderAlarmDTO;
+import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
+import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderAlarmDTO;
+import stanl_2.final_backend.domain.purchase_order.command.domain.aggregate.entity.PurchaseOrder;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
@@ -24,6 +30,8 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -106,9 +114,11 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public void send(String memberId, String message, String redirectUrl, String type, String createdAt){
+    public void send(String memberId, String adminId, String contentId, String message, String redirectUrl, String tag,
+                     String type, String createdAt){
 
-        Alarm alarm = alarmRepository.save(createAlarm(memberId, message, redirectUrl, type, createdAt));
+        Alarm alarm = alarmRepository.save(createAlarm(memberId, adminId, contentId, message, redirectUrl,
+                tag, type, createdAt));
 
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllEmitterStartWithByMemberId(memberId);
         sseEmitters.forEach(
@@ -121,12 +131,16 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public Alarm createAlarm(String memberId, String message, String redirectUrl, String type, String createdAt) {
+    public Alarm createAlarm(String memberId, String adminId, String contentId, String message, String redirectUrl
+            , String tag, String type, String createdAt) {
 
         Alarm alarm = new Alarm();
         alarm.setMemberId(memberId);
+        alarm.setAdminId(adminId);
+        alarm.setContentId(contentId);
         alarm.setMessage(message);
         alarm.setRedirectUrl(redirectUrl);
+        alarm.setTag(tag);
         alarm.setType(type);
         alarm.setReadStatus(false);
         alarm.setCreatedAt(createdAt);
@@ -138,18 +152,91 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
     @Transactional
     public void sendNoticeAlarm(NoticeAlarmDTO noticeAlarmDTO){
 
-        List<String> memberIdList = memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag());
+        List<String> memberIdList = new ArrayList<>();
+
+        if(noticeAlarmDTO.getTag().equals("all")){
+            // 결과 합치기
+            memberIdList.addAll(memberQueryService.selectMemberByRole("employee"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("admin"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
+            // 중복 제거
+            memberIdList = new ArrayList<>(new HashSet<>(memberIdList));
+        } else if (noticeAlarmDTO.getTag().equals("admin")){
+            memberIdList.addAll(memberQueryService.selectMemberByRole("admin"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
+        }else {
+            memberIdList.addAll(memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag()));
+        }
 
         memberIdList.forEach(member -> {
-            String memberId = member;
+            String targetId = member;
             String type = "NOTICE";
-            String tag = noticeAlarmDTO.getClassification();
-            String message = "[" + tag + "] 영업 관리자 대상 공지사항이 등록되었습니다.";
-            String redirectUrl = "/api/v1/notice/" + noticeAlarmDTO.getNoticeId();
+            String tag = null;
+            if(noticeAlarmDTO.getClassification().equals("important")){
+                tag = "중요";
+            } else {
+                tag = "일반";
+            }
+
+            String target = null;
+            if(noticeAlarmDTO.getTag().equals("all")){
+                target = "전체";
+            } else if(noticeAlarmDTO.getTag().equals("admin")) {
+                target = "영업관리자";
+            } else {
+                target = "영업담당자";
+            }
+
+            String message =  target + " 대상 공지사항이 등록되었습니다.";
+            String redirectUrl = "/notice/detail?tag=" + noticeAlarmDTO.getTag() + "&classification=" + noticeAlarmDTO.getClassification()
+                    + "&noticeTitle=" + noticeAlarmDTO.getTitle() + "&noticeContent=" + noticeAlarmDTO.getContent()
+                    + "&noticeId=" + noticeAlarmDTO.getNoticeId();
             String createdAt = getCurrentTime();
 
-            send(memberId, message, redirectUrl, type, createdAt);
+            send(targetId, noticeAlarmDTO.getMemberId(), noticeAlarmDTO.getNoticeId(), message, redirectUrl, tag, type, createdAt);
         });
+    }
+
+    @Override
+    @Transactional
+    public void sendContractAlarm(ContractAlarmDTO contractAlarmDTO) {
+
+        String type = "CONTRACT";
+        String tag = "계약서";
+        String message = contractAlarmDTO.getCustomerName() +" 고객님의 계약서가 승인되었습니다.";
+        String redirectUrl = "/contract/list";
+        String createdAt = getCurrentTime();
+
+        send(contractAlarmDTO.getMemberId(), contractAlarmDTO.getAdminId(),contractAlarmDTO.getContractId(), message,
+                redirectUrl, tag, type, createdAt);
+    }
+
+    @Override
+    @Transactional
+    public void sendPurchaseOrderAlarm(PurchaseOrderAlarmDTO purchaseOrderAlarmDTO) {
+
+        String type = "CONTRACT";
+        String tag = "발주서";
+        String message = purchaseOrderAlarmDTO.getTitle() +"  가 승인되었습니다.";
+        String redirectUrl = "/purchase-order/list";
+        String createdAt = getCurrentTime();
+
+        send(purchaseOrderAlarmDTO.getMemberId(), purchaseOrderAlarmDTO.getAdminId(), purchaseOrderAlarmDTO.getPurchaseOrderId(),
+                message, redirectUrl, tag, type, createdAt);
+    }
+
+    @Override
+    @Transactional
+    public void sendOrderAlarm(OrderAlarmDTO orderAlarmDTO) {
+
+        String type = "CONTRACT";
+        String tag = "수주서";
+        String message = orderAlarmDTO.getTitle() +" 가 승인되었습니다.";
+        String redirectUrl = "/order/list";
+        String createdAt = getCurrentTime();
+
+        send(orderAlarmDTO.getMemberId(), orderAlarmDTO.getAdminId(),orderAlarmDTO.getOrderId(), message, redirectUrl,
+                tag, type, createdAt);
     }
 
     @Override

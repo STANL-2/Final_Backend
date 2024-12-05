@@ -61,7 +61,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
                                Principal principal) {
         System.out.println("[Before Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         redisService.clearNoticeCache();
-        String memberId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeRegistDTO.getMemberLoginId());
         noticeRegistDTO.setMemberId(memberId);
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
@@ -80,11 +80,11 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
 
         redisService.clearNoticeCache();
-        String memberId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(noticeModifyDTO.getMemberLoginId());
+
 
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
-
         if(!notice.getMemberId().equals(memberId)){
             // 권한 오류
             throw new NoticeCommonException(NoticeErrorCode.AUTHORIZATION_VIOLATION);

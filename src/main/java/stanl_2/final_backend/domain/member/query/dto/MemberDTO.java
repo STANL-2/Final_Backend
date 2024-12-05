@@ -13,6 +13,7 @@ public class MemberDTO {
     private String memberId;
     private String loginId;
     private String name;
+    private String imageUrl;
     private String email;
     private Integer age;
     private String sex;
@@ -29,4 +30,6 @@ public class MemberDTO {
     private String account;
     private String centerId;
     private String createdAt;
+    private String updatedAt;
+    private String centerName;
 }
