@@ -17,4 +17,5 @@ public class SalesHistoryStatisticsAverageDTO {
     private BigDecimal averageTotalPerformance;
     private String month;
     private String year;
+    private String period;
 }
