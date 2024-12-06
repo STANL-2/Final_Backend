@@ -40,7 +40,7 @@ spring:
   mail:
     host:
       port:
-        username: stanl2e2@naver.com
+        username: "stanl2e2@naver.com"
         password: "Stanl222"
         properties:
           mail.smtp.auth: true
@@ -69,17 +69,17 @@ spring:
         springframework:
           security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
 
-    cloud:
-      aws:
-        credentials:
-          access-key: AKIAQE3ROMWSWEBT7F7O
-          secret-key: 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
-        s3:
-          bucket: motivebk
-        region:
-          static: ap-northeast-2
-        stack:
-          auto: false
+cloud:
+  aws:
+    credentials:
+      access-key: "AKIAQE3ROMWSWEBT7F7O"
+      secret-key: "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"
+    s3:
+      bucket: "motivebk"
+    region:
+      static: "ap-northeast-2"
+    stack:
+      auto: false
 
     mybatis:
       configuration:
