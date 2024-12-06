@@ -40,12 +40,12 @@ spring:
   mail:
     host:
       port:
-        username: ${EMAIL_ID}
-        password: ${EMAIL_PWD}
+        username: stanl2e2@naver.com
+        password: "Stanl222"
         properties:
           mail.smtp.auth: true
           mail.smtp.ssl.enable: true
-          mail.smtp.ssl.trust: ${EMAIL_HOST}
+          mail.smtp.ssl.trust: smtp.naver.com
           mail.smtp.ssl.protocols: TLSv1.2
           mail.debug: true
 
@@ -72,8 +72,8 @@ spring:
     cloud:
       aws:
         credentials:
-          access-key: AKIAQE3ROMWSWEBT7F7O
-          secret-key: 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
+          access-key: AKIAQE3ROMWSU6NF677B
+          secret-key: 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
         s3:
           bucket: motivebk
         region:
