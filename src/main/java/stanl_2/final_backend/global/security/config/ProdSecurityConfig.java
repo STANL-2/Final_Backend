@@ -54,9 +54,7 @@ public class ProdSecurityConfig {
 
                 // 필터 순서: JWT 검증 -> CSRF
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), UsernamePasswordAuthenticationFilter.class)
-//                .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())
-                .requiresChannel(rcc -> rcc.anyRequest().requiresSecure())  // Only HTTPS
-                // 인증 및 권한 예외를 처리
+                            .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())  // Only HTTPS
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             log.error("Authentication error: {}", authException.getMessage());

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: finalbackend
+    name: ${SPRING_APP_NAME}
 
   datasource:
     writer:
@@ -19,7 +19,6 @@ spring:
         username: admin
         password: motivepassword
         driver-class-name: org.mariadb.jdbc.Driver
-
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
@@ -93,3 +92,5 @@ claude:
 naver:
   client-id: CdxW72qcvZLVTHrViB20
   client-secret: ZjP2cbXlfU
+
+
