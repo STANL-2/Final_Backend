@@ -32,7 +32,7 @@ public class NoticeController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
-    @GetMapping("search")
+    @GetMapping()
     public ResponseEntity<Page<NoticeDTO>> getNotices(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
