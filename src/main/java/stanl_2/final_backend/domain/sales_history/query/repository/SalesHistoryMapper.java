@@ -32,7 +32,7 @@ public interface SalesHistoryMapper {
 
     List<SalesHistoryStatisticsDTO> findStatisticsSearchMonthByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
-    SalesHistoryStatisticsDTO findStatisticsSearchYearByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+    List<SalesHistoryStatisticsDTO> findStatisticsSearchYearByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
     List<SalesHistoryRankedDataDTO> findAllRank(@Param("salesHistoryRankedDataDTO")SalesHistoryRankedDataDTO salesHistoryRankedDataDTO
             , @Param("size") int size
@@ -111,6 +111,10 @@ public interface SalesHistoryMapper {
                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     String findSalesHistoryIdByContractId(@Param("contractId") String contractId);
+
+    List<SalesHistoryRankedDataDTO> findStatisticsBestBySearch(@Param("size") int size
+            , @Param("offset") int offset,
+                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 }
 
 

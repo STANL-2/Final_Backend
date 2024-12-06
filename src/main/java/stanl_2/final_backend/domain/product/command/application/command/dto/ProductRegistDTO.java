@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ProductRegistDTO {
-    private String productId;
     private String name;
     private String serialNumber;
     private String cost;
