@@ -1,6 +1,7 @@
 server:
   forward-headers-strategy: native
 
+
 spring:
   application:
     name: finalbackend
@@ -20,6 +21,7 @@ spring:
         password: motivepassword
         driver-class-name: org.mariadb.jdbc.Driver
 
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
 
@@ -28,6 +30,7 @@ spring:
       enabled: false
     restart:
       enabled: false
+
   servlet:
     multipart:
       enabled: true
@@ -46,52 +49,49 @@ spring:
           mail.smtp.ssl.protocols: TLSv1.2
           mail.debug: true
 
-jwt:
-  secret-key: ${JWT_SECRET_KEY}
-  header: ${JWT_HEADER}
-
-encryption:
-  algorithm: ${ALGORITHM}
-  transformation: ${TRANSFORMATION}
-  secret-key: ${SECRET_DEFAULT_KEY}
+  wt:
+    secret-key: s4G7tL9qH8vI2eP0j5W1uF3bM6nK8rXc
+    header: Authorization
 
 
-logging:
-  pattern:
-    console: ${LOGPATTERN_CONSOLE:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n}
-  level:
-    org:
-      springframework:
-        security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
-      apache.ibatis: DEBUG
-      mybatis: DEBUG
-    jdbc.sqltiming: DEBUG
-    jdbc.resultsettable: TRACE
+  encryption:
+    algorithm: AES
+    transformation: AES/ECB/PKCS5Padding
+    secret-key: haWh*9teA@2sT!nLaO$i0lEcj3cU282d
 
-cloud:
-  aws:
-    credentials:
-      access-key: AKIAQE3ROMWSWEBT7F7O
-      secret-key: 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
-    s3:
-      bucket: motivebk
-    region:
-      static: ap-northeast-2
 
-    stack:
-      auto: false
 
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  logging:
+    pattern:
+      console: ${LOGPATTERN_CONSOLE:%green(%d{HH:mm:ss.SSS}) %blue(%-5level) %red([%thread]) %yellow(%logger{15}) - %msg%n}
+    level:
+      org:
+        springframework:
+          security: ${SPRING_SECURITY_LOG_LEVEL:TRACE}
 
-claude:
-  api:
-    key: ${CLAUDE_API_KEY}
-    url: https://api.claude.ai/v1/summary
+    cloud:
+      aws:
+        credentials:
+          access-key: AKIAQE3ROMWSWEBT7F7O
+          secret-key: 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
+        s3:
+          bucket: motivebk
+        region:
+          static: ap-northeast-2
+        stack:
+          auto: false
 
-naver:
-  client-id: CdxW72qcvZLVTHrViB20
-  client-secret: ZjP2cbXlfU
+    mybatis:
+      configuration:
+        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+    claude:
+      api:
+        key: ${CLAUDE_API_KEY}
+        url: https://api.claude.ai/v1/summary
+
+    naver:
+      client-id: CdxW72qcvZLVTHrViB20
+      client-secret: ZjP2cbXlfU
 
 
