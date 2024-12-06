@@ -72,8 +72,8 @@ spring:
     cloud:
       aws:
         credentials:
-          access-key: AKIAQE3ROMWSU6NF677B
-          secret-key: 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
+          access-key: AKIAQE3ROMWSWEBT7F7O
+          secret-key: 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
         s3:
           bucket: motivebk
         region:
