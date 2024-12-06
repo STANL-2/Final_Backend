@@ -28,9 +28,9 @@ public class ContractExcelDTO {
     @ExcelColumnName(name = "제품명")
     private String carName;
 
-    @ExcelColumnName(name = "고객 구분")
-    private String customerClassifcation;
-
     @ExcelColumnName(name = "고객 조건")
     private String customerPurchaseCondition;
+
+    @ExcelColumnName(name = "계약일자")
+    private String createdAt;
 }
