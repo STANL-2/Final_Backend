@@ -179,7 +179,7 @@ public class Initializer implements ApplicationRunner {
                 "미필",
                 "한국은행",
                 "000-0000-000000-00000",
-                "CEN_000000000",
+                "CEN_000000001",
                 "ORG_000000000",
                 "EMPLOYEE",
                 loadImage("default.png")
@@ -201,7 +201,7 @@ public class Initializer implements ApplicationRunner {
                 "미필",
                 "한국은행",
                 "000-0000-000000-00000",
-                "CEN_000000000",
+                "CEN_000000001",
                 "ORG_000000000",
                 "ADMIN",
                 loadImage("default.png")
@@ -223,7 +223,7 @@ public class Initializer implements ApplicationRunner {
                 "미필",
                 "한국은행",
                 "000-0000-000000-00000",
-                "CEN_000000000",
+                "CEN_000000001",
                 "ORG_000000000",
                 "DIRECTOR",
                 loadImage("default.png")
@@ -231,7 +231,8 @@ public class Initializer implements ApplicationRunner {
 
 
         Random random = new Random();
-        String[] positions = {"영업 사원", "영업 관리자", "영업 담당자"};
+        String[] positions = {"INTERN", "STAFF", "ASSISTANT", "MANAGER", "SENIOR", "EXECUTIVE", "DIRECTO", "CEO"};
+        String[] grade = {"High School", "Associate", "Bachelor", "Master", "Doctoral"};
         String[] jobTypes = {"REGULAR", "TEMPORARY"};
         String[] militaryStatus = {"FULFILLED", "EXEMPTION", "UNFULFILLED"};
         String[] genders = {"MALE", "FEMALE"};
@@ -256,10 +257,9 @@ public class Initializer implements ApplicationRunner {
         for (int i = 1; i <= 93; i++) {
             int centerId = random.nextInt(10) + 1;
             int orgId = random.nextInt(10) + 5;
-            String sex = genders[i % 2];
+            String sex = genders[(i+1) % 2];
             String name = lastNames[random.nextInt(lastNames.length)] + firstNames[random.nextInt(firstNames.length)];
             String address = addresses[random.nextInt(addresses.length)];
-            int n = random.nextInt(positions.length);
             createOrUpdateMember(
                     String.format("M%09d", i),
                     "pass" + i,
@@ -270,15 +270,15 @@ public class Initializer implements ApplicationRunner {
                     String.format("123456-1%06d", 100000 + random.nextInt(900000)),
                     String.format("010-1234-%04d", i),
                     address,
-                    positions[n], // Random position
-                    "대학 졸업",
+                    positions[random.nextInt(positions.length)], // Random position
+                    grade[random.nextInt(grade.length)],
                     jobTypes[random.nextInt(jobTypes.length)], // Random job type
                     militaryStatus[random.nextInt(militaryStatus.length)], // Random military status
                     "Bank" + centerId,
                     "123456789" + i,
                     String.format("CEN_%09d", centerId),
                     String.format("ORG_%09d", orgId),
-                    roles[n], // Random role
+                    roles[random.nextInt(roles.length)], // Random role
                     loadImage("default.png")
             );
         }
