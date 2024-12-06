@@ -87,7 +87,7 @@ cloud:
 
 claude:
   api:
-    key: ${CLAUDE_API_KEY}
+    key: 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
     url: https://api.claude.ai/v1/summary
 
 naver:
