@@ -64,6 +64,9 @@ public class Log {
     @Column(name = "ERROR_MESSAGE", columnDefinition = "TEXT")
     private String errorMessage;
 
+    @Column(name = "LOGIN_ID")
+    private String loginId;
+
 
     @PrePersist
     private void prePersist() {

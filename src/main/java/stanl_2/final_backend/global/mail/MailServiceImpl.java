@@ -48,6 +48,7 @@ public class MailServiceImpl implements MailService {
 
         // thymeleaf 기반의 html 파일에 값을 넣고 연결
         Context context = new Context();
+        
         // templateengine과 classloadertemplateresolver를 활용하여 resource/template에 위치한 mail.html 연결
         TemplateEngine templateEngine = new TemplateEngine();
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();

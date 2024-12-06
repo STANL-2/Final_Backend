@@ -6,6 +6,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -72,6 +74,16 @@ public class LoggingAspect {
             // 유저 정보
             logEntry.setSessionId(safeValue(request.getRequestedSessionId()));
             logEntry.setUserAgent(safeValue(request.getHeader("User-Agent")));
+
+            String loginId = "anonymousUser";
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
+                loginId = authentication.getPrincipal().toString();
+            }
+
+            logEntry.setLoginId(loginId);
 
             // 네트워크 정보
             logEntry.setIpAddress(safeValue(getClientIp(request)));
