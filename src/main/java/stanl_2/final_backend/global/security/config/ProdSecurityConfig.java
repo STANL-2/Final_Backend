@@ -85,7 +85,6 @@ public class ProdSecurityConfig {
 
         return request -> config;
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
