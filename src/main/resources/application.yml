@@ -40,8 +40,8 @@ spring:
   mail:
     host:
       port:
-        username: "stanl2e2@naver.com"
-        password: "Stanl222"
+        username: stanl2e2@naver.com
+        password: Stanl222
         properties:
           mail.smtp.auth: true
           mail.smtp.ssl.enable: true
@@ -49,15 +49,15 @@ spring:
           mail.smtp.ssl.protocols: TLSv1.2
           mail.debug: true
 
-  jwt:
-    secret-key: s4G7tL9qH8vI2eP0j5W1uF3bM6nK8rXc
-    header: Authorization
+jwt:
+  secret-key: s4G7tL9qH8vI2eP0j5W1uF3bM6nK8rXc
+  header: Authorization
 
 
-  encryption:
-    algorithm: AES
-    transformation: AES/ECB/PKCS5Padding
-    secret-key: haWh*9teA@2sT!nLaO$i0lEcj3cU282d
+encryption:
+  algorithm: AES
+  transformation: AES/ECB/PKCS5Padding
+  secret-key: "haWh*9teA@2sT!nLaO$i0lEcj3cU282d"
 
 
 
@@ -72,12 +72,12 @@ spring:
 cloud:
   aws:
     credentials:
-      access-key: "AKIAQE3ROMWSWEBT7F7O"
-      secret-key: "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"
+      access-key: AKIAQE3ROMWSWEBT7F7O
+      secret-key: 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
     s3:
-      bucket: "motivebk"
+      bucket: motivebk
     region:
-      static: "ap-northeast-2"
+      static: ap-northeast-2
     stack:
       auto: false
 
@@ -85,13 +85,13 @@ cloud:
       configuration:
         log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-#    claude:
-#      api:
-#        key: ${CLAUDE_API_KEY}
-#        url: https://api.claude.ai/v1/summary
+claude:
+  api:
+    key: ${CLAUDE_API_KEY}
+    url: https://api.claude.ai/v1/summary
 
-    naver:
-      client-id: CdxW72qcvZLVTHrViB20
-      client-secret: ZjP2cbXlfU
+naver:
+  client-id: CdxW72qcvZLVTHrViB20
+  client-secret: ZjP2cbXlfU
 
 
