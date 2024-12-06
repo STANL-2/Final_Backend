@@ -28,6 +28,7 @@
         <result property="status" column="CONR_STAT"/>
         <result property="numberOfVehicles" column="CONR_NO_OF_VEH"/>
         <result property="totalSales" column="CONR_TOTA_SALE"/>
+        <result property="vehiclePrice" column="CONR_VEHI_PRIC"/>
         <result property="createdUrl" column="CREATED_URL"/>
         <result property="deletedUrl" column="DELETED_URL"/>
         <result property="active" column="ACTIVE"/>
@@ -71,6 +72,7 @@
         <result property="customerClassifcation" column="CONR_CUST_CLA"/>
         <result property="customerPurchaseCondition" column="CONR_CUST_PUR_COND"/>
         <result property="status" column="CONR_STAT"/>
+        <result property="vehiclePrice" column="CONR_VEHI_PRIC"/>
         <result property="createdUrl" column="CREATED_URL"/>
         <result property="deletedUrl" column="DELETED_URL"/>
         <result property="createdAt" column="CREATED_AT"/>
@@ -185,7 +187,8 @@
         a.created_url,
         a.active,
         a.conr_cust_cla,
-        a.conr_cust_pur_cond
+        a.conr_cust_pur_cond,
+        a.created_at,
         FROM tb_contract a
         WHERE a.mem_id = #{ memberId }
         AND a.active = TRUE
