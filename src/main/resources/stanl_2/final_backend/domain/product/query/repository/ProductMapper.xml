@@ -88,7 +88,7 @@
         b.opt_sun_roof,
         b.opt_sond
         FROM tb_product a
-        JOIN tb_product_option b ON a.prod_id = b.prod_id
+        JOIN tb_product_option b ON a.prod_id = b.product_id
         WHERE a.prod_id = #{productId} AND a.active = TRUE
     </select>
 
