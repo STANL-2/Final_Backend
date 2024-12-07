@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.*;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
-import stanl_2.final_backend.domain.notices.query.service.NoticeService;
+import stanl_2.final_backend.domain.notices.query.service.NoticeQueryService;
 
 
 @RestController("queryNoticeController")
 @RequestMapping("/api/v1/notice")
 public class NoticeController {
-    private final NoticeService noticeService;
+    private final NoticeQueryService noticeQueryService;
     @Autowired
-    public NoticeController(NoticeService noticeService) {
-        this.noticeService = noticeService;
+    public NoticeController(NoticeQueryService noticeQueryService) {
+        this.noticeQueryService = noticeQueryService;
     }
 
     @Operation(summary = "공지사항 조건별 조회")
@@ -46,7 +46,7 @@ public class NoticeController {
         Pageable pageable = PageRequest.of(page, size);
         SearchDTO searchDTO = new SearchDTO(title, tag, memberId, classification, startDate, endDate);
 
-        Page<NoticeDTO> noticeDTOPage = noticeService.findNotices(pageable, searchDTO);
+        Page<NoticeDTO> noticeDTOPage = noticeQueryService.findNotices(pageable, searchDTO);
 
         return ResponseEntity.ok(noticeDTOPage);
     }
@@ -58,7 +58,7 @@ public class NoticeController {
     })
     @GetMapping("{noticeId}")
     public ResponseEntity<NoticeDTO> getNotice(@PathVariable String noticeId){
-        NoticeDTO noticeDTO = noticeService.findNotice(noticeId);
+        NoticeDTO noticeDTO = noticeQueryService.findNotice(noticeId);
         return ResponseEntity.ok(noticeDTO);
     }
     @Operation(summary = "공지사항 엑셀 다운 테스트")
@@ -69,7 +69,7 @@ public class NoticeController {
     @GetMapping("/excel")
     public void exportNotice(HttpServletResponse response){
 
-        noticeService.exportNoticesToExcel(response);
+        noticeQueryService.exportNoticesToExcel(response);
     }
 
 }

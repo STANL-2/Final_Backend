@@ -30,14 +30,14 @@ import static org.springframework.transaction.support.TransactionSynchronization
 
 @Transactional(readOnly = true)
 @Service("queryNoticeServiceImpl")
-public class NoticeServiceImpl implements NoticeService{
+public class NoticeQueryServiceImpl implements NoticeQueryService {
     private final NoticeMapper noticeMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisService redisService;
     private final ExcelUtilsV1 excelUtilsV1;
     private final MemberQueryService memberQueryService;
     @Autowired
-    public NoticeServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1,MemberQueryService memberQueryService) {
+    public NoticeQueryServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1, MemberQueryService memberQueryService) {
         this.noticeMapper = noticeMapper;
         this.redisTemplate = redisTemplate;
         this.redisService =redisService;
