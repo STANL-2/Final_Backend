@@ -11,4 +11,5 @@ public class OrderRegistDTO {
     private String content;
     private String contractId;
     private String memberId;
+    private String centerId;
 }
