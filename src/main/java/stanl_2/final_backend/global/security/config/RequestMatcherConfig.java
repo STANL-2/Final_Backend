@@ -104,7 +104,7 @@ public class RequestMatcherConfig {
 
                 // Order API (Search and Excel)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order").hasAnyRole("order-get", "GOD", "DIRECTOR")
-                .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR", "EMPLOYEE", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/search").hasAnyRole("order-search-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/excel").hasAnyRole("order-excel-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN")
 
