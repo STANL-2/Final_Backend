@@ -212,7 +212,7 @@ public class OrderController {
     })
     @GetMapping("center")
     public ResponseEntity<OrderResponseMessage> getAllOrderCenter(@PageableDefault(size = 10)Pageable pageable,
-                                                                  Principal principal) {
+                                                                  Principal principal) throws GeneralSecurityException {
 
         String memberId = principal.getName();
         Page<OrderSelectAllDTO> responseOrders = orderQueryService.selectAllCenter(pageable, memberId);

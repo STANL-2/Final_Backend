@@ -452,7 +452,7 @@
         LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
-    <select id="findOrderSearchCount" resultType="Integer" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
+    <select id="findOrderSearchCountCenter" resultType="Integer" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
