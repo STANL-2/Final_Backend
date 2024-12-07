@@ -46,6 +46,7 @@ public class LogController {
     @GetMapping("")
     public ResponseEntity<LogResponseMessage> getLogs(
             @RequestParam(required = false) String logId,
+            @RequestParam(required = false) String loginId,
             @RequestParam(required = false) String ipAddress,
             @RequestParam(required = false) String requestTime_start,
             @RequestParam(required = false) String requestTime_end,
@@ -64,7 +65,7 @@ public class LogController {
         }
 
 
-        LogSearchDTO searchLogDTO = new LogSearchDTO(logId, ipAddress, requestTime_start, requestTime_end, status, method, uri);
+        LogSearchDTO searchLogDTO = new LogSearchDTO(logId, loginId, ipAddress, requestTime_start, requestTime_end, status, method, uri);
         Page<LogDTO> logDTOPage = logQueryService.selectLogs(pageable, searchLogDTO);
 
         return ResponseEntity.ok(LogResponseMessage.builder()

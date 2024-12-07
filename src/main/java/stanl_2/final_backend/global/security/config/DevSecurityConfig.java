@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.password.HaveIBeenPwnedRe
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
@@ -40,10 +41,13 @@ public class DevSecurityConfig {
     private String jwtHeader;
 
     private final LogRepository logRepository;
+    private final MemberQueryService memberQueryService;
 
     @Autowired
-    public DevSecurityConfig(LogRepository logRepository) {
+    public DevSecurityConfig(LogRepository logRepository,
+                             MemberQueryService memberQueryService) {
         this.logRepository = logRepository;
+        this.memberQueryService = memberQueryService;
     }
 
     @Bean
@@ -54,7 +58,7 @@ public class DevSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 API 설정
                         .anyRequest().permitAll())
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository, memberQueryService), UsernamePasswordAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {

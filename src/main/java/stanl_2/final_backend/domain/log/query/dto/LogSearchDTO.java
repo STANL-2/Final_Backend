@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class LogSearchDTO {
     private String logId;
+    private String loginId;
     private String sessionId;
     private String userAgent;
     private String ipAddress;
@@ -26,6 +27,7 @@ public class LogSearchDTO {
     private String errorMessage;
 
     public LogSearchDTO(String logId,
+                        String loginId,
                         String ipAddress,
                         String requestTime_start,
                         String requestTime_end,
@@ -33,6 +35,7 @@ public class LogSearchDTO {
                         String method,
                         String uri){
         this.logId = logId;
+        this.loginId = loginId;
         this.ipAddress = ipAddress;
         this.requestTime_start = requestTime_start;
         this.requestTime_end = requestTime_end;
