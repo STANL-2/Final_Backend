@@ -125,6 +125,19 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
             logEntry.setSessionId(safeValue(request.getRequestedSessionId()));
             logEntry.setUserAgent(safeValue(request.getHeader("User-Agent")));
 
+            String loginId = "anonymousUser";
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication != null && authentication.isAuthenticated() &&
+                    !"anonymousUser".equals(authentication.getPrincipal()) &&
+                    !authentication.getPrincipal().toString().startsWith("stanl_2")
+            ) {
+                loginId = authentication.getPrincipal().toString();
+            }
+
+            logEntry.setLoginId(loginId);
+
             // 네트워크 정보
             logEntry.setIpAddress(safeValue(getClientIp(request)));
             logEntry.setHostName(safeValue(request.getRemoteHost()));
