@@ -120,7 +120,11 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
         salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
 
+        System.out.println("==============================================================================");
+
         List<SalesHistorySelectDTO> salesHistoryList = salesHistoryMapper.findSalesHistorySearchByEmployee(size,offset, salesHistorySearchDTO, sortField, sortOrder);
+
+        System.out.println("salesHistoryList = " + salesHistoryList);
 
         int total = salesHistoryMapper.findSalesHistorySearchCountByEmployee(salesHistorySearchDTO);
 

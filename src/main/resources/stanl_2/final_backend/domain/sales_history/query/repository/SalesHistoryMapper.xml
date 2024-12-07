@@ -164,6 +164,21 @@
             <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
+            <if test="salesHistorySearchDTO.contractId != null">
+                AND a.conr_id =  #{salesHistorySearchDTO.contractId}
+            </if>
+            <if test="salesHistorySearchDTO.productList != null and salesHistorySearchDTO.productList.size() > 0">
+                AND a.prod_id IN
+                <foreach collection="salesHistorySearchDTO.productList" item="prod_id" open="(" separator="," close=")">
+                    #{prod_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
+                </foreach>
+            </if>
         </where>
         <choose>
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
@@ -444,8 +459,39 @@
         SELECT
         COUNT(*) AS cnt
         FROM tb_sales_history a
-        WHERE a.active = TRUE AND a.mem_id = #{searcherId}
-        ORDER BY a.created_at DESC
+        <where>
+            a.active = TRUE
+            <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
+                AND a.mem_id IN
+                <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
+                AND a.cent_id IN
+                <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.productList != null and salesHistorySearchDTO.productList.size() > 0">
+                AND a.prod_id IN
+                <foreach collection="salesHistorySearchDTO.productList" item="prod_id" open="(" separator="," close=")">
+                    #{prod_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.contractId != null">
+                AND a.conr_id = #{salesHistorySearchDTO.contractId}
+            </if>
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+        </where>
     </select>
 
     <select id="findSalesHistoryCount" resultType="int">
