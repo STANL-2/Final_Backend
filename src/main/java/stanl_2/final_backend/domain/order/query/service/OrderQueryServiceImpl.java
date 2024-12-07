@@ -52,21 +52,20 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
-        String cacheKey = "myCache::orders::offset=" + offset + "::size=" + pageSize;
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
 
-        // 캐시 조회
-        List<OrderSelectAllDTO> orders = (List<OrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
+        List<OrderSelectAllDTO> orders = orderMapper.findAllOrderByMemberId(offset, pageSize, memberId, sortField, sortOrder);
 
-        if (orders == null) {
-            orders = orderMapper.findAllOrderByMemberId(offset, pageSize, memberId);
-
-            // 결과가 null이거나 빈 리스트인지 확인
-            if (orders == null || orders.isEmpty()) {
-                throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
-            }
-
-            // 캐시에 데이터 저장 (빈 리스트는 저장하지 않음)
-            redisTemplate.opsForValue().set(cacheKey, orders);
+        // 결과가 null이거나 빈 리스트인지 확인
+        if (orders == null || orders.isEmpty()) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
         // 전체 개수 조회
@@ -93,23 +92,58 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OrderSelectSearchDTO> selectSearchOrdersEmployee(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) {
+    public Page<OrderSelectSearchDTO> selectSearchOrdersEmployee(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException {
 
         String memberId = authQueryService.selectMemberIdByLoginId(orderSelectSearchDTO.getMemberId());
         orderSelectSearchDTO.setMemberId(memberId);
 
+        if ("대기".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("WAIT");
+        }
+        if ("승인".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("APPROVED");
+        }
+        if ("취소".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("CANCEL");
+        }
+
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrderByMemberId(offset, pageSize, orderSelectSearchDTO);
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
 
-        if (orders == null || orders.isEmpty()) {
+        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrderByMemberId(offset, pageSize, orderSelectSearchDTO, sortField, sortOrder);
+
+        if (orders == null) {
             throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
-        Integer count = orderMapper.findOrderSearchCountByMemberId(orderSelectSearchDTO);
-        int totalOrder = (count != null) ? count : 0;
+        for (OrderSelectSearchDTO order : orders) {
+            if (order.getMemberId() != null) {
+                String memberName = memberQueryService.selectNameById(order.getMemberId());
+                order.setMemberName(memberName);
+            }
 
-        return new PageImpl<>(orders, pageable, totalOrder);
+            if (order.getAdminId() != null) {
+                String adminName = memberQueryService.selectNameById(order.getAdminId());
+                order.setAdminName(adminName);
+            } else {
+                order.setAdminName("-");
+            }
+        }
+
+        int count = orderMapper.findOrderSearchCountByMemberId(orderSelectSearchDTO);
+        if (count == 0) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        return new PageImpl<>(orders, pageable, count);
     }
 
     // 영업담당자, 영업관리자 조회
@@ -120,21 +154,12 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
-        String cacheKey = "myCache::orders::offset=" + offset + "::size=" + pageSize;
-
         // 캐시 조회
-        List<OrderSelectAllDTO> orders = (List<OrderSelectAllDTO>) redisTemplate.opsForValue().get(cacheKey);
+        List<OrderSelectAllDTO> orders = orderMapper.findAllOrder(offset, pageSize);
 
-        if (orders == null) {
-            orders = orderMapper.findAllOrder(offset, pageSize);
-
-            // 결과가 null이거나 빈 리스트인지 확인
-            if (orders == null || orders.isEmpty()) {
-                throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
-            }
-
-            // 캐시에 데이터 저장 (빈 리스트는 저장하지 않음)
-            redisTemplate.opsForValue().set(cacheKey, orders);
+        // 결과가 null이거나 빈 리스트인지 확인
+        if (orders == null || orders.isEmpty()) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
         }
 
         // 전체 개수 조회
@@ -190,7 +215,6 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         }
 
         for (OrderSelectSearchDTO order : orders) {
-            log.info("dasdas: " + order.getProductName());
             if (order.getMemberId() != null) {
                 String memberName = memberQueryService.selectNameById(order.getMemberId());
                 order.setMemberName(memberName);
@@ -229,5 +253,85 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         }
 
         excelUtilsV1.download(OrderExcelDTO.class, orderExcels, "orderExcel", response);
+    }
+
+    @Override
+    public Page<OrderSelectAllDTO> selectAllCenter(Pageable pageable, String memberId) throws GeneralSecurityException {
+
+        String memberId1 = authQueryService.selectMemberIdByLoginId(memberId);
+        String centerId = memberQueryService.selectMemberInfo(memberId).getCenterId();
+
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+
+        // 캐시 조회
+        List<OrderSelectAllDTO> orders = orderMapper.findAllOrderCenter(offset, pageSize, memberId1, centerId);
+
+        // 결과가 null이거나 빈 리스트인지 확인
+        if (orders == null || orders.isEmpty()) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        // 전체 개수 조회
+        Integer count = orderMapper.findOrderCountCenter();
+        int totalOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(orders, pageable, totalOrder);
+    }
+
+    @Override
+    public Page<OrderSelectSearchDTO> selectSearchOrdersCenter(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException {
+
+        String memberId = authQueryService.selectMemberIdByLoginId(orderSelectSearchDTO.getMemberId());
+        String centerId = memberQueryService.selectMemberInfo(orderSelectSearchDTO.getMemberId()).getCenterId();
+        orderSelectSearchDTO.setMemberId(memberId);
+        orderSelectSearchDTO.setCenterId(centerId);
+
+        if ("대기".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("WAIT");
+        }
+        if ("승인".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("APPROVED");
+        }
+        if ("취소".equals(orderSelectSearchDTO.getStatus())) {
+            orderSelectSearchDTO.setStatus("CANCEL");
+        }
+
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<OrderSelectSearchDTO> orders = orderMapper.findSearchOrderCenter(offset, pageSize, orderSelectSearchDTO, sortField, sortOrder);
+
+        if (orders == null || orders.isEmpty()) {
+            throw new OrderCommonException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        for (OrderSelectSearchDTO order : orders) {
+            if (order.getMemberId() != null) {
+                String memberName = memberQueryService.selectNameById(order.getMemberId());
+                order.setMemberName(memberName);
+            }
+
+            if (order.getAdminId() != null) {
+                String adminName = memberQueryService.selectNameById(order.getAdminId());
+                order.setAdminName(adminName);
+            } else {
+                order.setAdminName("-");
+            }
+        }
+
+        Integer count = orderMapper.findOrderSearchCountCenter(orderSelectSearchDTO);
+        int totalOrder = (count != null) ? count : 0;
+
+        return new PageImpl<>(orders, pageable, totalOrder);
     }
 }

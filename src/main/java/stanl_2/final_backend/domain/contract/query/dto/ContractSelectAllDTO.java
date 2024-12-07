@@ -21,4 +21,26 @@ public class ContractSelectAllDTO {
     private String createdAt;
     private String customerClassifcation;
     private String customerPurchaseCondition;
+    private String customerIdentifiNo;
+    private String customerAddress;
+    private String customerEmail;
+    private String customerPhone;
+    private String serialNum;
+    private String selectOption;
+    private Integer downPayment;
+    private Integer intermediatePayment;
+    private Integer remainderPayment;
+    private Integer consignmentPayment;
+    private String deliveryDate;
+    private String deliveryLocationLoc;
+    private String numberOfVehicles;
+    private String totalSales;
+    private String createdUrl;
+    private String updatedUrl;
+    private boolean active;
+    private String updatedAt;
+    private String deletedAt;
+    private String searchMemberId;
+    private String startAt;
+    private String endAt;
 }

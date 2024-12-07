@@ -41,9 +41,16 @@ public class OrderController {
     })
     @GetMapping("employee")
     public ResponseEntity<OrderResponseMessage> getAllOrderEmployee(Principal principal,
-                                                            @PageableDefault(size = 10)Pageable pageable) {
+                                                            @PageableDefault(size = 10)Pageable pageable,
+                                                               @RequestParam(required = false) String sortField,
+                                                                    @RequestParam(required = false) String sortOrder) {
 
         String loginId = principal.getName();
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<OrderSelectAllDTO> responseOrders = orderQueryService.selectAllEmployee(loginId, pageable);
 
@@ -89,8 +96,10 @@ public class OrderController {
                                                                @RequestParam(required = false) String searchMemberId,
                                                                @RequestParam(required = false) String startDate,
                                                                @RequestParam(required = false) String endDate,
+                                                                       @RequestParam(required = false) String sortField,
+                                                                       @RequestParam(required = false) String sortOrder,
                                                                Principal principal,
-                                                               @PageableDefault(size = 10) Pageable pageable) {
+                                                               @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
 
         OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
         orderSelectSearchDTO.setTitle(title);
@@ -101,6 +110,11 @@ public class OrderController {
         orderSelectSearchDTO.setEndDate(endDate);
         orderSelectSearchDTO.setMemberId(principal.getName());
 
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
+
         Page<OrderSelectSearchDTO> responseOrders = orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable);
 
         return ResponseEntity.ok(OrderResponseMessage.builder()
@@ -110,8 +124,8 @@ public class OrderController {
                 .build());
     }
 
-    // 영업관리자, 영업담당자 조회
-    @Operation(summary = "수주서 전체 조회(영업관리자, 영업담당자)")
+    // 영업담당자 조회
+    @Operation(summary = "수주서 전체 조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 전체 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -128,7 +142,7 @@ public class OrderController {
                 .build());
     }
 
-    @Operation(summary = "수주서 상세 조회(영업관리자, 영업담당자)")
+    @Operation(summary = "수주서 상세 조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 상세 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -148,7 +162,7 @@ public class OrderController {
                 .build());
     }
 
-    @Operation(summary = "수주서 검색 조회(영업관리자, 영업담당자)")
+    @Operation(summary = "수주서 검색 조회(영업담당자)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수주서 검색 조회 성공",
                     content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
@@ -182,6 +196,71 @@ public class OrderController {
         }
 
         Page<OrderSelectSearchDTO> responseOrders = orderQueryService.selectSearchOrders(orderSelectSearchDTO, pageable);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("수주서 검색 조회 성공")
+                .result(responseOrders)
+                .build());
+    }
+
+    // 영업관리자
+    @Operation(summary = "수주서 전체 조회(영업담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 전체 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("center")
+    public ResponseEntity<OrderResponseMessage> getAllOrderCenter(@PageableDefault(size = 10)Pageable pageable,
+                                                                  Principal principal) {
+
+        String memberId = principal.getName();
+        Page<OrderSelectAllDTO> responseOrders = orderQueryService.selectAllCenter(pageable, memberId);
+
+        return ResponseEntity.ok(OrderResponseMessage.builder()
+                .httpStatus(200)
+                .msg("수주서 전체 조회 성공")
+                .result(responseOrders)
+                .build());
+    }
+
+    @Operation(summary = "수주서 검색 조회(영업담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수주서 검색 조회 성공",
+                    content = {@Content(schema = @Schema(implementation = OrderResponseMessage.class))})
+    })
+    @GetMapping("center/search")
+    public ResponseEntity<OrderResponseMessage> getSearchOrderCenter(
+                                                               Principal principal,
+                                                               @RequestParam(required = false) String title,
+                                                               @RequestParam(required = false) String orderId,
+                                                               @RequestParam(required = false) String status,
+                                                               @RequestParam(required = false) String adminId,
+                                                               @RequestParam(required = false) String searchMemberId,
+                                                               @RequestParam(required = false) String startDate,
+                                                               @RequestParam(required = false) String endDate,
+                                                               @RequestParam(required = false) String sortField,
+                                                               @RequestParam(required = false) String sortOrder,
+                                                               @RequestParam(required = false) String productName,
+                                                               @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
+
+        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
+        orderSelectSearchDTO.setTitle(title);
+        orderSelectSearchDTO.setStatus(status);
+        orderSelectSearchDTO.setAdminId(adminId);
+        orderSelectSearchDTO.setSearchMemberId(searchMemberId);
+        orderSelectSearchDTO.setStartDate(startDate);
+        orderSelectSearchDTO.setEndDate(endDate);
+        orderSelectSearchDTO.setProductName(productName);
+        orderSelectSearchDTO.setOrderId(orderId);
+        orderSelectSearchDTO.setMemberId(principal.getName());
+
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
+
+        Page<OrderSelectSearchDTO> responseOrders = orderQueryService.selectSearchOrdersCenter(orderSelectSearchDTO, pageable);
 
         return ResponseEntity.ok(OrderResponseMessage.builder()
                 .httpStatus(200)

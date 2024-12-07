@@ -14,7 +14,7 @@ public interface OrderQueryService {
 
     OrderSelectIdDTO selectDetailOrderEmployee(OrderSelectIdDTO orderSelectIdDTO);
 
-    Page<OrderSelectSearchDTO> selectSearchOrdersEmployee(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable);
+    Page<OrderSelectSearchDTO> selectSearchOrdersEmployee(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException;
 
     Page<OrderSelectAllDTO> selectAll(Pageable pageable);
 
@@ -25,4 +25,8 @@ public interface OrderQueryService {
     String selectByContractId(String orderId);
 
     void exportOrder(HttpServletResponse response);
+
+    Page<OrderSelectAllDTO> selectAllCenter(Pageable pageable, String memberId) throws GeneralSecurityException;
+
+    Page<OrderSelectSearchDTO> selectSearchOrdersCenter(OrderSelectSearchDTO orderSelectSearchDTO, Pageable pageable) throws GeneralSecurityException;
 }

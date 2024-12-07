@@ -4,10 +4,12 @@ import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderStatusModifyDTO;
 
-public interface OrderCommandService {
-    void registerOrder(OrderRegistDTO orderRegistDTO);
+import java.security.GeneralSecurityException;
 
-    OrderModifyDTO modifyOrder(OrderModifyDTO orderModifyDTO);
+public interface OrderCommandService {
+    void registerOrder(OrderRegistDTO orderRegistDTO) throws GeneralSecurityException;
+
+    OrderModifyDTO modifyOrder(OrderModifyDTO orderModifyDTO) throws GeneralSecurityException;
 
     void deleteOrder(String orderId, String loginId);
 
