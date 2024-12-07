@@ -60,6 +60,9 @@ public class Order {
     @Column(name = "MEM_ID", nullable = false)
     private String memberId;
 
+    @Column(name = "CENT_ID", nullable = false)
+    private String centerId;
+
     // Insert 되기 전에 실행
     @PrePersist
     private void prePersist() {

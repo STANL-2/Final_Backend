@@ -20,4 +20,5 @@ public class OrderSelectSearchDTO {
     private String startDate;
     private String endDate;
     private String createdAt;
+    private String centerId;
 }

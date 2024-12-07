@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderAlarmDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderModifyDTO;
 import stanl_2.final_backend.domain.order.command.application.dto.OrderRegistDTO;
@@ -17,6 +18,7 @@ import stanl_2.final_backend.domain.order.common.exception.OrderCommonException;
 import stanl_2.final_backend.domain.order.common.exception.OrderErrorCode;
 import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
+import java.security.GeneralSecurityException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,14 +31,16 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final ModelMapper modelMapper;
     private final S3FileService s3FileService;
     private final AlarmCommandService alarmCommandService;
+    private final MemberQueryService memberQueryService;
 
     public OrderCommandServiceImpl(OrderRepository orderRepository, AuthQueryService authQueryService, ModelMapper modelMapper,
-                                   S3FileService s3FileService ,AlarmCommandService alarmCommandService) {
+                                   S3FileService s3FileService , AlarmCommandService alarmCommandService, MemberQueryService memberQueryService) {
         this.orderRepository = orderRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
         this.s3FileService = s3FileService;
         this.alarmCommandService = alarmCommandService;
+        this.memberQueryService = memberQueryService;
     }
 
     private String  getCurrentTime() {
@@ -46,15 +50,17 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
     @Override
     @Transactional
-    public void registerOrder(OrderRegistDTO orderRegistDTO) {
+    public void registerOrder(OrderRegistDTO orderRegistDTO) throws GeneralSecurityException {
 
         String memberId = authQueryService.selectMemberIdByLoginId(orderRegistDTO.getMemberId());
+        String centerId = memberQueryService.selectMemberInfo(orderRegistDTO.getMemberId()).getCenterId();
 
         String unescapedHtml = StringEscapeUtils.unescapeJson(orderRegistDTO.getContent());
         String updatedS3Url = s3FileService.uploadHtml(unescapedHtml, orderRegistDTO.getTitle());
 
         orderRegistDTO.setMemberId(memberId);
         orderRegistDTO.setContent(updatedS3Url);
+        orderRegistDTO.setCenterId(centerId);
 
         Order order = modelMapper.map(orderRegistDTO, Order.class);
 
@@ -63,9 +69,12 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
     @Override
     @Transactional
-    public OrderModifyDTO modifyOrder(OrderModifyDTO orderModifyDTO) {
+    public OrderModifyDTO modifyOrder(OrderModifyDTO orderModifyDTO) throws GeneralSecurityException {
 
         String memberId = authQueryService.selectMemberIdByLoginId(orderModifyDTO.getMemberId());
+        String centerId = memberQueryService.selectMemberInfo(orderModifyDTO.getMemberId()).getCenterId();
+        orderModifyDTO.setMemberId(memberId);
+        orderModifyDTO.setCenterId(centerId);
 
         Order order = orderRepository.findByOrderIdAndMemberId(orderModifyDTO.getOrderId(), memberId);
 
@@ -83,7 +92,6 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         updateOrder.setUpdatedAt(order.getUpdatedAt());
         updateOrder.setStatus(order.getStatus());
         updateOrder.setActive(order.getActive());
-        updateOrder.setContractId(order.getContractId());
 
         orderRepository.save(updateOrder);
 

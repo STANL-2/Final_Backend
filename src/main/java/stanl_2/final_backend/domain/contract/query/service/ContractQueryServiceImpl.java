@@ -58,33 +58,19 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
 
-        // 정렬 정보 가져오기
-        Sort sort = pageable.getSort();
-        String sortField = null;
-        String sortOrder = null;
-        if (sort.isSorted()) {
-            sortField = sort.iterator().next().getProperty();
-            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
-        }
-
-        String caschKey = "myCache::contracts::offset=" + offset + "::pageSize=" + pageSize;
-
-        List<ContractSelectAllDTO> contracts = (List<ContractSelectAllDTO>) redisTemplate.opsForValue().get(caschKey);
+        List<ContractSelectAllDTO> contracts = contractMapper.findContractAllByMemId(offset, pageSize, memberId);
 
         if (contracts == null) {
-            contracts = contractMapper.findContractAllByMemId(offset, pageSize, memberId, sortField, sortOrder);
-
-            if (contracts == null) {
-                throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
-            }
-
-            redisTemplate.opsForValue().set(caschKey, contracts);
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
-        Integer count = contractMapper.findContractCountByMemId(memberId);
-        int totalContract = (count != null) ? count : 0;
+        int count = contractMapper.findContractCountByMemId(memberId);
 
-        return new PageImpl<>(contracts, pageable, totalContract);
+        if (count == 0) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        return new PageImpl<>(contracts, pageable, count);
     }
 
     // 계약서 상세조회
@@ -105,6 +91,7 @@ public class ContractQueryServiceImpl implements ContractQueryService {
         if (content == null) {
             String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
             responseContract.setCreatedUrl(unescapedHtml);
+            return responseContract;
         }
         responseContract.setCreatedUrl(content);
 
@@ -119,33 +106,25 @@ public class ContractQueryServiceImpl implements ContractQueryService {
 
         if ("대기".equals(contractSearchDTO.getStatus())) {
             contractSearchDTO.setStatus("WAIT");
-        }
-        if ("승인".equals(contractSearchDTO.getStatus())) {
+        } else if ("승인".equals(contractSearchDTO.getStatus())) {
             contractSearchDTO.setStatus("APPROVED");
-        }
-        if ("취소".equals(contractSearchDTO.getStatus())) {
-            contractSearchDTO.setStatus("CANCEL");
-        }
-
-        int offset = Math.toIntExact(pageable.getOffset());
-        int pageSize = pageable.getPageSize();
-        List<ContractSearchDTO> contracts = contractMapper.findContractBySearchAndMemberId(offset, pageSize, contractSearchDTO);
-
-        if (contracts == null) {
-            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        } else if ("취소".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("LEASE");
         }
 
-        Integer count = contractMapper.findContractBySearchAndMemberIdCount(contractSearchDTO);
-        int totalContract = (count != null) ? count : 0;
+        if ("현금".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("CASH");
+        } else if ("할부".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("INSTALLMENT");
+        } else if ("리스".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
+            contractSearchDTO.setCustomerPurchaseCondition("CANCEL");
+        }
 
-        return new PageImpl<>(contracts, pageable, totalContract);
-    }
-
-    // 영업 관리자 조회
-    @Override
-    @Transactional(readOnly = true)
-    public Page<ContractSelectAllDTO> selectAllContractAdmin(ContractSelectAllDTO contractSelectAllDTO, Pageable pageable) throws GeneralSecurityException {
-        String centerId = memberQueryService.selectMemberInfo(contractSelectAllDTO.getMemberId()).getCenterId();
+        if ("개인".equals(contractSearchDTO.getCustomerClassifcation())) {
+            contractSearchDTO.setCustomerClassifcation("PERSONAL");
+        } else if ("법인".equals(contractSearchDTO.getCustomerClassifcation())) {
+            contractSearchDTO.setCustomerClassifcation("BUSINESS");
+        }
 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
@@ -159,18 +138,35 @@ public class ContractQueryServiceImpl implements ContractQueryService {
             sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
         }
 
-        String caschKey = "myCache::contracts::offset=" + offset + "::pageSize=" + pageSize;
-
-        List<ContractSelectAllDTO> contracts = (List<ContractSelectAllDTO>) redisTemplate.opsForValue().get(caschKey);
+        List<ContractSearchDTO> contracts = contractMapper.findContractBySearchAndMemberId(offset, pageSize, contractSearchDTO, sortField, sortOrder);
 
         if (contracts == null) {
-            contracts = contractMapper.findContractAllByCenterId(offset, pageSize, centerId, sortField, sortOrder);
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
 
-            if (contracts == null) {
-                throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
-            }
+        int count = contractMapper.findContractBySearchAndMemberIdCount(contractSearchDTO);
+        if (count == 0) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
 
-            redisTemplate.opsForValue().set(caschKey, contracts);
+        return new PageImpl<>(contracts, pageable, count);
+    }
+
+    // 영업 관리자 조회
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ContractSelectAllDTO> selectAllContractAdmin(ContractSelectAllDTO contractSelectAllDTO, Pageable pageable) throws GeneralSecurityException {
+        String memberId = authQueryService.selectMemberIdByLoginId(contractSelectAllDTO.getMemberId());
+        String centerId = memberQueryService.selectMemberInfo(contractSelectAllDTO.getMemberId()).getCenterId();
+        contractSelectAllDTO.setMemberId(memberId);
+
+        int offset = Math.toIntExact(pageable.getOffset());
+        int pageSize = pageable.getPageSize();
+
+        List<ContractSelectAllDTO> contracts = contractMapper.findContractAllByCenterId(offset, pageSize, centerId);
+
+        if (contracts == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
         Integer count = contractMapper.findContractCountByCenterId(centerId);
@@ -182,13 +178,25 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     @Override
     @Transactional(readOnly = true)
     public ContractSeletIdDTO selectDetailContractAdmin(ContractSeletIdDTO contractSeletIdDTO) throws GeneralSecurityException {
+        String memberId = authQueryService.selectMemberIdByLoginId(contractSeletIdDTO.getMemberId());
         String centerId = memberQueryService.selectMemberInfo(contractSeletIdDTO.getMemberId()).getCenterId();
+
+        contractSeletIdDTO.setMemberId(memberId);
 
         ContractSeletIdDTO responseContract = contractMapper.findContractByIdAndCenterId(contractSeletIdDTO.getContractId(), centerId);
 
-        // 이스케이프된 HTML 제거
-        String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
-        responseContract.setCreatedUrl(unescapedHtml);
+        if (responseContract == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
+
+        String content = updateHistoryQueryService.selectUpdateHistoryByContractId(responseContract.getContractId());
+
+        if (content == null) {
+            String unescapedHtml = StringEscapeUtils.unescapeJson(responseContract.getCreatedUrl());
+            responseContract.setCreatedUrl(unescapedHtml);
+            return responseContract;
+        }
+        responseContract.setCreatedUrl(content);
 
         return responseContract;
     }
@@ -196,16 +204,18 @@ public class ContractQueryServiceImpl implements ContractQueryService {
     @Override
     @Transactional(readOnly = true)
     public Page<ContractSearchDTO> selectBySearchAdmin(ContractSearchDTO contractSearchDTO, Pageable pageable) throws GeneralSecurityException {
+
+        String memberId = authQueryService.selectMemberIdByLoginId(contractSearchDTO.getMemberId());
         String centerId = memberQueryService.selectMemberInfo(contractSearchDTO.getMemberId()).getCenterId();
+
+        contractSearchDTO.setMemberId(memberId);
 
         if ("대기".equals(contractSearchDTO.getStatus())) {
             contractSearchDTO.setStatus("WAIT");
-        }
-        if ("승인".equals(contractSearchDTO.getStatus())) {
+        } else if ("승인".equals(contractSearchDTO.getStatus())) {
             contractSearchDTO.setStatus("APPROVED");
-        }
-        if ("취소".equals(contractSearchDTO.getStatus())) {
-            contractSearchDTO.setStatus("CANCEL");
+        } else if ("취소".equals(contractSearchDTO.getStatus())) {
+            contractSearchDTO.setStatus("LEASE");
         }
 
         if ("현금".equals(contractSearchDTO.getCustomerPurchaseCondition())) {
@@ -216,24 +226,36 @@ public class ContractQueryServiceImpl implements ContractQueryService {
             contractSearchDTO.setCustomerPurchaseCondition("CANCEL");
         }
 
-        if (contractSearchDTO.getCustomerClassifcation().equals("개인")) {
+        if ("개인".equals(contractSearchDTO.getCustomerClassifcation())) {
             contractSearchDTO.setCustomerClassifcation("PERSONAL");
-        } else if (contractSearchDTO.getCustomerClassifcation().equals("법인")) {
+        } else if ("법인".equals(contractSearchDTO.getCustomerClassifcation())) {
             contractSearchDTO.setCustomerClassifcation("BUSINESS");
         }
 
         int offset = Math.toIntExact(pageable.getOffset());
         int pageSize = pageable.getPageSize();
-        List<ContractSearchDTO> contracts = contractMapper.findContractBySearchAndCenterId(offset, pageSize, contractSearchDTO, centerId);
+
+        // 정렬 정보 가져오기
+        Sort sort = pageable.getSort();
+        String sortField = null;
+        String sortOrder = null;
+        if (sort.isSorted()) {
+            sortField = sort.iterator().next().getProperty();
+            sortOrder = sort.iterator().next().isAscending() ? "ASC" : "DESC";
+        }
+
+        List<ContractSearchDTO> contracts = contractMapper.findContractBySearchAndCenterId(offset, pageSize, contractSearchDTO, centerId, sortField, sortOrder);
 
         if (contracts == null) {
             throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
         }
 
-        Integer count = contractMapper.findContractBySearchAndCenterCount(contractSearchDTO, centerId);
-        int totalContract = (count != null) ? count : 0;
+        int count = contractMapper.findContractBySearchAndCenterCount(contractSearchDTO, centerId);
+        if (count == 0) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
 
-        return new PageImpl<>(contracts, pageable, totalContract);
+        return new PageImpl<>(contracts, pageable, count);
     }
 
     // 영업담당자 조회
