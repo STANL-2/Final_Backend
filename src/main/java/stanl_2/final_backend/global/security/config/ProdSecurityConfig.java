@@ -54,7 +54,7 @@ public class ProdSecurityConfig {
 
                 // 필터 순서: JWT 검증 -> CSRF
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), UsernamePasswordAuthenticationFilter.class)
-                            .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())  // Only HTTPS
+                .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())  // Only HTTPS
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             log.error("Authentication error: {}", authException.getMessage());
@@ -76,7 +76,7 @@ public class ProdSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("https://final-frontend-nine.vercel.app/"));
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-XSRF-TOKEN"));

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeDeleteDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModifyDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
@@ -17,6 +18,7 @@ import stanl_2.final_backend.domain.notices.command.application.service.NoticeCo
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @RestController("commandNoticeController")
@@ -28,13 +30,15 @@ public class NoticeController {
 
     private final S3FileServiceImpl s3FileService;
     private final NoticeModifyDTO noticeModifyDTO;
+    private final MemberQueryService memberQueryService;
 
     @Autowired
-    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, NoticeModifyDTO noticeModifyDTO){
+    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, NoticeModifyDTO noticeModifyDTO,MemberQueryService memberQueryService){
         this.noticeModifyDTO = noticeModifyDTO;
         this.noticeCommandService = noticeCommandService;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
+        this.memberQueryService = memberQueryService;
     }
 
     @Operation(summary = "공지사항 작성")
@@ -45,7 +49,7 @@ public class NoticeController {
     @PostMapping(value = "")
     public ResponseEntity<NoticeResponseMessage> postNotice(@RequestPart("dto") NoticeRegistDTO noticeRegistDTO, // JSON 데이터
                                                             @RequestPart(value = "file", required = false)  MultipartFile file,
-                                                            Principal principal){
+                                                            Principal principal) throws GeneralSecurityException {
         String memberLoginId = principal.getName();
         noticeRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
@@ -73,8 +77,11 @@ public class NoticeController {
                                                                 @PathVariable String noticeId,
                                                                 @RequestPart("dto") NoticeModifyDTO noticeModifyDTO, // JSON 데이터
                                                                 @RequestPart(value = "file", required = false)  MultipartFile file,
-                                                                Principal principal){
+                                                                Principal principal) throws GeneralSecurityException {
         String memberLoginId = principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(memberLoginId);
+        memberId=memberQueryService.selectNameById(memberId);
+        noticeModifyDTO.setMemberId(memberId);
         noticeModifyDTO.setMemberLoginId(memberLoginId);
         noticeModifyDTO.setContent(noticeModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {

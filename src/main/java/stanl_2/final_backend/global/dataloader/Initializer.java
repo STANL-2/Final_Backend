@@ -70,6 +70,28 @@ public class Initializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
+        createOrUpdateMember(
+                "godgod",
+                "godgod",
+                "신하늘",
+                "godgod@stanl.com",
+                0,
+                "MALE",
+                "000000-0000000",
+                "010-0000-0000",
+                "서울 동작구 보라매로 87",
+                "시스템 관리자",
+                "중졸",
+                "REGULAR",
+                "미필",
+                "한국은행",
+                "000-0000-000000-00000",
+                "CEN_000000000",
+                "ORG_000000000",
+                "GOD",
+                loadImage("god.png")
+        );
+
         // 우리 계정
         createOrUpdateMember(
                 "god",

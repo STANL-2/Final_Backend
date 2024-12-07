@@ -71,7 +71,6 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
         }
         notices.forEach(notice -> {
             try {
-                notice.setMemberId(memberQueryService.selectNameById(notice.getMemberId()));
             } catch (Exception e) {
                 throw new SalesHistoryCommonException(SalesHistoryErrorCode.MEMBER_NOT_FOUND);
             }

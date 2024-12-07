@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.alarm.command.application.service.AlarmCommandService;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeDeleteDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModifyDTO;
@@ -17,10 +18,9 @@ import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Noti
 import stanl_2.final_backend.domain.notices.command.domain.repository.NoticeRepository;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
-import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
-import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 import stanl_2.final_backend.global.redis.RedisService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -38,16 +38,18 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     private final ModelMapper modelMapper;
     private final AlarmCommandService alarmCommandService;
+    private final MemberQueryService memberQueryService;
 
     @Autowired
     public NoticeCommandServiceImpl(NoticeRepository noticeRepository, ModelMapper modelMapper,
                                     AuthQueryService authQueryService, AlarmCommandService alarmCommandService,
-                                    RedisService redisService) {
+                                    RedisService redisService, MemberQueryService memberQueryService) {
         this.noticeRepository = noticeRepository;
         this.modelMapper = modelMapper;
         this.authQueryService =authQueryService;
         this.alarmCommandService = alarmCommandService;
         this.redisService = redisService;
+        this.memberQueryService = memberQueryService;
     }
 
     private String getCurrentTimestamp() {
@@ -58,10 +60,11 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     @Override
     @Transactional(readOnly = false)
     public void registerNotice(NoticeRegistDTO noticeRegistDTO,
-                               Principal principal) {
+                               Principal principal) throws GeneralSecurityException {
         System.out.println("[Before Cache Clear] Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         redisService.clearNoticeCache();
         String memberId = authQueryService.selectMemberIdByLoginId(noticeRegistDTO.getMemberLoginId());
+        memberId=memberQueryService.selectNameById(memberId);
         noticeRegistDTO.setMemberId(memberId);
         try {
             Notice notice = modelMapper.map(noticeRegistDTO, Notice.class);
@@ -77,11 +80,11 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         }
     }
     @Override
-    public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) {
+    public NoticeModifyDTO modifyNotice(String id, NoticeModifyDTO noticeModifyDTO,Principal principal) throws GeneralSecurityException {
 
         redisService.clearNoticeCache();
         String memberId = authQueryService.selectMemberIdByLoginId(noticeModifyDTO.getMemberLoginId());
-
+        memberId=memberQueryService.selectNameById(memberId);
 
         Notice notice = noticeRepository.findById(id)
                 .orElseThrow(() -> new NoticeCommonException(NoticeErrorCode.NOTICE_NOT_FOUND));
@@ -91,6 +94,8 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         }
         try {
             Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
+            updateNotice.setTag(notice.getTag());//수정예정
+            updateNotice.setClassification(notice.getClassification());//수정예정
             updateNotice.setNoticeId(notice.getNoticeId());
             updateNotice.setMemberId(notice.getMemberId());
             updateNotice.setCreatedAt(notice.getCreatedAt());
