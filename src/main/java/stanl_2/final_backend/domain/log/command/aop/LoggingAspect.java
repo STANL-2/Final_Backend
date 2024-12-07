@@ -79,7 +79,10 @@ public class LoggingAspect {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
+            if (authentication != null && authentication.isAuthenticated() &&
+                    !"anonymousUser".equals(authentication.getPrincipal()) &&
+                    !authentication.getPrincipal().toString().startsWith("stanl_2")
+            ) {
                 loginId = authentication.getPrincipal().toString();
             }
 

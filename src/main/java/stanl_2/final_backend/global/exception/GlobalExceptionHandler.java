@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -112,6 +114,19 @@ public class GlobalExceptionHandler {
             // 유저 정보
             logEntry.setSessionId(safeValue(request.getRequestedSessionId()));
             logEntry.setUserAgent(safeValue(request.getHeader("User-Agent")));
+
+            String loginId = "anonymousUser";
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication != null && authentication.isAuthenticated() &&
+                    !"anonymousUser".equals(authentication.getPrincipal()) &&
+                    !authentication.getPrincipal().toString().startsWith("stanl_2")
+            ) {
+                loginId = authentication.getPrincipal().toString();
+            }
+
+            logEntry.setLoginId(loginId);
 
             // 네트워크 정보
             logEntry.setIpAddress(safeValue(getClientIp(request)));
