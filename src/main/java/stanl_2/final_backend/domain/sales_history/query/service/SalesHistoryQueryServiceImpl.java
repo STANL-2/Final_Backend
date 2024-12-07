@@ -311,8 +311,6 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
         List<SalesHistoryStatisticsDTO> salesHistoryStatisticsDTOList = salesHistoryMapper.findStatisticsSearchYearByEmployee(salesHistorySearchDTO);
 
-        System.out.println("check: " + salesHistoryStatisticsDTOList);
-
         if(salesHistoryStatisticsDTOList == null){
             throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
         }
@@ -396,113 +394,6 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<SalesHistoryRankedDataDTO> selectStatisticsBySearchMonth(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
-        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
-
-        parseStartDate = parseStartDate.substring(0,7);
-        parseEndDate = parseEndDate.substring(0,7);
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearchMonth(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<SalesHistoryRankedDataDTO> selectStatisticsBySearchYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
-        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
-
-        parseStartDate = parseStartDate.substring(0,4);
-        parseEndDate = parseEndDate.substring(0,4);
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearchYear(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsBySearchCountYear(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<SalesHistoryRankedDataDTO> selectStatisticsCenterBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearch(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsCenterBySearchCount(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
-    public Page<SalesHistoryRankedDataDTO> selectStatisticsCenterBySearchMonth(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
-        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
-
-        parseStartDate = parseStartDate.substring(0,7);
-        parseEndDate = parseEndDate.substring(0,7);
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearchMonth(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsCenterBySearchCountMonth(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
-    public Page<SalesHistoryRankedDataDTO> selectStatisticsCenterBySearchYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
-        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
-
-        parseStartDate = parseStartDate.substring(0,4);
-        parseEndDate = parseEndDate.substring(0,4);
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsCenterBySearchYear(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsCenterBySearchCountYear(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
     @Transactional
     public void exportSalesHistoryToExcel(HttpServletResponse response) {
         List<SalesHistoryExcelDownload> salesHistoryList = salesHistoryMapper.findSalesHistoryForExcel();
@@ -535,69 +426,6 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
     @Override
     @Transactional
-    public Page<SalesHistoryRankedDataDTO> selectAllStatisticsByMonth(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
-        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
-
-        parseStartDate = parseStartDate.substring(0,7);
-        parseEndDate = parseEndDate.substring(0,7);
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsByMonth(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
-    @Transactional
-    public Page<SalesHistoryRankedDataDTO> selectAllStatisticsByYear(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        String parseStartDate = salesHistoryRankedDataDTO.getStartDate();
-        String parseEndDate = salesHistoryRankedDataDTO.getEndDate();
-
-        parseStartDate = parseStartDate.substring(0,4);
-        parseEndDate = parseEndDate.substring(0,4);
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsByYear(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
-    @Transactional
-    public Page<SalesHistoryRankedDataDTO> selectAllStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
-        int offset = Math.toIntExact(pageable.getOffset());
-        int size = pageable.getPageSize();
-
-        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findAllStatisticsBySearch(size,offset, salesHistoryRankedDataDTO);
-
-        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
-
-        if(salesHistoryList.isEmpty() || total == 0){
-            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
-        }
-
-        return new PageImpl<>(salesHistoryList, pageable, total);
-    }
-
-    @Override
-    @Transactional
     public String selectSalesHistoryIdByContractId(String contractId) {
 
         String salesHistoryId = salesHistoryMapper.findSalesHistoryIdByContractId(contractId);
@@ -617,7 +445,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
         List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBestBySearch(size,offset, salesHistoryRankedDataDTO);
 
-        int total = salesHistoryMapper.findStatisticsBySearchCountMonth(salesHistoryRankedDataDTO);
+        int total = salesHistoryMapper.findStatisticsBySearchCount(salesHistoryRankedDataDTO);
 
         if(salesHistoryList.isEmpty() || total == 0){
             throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
