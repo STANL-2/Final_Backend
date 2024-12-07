@@ -28,6 +28,9 @@ public class Log {
     @Column(name = "LOG_ID", nullable = false)
     private String logId;
 
+    @Column(name = "LOGIN_ID")
+    private String loginId;
+
     @Column(name = "SESSION_ID", nullable = false)
     private String sessionId;
 
@@ -63,9 +66,6 @@ public class Log {
 
     @Column(name = "ERROR_MESSAGE", columnDefinition = "TEXT")
     private String errorMessage;
-
-    @Column(name = "LOGIN_ID")
-    private String loginId;
 
 
     @PrePersist
