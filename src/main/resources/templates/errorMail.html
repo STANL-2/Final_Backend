@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #d32f2f;
+        }
+        h2 {
+            color: #333333;
+            font-size: 18px;
+        }
+        p {
+            color: #555555;
+            margin: 8px 0;
+        }
+        .info-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #888888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🚨 시스템 에러 알림</h1>
+    <p>안녕하세요,</p>
+    <p>다음과 같은 에러가 발생했습니다. 빠른 확인 및 조치를 부탁드립니다:</p>
+
+    <h2>유저 정보</h2>
+    <div class="info-box">
+        <p><strong>Login ID:</strong> <span th:text="${loginId}">[Login ID]</span></p>
+        <p><strong>Name:</strong> <span th:text="${name}">[Name]</span></p>
+        <p><strong>Position:</strong> <span th:text="${position}">[Position]</span></p>
+        <p><strong>User Agent:</strong> <span th:text="${userAgent}">[User Agent]</span></p>
+    </div>
+
+    <h2>에러 정보</h2>
+    <div class="info-box">
+        <p><strong>상태:</strong> <span th:text="${status}">ERROR</span></p>
+        <p><strong>에러 메시지:</strong> <span th:text="${errorMessage}">[에러 메시지]</span></p>
+    </div>
+
+    <h2>요청 정보</h2>
+    <div class="info-box">
+        <p><strong>URI:</strong> <span th:text="${uri}">[URI]</span></p>
+        <p><strong>Method:</strong> <span th:text="${method}">[Method]</span></p>
+        <p><strong>Query String:</strong> <span th:text="${queryString}">[Query String]</span></p>
+    </div>
+
+    <h2>네트워크 정보</h2>
+    <div class="info-box">
+        <p><strong>IP 주소:</strong> <span th:text="${ipAddress}">[IP Address]</span></p>
+        <p><strong>호스트 이름:</strong> <span th:text="${hostName}">[Host Name]</span></p>
+        <p><strong>포트 번호:</strong> <span th:text="${remotePort}">[Port]</span></p>
+    </div>
+
+    <p>감사합니다.</p>
+</div>
+<div class="footer">
+    <p>이 메일은 STANL2 시스템에서 자동으로 발송된 알림입니다.</p>
+</div>
+</body>
+</html>
