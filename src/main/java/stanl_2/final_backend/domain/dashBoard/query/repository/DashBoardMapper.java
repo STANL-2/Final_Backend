@@ -1,7 +1,7 @@
 package stanl_2.final_backend.domain.dashBoard.query.repository;
 
-import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardDTO;
+import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
 
 public interface DashBoardMapper {
-    DashBoardDTO findDashBoardInfoByMemberId(String memberId);
+    DashBoardAdminDTO findDashBoardInfoByMemberId(String memberId);
 }

@@ -9,12 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.dashBoard.common.response.DashBoardResponseMessage;
-import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardDTO;
+import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
 import stanl_2.final_backend.domain.dashBoard.query.service.DashBoardQueryService;
 
 import java.security.Principal;
@@ -31,17 +30,55 @@ public class DashBoardController {
         this.dashBoardQueryService = dashBoardQueryService;
     }
 
-    @Operation(summary = "대시보드 정보 조회")
+    @Operation(summary = "대시보드 정보 조회 (사원)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "대시보드 조회 성공",
+            @ApiResponse(responseCode = "200", description = "대시보드 조회 성공(사원)",
                     content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
     })
     @GetMapping("")
-    public ResponseEntity<DashBoardResponseMessage> selectDashBoard(Principal principal){
+    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForEmployee(Principal principal){
 
         String memberLoginId = principal.getName();
 
-        DashBoardDTO boardResponseDTO = dashBoardQueryService.selectAllInfo(memberLoginId);
+        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployee(memberLoginId);
+
+        return ResponseEntity.ok(DashBoardResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(boardResponseDTO)
+                .build());
+    }
+
+    @Operation(summary = "대시보드 정보 조회 (관리자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "대시보드 조회 성공(관리자)",
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
+    })
+    @GetMapping("")
+    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForAdmin(Principal principal){
+
+        String memberLoginId = principal.getName();
+
+        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForAdmin(memberLoginId);
+
+        return ResponseEntity.ok(DashBoardResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(boardResponseDTO)
+                .build());
+    }
+
+    @Operation(summary = "대시보드 정보 조회 (담당자)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "대시보드 조회 성공(담당자)",
+                    content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
+    })
+    @GetMapping("/director")
+    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForDirector(Principal principal){
+
+        String memberLoginId = principal.getName();
+
+        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployeeAndAdmin(memberLoginId);
 
         return ResponseEntity.ok(DashBoardResponseMessage.builder()
                 .httpStatus(200)

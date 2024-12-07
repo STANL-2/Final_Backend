@@ -9,13 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class DashBoardDTO {
-
-    private String unreadContract;
-    private String unreadPurchase;
-    private String unreadPurchaseOrder;
-
-    private String noticeTitle;
+public class DashBoardDirectorDTO {
 
     private String memberLoginId;
     private String memberId;

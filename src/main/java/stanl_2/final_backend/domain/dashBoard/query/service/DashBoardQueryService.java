@@ -1,7 +1,9 @@
 package stanl_2.final_backend.domain.dashBoard.query.service;
 
-import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardDTO;
+import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
 
 public interface DashBoardQueryService {
-    DashBoardDTO selectAllInfo(String memberLoginId);
+    DashBoardAdminDTO selectInfoForEmployee(String memberLoginId);
+
+    DashBoardAdminDTO selectInfoForAdmin(String memberLoginId);
 }
