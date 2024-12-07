@@ -1,5 +1,6 @@
 package stanl_2.final_backend.domain.member.query.service;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
+import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
 import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
@@ -20,6 +22,7 @@ import stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO;
 import stanl_2.final_backend.domain.member.query.repository.MemberMapper;
 import stanl_2.final_backend.domain.member.query.repository.MemberRoleMapper;
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
+import stanl_2.final_backend.global.mail.MailService;
 import stanl_2.final_backend.global.utils.AESUtils;
 
 import java.security.GeneralSecurityException;
@@ -36,15 +39,21 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final AESUtils aesUtils;
     private final MemberRoleMapper memberRoleMapper;
     private final ExcelUtilsV1 excelUtilsV1;
+    private final MailService mailService;
 
     @Autowired
-    public MemberQueryServiceImpl(MemberMapper memberMapper, CenterQueryService centerQueryService, AESUtils aesUtils,
-                                  MemberRoleMapper memberRoleMapper, ExcelUtilsV1 excelUtilsV1) {
+    public MemberQueryServiceImpl(MemberMapper memberMapper,
+                                  CenterQueryService centerQueryService,
+                                  AESUtils aesUtils,
+                                  MemberRoleMapper memberRoleMapper,
+                                  ExcelUtilsV1 excelUtilsV1,
+                                  MailService mailService) {
         this.memberMapper = memberMapper;
         this.centerQueryService = centerQueryService;
         this.aesUtils = aesUtils;
         this.memberRoleMapper = memberRoleMapper;
         this.excelUtilsV1 = excelUtilsV1;
+        this.mailService = mailService;
     }
 
     @Override
@@ -134,7 +143,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         for(int i=0;i<memberList.size();i++){
             memberList.get(i).getName();
             MemberDTO member = memberList.get(i);
-            log.info(member.getName());
             member.setName(aesUtils.decrypt(member.getName()));
             memberList.set(i, member);
         }
@@ -247,5 +255,16 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         }
 
         excelUtilsV1.download(MemberExcelDTO.class, memberExcels, "employeeExcel", response);
+    }
+
+    @Override
+    public void sendErrorMail(String loginId, Log logEntry) throws GeneralSecurityException, MessagingException {
+
+        MemberDTO memberDTO = memberMapper.findMemberInfoById(loginId);
+        
+        if("DIRECTOR".equals(memberDTO.getPosition()) || "CEO".equals(memberDTO.getPosition())){
+            mailService.sendErrorEmail("stanl2e2@gmail.com", loginId, aesUtils.decrypt(memberDTO.getName()), memberDTO.getPosition(), logEntry);
+        }
+
     }
 }
