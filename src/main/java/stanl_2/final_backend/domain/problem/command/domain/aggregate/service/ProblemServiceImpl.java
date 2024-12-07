@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
 import stanl_2.final_backend.domain.problem.command.application.dto.ProblemModifyDTO;
@@ -15,12 +16,9 @@ import stanl_2.final_backend.domain.problem.command.domain.aggregate.entity.Prob
 import stanl_2.final_backend.domain.problem.command.domain.aggregate.repository.ProblemRepository;
 import stanl_2.final_backend.domain.problem.common.exception.ProblemCommonException;
 import stanl_2.final_backend.domain.problem.common.exception.ProblemErrorCode;
-import stanl_2.final_backend.domain.promotion.common.exception.PromotionCommonException;
-import stanl_2.final_backend.domain.promotion.common.exception.PromotionErrorCode;
-import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
-import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 import stanl_2.final_backend.global.redis.RedisService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -33,16 +31,20 @@ public class ProblemServiceImpl implements ProblemCommandService {
     private final AuthQueryService authQueryService;
     private final RedisService redisService;
     private final ModelMapper modelMapper;
+    private final MemberQueryService memberQueryService;
+
 
     @Autowired
     public ProblemServiceImpl(ProblemRepository problemRepository,
                               AuthQueryService authQueryService,
                               ModelMapper modelMapper,
-                              RedisService redisService) {
+                              RedisService redisService,
+                              MemberQueryService memberQueryService) {
         this.problemRepository = problemRepository;
         this.modelMapper = modelMapper;
         this.redisService = redisService;
         this.authQueryService =authQueryService;
+        this.memberQueryService = memberQueryService;
     }
     private String getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -52,9 +54,10 @@ public class ProblemServiceImpl implements ProblemCommandService {
     @Transactional
     @Override
     public void registerProblem(ProblemRegistDTO problemRegistDTO,
-                                Principal principal) {
+                                Principal principal) throws GeneralSecurityException {
         redisService.clearProblemCache();
         String memberId = authQueryService.selectMemberIdByLoginId(problemRegistDTO.getMemberLoginId());
+        memberId=memberQueryService.selectNameById(memberId);
         problemRegistDTO.setMemberId(memberId);
         try {
             Problem problem = modelMapper.map(problemRegistDTO, Problem.class);
@@ -69,21 +72,23 @@ public class ProblemServiceImpl implements ProblemCommandService {
 
     @Transactional
     @Override
-    public ProblemModifyDTO modifyProblem(String problemId, ProblemModifyDTO problemModifyDTO,Principal principal) {
+    public ProblemModifyDTO modifyProblem(String problemId, ProblemModifyDTO problemModifyDTO,Principal principal) throws GeneralSecurityException {
         redisService.clearProblemCache();
-        String memberId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(problemModifyDTO.getMemberLoginId());
+        memberId=memberQueryService.selectNameById(memberId);
+
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new ProblemCommonException(ProblemErrorCode.PROBLEM_NOT_FOUND));
-        if(problem.getMemberId().equals(memberId)){
+        if(!problem.getMemberId().equals(memberId)){
             throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
+
         }
         try {
+            System.out.println("test1");
             Problem updateProblem = modelMapper.map(problemModifyDTO, Problem.class);
             updateProblem.setProblemId(problem.getProblemId());
-            updateProblem.setProblemId(problem.getTitle());
-            updateProblem.setProblemId(problem.getContent());
             updateProblem.setMemberId(problem.getMemberId());
-            updateProblem.setStatus("DONE");
+            updateProblem.setStatus(problem.getStatus());
             updateProblem.setCreatedAt(problem.getCreatedAt());
             updateProblem.setActive(problem.getActive());
             updateProblem.setCustomerId(problem.getCustomerId());
