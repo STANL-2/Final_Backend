@@ -93,7 +93,6 @@ public class ProblemServiceImpl implements ProblemCommandService {
             updateProblem.setActive(problem.getActive());
             updateProblem.setCustomerId(problem.getCustomerId());
             updateProblem.setProductId(problem.getProductId());
-
             problemRepository.save(updateProblem);
 
             ProblemModifyDTO problemModify = modelMapper.map(updateProblem,ProblemModifyDTO.class);

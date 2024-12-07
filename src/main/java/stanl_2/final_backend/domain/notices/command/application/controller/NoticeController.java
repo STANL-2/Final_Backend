@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,9 @@ import stanl_2.final_backend.domain.notices.command.application.dto.NoticeDelete
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeModifyDTO;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeRegistDTO;
 import stanl_2.final_backend.domain.notices.command.application.service.NoticeCommandService;
+import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Notice;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
+import stanl_2.final_backend.domain.promotion.command.domain.aggregate.entity.Promotion;
 import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
 
 import java.security.GeneralSecurityException;
@@ -31,14 +34,17 @@ public class NoticeController {
     private final S3FileServiceImpl s3FileService;
     private final NoticeModifyDTO noticeModifyDTO;
     private final MemberQueryService memberQueryService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, NoticeModifyDTO noticeModifyDTO,MemberQueryService memberQueryService){
+    public NoticeController(NoticeCommandService noticeCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService, NoticeModifyDTO noticeModifyDTO,
+                            MemberQueryService memberQueryService, ModelMapper modelMapper){
         this.noticeModifyDTO = noticeModifyDTO;
         this.noticeCommandService = noticeCommandService;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
         this.memberQueryService = memberQueryService;
+        this.modelMapper = modelMapper;
     }
 
     @Operation(summary = "공지사항 작성")
@@ -84,11 +90,20 @@ public class NoticeController {
         noticeModifyDTO.setMemberId(memberId);
         noticeModifyDTO.setMemberLoginId(memberLoginId);
         noticeModifyDTO.setContent(noticeModifyDTO.getContent());
+        Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
+        System.out.println("1."+updateNotice.getFileUrl());
+        if(noticeModifyDTO.getFileUrl()==null){
+            System.out.println("테스트중");
+            noticeModifyDTO.setFileUrl(updateNotice.getFileUrl());
+        }
         if (file != null && !file.isEmpty()) {
+            System.out.println("1번");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }else if(file==null || file.isEmpty()) {
-            noticeModifyDTO.setFileUrl(null);
+            System.out.println("2번");
+            noticeModifyDTO.setFileUrl(updateNotice.getFileUrl());
         } else {
+            System.out.println("3번");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }
         noticeCommandService.modifyNotice(noticeId,noticeModifyDTO, principal);
