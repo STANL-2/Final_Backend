@@ -87,7 +87,7 @@ public class RequestMatcherConfig {
                 // Contract API (General)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract").hasAnyRole("contract-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/search").hasAnyRole("contract-search-get", "GOD", "DIRECTOR")
-                .requestMatchers(HttpMethod.GET, "/api/v1/contract/{contractId}").hasAnyRole("contract-id-get", "GOD", "DIRECTOR")
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/{contractId}").hasAnyRole("contract-id-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/contract/status/{contractId}").hasAnyRole("contract-status-id-put", "GOD", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/excel").hasAnyRole("contract-excel-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN")
 
@@ -104,7 +104,7 @@ public class RequestMatcherConfig {
 
                 // Order API (Search and Excel)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order").hasAnyRole("order-get", "GOD", "DIRECTOR")
-                .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR")
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR", "EMPLOYEE", "EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/search").hasAnyRole("order-search-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/excel").hasAnyRole("order-excel-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN")
 
@@ -121,7 +121,7 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/purchase-order/{purchaseOrderId}").hasAnyRole("purchase-order-delete", "GOD", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order").hasAnyRole("purchase-order-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/search").hasAnyRole("purchase-order-search-get", "GOD", "DIRECTOR")
-                .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/{purchaseOrderId}").hasAnyRole("purchase-order-id-get", "GOD", "DIRECTOR")
+                .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/{purchaseOrderId}").hasAnyRole("purchase-order-id-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/excel").hasAnyRole("purchase-order-excel-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/purchase-order/status/{purchaseOrderId}").hasAnyRole("purchase-order-status-put", "GOD", "DIRECTOR")
 
