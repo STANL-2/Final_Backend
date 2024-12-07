@@ -28,6 +28,7 @@ public class ContractModifyDTO {
     private String selectOption;
     private Integer downPayment;
     private Integer intermediatePayment;
+    private Integer vehiclePrice;
     private Integer remainderPayment;
     private Integer consignmentPayment;
     private Integer totalSales;
