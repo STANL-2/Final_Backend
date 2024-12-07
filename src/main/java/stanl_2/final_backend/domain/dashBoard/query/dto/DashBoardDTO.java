@@ -14,6 +14,9 @@ public class DashBoardDTO {
     private String unreadContract;
     private String unreadPurchase;
     private String unreadPurchaseOrder;
+
+    private String noticeTitle;
+
     private String memberLoginId;
     private String memberId;
 }
