@@ -11,11 +11,12 @@ import lombok.Setter;
 @Setter
 public class DashBoardAdminDTO {
 
-    private String unreadContract;
-    private String unreadPurchase;
-    private String unreadPurchaseOrder;
+    private Integer unreadContract;
+    private Integer unreadOrder;
+    private Integer unreadPurchaseOrder;
 
     private String noticeTitle;
+    private Integer totalPrice;
 
     private String memberLoginId;
     private String memberId;

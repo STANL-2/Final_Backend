@@ -11,9 +11,9 @@ import lombok.Setter;
 @Setter
 public class DashBoardEmployeeDTO {
 
-    private String unreadContract;
-    private String unreadPurchase;
-    private String unreadPurchaseOrder;
+    private Integer unreadContract;
+    private Integer unreadOrder;
+    private Integer unreadPurchaseOrder;
 
     private String noticeTitle;
 

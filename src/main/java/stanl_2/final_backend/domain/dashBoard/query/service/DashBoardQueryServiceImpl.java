@@ -63,7 +63,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
     @Transactional(readOnly = true)
     public DashBoardAdminDTO selectInfoForEmployee(String memberLoginId) {
 
-
+        DashBoardAdminDTO dashBoardAdminDTO = new DashBoardAdminDTO();
         String memberId = authQueryService.selectMemberIdByLoginId(memberLoginId);
         // Pageable을 null로 전달하거나 유효한 Pageable 사용
         Pageable pageable = Pageable.unpaged();
@@ -78,6 +78,8 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         contractSearchDTO.setStartAt(startAt);
         contractSearchDTO.setEndAt(endAt);
         Integer unreadContract = contractQueryService.selectBySearchEmployee(contractSearchDTO, pageable).getNumberOfElements();
+        dashBoardAdminDTO.setUnreadContract(unreadContract);
+
 
         // 이번달 Order 받아오기
         OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
@@ -85,6 +87,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         orderSelectSearchDTO.setStartDate(startAt);
         orderSelectSearchDTO.setEndDate(endAt);
         Integer unreadOrder = orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable).getNumberOfElements();
+        dashBoardAdminDTO.setUnreadOrder(unreadOrder);
 
         // 이번달 판매내역 받아오기
         ArrayList memberList = new ArrayList();
@@ -96,6 +99,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         salesHistorySearchDTO.setEndDate(endAt);
         Page<SalesHistorySelectDTO> resultPage = salesHistoryQueryService.selectSalesHistorySearchByEmployee(salesHistorySearchDTO, pageable);
         Integer totalPrice = resultPage.getContent().isEmpty() ? null : resultPage.getContent().get(0).getSalesHistoryTotalSales();
+        dashBoardAdminDTO.setTotalPrice(totalPrice);
 
         // 이번달 내 고객 순위 조회
 
