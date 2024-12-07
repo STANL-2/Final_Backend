@@ -21,5 +21,7 @@ public class SalesHistorySearchDTO {
     private String customerName;
     private List<String> customerList;
     private List<String> productList;
+    private List<String> contractList;
     private String contractId;
+    private String productId;
 }

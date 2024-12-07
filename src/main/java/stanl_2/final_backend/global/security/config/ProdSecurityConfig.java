@@ -20,6 +20,7 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
 import stanl_2.final_backend.global.security.filter.JWTTokenValidatorFilter;
@@ -37,11 +38,14 @@ public class ProdSecurityConfig {
     @Value("${jwt.secret-key}")
     private String jwtSecretKey;
 
-    private LogRepository logRepository;
+    private final LogRepository logRepository;
+    private final MemberQueryService memberQueryService;
 
     @Autowired
-    public ProdSecurityConfig(LogRepository logRepository) {
+    public ProdSecurityConfig(LogRepository logRepository,
+                              MemberQueryService memberQueryService) {
         this.logRepository = logRepository;
+        this.memberQueryService = memberQueryService;
     }
 
     @Bean
@@ -52,7 +56,7 @@ public class ProdSecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 // 필터 순서: JWT 검증 -> CSRF
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtSecretKey, logRepository, memberQueryService), UsernamePasswordAuthenticationFilter.class)
                 .requiresChannel(rcc -> rcc.anyRequest().requiresInsecure())
                 // 인증 및 권한 예외를 처리
                 .exceptionHandling(ex -> ex

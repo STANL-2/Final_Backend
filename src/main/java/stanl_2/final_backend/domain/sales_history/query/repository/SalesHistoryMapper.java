@@ -46,35 +46,7 @@ public interface SalesHistoryMapper {
 
     int findStatisticsBySearchCount(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
-    List<SalesHistoryRankedDataDTO> findStatisticsCenterBySearch(@Param("size") int size
-                                                           , @Param("offset") int offset,
-                                                             @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    int findStatisticsCenterBySearchCount(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    List<SalesHistoryRankedDataDTO> findStatisticsBySearchMonth(@Param("size") int size
-                                                            , @Param("offset") int offset,
-                                                                @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
     int findStatisticsBySearchCountMonth(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    List<SalesHistoryRankedDataDTO> findStatisticsBySearchYear(@Param("size") int size
-                                                            , @Param("offset") int offset,
-                                                               @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    int findStatisticsBySearchCountYear(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    List<SalesHistoryRankedDataDTO> findStatisticsCenterBySearchMonth(@Param("size") int size
-                                                                    , @Param("offset") int offset,
-                                                                      @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    int findStatisticsCenterBySearchCountMonth(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    List<SalesHistoryRankedDataDTO> findStatisticsCenterBySearchYear(@Param("size") int size
-                                                                    , @Param("offset") int offset,
-                                                                     @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    int findStatisticsCenterBySearchCountYear(@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     List<SalesHistorySelectDTO> findSalesHistorySearchByEmployee(@Param("size") int size
                                                                 , @Param("offset") int offset,
@@ -97,18 +69,6 @@ public interface SalesHistoryMapper {
             ,@Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     List<SalesHistoryExcelDownload> findSalesHistoryForExcel();
-
-    List<SalesHistoryRankedDataDTO> findAllStatisticsByMonth(@Param("size") int size
-            , @Param("offset") int offset,
-                                                             @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    List<SalesHistoryRankedDataDTO> findAllStatisticsByYear(@Param("size") int size
-            , @Param("offset") int offset,
-                                                            @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
-
-    List<SalesHistoryRankedDataDTO> findAllStatisticsBySearch(@Param("size") int size
-            , @Param("offset") int offset,
-                                                              @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 
     String findSalesHistoryIdByContractId(@Param("contractId") String contractId);
 
