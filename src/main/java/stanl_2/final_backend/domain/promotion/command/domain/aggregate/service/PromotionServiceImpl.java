@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeCommonException;
 import stanl_2.final_backend.domain.notices.common.exception.NoticeErrorCode;
 import stanl_2.final_backend.domain.problem.common.exception.ProblemCommonException;
@@ -19,6 +20,7 @@ import stanl_2.final_backend.domain.promotion.common.exception.PromotionCommonEx
 import stanl_2.final_backend.domain.promotion.common.exception.PromotionErrorCode;
 import stanl_2.final_backend.global.redis.RedisService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -32,13 +34,15 @@ public class PromotionServiceImpl implements PromotionCommandService {
 
     private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
+    private final MemberQueryService memberQueryService;
 
     @Autowired
-    public PromotionServiceImpl(PromotionRepository promotionRepository, ModelMapper modelMapper,RedisService redisService, AuthQueryService authQueryService) {
+    public PromotionServiceImpl(PromotionRepository promotionRepository, ModelMapper modelMapper,RedisService redisService, AuthQueryService authQueryService, MemberQueryService memberQueryService) {
         this.redisService = redisService;
         this.promotionRepository = promotionRepository;
         this.authQueryService = authQueryService;
         this.modelMapper = modelMapper;
+        this.memberQueryService =memberQueryService;
     }
     private String getCurrentTimestamp() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -47,9 +51,10 @@ public class PromotionServiceImpl implements PromotionCommandService {
 
     @Transactional
     @Override
-    public void registerPromotion(PromotionRegistDTO promotionRegistDTO, Principal principal) {
+    public void registerPromotion(PromotionRegistDTO promotionRegistDTO, Principal principal) throws GeneralSecurityException {
         redisService.clearPromotionCache();
         String memberId = authQueryService.selectMemberIdByLoginId(promotionRegistDTO.getMemberLoginId());
+        memberId=memberQueryService.selectNameById(memberId);
         promotionRegistDTO.setMemberId(memberId);
         try {
             Promotion promotion =modelMapper.map(promotionRegistDTO,Promotion.class);
@@ -64,12 +69,14 @@ public class PromotionServiceImpl implements PromotionCommandService {
 
     @Transactional
     @Override
-    public PromotionModifyDTO modifyPromotion(String promotionId, PromotionModifyDTO promotionModifyDTO, Principal principal) {
+    public PromotionModifyDTO modifyPromotion(String promotionId, PromotionModifyDTO promotionModifyDTO, Principal principal) throws GeneralSecurityException {
         redisService.clearPromotionCache();
-        String memberId= principal.getName();
+        String memberId=authQueryService.selectMemberIdByLoginId(promotionModifyDTO.getMemberLoginId());
+        memberId=memberQueryService.selectNameById(memberId);
+
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
-        if(promotion.getMemberId().equals(memberId)){
+        if(!promotion.getMemberId().equals(memberId)){
             throw new ProblemCommonException(ProblemErrorCode.AUTHORIZATION_VIOLATION);
         }
         try {

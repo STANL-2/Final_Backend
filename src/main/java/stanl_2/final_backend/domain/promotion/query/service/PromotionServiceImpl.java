@@ -55,7 +55,6 @@ public class PromotionServiceImpl implements PromotionService{
         }
         promotions.forEach(promotion -> {
             try {
-                promotion.setMemberId(memberQueryService.selectNameById(promotion.getMemberId()));
             } catch (Exception e) {
                 throw new SalesHistoryCommonException(SalesHistoryErrorCode.MEMBER_NOT_FOUND);
             }

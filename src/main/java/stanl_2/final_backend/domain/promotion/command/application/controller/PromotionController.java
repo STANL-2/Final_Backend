@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionModifyDTO;
 import stanl_2.final_backend.domain.promotion.command.application.dto.PromotionRegistDTO;
 import stanl_2.final_backend.domain.promotion.command.application.service.PromotionCommandService;
 import stanl_2.final_backend.domain.promotion.common.response.PromotionResponseMessage;
 import stanl_2.final_backend.domain.s3.command.domain.service.S3FileServiceImpl;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @RestController("commandPromotionController")
@@ -24,12 +26,14 @@ public class PromotionController {
     private final PromotionCommandService promotionCommandService;
     private final AuthQueryService authQueryService;
     private final S3FileServiceImpl s3FileService;
+    private final MemberQueryService memberQueryService;
 
     @Autowired
-    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService) {
+    public PromotionController(PromotionCommandService promotionCommandService, AuthQueryService authQueryService, S3FileServiceImpl s3FileService,MemberQueryService memberQueryService) {
         this.promotionCommandService = promotionCommandService;
         this.authQueryService =authQueryService;
         this.s3FileService = s3FileService;
+        this.memberQueryService =memberQueryService;
     }
 
     @Operation(summary = "프로모션 작성")
@@ -40,7 +44,7 @@ public class PromotionController {
     @PostMapping("")
     public ResponseEntity<PromotionResponseMessage> postNotice(@RequestPart("dto") PromotionRegistDTO promotionRegistDTO, // JSON 데이터
                                                                @RequestPart(value = "file", required = false)  MultipartFile file,
-                                                               Principal principal){
+                                                               Principal principal) throws GeneralSecurityException {
         String memberLoginId = principal.getName();
         promotionRegistDTO.setMemberLoginId(memberLoginId);
         if (file != null && !file.isEmpty()) {
@@ -67,9 +71,12 @@ public class PromotionController {
                                                                 @PathVariable String promotionId,
                                                                 @RequestPart("dto") PromotionModifyDTO promotionModifyDTO,
                                                                 @RequestPart(value = "file", required = false)  MultipartFile file,
-                                                                Principal principal){
+                                                                Principal principal) throws GeneralSecurityException {
         String memberLoginId = principal.getName();
-        promotionModifyDTO.setMemberId(memberLoginId);
+        String memberId = authQueryService.selectMemberIdByLoginId(memberLoginId);
+        memberId=memberQueryService.selectNameById(memberId);
+        promotionModifyDTO.setMemberId(memberId);
+        promotionModifyDTO.setMemberLoginId(memberLoginId);
         promotionModifyDTO.setContent(promotionModifyDTO.getContent());
         if (file != null && !file.isEmpty()) {
             promotionModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
