@@ -1,6 +1,7 @@
 package stanl_2.final_backend.domain.dashBoard.query.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,15 @@ import stanl_2.final_backend.domain.notices.query.service.NoticeService;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import stanl_2.final_backend.domain.order.query.service.OrderQueryService;
 import stanl_2.final_backend.domain.purchase_order.query.service.PurchaseOrderQueryService;
+import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySearchDTO;
+import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
 import stanl_2.final_backend.domain.sales_history.query.service.SalesHistoryQueryService;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service("queryDashBoardService")
@@ -82,10 +87,21 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         Integer unreadOrder = orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable).getNumberOfElements();
 
         // 이번달 판매내역 받아오기
+        ArrayList memberList = new ArrayList();
+        memberList.add(memberId);
+
+        SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
+        salesHistorySearchDTO.setMemberList(memberList);
+        salesHistorySearchDTO.setStartDate(startAt);
+        salesHistorySearchDTO.setEndDate(endAt);
+        Page<SalesHistorySelectDTO> resultPage = salesHistoryQueryService.selectSalesHistorySearchByEmployee(salesHistorySearchDTO, pageable);
+        Integer totalPrice = resultPage.getContent().isEmpty() ? null : resultPage.getContent().get(0).getSalesHistoryTotalSales();
 
         // 이번달 내 고객 순위 조회
 
+
         // 이번달 판매사원 순위
+
 
         // 공지사항
 
