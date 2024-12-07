@@ -1,8 +1,10 @@
 package stanl_2.final_backend.domain.member.query.service;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO;
 
@@ -15,6 +17,7 @@ public interface MemberQueryService {
     List<String> selectMemberByRole(String role);
 
     List<MemberDTO> selectMemberByCenterId(String centerId);
+
     List<MemberDTO> selectMemberByCenterList(List<String> centerList);
 
     String selectNameById(String memberId) throws GeneralSecurityException;
@@ -28,6 +31,8 @@ public interface MemberQueryService {
     Page<MemberSearchDTO> selectMemberBySearch(Pageable pageable, MemberSearchDTO memberSearchDTO) throws GeneralSecurityException;
 
     void exportCustomerToExcel(HttpServletResponse response) throws GeneralSecurityException;
+
+    void sendErrorMail(String loginId, Log logEntry) throws GeneralSecurityException, MessagingException;
 
 //    MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException;
 }

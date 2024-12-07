@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.global.exception.GlobalCommonException;
 import stanl_2.final_backend.global.exception.GlobalErrorCode;
 
@@ -34,10 +35,14 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     private final String jwtSecretKey;
     private final LogRepository logRepository; // 로그 저장소
+    private final MemberQueryService memberQueryService;
 
-    public JWTTokenValidatorFilter(String jwtSecretKey, LogRepository logRepository) {
+    public JWTTokenValidatorFilter(String jwtSecretKey,
+                                   LogRepository logRepository,
+                                   MemberQueryService memberQueryService) {
         this.jwtSecretKey = jwtSecretKey;
         this.logRepository = logRepository; // DI 주입
+        this.memberQueryService = memberQueryService;
     }
 
     @Override
@@ -148,6 +153,13 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
             logEntry.setTransactionId(transactionId);
 
             logRepository.save(logEntry);
+
+            // 임원 일시 메일 전송
+            String pos =  memberQueryService.selectMemberInfo(loginId).getPosition();
+
+            if("DIRECTOR".equals(pos) || "CEO".equals(pos)){
+                memberQueryService.sendErrorMail(loginId, logEntry);
+            }
 
         } catch (Exception ex) {
             log.error("로그 저장 실패: {}", ex.getMessage());

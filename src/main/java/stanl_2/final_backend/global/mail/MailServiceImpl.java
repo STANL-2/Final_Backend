@@ -2,6 +2,7 @@ package stanl_2.final_backend.global.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,10 +11,12 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.global.redis.RedisService;
 
 import java.security.SecureRandom;
 
+@Slf4j
 @Service(value = "MailService")
 public class MailServiceImpl implements MailService {
 
@@ -87,6 +90,44 @@ public class MailServiceImpl implements MailService {
         return templateEngine.process("pwdMail", context);
     }
 
+    private String setErrorContext(String loginId, String name, String position, Log logEntry) {
+        // Thymeleaf Context 생성
+        Context context = new Context();
+        TemplateEngine templateEngine = new TemplateEngine();
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+
+        if("DIRECTOR".equals(position)){
+            position = "임원";
+        } else {
+            position = "대표이사";
+        }
+        // 매개변수 저장
+        context.setVariable("loginId", loginId);
+        context.setVariable("name", name);
+        context.setVariable("position", position);
+        context.setVariable("status", logEntry.getStatus());
+        context.setVariable("errorMessage", logEntry.getErrorMessage());
+        context.setVariable("uri", logEntry.getUri());
+        context.setVariable("method", logEntry.getMethod());
+        context.setVariable("queryString", logEntry.getQueryString());
+        context.setVariable("userAgent", logEntry.getUserAgent());
+        context.setVariable("ipAddress", logEntry.getIpAddress());
+        context.setVariable("hostName", logEntry.getHostName());
+        context.setVariable("remotePort", logEntry.getRemotePort());
+
+        // Thymeleaf 템플릿 설정
+        templateResolver.setPrefix("templates/"); // 템플릿 디렉토리 설정
+        templateResolver.setSuffix(".html"); // 파일 확장자 설정
+        templateResolver.setTemplateMode(TemplateMode.HTML); // 템플릿 모드 설정
+        templateResolver.setCacheable(false); // 캐싱 비활성화
+
+        // 템플릿 엔진에 리졸버 설정
+        templateEngine.setTemplateResolver(templateResolver);
+
+        // `errorMail.html` 파일 처리 및 반환
+        return templateEngine.process("errorMail", context);
+    }
+
     private MimeMessage createEmailForm(String email) throws MessagingException {
 
         String authCode = createCode();
@@ -116,6 +157,19 @@ public class MailServiceImpl implements MailService {
         return message;
     }
 
+    private MimeMessage createErrorEmailForm(String email, String loginId, String name, String position, Log logEntry) throws MessagingException {
+        // MimeMessage 객체 생성
+        MimeMessage message = mailSender.createMimeMessage();
+
+        // 이메일 수신자, 제목 설정
+        message.addRecipients(MimeMessage.RecipientType.TO, email);
+        message.setSubject("🚨 STANL2 시스템 에러 알림");
+        message.setFrom(configEmail);
+        message.setText(setErrorContext(loginId, name, position, logEntry), "utf-8", "html");
+
+        return message;
+    }
+
     /* 만든 메일 전송 */
     @Override
     public void sendEmail(String toEmail) throws MessagingException {
@@ -134,6 +188,14 @@ public class MailServiceImpl implements MailService {
     public void sendPwdEmail(String email, StringBuilder password) throws MessagingException {
 
         MimeMessage emailForm = createNewPwdEmailForm(email, password.toString());
+
+        mailSender.send(emailForm);
+    }
+
+    @Override
+    public void sendErrorEmail(String email, String loginId, String name, String position, Log logEntry) throws MessagingException {
+
+        MimeMessage emailForm = createErrorEmailForm(email, loginId, name, position, logEntry);
 
         mailSender.send(emailForm);
     }

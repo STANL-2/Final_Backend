@@ -18,6 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.log.command.repository.LogRepository;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +28,14 @@ import java.util.UUID;
 @RestControllerAdvice(basePackages = "stanl_2.final_backend")
 public class GlobalExceptionHandler {
 
-    private LogRepository logRepository;
+    private final LogRepository logRepository;
+    private final MemberQueryService memberQueryService;
 
     @Autowired
-    public GlobalExceptionHandler(LogRepository logRepository) {
+    public GlobalExceptionHandler(LogRepository logRepository,
+                                  MemberQueryService memberQueryService) {
         this.logRepository = logRepository;
+        this.memberQueryService = memberQueryService;
     }
 
     @ExceptionHandler({NoHandlerFoundException.class, HttpRequestMethodNotSupportedException.class})
@@ -138,6 +142,14 @@ public class GlobalExceptionHandler {
             logEntry.setTransactionId(transactionId);
 
             logRepository.save(logEntry);
+
+            // 임원 일시 메일 전송
+            String pos =  memberQueryService.selectMemberInfo(loginId).getPosition();
+
+            if("DIRECTOR".equals(pos) || "CEO".equals(pos)){
+                memberQueryService.sendErrorMail(loginId, logEntry);
+            }
+
         } catch (Exception ex) {
             log.error("로그 저장 중 오류 발생: {}", ex.getMessage(), ex);
         }

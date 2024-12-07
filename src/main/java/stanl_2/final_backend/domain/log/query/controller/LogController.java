@@ -67,7 +67,7 @@ public class LogController {
 
         LogSearchDTO searchLogDTO = new LogSearchDTO(logId, loginId, ipAddress, requestTime_start, requestTime_end, status, method, uri);
         Page<LogDTO> logDTOPage = logQueryService.selectLogs(pageable, searchLogDTO);
-        
+
         return ResponseEntity.ok(LogResponseMessage.builder()
                                                     .httpStatus(200)
                                                     .result(logDTOPage)
