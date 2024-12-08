@@ -213,8 +213,10 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
 
         // 계약 조회
-        Contract contract = (Contract)contractRepository.findByContractIdAndMemberId(contractModifyRequestDTO.getContractId(), memberId)
-                .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
+        Contract contract = (Contract)contractRepository.findByContractId(contractModifyRequestDTO.getContractId());
+        if (contract == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
 
         // 계약 생성
 
@@ -267,10 +269,11 @@ public class ContractCommandServiceImpl implements ContractCommandService {
     @Transactional
     public void deleteContract(ContractDeleteDTO contractDeleteDTO) {
 
-        String memberId = authQueryService.selectMemberIdByLoginId(contractDeleteDTO.getMemberId());
+        Contract contract = (Contract) contractRepository.findByContractId(contractDeleteDTO.getContractId());
 
-        Contract contract = (Contract) contractRepository.findByContractIdAndMemberId(contractDeleteDTO.getContractId(), memberId)
-                .orElseThrow(() -> new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND));
+        if (contract == null) {
+            throw new ContractCommonException(ContractErrorCode.CONTRACT_NOT_FOUND);
+        }
 
         contract.setActive(false);
         contract.setDeletedAt(getCurrentTime());

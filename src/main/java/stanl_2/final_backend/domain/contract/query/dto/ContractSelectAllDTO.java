@@ -41,6 +41,6 @@ public class ContractSelectAllDTO {
     private String updatedAt;
     private String deletedAt;
     private String searchMemberId;
-    private String startAt;
-    private String endAt;
+    private String startDate;
+    private String endDate;
 }
