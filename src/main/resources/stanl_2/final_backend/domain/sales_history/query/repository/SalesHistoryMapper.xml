@@ -732,10 +732,10 @@
         a.created_at,
         <choose>
             <!-- 그룹화 처리 -->
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee' or (salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0)">
                 COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
             </when>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center' or (salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0)">
                 COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
             </when>
             <otherwise>
@@ -936,10 +936,10 @@
         a.created_at,
         <choose>
             <!-- 그룹화 처리 -->
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee' or (salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0)">
                 COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
             </when>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center' or (salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0)">
                 COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
             </when>
             <otherwise>
