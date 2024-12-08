@@ -88,6 +88,12 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         String startAt = getCurrentTime().substring(0, 7) + "-01";
         String endAt = getCurrentTime().substring(0,10);
 
+        LocalDate date = LocalDate.parse(endAt);
+        LocalDate nextDate = date.plusDays(1);
+        // 프론트에서 +1 처리했기 떄문에 따로 백에서 처리
+        String salesEndAt = nextDate.toString();
+
+
         // 이번달 Contract 받아오기
         ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
         contractSearchDTO.setMemberId(memberLoginId);
@@ -109,7 +115,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
         salesHistorySearchDTO.setSearcherName(memberLoginId);
         salesHistorySearchDTO.setStartDate(startAt);
-        salesHistorySearchDTO.setEndDate(endAt);
+        salesHistorySearchDTO.setEndDate(salesEndAt);
 
         SalesHistoryStatisticsDTO resultStatistics = salesHistoryQueryService.selectStatisticsSearchByEmployee(salesHistorySearchDTO);
         Integer totalPrice = resultStatistics.getTotalSales();
@@ -134,7 +140,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         salesHistoryRankedDataDTO.setCenterList(centerList);
         salesHistoryRankedDataDTO.setPeriod("month");
         salesHistoryRankedDataDTO.setStartDate(startAt);
-        salesHistoryRankedDataDTO.setEndDate(endAt);
+        salesHistoryRankedDataDTO.setEndDate(salesEndAt);
         salesHistoryRankedDataDTO.setGroupBy("employee");
         salesHistoryRankedDataDTO.setOrderBy("totalSales");
 
@@ -180,6 +186,11 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         String startAt = getCurrentTime().substring(0, 7) + "-01";
         String endAt = getCurrentTime().substring(0,10);
 
+        LocalDate date = LocalDate.parse(endAt);
+        LocalDate nextDate = date.plusDays(1);
+        // 프론트에서 +1 처리했기 떄문에 따로 백에서 처리
+        String salesEndAt = nextDate.toString();
+
         // 이번달 Contract 받아오기
         ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
         contractSearchDTO.setMemberId(memberLoginId);
@@ -210,7 +221,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
         salesHistorySearchDTO.setSearcherName(memberLoginId);
         salesHistorySearchDTO.setStartDate(startAt);
-        salesHistorySearchDTO.setEndDate(endAt);
+        salesHistorySearchDTO.setEndDate(salesEndAt);
 
         SalesHistoryStatisticsDTO resultStatistics = salesHistoryQueryService.selectStatisticsSearchByEmployee(salesHistorySearchDTO);
         Integer totalPrice = resultStatistics.getTotalSales();
@@ -225,7 +236,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         salesHistoryRankedDataDTO.setCenterList(centerList);
         salesHistoryRankedDataDTO.setPeriod("month");
         salesHistoryRankedDataDTO.setStartDate(startAt);
-        salesHistoryRankedDataDTO.setEndDate(endAt);
+        salesHistoryRankedDataDTO.setEndDate(salesEndAt);
         salesHistoryRankedDataDTO.setGroupBy("employee");
         salesHistoryRankedDataDTO.setOrderBy("totalSales");
 
@@ -268,6 +279,11 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         String startAt = getCurrentTime().substring(0, 7) + "-01";
         String endAt = getCurrentTime().substring(0,10);
 
+        LocalDate date = LocalDate.parse(endAt);
+        LocalDate nextDate = date.plusDays(1);
+        // 프론트에서 +1 처리했기 떄문에 따로 백에서 처리
+        String salesEndAt = nextDate.toString();
+
         // 승인되지 않은 발주서 건수
         PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
         purchaseOrderSelectSearchDTO.setMemberId(memberLoginId);
@@ -283,7 +299,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         SalesHistoryRankedDataDTO salesHistoryRankedDataDTO = new SalesHistoryRankedDataDTO();
         salesHistoryRankedDataDTO.setPeriod("month");
         salesHistoryRankedDataDTO.setStartDate(startAt);
-        salesHistoryRankedDataDTO.setEndDate(endAt);
+        salesHistoryRankedDataDTO.setEndDate(salesEndAt);
 
         salesHistoryRankedDataDTO.setGroupBy("center");
         salesHistoryRankedDataDTO.setOrderBy("totalSales");
