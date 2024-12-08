@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.dashBoard.common.response.DashBoardResponseMessage;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
+import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardEmployeeDTO;
 import stanl_2.final_backend.domain.dashBoard.query.service.DashBoardQueryService;
 
 import java.security.GeneralSecurityException;
@@ -41,7 +42,7 @@ public class DashBoardController {
 
         String memberLoginId = principal.getName();
 
-//        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployee(memberLoginId);
+        DashBoardEmployeeDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployee(memberLoginId);
 
         return ResponseEntity.ok(DashBoardResponseMessage.builder()
                 .httpStatus(200)

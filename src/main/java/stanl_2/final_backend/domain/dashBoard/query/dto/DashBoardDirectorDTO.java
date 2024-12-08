@@ -5,12 +5,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Map;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class DashBoardDirectorDTO {
 
+    private Integer unreadContract;
+    private Integer unreadOrder;
+
+    private Integer totalPrice;
+
+    private List<Map<String, String>> noticeList;
+
+    private List<String> customerList;
+    private List<String> memberList;
     private String memberLoginId;
     private String memberId;
 }
