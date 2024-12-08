@@ -60,7 +60,7 @@
            AND a.active = TRUE
             AND a.ord_stat = 'APPROVED'
          ORDER BY a.created_at DESC
-         LIMIT #{pageSize} OFFSET #{offset};
+         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findOrderCountByMemberId" resultType="int">
@@ -68,7 +68,7 @@
         COUNT(*) AS cnt
         FROM tb_order a
         WHERE a.mem_id = #{memberId}
-        AND a.active = TRUE;
+        AND a.active = TRUE
     </select>
 
     <select id="findOrderByIdAndMemberId" resultMap="orderDetailResultMap" parameterType="string">
@@ -95,7 +95,7 @@
         ON b.prod_id = e.prod_id
         WHERE a.mem_id = #{memberId}
         AND a.active = TRUE
-        AND a.ord_id = #{orderId};
+        AND a.ord_id = #{orderId}
     </select>
 
     <select id="findSearchOrderByMemberId" resultMap="orderResultMap">
@@ -126,13 +126,14 @@
                 AND a.admin_id = #{orderSelectSearchDTO.adminId}
             </if>
             <if test="orderSelectSearchDTO.searchMemberId != null">
-                AND a.mem_id = #{searchMemberId}
+                AND a.mem_id = #{orderSelectSearchDTO.searchMemberId}
             </if>
             <if test="orderSelectSearchDTO.productName != null">
-                AND c.prod_name LIKE CONCAT('%', #{productName}, '%');
+                AND c.prod_name LIKE CONCAT('%', #{orderSelectSearchDTO.productName}, '%')
             </if>
             <if test="orderSelectSearchDTO.startDate != null and orderSelectSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate} AND #{orderSelectSearchDTO.endDate}
+                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{orderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
         <choose>
@@ -146,19 +147,19 @@
                         ORDER BY a.ord_stat ${sortOrder}
                     </when>
                     <when test="sortField == 'orderId'">
-                        ORDER BY a.ord_id ${orderId}
+                        ORDER BY a.ord_id ${sortOrder}
                     </when>
                     <when test="sortField == 'memberId'">
-                        ORDER BY a.mem_id ${memberId}
+                        ORDER BY a.mem_id ${sortOrder}
                     </when>
                     <when test="sortField == 'adminId'">
-                        ORDER BY a.admin_id ${adminId}
+                        ORDER BY a.admin_id ${sortOrder}
                     </when>
                     <when test="sortField == 'createdAt'">
-                        ORDER BY a.created_at ${createdAt}
+                        ORDER BY a.created_at ${sortOrder}
                     </when>
                     <when test="sortField == 'productName'">
-                        ORDER BY e.prod_name ${productName}
+                        ORDER BY c.prod_name ${sortOrder}
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
@@ -170,13 +171,17 @@
                 ORDER BY a.created_at DESC
             </otherwise>
         </choose>
-        LIMIT #{pageSize} OFFSET #{offset};
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findOrderSearchCountByMemberId" resultType="int" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
+        LEFT JOIN tb_contract b
+        ON a.conr_id = b.conr_id
+        LEFT JOIN tb_product c
+        ON b.prod_id = c.prod_id
         <where>
             a.mem_id = #{memberId}
             AND a.active = TRUE
@@ -192,8 +197,11 @@
             <if test="searchMemberId != null">
                 AND a.mem_id = #{searchMemberId}
             </if>
+            <if test="productName != null">
+                AND c.prod_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
             <if test="startDate != null and endDate != null">
-                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+                AND a.created_at BETWEEN #{startDate} AND DATE_ADD(#{endDate}, INTERVAL 1 DAY)
             </if>
         </where>
     </select>
@@ -221,14 +229,14 @@
         WHERE a.active = TRUE
         AND a.ord_stat = 'APPROVED'
         ORDER BY a.created_at DESC
-        LIMIT #{pageSize} OFFSET #{offset};
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findOrderCount" resultType="Integer">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
-        WHERE a.active = TRUE;
+        WHERE a.active = TRUE
     </select>
 
     <select id="findOrderByOrderId" resultMap="orderDetailResultMap" parameterType="string">
@@ -254,7 +262,7 @@
         LEFT JOIN tb_product e
         ON b.prod_id = e.prod_id
         WHERE a.active = TRUE
-        AND a.ord_id = #{orderId};
+        AND a.ord_id = #{orderId}
     </select>
 
     <select id="findSearchOrder" resultMap="orderResultMap">
@@ -284,13 +292,14 @@
                 AND a.admin_id = #{orderSelectSearchDTO.adminId}
             </if>
             <if test="orderSelectSearchDTO.searchMemberId != null">
-                AND a.mem_id = #{searchMemberId}
+                AND a.mem_id = #{orderSelectSearchDTO.searchMemberId}
             </if>
             <if test="orderSelectSearchDTO.productName != null">
-                AND c.prod_name LIKE CONCAT('%', #{productName}, '%');
+                AND c.prod_name LIKE CONCAT('%', #{orderSelectSearchDTO.productName}, '%')
             </if>
             <if test="orderSelectSearchDTO.startDate != null and orderSelectSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate} AND #{orderSelectSearchDTO.endDate}
+                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{orderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
         <choose>
@@ -304,19 +313,19 @@
                         ORDER BY a.ord_stat ${sortOrder}
                     </when>
                     <when test="sortField == 'orderId'">
-                        ORDER BY a.ord_id ${orderId}
+                        ORDER BY a.ord_id ${sortOrder}
                     </when>
                     <when test="sortField == 'memberId'">
-                        ORDER BY a.mem_id ${memberId}
+                        ORDER BY a.mem_id ${sortOrder}
                     </when>
                     <when test="sortField == 'adminId'">
-                        ORDER BY a.admin_id ${adminId}
+                        ORDER BY a.admin_id ${sortOrder}
                     </when>
                     <when test="sortField == 'createdAt'">
-                        ORDER BY a.created_at ${createdAt}
+                        ORDER BY a.created_at ${sortOrder}
                     </when>
                     <when test="sortField == 'productName'">
-                        ORDER BY e.prod_name ${productName}
+                        ORDER BY e.prod_name ${sortOrder}
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
@@ -328,13 +337,17 @@
                 ORDER BY a.created_at DESC
             </otherwise>
         </choose>
-        LIMIT #{pageSize} OFFSET #{offset};
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findOrderSearchCount" resultType="Integer" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
+        LEFT JOIN tb_contract b
+        ON a.conr_id = b.conr_id
+        LEFT JOIN tb_product c
+        ON b.prod_id = c.prod_id
         <where>
             a.active = TRUE
             <if test="title != null">
@@ -349,8 +362,11 @@
             <if test="searchMemberId != null">
                 AND a.mem_id = #{searchMemberId}
             </if>
+            <if test="productName != null">
+                AND c.prod_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
             <if test="startDate != null and endDate != null">
-                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+                AND a.created_at BETWEEN #{startDate} AND DATE_ADD(#{endDate}, INTERVAL 1 DAY)
             </if>
         </where>
     </select>
@@ -377,7 +393,7 @@
          WHERE a.active = true
     </select>
 
-    <select id="selectSearchOrdersCenter" resultMap="orderResultMap">
+    <select id="findSearchOrderCenter" resultMap="orderResultMap">
         SELECT
         a.ord_id,
         a.ord_ttl,
@@ -394,7 +410,7 @@
         ON b.prod_id = c.prod_id
         <where>
             a.active = TRUE
-            a.cent_id = #{orderSelectSearchDTO.centerId}
+            AND a.cent_id = #{orderSelectSearchDTO.centerId}
             <if test="orderSelectSearchDTO.title != null">
                 AND a.ord_ttl LIKE CONCAT('%', #{orderSelectSearchDTO.title}, '%')
             </if>
@@ -405,13 +421,14 @@
                 AND a.admin_id = #{orderSelectSearchDTO.adminId}
             </if>
             <if test="orderSelectSearchDTO.searchMemberId != null">
-                AND a.mem_id = #{searchMemberId}
+                AND a.mem_id = #{orderSelectSearchDTO.searchMemberId}
             </if>
             <if test="orderSelectSearchDTO.productName != null">
-                AND c.prod_name LIKE CONCAT('%', #{productName}, '%');
+                AND c.prod_name LIKE CONCAT('%', #{orderSelectSearchDTO.productName}, '%')
             </if>
             <if test="orderSelectSearchDTO.startDate != null and orderSelectSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate} AND #{orderSelectSearchDTO.endDate}
+                AND a.created_at BETWEEN #{orderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{orderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
         <choose>
@@ -425,19 +442,19 @@
                         ORDER BY a.ord_stat ${sortOrder}
                     </when>
                     <when test="sortField == 'orderId'">
-                        ORDER BY a.ord_id ${orderId}
+                        ORDER BY a.ord_id ${sortOrder}
                     </when>
                     <when test="sortField == 'memberId'">
-                        ORDER BY a.mem_id ${memberId}
+                        ORDER BY a.mem_id ${sortOrder}
                     </when>
                     <when test="sortField == 'adminId'">
-                        ORDER BY a.admin_id ${adminId}
+                        ORDER BY a.admin_id ${sortOrder}
                     </when>
                     <when test="sortField == 'createdAt'">
-                        ORDER BY a.created_at ${createdAt}
+                        ORDER BY a.created_at ${sortOrder}
                     </when>
                     <when test="sortField == 'productName'">
-                        ORDER BY e.prod_name ${productName}
+                        ORDER BY c.prod_name ${sortOrder}
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
@@ -449,16 +466,20 @@
                 ORDER BY a.created_at DESC
             </otherwise>
         </choose>
-        LIMIT #{pageSize} OFFSET #{offset};
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findOrderSearchCountCenter" resultType="Integer" parameterType="stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO">
         SELECT
         COUNT(*) AS cnt
         FROM tb_order a
+        LEFT JOIN tb_contract b
+        ON a.conr_id = b.conr_id
+        LEFT JOIN tb_product c
+        ON b.prod_id = c.prod_id
         <where>
             a.active = TRUE
-            a.cent_id = #{orderSelectSearchDTO.centerId}
+            AND a.cent_id = #{centerId}
             <if test="title != null">
                 AND a.ord_ttl LIKE CONCAT('%', #{title}, '%')
             </if>
@@ -471,8 +492,12 @@
             <if test="searchMemberId != null">
                 AND a.mem_id = #{searchMemberId}
             </if>
+            <if test="productName != null">
+                AND c.prod_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
             <if test="startDate != null and endDate != null">
-                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+                AND a.created_at BETWEEN #{startDate}
+                AND DATE_ADD(#{endDate}, INTERVAL 1 DAY)
             </if>
         </where>
     </select>
