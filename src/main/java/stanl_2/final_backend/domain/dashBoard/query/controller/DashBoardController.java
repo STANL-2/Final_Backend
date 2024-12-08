@@ -16,6 +16,7 @@ import stanl_2.final_backend.domain.dashBoard.common.response.DashBoardResponseM
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
 import stanl_2.final_backend.domain.dashBoard.query.service.DashBoardQueryService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @Slf4j
@@ -35,17 +36,17 @@ public class DashBoardController {
             @ApiResponse(responseCode = "200", description = "대시보드 조회 성공(사원)",
                     content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
     })
-    @GetMapping("")
-    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForEmployee(Principal principal){
+    @GetMapping("/employee")
+    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForEmployee(Principal principal) throws GeneralSecurityException {
 
         String memberLoginId = principal.getName();
 
-        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployee(memberLoginId);
+//        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployee(memberLoginId);
 
         return ResponseEntity.ok(DashBoardResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(boardResponseDTO)
+//                .result(boardResponseDTO)
                 .build());
     }
 
@@ -54,8 +55,8 @@ public class DashBoardController {
             @ApiResponse(responseCode = "200", description = "대시보드 조회 성공(관리자)",
                     content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
     })
-    @GetMapping("")
-    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForAdmin(Principal principal){
+    @GetMapping("/admin")
+    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForAdmin(Principal principal) throws GeneralSecurityException {
 
         String memberLoginId = principal.getName();
 
@@ -78,7 +79,7 @@ public class DashBoardController {
 
         String memberLoginId = principal.getName();
 
-        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployeeAndAdmin(memberLoginId);
+//        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployeeAndAdmin(memberLoginId);
 
         return ResponseEntity.ok(DashBoardResponseMessage.builder()
                 .httpStatus(200)

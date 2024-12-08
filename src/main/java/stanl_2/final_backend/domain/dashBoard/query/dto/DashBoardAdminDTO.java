@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Map;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -18,6 +21,9 @@ public class DashBoardAdminDTO {
     private String noticeTitle;
     private Integer totalPrice;
 
+    private List<Map<String, String>> noticeList;
+
+    private List<String> memberList;
     private String memberLoginId;
     private String memberId;
 }
