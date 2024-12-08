@@ -99,6 +99,7 @@ public class CustomerQueryServiceImpl implements CustomerQueryService{
         params.put("name", customerSearchDTO.getName());
         params.put("sex", customerSearchDTO.getSex());
         params.put("phone", aesUtils.encrypt(customerSearchDTO.getPhone()));
+        params.put("memberId", customerSearchDTO.getMemberId());
 
         params.put("sortField", sortField);
         params.put("sortOrder", sortOrder);

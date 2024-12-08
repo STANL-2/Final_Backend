@@ -113,6 +113,9 @@
             <if test="customerId != null">
                 AND a.cust_id = #{ customerId }
             </if>
+            <if test="memberId != null">
+                AND a.mem_id = #{ memberId }
+            </if>
         </where>
         <choose>
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
@@ -129,6 +132,9 @@
                     </when>
                     <when test="sortField == 'customerId'">
                         ORDER BY a.cust_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${ sortOrder }
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
@@ -161,6 +167,9 @@
             </if>
             <if test="customerId != null and customerId != ''">
                 AND a.cust_id= #{ customerId }
+            </if>
+            <if test="memberId != null and memberId != ''">
+                AND a.mem_id= #{ memberId }
             </if>
         </where>
     </select>
