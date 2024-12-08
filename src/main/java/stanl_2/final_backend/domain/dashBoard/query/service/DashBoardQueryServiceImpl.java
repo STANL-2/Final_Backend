@@ -69,98 +69,98 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         this.memberQueryService = memberQueryService;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public DashBoardAdminDTO selectInfoForEmployee(String memberLoginId) throws GeneralSecurityException {
-
-        DashBoardAdminDTO dashBoardAdminDTO = new DashBoardAdminDTO();
-
-        String memberId = authQueryService.selectMemberIdByLoginId(memberLoginId);
-        String centerId = memberQueryService.selectMemberInfo(memberLoginId).getCenterId();
-
-        // Pageable을 null로 전달하거나 유효한 Pageable 사용
-        Pageable pageable = PageRequest.of(0, 100);
-
-        String currentDate = getCurrentTime().substring(0, 10);;
-        LocalDate date = LocalDate.parse(currentDate);
-        LocalDate nextDate = date.plusDays(1);
-
-        // 이번달 조회를 위한 날짜 지정
-        String startAt = currentDate.substring(0,7) + "-01";
-        String endAt = nextDate.toString();
-
-        // 이번달 Contract 받아오기
-        ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
-        contractSearchDTO.setMemberId(memberLoginId);
-        contractSearchDTO.setSearchMemberId(memberId);
-        contractSearchDTO.setStartAt(startAt);
-        contractSearchDTO.setEndAt(endAt);
-        Integer unreadContract = Math.toIntExact(contractQueryService.selectBySearchEmployee(contractSearchDTO, pageable).getTotalElements());
-        dashBoardAdminDTO.setUnreadContract(unreadContract);
-        System.out.println("unreadContract" + unreadContract);
-
-        // 이번달 Order 받아오기
-        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
-        orderSelectSearchDTO.setMemberId(memberLoginId);
-        orderSelectSearchDTO.setStartDate(startAt);
-        orderSelectSearchDTO.setEndDate(endAt);
-        Integer unreadOrder = Math.toIntExact(orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable).getTotalElements());
-        dashBoardAdminDTO.setUnreadOrder(unreadOrder);
-        System.out.println("unreadOrder" + unreadOrder);
-
-        // 이번달 판매내역 받아오기
-        SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
-        salesHistorySearchDTO.setSearcherName(memberLoginId);
-        salesHistorySearchDTO.setStartDate(startAt);
-        salesHistorySearchDTO.setEndDate(endAt);
-
-        SalesHistoryStatisticsDTO resultStatistics = salesHistoryQueryService.selectStatisticsSearchByEmployee(salesHistorySearchDTO);
-        Integer totalPrice = resultStatistics.getTotalSales();
-        dashBoardAdminDTO.setTotalPrice(totalPrice);
-
-        // 이번달 내 고객 순위 조회
-
-
-
-        // 이번달 판매사원 순위
-        ArrayList employeeList = new ArrayList();
-        ArrayList centerList = new ArrayList();
-        centerList.add(centerId);
-
-        SalesHistoryRankedDataDTO salesHistoryRankedDataDTO = new SalesHistoryRankedDataDTO();
-        salesHistoryRankedDataDTO.setCenterList(centerList);
-        salesHistoryRankedDataDTO.setPeriod("month");
-        salesHistoryRankedDataDTO.setStartDate(startAt);
-        salesHistoryRankedDataDTO.setEndDate(endAt);
-        salesHistoryRankedDataDTO.setGroupBy("employee");
-        salesHistoryRankedDataDTO.setOrderBy("totalSales");
-
-        Page<SalesHistoryRankedDataDTO> rankPage = salesHistoryQueryService.selectStatisticsBySearch(salesHistoryRankedDataDTO, pageable);
-
-        List<SalesHistoryRankedDataDTO> contentList = rankPage.getContent();
-
-        for (int i = 0; i < Math.min(contentList.size(), 5); i++) {
-            employeeList.add(contentList.get(i).getMemberId());
-        }
-        dashBoardAdminDTO.setMemberList(employeeList);
-
-        // 공지사항 조회 (제목, 내용(redirect))
-        ArrayList<Map<String, String>> noticeList = new ArrayList<>();
-
-        SearchDTO searchDTO = new SearchDTO();
-        searchDTO.setTag("ADMIN");
-        Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
-
-        for (NoticeDTO notice : noticePage.getContent()) {
-            Map<String, String> noticeData = new HashMap<>();
-            noticeData.put("title", notice.getTitle()); // NoticeDTO의 title
-            noticeData.put("content", notice.getContent()); // NoticeDTO의 content
-            noticeList.add(noticeData);
-        }
-        dashBoardAdminDTO.setNoticeList(noticeList);
-
-        return dashBoardAdminDTO;
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public DashBoardAdminDTO selectInfoForEmployee(String memberLoginId) throws GeneralSecurityException {
+//
+//        DashBoardAdminDTO dashBoardAdminDTO = new DashBoardAdminDTO();
+//
+//        String memberId = authQueryService.selectMemberIdByLoginId(memberLoginId);
+//        String centerId = memberQueryService.selectMemberInfo(memberLoginId).getCenterId();
+//
+//        // Pageable을 null로 전달하거나 유효한 Pageable 사용
+//        Pageable pageable = PageRequest.of(0, 100);
+//
+//        String currentDate = getCurrentTime().substring(0, 10);;
+//        LocalDate date = LocalDate.parse(currentDate);
+//        LocalDate nextDate = date.plusDays(1);
+//
+//        // 이번달 조회를 위한 날짜 지정
+//        String startAt = currentDate.substring(0,7) + "-01";
+//        String endAt = nextDate.toString();
+//
+//        // 이번달 Contract 받아오기
+//        ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
+//        contractSearchDTO.setMemberId(memberLoginId);
+//        contractSearchDTO.setSearchMemberId(memberId);
+//        contractSearchDTO.setStartAt(startAt);
+//        contractSearchDTO.setEndAt(endAt);
+//        Integer unreadContract = Math.toIntExact(contractQueryService.selectBySearchEmployee(contractSearchDTO, pageable).getTotalElements());
+//        dashBoardAdminDTO.setUnreadContract(unreadContract);
+//        System.out.println("unreadContract" + unreadContract);
+//
+//        // 이번달 Order 받아오기
+//        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
+//        orderSelectSearchDTO.setMemberId(memberLoginId);
+//        orderSelectSearchDTO.setStartDate(startAt);
+//        orderSelectSearchDTO.setEndDate(endAt);
+//        Integer unreadOrder = Math.toIntExact(orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable).getTotalElements());
+//        dashBoardAdminDTO.setUnreadOrder(unreadOrder);
+//        System.out.println("unreadOrder" + unreadOrder);
+//
+//        // 이번달 판매내역 받아오기
+//        SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
+//        salesHistorySearchDTO.setSearcherName(memberLoginId);
+//        salesHistorySearchDTO.setStartDate(startAt);
+//        salesHistorySearchDTO.setEndDate(endAt);
+//
+//        SalesHistoryStatisticsDTO resultStatistics = salesHistoryQueryService.selectStatisticsSearchByEmployee(salesHistorySearchDTO);
+//        Integer totalPrice = resultStatistics.getTotalSales();
+//        dashBoardAdminDTO.setTotalPrice(totalPrice);
+//
+//        // 이번달 내 고객 순위 조회
+//
+//
+//
+//        // 이번달 판매사원 순위
+//        ArrayList employeeList = new ArrayList();
+//        ArrayList centerList = new ArrayList();
+//        centerList.add(centerId);
+//
+//        SalesHistoryRankedDataDTO salesHistoryRankedDataDTO = new SalesHistoryRankedDataDTO();
+//        salesHistoryRankedDataDTO.setCenterList(centerList);
+//        salesHistoryRankedDataDTO.setPeriod("month");
+//        salesHistoryRankedDataDTO.setStartDate(startAt);
+//        salesHistoryRankedDataDTO.setEndDate(endAt);
+//        salesHistoryRankedDataDTO.setGroupBy("employee");
+//        salesHistoryRankedDataDTO.setOrderBy("totalSales");
+//
+//        Page<SalesHistoryRankedDataDTO> rankPage = salesHistoryQueryService.selectStatisticsBySearch(salesHistoryRankedDataDTO, pageable);
+//
+//        List<SalesHistoryRankedDataDTO> contentList = rankPage.getContent();
+//
+//        for (int i = 0; i < Math.min(contentList.size(), 5); i++) {
+//            employeeList.add(contentList.get(i).getMemberId());
+//        }
+//        dashBoardAdminDTO.setMemberList(employeeList);
+//
+//        // 공지사항 조회 (제목, 내용(redirect))
+//        ArrayList<Map<String, String>> noticeList = new ArrayList<>();
+//
+//        SearchDTO searchDTO = new SearchDTO();
+//        searchDTO.setTag("ADMIN");
+//        Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
+//
+//        for (NoticeDTO notice : noticePage.getContent()) {
+//            Map<String, String> noticeData = new HashMap<>();
+//            noticeData.put("title", notice.getTitle()); // NoticeDTO의 title
+//            noticeData.put("content", notice.getContent()); // NoticeDTO의 content
+//            noticeList.add(noticeData);
+//        }
+//        dashBoardAdminDTO.setNoticeList(noticeList);
+//
+//        return dashBoardAdminDTO;
+//    }
 
 
     @Override
