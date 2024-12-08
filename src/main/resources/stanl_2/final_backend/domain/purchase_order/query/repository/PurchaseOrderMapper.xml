@@ -26,6 +26,7 @@
         <result property="adminName" column="ADMIN_NAME"/>
         <result property="memberName" column="MEM_NAME"/>
         <result property="memberId" column="MEM_ID"/>
+        <result property="adminId" column="ADMIN_ID"/>
         <result property="productName" column="PROD_NAME"/>
         <result property="createdAt" column="CREATED_AT"/>
     </resultMap>
@@ -94,12 +95,15 @@
     </select>
 
     <select id="findSearchPurchaseOrderMemberId" resultMap="purchaseOrderResultMap">
+        SELECT
         a.pur_ord_id,
         a.pur_ord_ttl,
         a.pur_ord_stat,
         a.created_at,
+        a.admin_id,
         a.mem_id,
-        b.ord_ttl
+        b.ord_ttl,
+        f.prod_name
         FROM tb_purchase_order a
         LEFT JOIN tb_order b
         ON a.ord_id = b.ord_id
@@ -112,8 +116,8 @@
         LEFT JOIN tb_product f
         ON e.prod_id = f.prod_id
         <where>
-            a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
             a.active = TRUE
+            AND a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
             <if test="purchaseOrderSelectSearchDTO.title != null">
                 AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
             </if>
@@ -127,7 +131,11 @@
                 AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
             <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name = #{productName}
             </if>
         </where>
         <choose>
@@ -162,7 +170,7 @@
                 ORDER BY a.created_at DESC
             </otherwise>
         </choose>
-        LIMIT #{pageSize} OFFSET #{offset};
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findSearchPurchaseOrderCountMemberId" resultType="int">
@@ -171,6 +179,7 @@
         FROM tb_purchase_order a
         <where>
             a.active = TRUE
+            AND a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
             <if test="purchaseOrderSelectSearchDTO.title != null">
                 AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
             </if>
@@ -184,7 +193,8 @@
                 AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
             <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
     </select>
@@ -247,6 +257,7 @@
         a.pur_ord_stat,
         a.created_at,
         a.mem_id,
+        a.admin_id,
         b.ord_ttl,
         f.prod_name
         FROM tb_purchase_order a
@@ -275,7 +286,8 @@
                 AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
             <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
             <if test="purchaseOrderSelectSearchDTO.productName != null">
                 AND f.prod_name = #{productName}
@@ -313,7 +325,7 @@
                 ORDER BY a.created_at DESC
             </otherwise>
         </choose>
-        LIMIT #{pageSize} OFFSET #{offset};
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="findSearchPurchaseOrderCount" resultType="int">
@@ -335,7 +347,8 @@
                 AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
             </if>
             <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate} AND #{purchaseOrderSelectSearchDTO.endDate}
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
     </select>

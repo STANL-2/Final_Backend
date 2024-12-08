@@ -88,8 +88,8 @@ public class ContractController {
                                                                        @RequestParam(required = false) String searchMemberId,
                                                                        @RequestParam(required = false) String centerId,
                                                                        @RequestParam(required = false) String title,
-                                                                       @RequestParam(required = false) String startAt,
-                                                                       @RequestParam(required = false) String endAt,
+                                                                       @RequestParam(required = false) String startDate,
+                                                                       @RequestParam(required = false) String endDate,
                                                                        @RequestParam(required = false) String customerName,
                                                                        @RequestParam(required = false) String customerClassifcation,
                                                                        @RequestParam(required = false) String carName,
@@ -105,8 +105,8 @@ public class ContractController {
         contractSearchDTO.setSearchMemberId(searchMemberId);
         contractSearchDTO.setCenterId(centerId);
         contractSearchDTO.setTitle(title);
-        contractSearchDTO.setStartAt(startAt);
-        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setStartDate(startDate);
+        contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
         contractSearchDTO.setCarName(carName);
@@ -183,8 +183,8 @@ public class ContractController {
                                                                                @RequestParam(required = false) String searchMemberId,
                                                                                @RequestParam(required = false) String centerId,
                                                                                @RequestParam(required = false) String title,
-                                                                               @RequestParam(required = false) String startAt,
-                                                                               @RequestParam(required = false) String endAt,
+                                                                               @RequestParam(required = false) String startDate,
+                                                                               @RequestParam(required = false) String endDate,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
                                                                                @RequestParam(required = false) String carName,
@@ -200,8 +200,8 @@ public class ContractController {
         contractSearchDTO.setSearchMemberId(searchMemberId);
         contractSearchDTO.setCenterId(centerId);
         contractSearchDTO.setTitle(title);
-        contractSearchDTO.setStartAt(startAt);
-        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setStartDate(startDate);
+        contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
         contractSearchDTO.setCarName(carName);
@@ -281,8 +281,8 @@ public class ContractController {
     public ResponseEntity<ContractResponseMessage> getContractBySearch(@RequestParam(required = false) String searchMemberId,
                                                                                @RequestParam(required = false) String centerId,
                                                                                @RequestParam(required = false) String title,
-                                                                               @RequestParam(required = false) String startAt,
-                                                                               @RequestParam(required = false) String endAt,
+                                                                               @RequestParam(required = false) String startDate,
+                                                                               @RequestParam(required = false) String endDate,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
                                                                                @RequestParam(required = false) String carName,
@@ -303,8 +303,8 @@ public class ContractController {
         contractSearchDTO.setSearchMemberId(searchMemberId);
         contractSearchDTO.setCenterId(centerId);
         contractSearchDTO.setTitle(title);
-        contractSearchDTO.setStartAt(startAt);
-        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setStartDate(startDate);
+        contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
         contractSearchDTO.setCarName(carName);

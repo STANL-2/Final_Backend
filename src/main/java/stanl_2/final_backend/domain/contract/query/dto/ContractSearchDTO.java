@@ -39,7 +39,7 @@ public class ContractSearchDTO {
     private String searchMemberId;
     private String centerId;
     private String customerId;
-    private String startAt;
-    private String endAt;
+    private String startDate;
+    private String endDate;
     private String carName;
 }
