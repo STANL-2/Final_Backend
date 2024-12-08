@@ -18,7 +18,6 @@ public class DashBoardAdminDTO {
     private Integer unreadOrder;
     private Integer unreadPurchaseOrder;
 
-    private String noticeTitle;
     private Integer totalPrice;
 
     private List<Map<String, String>> noticeList;
