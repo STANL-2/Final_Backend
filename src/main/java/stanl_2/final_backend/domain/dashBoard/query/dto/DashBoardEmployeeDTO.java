@@ -16,10 +16,10 @@ public class DashBoardEmployeeDTO {
 
     private Integer unreadContract;
     private Integer unreadOrder;
-    private Integer unreadPurchaseOrder;
 
     private Integer totalPrice;
 
+    private List<String> scheduleTitle;
     private List<Map<String, String>> noticeList;
 
     private List<String> memberList;

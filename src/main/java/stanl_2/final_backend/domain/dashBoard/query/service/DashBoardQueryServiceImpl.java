@@ -28,6 +28,8 @@ import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySearchDT
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsDTO;
 import stanl_2.final_backend.domain.sales_history.query.service.SalesHistoryQueryService;
+import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO;
+import stanl_2.final_backend.domain.schedule.query.service.ScheduleQueryService;
 
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
@@ -48,7 +50,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
     private final OrderQueryService orderQueryService;
     private final PurchaseOrderQueryService purchaseOrderQueryService;
     private final SalesHistoryQueryService salesHistoryQueryService;
-    private final CustomerQueryService customerQueryService;
+    private final ScheduleQueryService scheduleQueryService;
     private final NoticeService noticeService;
     private final MemberQueryService memberQueryService;
 
@@ -59,14 +61,14 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
 
     public DashBoardQueryServiceImpl(AuthQueryService authQueryService, ContractQueryService contractQueryService,
                                      OrderQueryService orderQueryService, PurchaseOrderQueryService purchaseOrderQueryService,
-                                     SalesHistoryQueryService salesHistoryQueryService, CustomerQueryService customerQueryService,
+                                     SalesHistoryQueryService salesHistoryQueryService, ScheduleQueryService scheduleQueryService,
                                      NoticeService noticeService, MemberQueryService memberQueryService) {
         this.authQueryService = authQueryService;
         this.contractQueryService = contractQueryService;
         this.orderQueryService = orderQueryService;
         this.purchaseOrderQueryService = purchaseOrderQueryService;
         this.salesHistoryQueryService = salesHistoryQueryService;
-        this.customerQueryService = customerQueryService;
+        this.scheduleQueryService = scheduleQueryService;
         this.noticeService = noticeService;
         this.memberQueryService = memberQueryService;
     }
@@ -94,7 +96,6 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         contractSearchDTO.setEndDate(endAt);
         Integer unreadContract = Math.toIntExact(contractQueryService.selectBySearchEmployee(contractSearchDTO, pageable).getTotalElements());
         dashBoardEmployeeDTO.setUnreadContract(unreadContract);
-        System.out.println("unreadContract" + unreadContract);
 
         // 이번달 Order 받아오기
         OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
@@ -103,7 +104,6 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         orderSelectSearchDTO.setEndDate(endAt);
         Integer unreadOrder = Math.toIntExact(orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable).getTotalElements());
         dashBoardEmployeeDTO.setUnreadOrder(unreadOrder);
-        System.out.println("unreadOrder" + unreadOrder);
 
         // 이번달 판매내역 받아오기
         SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
@@ -115,9 +115,15 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         Integer totalPrice = resultStatistics.getTotalSales();
         dashBoardEmployeeDTO.setTotalPrice(totalPrice);
 
-        // 이번달 내 고객 순위 조회
+        // 오늘 일정조회
+        ArrayList scheduleList = new ArrayList();
 
+        List<ScheduleDayDTO> todaySchedules = scheduleQueryService.findSchedulesByDate(endAt);
 
+        for (ScheduleDayDTO schedule : todaySchedules) {
+            scheduleList.add(schedule.getName());
+        }
+        dashBoardEmployeeDTO.setScheduleTitle(scheduleList);
 
         // 이번달 판매사원 순위
         ArrayList employeeList = new ArrayList();
