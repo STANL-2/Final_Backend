@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import stanl_2.final_backend.domain.customer.common.response.CustomerResponseMessage;
 import stanl_2.final_backend.domain.dashBoard.common.response.DashBoardResponseMessage;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
+import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardDirectorDTO;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardEmployeeDTO;
 import stanl_2.final_backend.domain.dashBoard.query.service.DashBoardQueryService;
 
@@ -47,7 +48,7 @@ public class DashBoardController {
         return ResponseEntity.ok(DashBoardResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-//                .result(boardResponseDTO)
+                .result(boardResponseDTO)
                 .build());
     }
 
@@ -76,16 +77,16 @@ public class DashBoardController {
                     content = {@Content(schema = @Schema(implementation = CustomerResponseMessage.class))})
     })
     @GetMapping("/director")
-    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForDirector(Principal principal){
+    public ResponseEntity<DashBoardResponseMessage> selectDashBoardForDirector(Principal principal) throws GeneralSecurityException {
 
         String memberLoginId = principal.getName();
 
-//        DashBoardAdminDTO boardResponseDTO = dashBoardQueryService.selectInfoForEmployeeAndAdmin(memberLoginId);
+        DashBoardDirectorDTO boardResponseDTO = dashBoardQueryService.selectInfoForDirector(memberLoginId);
 
         return ResponseEntity.ok(DashBoardResponseMessage.builder()
                 .httpStatus(200)
                 .msg("성공")
-                .result(null)
+                .result(boardResponseDTO)
                 .build());
     }
 

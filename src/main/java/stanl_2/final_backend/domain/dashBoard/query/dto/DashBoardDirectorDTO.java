@@ -14,15 +14,10 @@ import java.util.Map;
 @Setter
 public class DashBoardDirectorDTO {
 
-    private Integer unreadContract;
-    private Integer unreadOrder;
+    private Integer unreadPurchaseOrder;
 
-    private Integer totalPrice;
+    private List<String> centerList;
 
-    private List<Map<String, String>> noticeList;
-
-    private List<String> customerList;
-    private List<String> memberList;
     private String memberLoginId;
     private String memberId;
 }

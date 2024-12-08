@@ -11,6 +11,7 @@ import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
 import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
 import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
+import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardDirectorDTO;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardEmployeeDTO;
 import stanl_2.final_backend.domain.dashBoard.query.repository.DashBoardMapper;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
@@ -181,7 +182,6 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         contractSearchDTO.setEndDate(endAt);
         Integer unreadContract = Math.toIntExact(contractQueryService.selectBySearchEmployee(contractSearchDTO, pageable).getTotalElements());
         dashBoardAdminDTO.setUnreadContract(unreadContract);
-        System.out.println("unreadContract" + unreadContract);
 
         // 이번달 Order 받아오기
         OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
@@ -190,7 +190,6 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         orderSelectSearchDTO.setEndDate(endAt);
         Integer unreadOrder = Math.toIntExact(orderQueryService.selectSearchOrdersEmployee(orderSelectSearchDTO, pageable).getTotalElements());
         dashBoardAdminDTO.setUnreadOrder(unreadOrder);
-        System.out.println("unreadOrder" + unreadOrder);
 
         // 이번달 PurchaseOrder 받아오기
         PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
@@ -249,5 +248,50 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         dashBoardAdminDTO.setNoticeList(noticeList);
 
         return dashBoardAdminDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DashBoardDirectorDTO selectInfoForDirector(String memberLoginId) throws GeneralSecurityException {
+
+        DashBoardDirectorDTO dashBoardDirectorDTO = new DashBoardDirectorDTO();
+
+        // Pageable을 null로 전달하거나 유효한 Pageable 사용
+        Pageable pageable = PageRequest.of(0, 100);
+
+        String startAt = getCurrentTime().substring(0, 7) + "-01";
+        String endAt = getCurrentTime().substring(0,10);
+
+        // 승인되지 않은 발주서 건수
+        PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
+        purchaseOrderSelectSearchDTO.setMemberId(memberLoginId);
+        purchaseOrderSelectSearchDTO.setStatus("WAIT");
+        purchaseOrderSelectSearchDTO.setStartDate(startAt);
+        purchaseOrderSelectSearchDTO.setEndDate(endAt);
+        Integer unreadPurchaseOrderCnt = Math.toIntExact(purchaseOrderQueryService.selectSearchPurchaseOrder(purchaseOrderSelectSearchDTO, pageable).getTotalElements());
+        dashBoardDirectorDTO.setUnreadPurchaseOrder(unreadPurchaseOrderCnt);
+
+        // 판매 매장 실적 순위
+        ArrayList centerList = new ArrayList();
+
+        SalesHistoryRankedDataDTO salesHistoryRankedDataDTO = new SalesHistoryRankedDataDTO();
+        salesHistoryRankedDataDTO.setPeriod("month");
+        salesHistoryRankedDataDTO.setStartDate(startAt);
+        salesHistoryRankedDataDTO.setEndDate(endAt);
+
+        salesHistoryRankedDataDTO.setGroupBy("center");
+        salesHistoryRankedDataDTO.setOrderBy("totalSales");
+
+        Page<SalesHistoryRankedDataDTO> rankPage = salesHistoryQueryService.selectStatisticsBySearch(salesHistoryRankedDataDTO, pageable);
+
+        List<SalesHistoryRankedDataDTO> content = rankPage.getContent();
+
+        for (int i = 0; i < Math.min(content.size(), 5); i++) {
+            centerList.add(content.get(i).getCenterId());
+        }
+
+        dashBoardDirectorDTO.setCenterList(centerList);
+
+        return dashBoardDirectorDTO;
     }
 }
