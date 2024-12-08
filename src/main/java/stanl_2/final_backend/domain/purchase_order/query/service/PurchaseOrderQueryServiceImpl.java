@@ -138,6 +138,13 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
                 String memberName = memberQueryService.selectNameById(purchaseOrder.getMemberId());
                 purchaseOrder.setMemberName(memberName);
             }
+
+            if (purchaseOrder.getAdminId() != null) {
+                String adminName = memberQueryService.selectNameById(purchaseOrder.getAdminId());
+                purchaseOrder.setAdminName(adminName);
+            } else {
+                purchaseOrder.setAdminName("-");
+            }
         }
 
         int count = purchaseOrderMapper.findSearchPurchaseOrderCountMemberId(purchaseOrderSelectSearchDTO);
@@ -226,6 +233,13 @@ public class PurchaseOrderQueryServiceImpl implements PurchaseOrderQueryService 
             if (purchaseOrder.getMemberId() != null) {
                 String memberName = memberQueryService.selectNameById(purchaseOrder.getMemberId());
                 purchaseOrder.setMemberName(memberName);
+            }
+
+            if (purchaseOrder.getAdminId() != null) {
+                String adminName = memberQueryService.selectNameById(purchaseOrder.getAdminId());
+                purchaseOrder.setAdminName(adminName);
+            } else {
+                purchaseOrder.setAdminName("-");
             }
         }
 
