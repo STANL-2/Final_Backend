@@ -3,6 +3,7 @@ package stanl_2.final_backend.domain.sales_history.query.service;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.sales_history.query.dto.*;
 
 import java.security.GeneralSecurityException;
@@ -38,4 +39,7 @@ public interface SalesHistoryQueryService {
     String selectSalesHistoryIdByContractId(String contractId);
 
     Page<SalesHistoryRankedDataDTO> selectStatisticsBestBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
+    @Transactional
+    Page<SalesHistoryRankedDataDTO> selectAllStatstics(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 }

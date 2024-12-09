@@ -877,19 +877,11 @@
         a.created_at
         FROM tb_sales_history a
         <where>
+            a.active = TRUE
             <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
             </if>
-            AND a.active = TRUE
         </where>
-        <choose>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
-                GROUP BY a.mem_id
-            </when>
-            <otherwise>
-                GROUP BY a.cent_id
-            </otherwise>
-        </choose>
         <choose>
             <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
                 ORDER BY total_incentive DESC
@@ -904,7 +896,6 @@
                 ORDER BY a.created_at DESC
             </otherwise>
         </choose>
-        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findSalesHistoryIdByContractId" resultType="String">
