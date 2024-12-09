@@ -73,7 +73,7 @@ public class RequestMatcherConfig {
 
                 // Contract API (Employee)
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee").hasAnyRole("contract-employee-get", "GOD", "EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/search").hasAnyRole("contract-employee-search-get", "GOD", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/search").hasAnyRole("contract-employee-search-get", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/employee/{contractId}").hasAnyRole("contract-employee-id-get", "GOD", "EMPLOYEE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/contract").hasAnyRole("contract-post", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/contract/{contractId}").hasAnyRole("contract-id-put", "GOD", "EMPLOYEE", "ADMIN")
@@ -85,26 +85,28 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/center/{contractId}").hasAnyRole("contract-center-id-get", "GOD", "ADMIN")
 
                 // Contract API (General)
-                .requestMatchers(HttpMethod.GET, "/api/v1/contract").hasAnyRole("contract-get", "GOD", "DIRECTOR")
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract").hasAnyRole("contract-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/search").hasAnyRole("contract-search-get", "GOD", "DIRECTOR")
-                .requestMatchers(HttpMethod.GET, "/api/v1/contract/{contractId}").hasAnyRole("contract-id-get", "GOD", "DIRECTOR")
+                .requestMatchers(HttpMethod.GET, "/api/v1/contract/{contractId}").hasAnyRole("contract-id-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/contract/status/{contractId}").hasAnyRole("contract-status-id-put", "GOD", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/contract/excel").hasAnyRole("contract-excel-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN")
 
 
                 // Order API (Employee)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee").hasAnyRole("order-employee-get", "GOD", "EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/api/v1/order/employee/search").hasAnyRole("order-employee-search-get", "GOD", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/employee/search").hasAnyRole("order-employee-search-get", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/employee/{orderId}").hasAnyRole("order-employee-id-get", "GOD", "EMPLOYEE")
 
                 // Order API (General)
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/center").hasAnyRole("order-center", "GOD", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/center/search").hasAnyRole("order-center-search", "GOD", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/order").hasAnyRole("order-post", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/order/{orderId}").hasAnyRole("order-id-put", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/order/{orderId}").hasAnyRole("order-id-delete", "GOD", "EMPLOYEE", "ADMIN")
 
                 // Order API (Search and Excel)
                 .requestMatchers(HttpMethod.GET, "/api/v1/order").hasAnyRole("order-get", "GOD", "DIRECTOR")
-                .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR")
+                .requestMatchers(HttpMethod.GET, "/api/v1/order/{orderId}").hasAnyRole("order-id-get", "GOD", "DIRECTOR", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/search").hasAnyRole("order-search-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.GET, "/api/v1/order/excel").hasAnyRole("order-excel-get", "GOD", "EMPLOYEE", "DIRECTOR", "ADMIN")
 
@@ -121,7 +123,7 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/purchase-order/{purchaseOrderId}").hasAnyRole("purchase-order-delete", "GOD", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order").hasAnyRole("purchase-order-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/search").hasAnyRole("purchase-order-search-get", "GOD", "DIRECTOR")
-                .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/{purchaseOrderId}").hasAnyRole("purchase-order-id-get", "GOD", "DIRECTOR")
+                .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/{purchaseOrderId}").hasAnyRole("purchase-order-id-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/api/v1/purchase-order/excel").hasAnyRole("purchase-order-excel-get", "GOD", "DIRECTOR")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/purchase-order/status/{purchaseOrderId}").hasAnyRole("purchase-order-status-put", "GOD", "DIRECTOR")
 
@@ -219,6 +221,10 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search/month").hasAnyRole("salesHistory-employee-statistics-search-month-get", "GOD", "EMPLOYEE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/employee/search").hasAnyRole("salesHistory-employee-search-post", "GOD", "EMPLOYEE")
 
+                // DashBoard API
+                .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/employee").hasAnyRole("dashboard-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/admin").hasAnyRole("dashboard-get", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/director").hasAnyRole("dashboard-get", "GOD", "DIRECTOR")
 
                 // 그 외 나머지 시스템 관리자만 접근 가능
                 .anyRequest().hasRole("GOD")

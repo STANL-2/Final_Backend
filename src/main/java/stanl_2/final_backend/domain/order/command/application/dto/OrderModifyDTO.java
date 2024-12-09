@@ -10,5 +10,7 @@ public class OrderModifyDTO {
     private String orderId;
     private String title;
     private String content;
+    private String contractId;
     private String memberId;
+    private String centerId;
 }

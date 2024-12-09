@@ -10,6 +10,9 @@ public class LogExcelDTO {
     @ExcelColumnName(name = "로그 번호")
     private String logId;
 
+    @ExcelColumnName(name = "접근한 유저")
+    private String loginId;
+
     @ExcelColumnName(name = "트랜잭션 번호")
     private String transactionId;
 

@@ -19,9 +19,6 @@ public class ContractExcelDTO {
     @ExcelColumnName(name = "고객명")
     private String customerName;
 
-    @ExcelColumnName(name = "고객 상호")
-    private String companyName;
-
     @ExcelColumnName(name = "승인 상태")
     private String status;
 

@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 public class LogDTO {
     private String logId;
+    private String loginId;
     private String sessionId;
     private String userAgent;
     private String ipAddress;

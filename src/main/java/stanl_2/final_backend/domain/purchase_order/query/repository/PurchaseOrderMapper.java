@@ -29,11 +29,11 @@ public interface PurchaseOrderMapper {
 
     List<PurchaseOrderSelectSearchDTO> findSearchPurchaseOrderMemberId(@Param("offset") int offset,
                                                                        @Param("pageSize") int pageSize,
-                                                                       @Param("PurchaseOrderSelectSearchDTO") PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO,
+                                                                       @Param("purchaseOrderSelectSearchDTO") PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO,
                                                                        @Param("sortField") String sortField,
                                                                        @Param("sortOrder") String sortOrder);
 
-    int findSearchPurchaseOrderCountMemberId(@Param("PurchaseOrderSelectSearchDTO") PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO);
+    int findSearchPurchaseOrderCountMemberId(@Param("purchaseOrderSelectSearchDTO") PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO);
 
     PurchaseOrderSelectIdDTO findPurchaseOrderByPurchaseOrderId(String purchaseOrderId);
 

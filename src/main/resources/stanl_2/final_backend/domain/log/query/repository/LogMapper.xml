@@ -5,6 +5,7 @@
 <mapper namespace="stanl_2.final_backend.domain.log.query.repository.LogMapper">
     <resultMap id="Log" type="stanl_2.final_backend.domain.log.query.dto.LogDTO">
         <id property="logId" column="LOG_ID"/>
+        <result property="loginId" column="LOGIN_ID"/>
         <result property="sessionId" column="SESSION_ID"/>
         <result property="userAgent" column="USER_AGENT"/>
         <result property="ipAddress" column="IP_ADDRESS"/>
@@ -21,6 +22,7 @@
 
     <resultMap id="logExcel" type="stanl_2.final_backend.domain.log.query.dto.LogExcelDTO">
         <id property="logId" column="LOG_ID"/>
+        <result property="loginId" column="LOGIN_ID"/>
         <result property="transactionId" column="TRANSACTION_ID"/>
         <result property="requestTime" column="REQUEST_TIME"/>
         <result property="method" column="METHOD"/>
@@ -40,6 +42,9 @@
         <where>
             <if test="searchLogDTO.logId != null and searchLogDTO.logId != ''">
                 AND a.log_id LIKE CONCAT('%', #{ searchLogDTO.logId }, '%')
+            </if>
+            <if test="searchLogDTO.loginId != null and searchLogDTO.loginId != ''">
+                AND a.login_id LIKE CONCAT('%', #{ searchLogDTO.loginId }, '%')
             </if>
             <if test="searchLogDTO.ipAddress != null and searchLogDTO.ipAddress != ''">
                 AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
@@ -65,6 +70,7 @@
     <select id="findLogs" resultMap="Log" parameterType="String">
         SELECT
                a.log_id,
+               a.login_id,
                a.error_message,
                a.host_name,
                a.ip_address,
@@ -81,6 +87,9 @@
         <where>
             <if test="searchLogDTO.logId != null">
                 AND a.log_id LIKE CONCAT('%', #{ searchLogDTO.logId }, '%')
+            </if>
+            <if test="searchLogDTO.loginId != null">
+                AND a.login_id LIKE CONCAT('%', #{ searchLogDTO.loginId }, '%')
             </if>
             <if test="searchLogDTO.ipAddress != null">
                 AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
@@ -107,6 +116,9 @@
                 <choose>
                     <when test="sortField == 'logId'">
                         ORDER BY a.log_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'loginId'">
+                        ORDER BY a.login_id ${ sortOrder }
                     </when>
                     <when test="sortField == 'ipAddress'">
                         ORDER BY a.ip_address ${ sortOrder }
@@ -138,19 +150,20 @@
 
     <select id="findLogForExcel" resultMap="logExcel">
         SELECT
-        a.log_id,
-        a.transaction_id,
-        a.request_time,
-        a.method,
-        a.uri,
-        a.query_string,
-        a.user_agent,
-        a.ip_address,
-        a.host_name,
-        a.remote_port,
-        a.status,
-        a.error_message
-        FROM tb_log a
+               a.log_id,
+               a.login_id,
+               a.transaction_id,
+               a.request_time,
+               a.method,
+               a.uri,
+               a.query_string,
+               a.user_agent,
+               a.ip_address,
+               a.host_name,
+               a.remote_port,
+               a.status,
+               a.error_message
+          FROM tb_log a
     </select>
 
 </mapper>

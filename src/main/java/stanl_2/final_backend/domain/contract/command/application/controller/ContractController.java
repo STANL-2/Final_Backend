@@ -56,12 +56,11 @@ public class ContractController {
     })
     @PutMapping("{contractId}")
     public ResponseEntity<ContractResponseMessage> putContract(@PathVariable String contractId,
-                                                               @RequestBody ContractModifyDTO contractModifyRequestDTO,
-                                                               Principal principal) throws GeneralSecurityException {
+                                                               Principal principal,
+                                                               @RequestBody ContractModifyDTO contractModifyRequestDTO) throws GeneralSecurityException {
 
         contractModifyRequestDTO.setContractId(contractId);
         contractModifyRequestDTO.setMemberId(principal.getName());
-
         contractCommandService.modifyContract(contractModifyRequestDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()
@@ -77,12 +76,10 @@ public class ContractController {
                     content = {@Content(schema = @Schema(implementation = ContractResponseMessage.class))})
     })
     @DeleteMapping("{contractId}")
-    public ResponseEntity<ContractResponseMessage> deleteContract(@PathVariable String contractId,
-                                                                  Principal principal) {
+    public ResponseEntity<ContractResponseMessage> deleteContract(@PathVariable String contractId) {
 
         ContractDeleteDTO contractDeleteDTO = new ContractDeleteDTO();
         contractDeleteDTO.setContractId(contractId);
-        contractDeleteDTO.setMemberId(principal.getName());
         contractCommandService.deleteContract(contractDeleteDTO);
 
         return ResponseEntity.ok(ContractResponseMessage.builder()

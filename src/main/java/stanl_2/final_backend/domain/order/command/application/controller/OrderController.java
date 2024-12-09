@@ -14,6 +14,7 @@ import stanl_2.final_backend.domain.order.command.application.dto.OrderStatusMod
 import stanl_2.final_backend.domain.order.command.application.service.OrderCommandService;
 import stanl_2.final_backend.domain.order.common.response.OrderResponseMessage;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @RestController("OrderCommandController")
@@ -34,7 +35,7 @@ public class OrderController {
     })
     @PostMapping("")
     public ResponseEntity<OrderResponseMessage> postOrder(@RequestBody OrderRegistDTO orderRegistDTO,
-                                                          Principal principal) {
+                                                          Principal principal) throws GeneralSecurityException {
 
         orderRegistDTO.setMemberId(principal.getName());
         orderCommandService.registerOrder(orderRegistDTO);
@@ -54,7 +55,7 @@ public class OrderController {
     @PutMapping("{orderId}")
     public ResponseEntity<OrderResponseMessage> putOrder(@PathVariable String orderId,
                                                          @RequestBody OrderModifyDTO orderModifyDTO,
-                                                         Principal principal) {
+                                                         Principal principal) throws GeneralSecurityException {
 
         orderModifyDTO.setOrderId(orderId);
         orderModifyDTO.setMemberId(principal.getName());
