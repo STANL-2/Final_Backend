@@ -91,19 +91,14 @@ public class NoticeController {
         noticeModifyDTO.setMemberLoginId(memberLoginId);
         noticeModifyDTO.setContent(noticeModifyDTO.getContent());
         Notice updateNotice = modelMapper.map(noticeModifyDTO, Notice.class);
-        System.out.println("1."+updateNotice.getFileUrl());
         if(noticeModifyDTO.getFileUrl()==null){
-            System.out.println("테스트중");
             noticeModifyDTO.setFileUrl(updateNotice.getFileUrl());
         }
         if (file != null && !file.isEmpty()) {
-            System.out.println("1번");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }else if(file==null || file.isEmpty()) {
-            System.out.println("2번");
             noticeModifyDTO.setFileUrl(updateNotice.getFileUrl());
         } else {
-            System.out.println("3번");
             noticeModifyDTO.setFileUrl(s3FileService.uploadOneFile(file));
         }
         noticeCommandService.modifyNotice(noticeId,noticeModifyDTO, principal);
