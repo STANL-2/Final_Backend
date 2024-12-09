@@ -221,6 +221,10 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search/month").hasAnyRole("salesHistory-employee-statistics-search-month-get", "GOD", "EMPLOYEE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/employee/search").hasAnyRole("salesHistory-employee-search-post", "GOD", "EMPLOYEE")
 
+                // DashBoard API
+                .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/employee").hasAnyRole("dashboard-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/admin").hasAnyRole("dashboard-get", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/director").hasAnyRole("dashboard-get", "GOD", "DIRECTOR")
 
                 // 그 외 나머지 시스템 관리자만 접근 가능
                 .anyRequest().hasRole("GOD")
