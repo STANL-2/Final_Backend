@@ -211,6 +211,7 @@ public class SalesHistoryController {
         salesHistorySearchDTO.setSearcherName(principal.getName());
         salesHistorySearchDTO.setStartDate(params.get("startDate"));
         salesHistorySearchDTO.setEndDate(params.get("endDate"));
+        salesHistorySearchDTO.setPeriod(params.get("period"));
 
         SalesHistoryStatisticsDTO responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchByEmployee(salesHistorySearchDTO);
 
@@ -220,6 +221,35 @@ public class SalesHistoryController {
                 .result(responseSalesHistory)
                 .build());
     }
+
+    @Operation(summary = "사원 통계(실적,수당,매출액) 일자별 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SalesHistoryResponseMessage.class))}),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없음",
+                    content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("employee/statistics/search/daily")
+    public ResponseEntity<SalesHistoryResponseMessage> getStatisticsSearchByEmployeeDaily(@RequestParam Map<String, String> params
+            ,Principal principal,
+                                                                                     @PageableDefault(size = 20) Pageable pageable){
+
+        SalesHistorySearchDTO salesHistorySearchDTO = new SalesHistorySearchDTO();
+
+        salesHistorySearchDTO.setSearcherName(principal.getName());
+        salesHistorySearchDTO.setStartDate(params.get("startDate"));
+        salesHistorySearchDTO.setEndDate(params.get("endDate"));
+        salesHistorySearchDTO.setPeriod(params.get("period"));
+
+        List<SalesHistoryStatisticsDTO> responseSalesHistory = salesHistoryQueryService.selectStatisticsSearchByEmployeeDaily(salesHistorySearchDTO);
+
+        return ResponseEntity.ok(SalesHistoryResponseMessage.builder()
+                .httpStatus(200)
+                .msg("사원 통계(실적,수당,매출액) 일자별 검색 성공")
+                .result(responseSalesHistory)
+                .build());
+    }
+
 
     @Operation(summary = "사원 통계(실적,수당,매출액) 월 별 검색")
     @ApiResponses(value = {
