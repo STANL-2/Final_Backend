@@ -225,7 +225,7 @@
                         ORDER BY b.mem_ema ${ sortOrder }
                     </when>
                     <when test="sortField == 'centerName'">
-                        ORDER BY b.cent_name ${ sortOrder }
+                        ORDER BY a.cent_name ${ sortOrder }
                     </when>
                     <when test="sortField == 'organizationName'">
                         ORDER BY c.org_cha_name ${ sortOrder }

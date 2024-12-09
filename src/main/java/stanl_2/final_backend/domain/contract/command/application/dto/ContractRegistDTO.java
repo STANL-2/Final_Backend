@@ -25,6 +25,7 @@ public class ContractRegistDTO {
     private String serialNum;
     private String selectOption;
     private Integer downPayment;
+    private Integer vehiclePrice;
     private Integer intermediatePayment;
     private Integer remainderPayment;
     private Integer consignmentPayment;

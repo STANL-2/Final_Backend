@@ -164,6 +164,21 @@
             <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
+            <if test="salesHistorySearchDTO.contractId != null">
+                AND a.conr_id =  #{salesHistorySearchDTO.contractId}
+            </if>
+            <if test="salesHistorySearchDTO.productList != null and salesHistorySearchDTO.productList.size() > 0">
+                AND a.prod_id IN
+                <foreach collection="salesHistorySearchDTO.productList" item="prod_id" open="(" separator="," close=")">
+                    #{prod_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
+                </foreach>
+            </if>
         </where>
         <choose>
             <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
@@ -444,8 +459,39 @@
         SELECT
         COUNT(*) AS cnt
         FROM tb_sales_history a
-        WHERE a.active = TRUE AND a.mem_id = #{searcherId}
-        ORDER BY a.created_at DESC
+        <where>
+            a.active = TRUE
+            <if test="salesHistorySearchDTO.memberList != null and salesHistorySearchDTO.memberList.size() > 0">
+                AND a.mem_id IN
+                <foreach collection="salesHistorySearchDTO.memberList" item="mem_id" open="(" separator="," close=")">
+                    #{mem_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.centerList != null and salesHistorySearchDTO.centerList.size() > 0">
+                AND a.cent_id IN
+                <foreach collection="salesHistorySearchDTO.centerList" item="cent_id" open="(" separator="," close=")">
+                    #{cent_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.customerList != null and salesHistorySearchDTO.customerList.size() > 0">
+                AND a.cust_id IN
+                <foreach collection="salesHistorySearchDTO.customerList" item="cust_id" open="(" separator="," close=")">
+                    #{cust_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.productList != null and salesHistorySearchDTO.productList.size() > 0">
+                AND a.prod_id IN
+                <foreach collection="salesHistorySearchDTO.productList" item="prod_id" open="(" separator="," close=")">
+                    #{prod_id}
+                </foreach>
+            </if>
+            <if test="salesHistorySearchDTO.contractId != null">
+                AND a.conr_id = #{salesHistorySearchDTO.contractId}
+            </if>
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+        </where>
     </select>
 
     <select id="findSalesHistoryCount" resultType="int">
@@ -660,7 +706,7 @@
                 ORDER BY period ASC
             </otherwise>
         </choose>
-        LIMIT #{size} OFFSET #{offset}
+<!--        LIMIT #{size} OFFSET #{offset}-->
     </select>
 
 
@@ -686,10 +732,10 @@
         a.created_at,
         <choose>
             <!-- 그룹화 처리 -->
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee' or (salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0)">
                 COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
             </when>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center' or (salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0)">
                 COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
             </when>
             <otherwise>
@@ -722,7 +768,7 @@
         </choose>
         ) AS SUMMARY
         GROUP BY period
-        LIMIT #{size} OFFSET #{offset}
+<!--        LIMIT #{size} OFFSET #{offset}-->
     </select>
 
     <select id="findStatisticsBySearchCount" resultType="int">
@@ -823,389 +869,6 @@
         ) AS subquery
     </select>
 
-    <select id="findStatisticsBySearchMonth" resultMap="SalesHistoryRankedDataResultMap">
-        SELECT
-        a.mem_id,
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales,
-        LEFT(a.created_at, 7) AS MONTH
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
-                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
-                    #{mem_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.mem_id, LEFT(a.created_at, 7)
-        <choose>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
-            </when>
-            <otherwise>
-                ORDER BY MONTH ASC
-            </otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findStatisticsBySearchCountMonth" resultType="int">
-        SELECT
-        COUNT(*) AS rank_count
-        FROM(
-        SELECT
-        COUNT(*)
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
-                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
-                    #{mem_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.mem_id, LEFT(a.created_at, 7)) AS A
-    </select>
-
-    <select id="findStatisticsBySearchYear" resultMap="SalesHistoryRankedDataResultMap">
-        SELECT
-        LEFT(a.created_at, 4) AS YEAR,
-        a.mem_id,
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
-                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
-                    #{mem_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.mem_id, LEFT(a.created_at, 4)
-        <choose>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
-            </when>
-            <otherwise>
-                ORDER BY YEAR ASC
-            </otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findStatisticsBySearchCountYear" resultType="int">
-        SELECT
-        COUNT(*) AS rank_count
-        FROM(
-        SELECT
-        COUNT(*)
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
-                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
-                    #{mem_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.mem_id, LEFT(a.created_at, 4)) AS A
-    </select>
-
-
-    <select id="findStatisticsCenterBySearch" resultMap="SalesHistoryRankedDataCenterResultMap">
-        SELECT
-        a.cent_id,
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
-                a.cent_id IN
-                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
-                    #{cent_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.cent_id
-        <choose>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
-            </when>
-            <otherwise>
-                ORDER BY a.created_at DESC
-            </otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findStatisticsCenterBySearchCount" resultType="int">
-        SELECT
-        COUNT(*) AS rank_count
-        FROM(
-        SELECT
-        COUNT(*)
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
-                a.cent_id IN
-                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
-                    #{cent_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.cent_id) AS A
-    </select>
-
-<select id="findStatisticsCenterBySearchMonth" resultMap="SalesHistoryRankedDataCenterResultMap">
-        SELECT
-        a.cent_id,
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales,
-        LEFT(a.created_at, 7) AS MONTH
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
-                a.cent_id IN
-                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
-                    #{cent_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.cent_id, LEFT(a.created_at, 7)
-    <choose>
-        <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
-            ORDER BY total_incentive DESC
-        </when>
-        <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
-            ORDER BY total_performance DESC
-        </when>
-        <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
-            ORDER BY total_sales DESC
-        </when>
-        <otherwise>
-            ORDER BY MONTH ASC
-        </otherwise>
-    </choose>
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findStatisticsCenterBySearchCountMonth" resultType="int">
-        SELECT
-        COUNT(*) AS rank_count
-        FROM(
-        SELECT
-        COUNT(*)
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
-                a.cent_id IN
-                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
-                    #{cent_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.cent_id, LEFT(a.created_at, 7)) AS A
-    </select>
-
-    <select id="findStatisticsCenterBySearchYear" resultMap="SalesHistoryRankedDataCenterResultMap">
-        SELECT
-        LEFT(a.created_at, 4) AS YEAR,
-        a.cent_id,
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0">
-                a.cent_id IN
-                <foreach collection="salesHistoryRankedDataDTO.centerList" item="cent_id" open="(" separator="," close=")">
-                    #{cent_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.cent_id, LEFT(a.created_at, 4)
-        <choose>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
-            </when>
-            <otherwise>
-                ORDER BY YEAR ASC
-            </otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findStatisticsCenterBySearchCountYear" resultType="int">
-        SELECT
-        COUNT(*) AS rank_count
-        FROM(
-        SELECT
-        COUNT(*)
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0">
-                a.mem_id IN
-                <foreach collection="salesHistoryRankedDataDTO.memberList" item="mem_id" open="(" separator="," close=")">
-                    #{mem_id}
-                </foreach>
-            </if>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        GROUP BY a.mem_id, LEFT(a.created_at, 4)) AS A
-    </select>
-
-    <select id="findAllStatisticsByMonth" resultMap="SalesHistoryRankedDataResultMap">
-        SELECT
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales,
-        LEFT(a.created_at, 7) AS MONTH
-        FROM tb_sales_history a
-        <where>
-            a.active = TRUE
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-        </where>
-        <choose>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
-                GROUP BY a.mem_id
-            </when>
-            <otherwise>
-                GROUP BY a.cent_id
-            </otherwise>
-        </choose>
-            , LEFT(a.created_at, 7)
-        <choose>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
-            </when>
-            <otherwise>
-                ORDER BY MONTH ASC
-            </otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
-    <select id="findAllStatisticsByYear" resultMap="SalesHistoryRankedDataResultMap">
-        SELECT
-        SUM(a.sal_hist_ince) AS total_incentive,
-        SUM(a.sal_hist_no_of_veh) AS total_performance,
-        SUM(a.sal_hist_tota_sale) AS total_sales,
-        LEFT(a.created_at, 4) AS YEAR
-        FROM tb_sales_history a
-        <where>
-            <if test="salesHistoryRankedDataDTO.startDate != null and salesHistoryRankedDataDTO.endDate != null">
-                AND a.created_at BETWEEN #{salesHistoryRankedDataDTO.startDate} AND #{salesHistoryRankedDataDTO.endDate}
-            </if>
-            AND a.active = TRUE
-        </where>
-        <choose>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
-                GROUP BY a.mem_id
-            </when>
-            <otherwise>
-                GROUP BY a.cent_id
-            </otherwise>
-        </choose>
-        <if test="salesHistoryRankedDataDTO.month != null">
-            , LEFT(a.created_at, 7)
-        </if>
-        <if test="salesHistoryRankedDataDTO.year != null">
-            , LEFT(a.created_at, 4)
-        </if>
-        <choose>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalIncentive'">
-                ORDER BY total_incentive DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalPerformance'">
-                ORDER BY total_performance DESC
-            </when>
-            <when test="salesHistoryRankedDataDTO.orderBy == 'totalSales'">
-                ORDER BY total_sales DESC
-            </when>
-            <otherwise>
-                ORDER BY YEAR ASC
-            </otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
-    </select>
-
     <select id="findAllStatisticsBySearch" resultMap="SalesHistoryRankedDataResultMap">
         SELECT
         SUM(a.sal_hist_ince) AS total_incentive,
@@ -1273,10 +936,10 @@
         a.created_at,
         <choose>
             <!-- 그룹화 처리 -->
-            <when test="salesHistoryRankedDataDTO.groupBy == 'employee'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'employee' or (salesHistoryRankedDataDTO.memberList != null and salesHistoryRankedDataDTO.memberList.size() > 0)">
                 COALESCE(a.mem_id, 'Unknown Employee') AS group_key -- 사원별
             </when>
-            <when test="salesHistoryRankedDataDTO.groupBy == 'center'">
+            <when test="salesHistoryRankedDataDTO.groupBy == 'center' or (salesHistoryRankedDataDTO.centerList != null and salesHistoryRankedDataDTO.centerList.size() > 0)">
                 COALESCE(a.cent_id, 'Unknown Center') AS group_key -- 매장별
             </when>
             <otherwise>
@@ -1309,7 +972,7 @@
         </choose>
         ) AS SUMMARY
         GROUP BY period
-        LIMIT #{size} OFFSET #{offset}
+<!--        LIMIT #{size} OFFSET #{offset}-->
     </select>
 
 </mapper>

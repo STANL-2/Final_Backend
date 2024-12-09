@@ -253,7 +253,7 @@ public class Initializer implements ApplicationRunner {
 
 
         Random random = new Random();
-        String[] positions = {"INTERN", "STAFF", "ASSISTANT", "MANAGER", "SENIOR", "EXECUTIVE", "DIRECTO", "CEO"};
+        String[] positions = {"INTERN", "STAFF", "ASSISTANT", "MANAGER", "SENIOR", "EXECUTIVE", "DIRECTOR", "CEO"};
         String[] grade = {"High School", "Associate", "Bachelor", "Master", "Doctoral"};
         String[] jobTypes = {"REGULAR", "TEMPORARY"};
         String[] militaryStatus = {"FULFILLED", "EXEMPTION", "UNFULFILLED"};

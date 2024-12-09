@@ -11,22 +11,22 @@ import java.util.List;
 
 @Mapper
 public interface ContractMapper {
-    ContractSeletIdDTO findContractByIdAndMemId(@Param("purchaseOrderId") String purchaseOrderId,
+    ContractSeletIdDTO findContractByIdAndMemId(@Param("contractId") String contractId,
                                                 @Param("memberId") String memberId);
 
     List<ContractSearchDTO> findContractBySearchAndMemberId(@Param("offset") int offset,
                                                             @Param("pageSize") int pageSize,
-                                                            @Param("contractSearchDTO") ContractSearchDTO contractSearchDTO);
+                                                            @Param("contractSearchDTO") ContractSearchDTO contractSearchDTO,
+                                                            @Param("sortField") String sortField,
+                                                            @Param("sortOrder") String sortOrder);
 
-    int findContractBySearchAndMemberIdCount(ContractSearchDTO contractSearchDTO);
+    int findContractBySearchAndMemberIdCount(@Param("contractSearchDTO") ContractSearchDTO contractSearchDTO);
 
     List<ContractSelectAllDTO> findContractAllByMemId(@Param("offset") int offset,
                                                       @Param("pageSize") int pageSize,
-                                                      @Param("memberId") String memberId,
-                                                      @Param("sortField") String sortField,
-                                                      @Param("sortOrder") String sortOrder);
+                                                      @Param("memberId") String memberId);
 
-    int findContractCountByMemId(String memId);
+    int findContractCountByMemId(String memberId);
 
     List<ContractSelectAllDTO> findContractAll(@Param("offset") int offset,
                                                @Param("pageSize") int pageSize,
@@ -47,9 +47,7 @@ public interface ContractMapper {
 
     List<ContractSelectAllDTO> findContractAllByCenterId(@Param("offset") int offset,
                                                          @Param("pageSize") int pageSize,
-                                                         @Param("centerId") String centerId,
-                                                         @Param("sortField") String sortField,
-                                                         @Param("sortOrder") String sortOrder);
+                                                         @Param("centerId") String centerId);
 
     Integer findContractCountByCenterId(@Param("centerId") String centerId);
 
@@ -59,7 +57,9 @@ public interface ContractMapper {
     List<ContractSearchDTO> findContractBySearchAndCenterId(@Param("offset") int offset,
                                                             @Param("pageSize") int pageSize,
                                                             @Param("contractSearchDTO") ContractSearchDTO contractSearchDTO,
-                                                            @Param("centerId") String centerId);
+                                                            @Param("centerId") String centerId,
+                                                            @Param("sortField") String sortField,
+                                                            @Param("sortOrder") String sortOrder);
 
     Integer findContractBySearchAndCenterCount(@Param("contractSearchDTO") ContractSearchDTO contractSearchDTO, @Param("centerId") String centerId);
 

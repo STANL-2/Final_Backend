@@ -42,19 +42,10 @@ public class ContractController {
     })
     @GetMapping("employee")
     public ResponseEntity<ContractResponseMessage> getAllContractEmployee(@PageableDefault(size = 10) Pageable pageable,
-                                                                          Principal principal,
-                                                                          @RequestParam(required = false) String sortField,
-                                                                          @RequestParam(required = false) String sortOrder) {
+                                                                          Principal principal) {
 
         ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
         contractSelectAllDTO.setMemberId(principal.getName());
-
-        // 정렬 추가
-        if (sortField != null && sortOrder != null) {
-            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
-        }
-
 
         Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContractEmployee(contractSelectAllDTO, pageable);
 
@@ -97,14 +88,16 @@ public class ContractController {
                                                                        @RequestParam(required = false) String searchMemberId,
                                                                        @RequestParam(required = false) String centerId,
                                                                        @RequestParam(required = false) String title,
-                                                                       @RequestParam(required = false) String startAt,
-                                                                       @RequestParam(required = false) String endAt,
+                                                                       @RequestParam(required = false) String startDate,
+                                                                       @RequestParam(required = false) String endDate,
                                                                        @RequestParam(required = false) String customerName,
                                                                        @RequestParam(required = false) String customerClassifcation,
                                                                        @RequestParam(required = false) String carName,
                                                                        @RequestParam(required = false) String status,
                                                                        @RequestParam(required = false) String companyName,
                                                                        @RequestParam(required = false) String customerPurchaseCondition,
+                                                                               @RequestParam(required = false) String sortField,
+                                                                               @RequestParam(required = false) String sortOrder,
                                                                @PageableDefault(size = 10) Pageable pageable) {
 
         ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
@@ -112,14 +105,20 @@ public class ContractController {
         contractSearchDTO.setSearchMemberId(searchMemberId);
         contractSearchDTO.setCenterId(centerId);
         contractSearchDTO.setTitle(title);
-        contractSearchDTO.setStartAt(startAt);
-        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setStartDate(startDate);
+        contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
         contractSearchDTO.setCarName(carName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<ContractSearchDTO> responseContracts = contractQueryService.selectBySearchEmployee(contractSearchDTO, pageable);
 
@@ -138,18 +137,10 @@ public class ContractController {
     })
     @GetMapping("center")
     public ResponseEntity<ContractResponseMessage> getAllContractAdmin(@PageableDefault(size = 10) Pageable pageable,
-                                                                       Principal principal,
-                                                                       @RequestParam(required = false) String sortField,
-                                                                       @RequestParam(required = false) String sortOrder) throws GeneralSecurityException {
+                                                                       Principal principal) throws GeneralSecurityException {
 
         ContractSelectAllDTO contractSelectAllDTO = new ContractSelectAllDTO();
         contractSelectAllDTO.setMemberId(principal.getName());
-
-        // 정렬 추가
-        if (sortField != null && sortOrder != null) {
-            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
-        }
 
         Page<ContractSelectAllDTO> responseContracts = contractQueryService.selectAllContractAdmin(contractSelectAllDTO, pageable);
 
@@ -192,14 +183,16 @@ public class ContractController {
                                                                                @RequestParam(required = false) String searchMemberId,
                                                                                @RequestParam(required = false) String centerId,
                                                                                @RequestParam(required = false) String title,
-                                                                               @RequestParam(required = false) String startAt,
-                                                                               @RequestParam(required = false) String endAt,
+                                                                               @RequestParam(required = false) String startDate,
+                                                                               @RequestParam(required = false) String endDate,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
                                                                                @RequestParam(required = false) String carName,
                                                                                @RequestParam(required = false) String status,
                                                                                @RequestParam(required = false) String companyName,
                                                                                @RequestParam(required = false) String customerPurchaseCondition,
+                                                                                @RequestParam(required = false) String sortField,
+                                                                                @RequestParam(required = false) String sortOrder,
                                                                                @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
 
         ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
@@ -207,14 +200,20 @@ public class ContractController {
         contractSearchDTO.setSearchMemberId(searchMemberId);
         contractSearchDTO.setCenterId(centerId);
         contractSearchDTO.setTitle(title);
-        contractSearchDTO.setStartAt(startAt);
-        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setStartDate(startDate);
+        contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
         contractSearchDTO.setCarName(carName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
+
+        // 정렬 추가
+        if (sortField != null && sortOrder != null) {
+            Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
+        }
 
         Page<ContractSearchDTO> responseContracts = contractQueryService.selectBySearchAdmin(contractSearchDTO, pageable);
 
@@ -282,8 +281,8 @@ public class ContractController {
     public ResponseEntity<ContractResponseMessage> getContractBySearch(@RequestParam(required = false) String searchMemberId,
                                                                                @RequestParam(required = false) String centerId,
                                                                                @RequestParam(required = false) String title,
-                                                                               @RequestParam(required = false) String startAt,
-                                                                               @RequestParam(required = false) String endAt,
+                                                                               @RequestParam(required = false) String startDate,
+                                                                               @RequestParam(required = false) String endDate,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
                                                                                @RequestParam(required = false) String carName,
@@ -304,8 +303,8 @@ public class ContractController {
         contractSearchDTO.setSearchMemberId(searchMemberId);
         contractSearchDTO.setCenterId(centerId);
         contractSearchDTO.setTitle(title);
-        contractSearchDTO.setStartAt(startAt);
-        contractSearchDTO.setEndAt(endAt);
+        contractSearchDTO.setStartDate(startDate);
+        contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
         contractSearchDTO.setCarName(carName);

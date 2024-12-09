@@ -99,6 +99,9 @@ public class Contract {
     @Column(name = "CONR_TOTA_SALE", nullable = false)
     private Integer totalSales = 0;
 
+    @Column(name = "CONR_VEHI_PRIC", nullable = false)
+    private Integer vehiclePrice = 0;
+
     @Lob
     @Column(name = "CREATED_URL", nullable = false, columnDefinition = "TEXT")
     private String createdUrl;

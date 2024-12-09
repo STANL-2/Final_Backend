@@ -13,17 +13,24 @@ import java.util.List;
 public interface OrderMapper {
     List<OrderSelectSearchDTO> findSearchOrderByMemberId(@Param("offset") int offset,
                                                          @Param("pageSize") int pageSize,
-                                                         @Param("orderSelectSearchDTO") OrderSelectSearchDTO orderSelectSearchDTO);
+                                                         @Param("orderSelectSearchDTO") OrderSelectSearchDTO orderSelectSearchDTO,
+                                                         @Param("sortField") String sortField,
+                                                         @Param("sortOrder") String sortOrder);
 
-    int findOrderCountByMemberId(String memberId);
+    int findOrderCountByMemberId(@Param("memberId")  String memberId);
 
     OrderSelectIdDTO findOrderByIdAndMemberId(String orderId, String memberId);
 
-    List<OrderSelectAllDTO> findAllOrderByMemberId(int offset, int pageSize, String memberId);
+    List<OrderSelectAllDTO> findAllOrderByMemberId(@Param("offset") int offset,
+                                                   @Param("pageSize") int pageSize,
+                                                   @Param("memberId") String memberId,
+                                                   @Param("sortField") String sortField,
+                                                   @Param("sortOrder") String sortOrder);
 
     int findOrderSearchCountByMemberId(OrderSelectSearchDTO orderSelectSearchDTO);
 
-    List<OrderSelectAllDTO> findAllOrder(int offset, int pageSize);
+    List<OrderSelectAllDTO> findAllOrder(@Param("offset") int offset,
+                                         @Param("pageSize") int pageSize);
 
     int findOrderCount();
 
@@ -40,4 +47,19 @@ public interface OrderMapper {
     List<OrderExcelDTO> findOrderForExcel();
 
     String selectByContractId(String orderId);
+
+    List<OrderSelectAllDTO> findAllOrderCenter(@Param("offset") int offset,
+                                               @Param("pageSize") int pageSize,
+                                               @Param("memberId") String memberId1,
+                                               @Param("centerId") String centerId);
+
+    Integer findOrderCountCenter();
+
+    List<OrderSelectSearchDTO> findSearchOrderCenter(@Param("offset") int offset,
+                                                     @Param("pageSize") int pageSize,
+                                                     @Param("orderSelectSearchDTO") OrderSelectSearchDTO orderSelectSearchDTO,
+                                                     @Param("sortField") String sortField,
+                                                     @Param("sortOrder") String sortOrder);
+
+    Integer findOrderSearchCountCenter(OrderSelectSearchDTO orderSelectSearchDTO);
 }

@@ -92,6 +92,7 @@ public class CustomerController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String sex,
             @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String memberId,
             @RequestParam(required = false) String sortField,
             @RequestParam(required = false) String sortOrder,
             @PageableDefault(size = 10) Pageable pageable
@@ -103,7 +104,7 @@ public class CustomerController {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(direction, sortField));
         }
 
-        CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(customerId , name, sex, phone);
+        CustomerSearchDTO customerSearchDTO = new CustomerSearchDTO(customerId , name, sex, phone, memberId);
         Page<CustomerSearchDTO> customerDTOPage = customerQueryService.findCustomerByCondition(pageable, customerSearchDTO);
 
         return ResponseEntity.ok(CustomerResponseMessage.builder()

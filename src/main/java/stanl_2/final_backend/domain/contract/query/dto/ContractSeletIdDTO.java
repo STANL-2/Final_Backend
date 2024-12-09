@@ -29,11 +29,12 @@ public class ContractSeletIdDTO {
     private String deliveryDate;
     private String deliveryLocation;
     private String status;
-    private Integer NumberOfVehicles;
+    private Integer numberOfVehicles;
     private Integer totalSales;
     private String carName;
     private String createdUrl;
     private String updatedUrl;
+    private String vehiclePrice;
     private boolean active;
     private String createdAt;
     private String updatedAt;
