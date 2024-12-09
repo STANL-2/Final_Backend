@@ -160,12 +160,19 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         searchDTO.setTag("ALL");
         Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
 
+        System.out.println("noticePage = " + noticePage);
+
         for (NoticeDTO notice : noticePage.getContent()) {
             Map<String, String> noticeData = new HashMap<>();
             noticeData.put("title", notice.getTitle()); // NoticeDTO의 title
-            noticeData.put("content", notice.getContent()); // NoticeDTO의 content
+            noticeData.put("content", "/notice/detail?tag=" + notice.getTag() + "&classification=" + notice.getClassification()
+                    + "&noticeTitle=" + notice.getTitle() + "&noticeContent=" + notice.getContent()
+                    + "&noticeId=" + notice.getNoticeId()); // NoticeDTO의 redirectUrl
             noticeList.add(noticeData);
         }
+
+        System.out.println("noticeLsit = " + noticeList);
+
         dashBoardEmployeeDTO.setNoticeList(noticeList);
 
         return dashBoardEmployeeDTO;
@@ -259,7 +266,9 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         for (NoticeDTO notice : noticePage.getContent()) {
             Map<String, String> noticeData = new HashMap<>();
             noticeData.put("title", notice.getTitle()); // NoticeDTO의 title
-            noticeData.put("content", notice.getContent()); // NoticeDTO의 content
+            noticeData.put("content", "/notice/detail?tag=" + notice.getTag() + "&classification=" + notice.getClassification()
+                    + "&noticeTitle=" + notice.getTitle() + "&noticeContent=" + notice.getContent()
+                    + "&noticeId=" + notice.getNoticeId()); // NoticeDTO의 redirectUrl
             noticeList.add(noticeData);
         }
         dashBoardAdminDTO.setNoticeList(noticeList);
