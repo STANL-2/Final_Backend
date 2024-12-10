@@ -283,7 +283,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
 
     @Override
     @Transactional
-    public void modifyContractStatus(ContractStatusModifyDTO contractStatusModifyDTO) {
+    public void modifyContractStatus(ContractStatusModifyDTO contractStatusModifyDTO) throws GeneralSecurityException {
 
         // 관리자 ID 조회
         String adminId = authQueryService.selectMemberIdByLoginId(contractStatusModifyDTO.getAdminId());

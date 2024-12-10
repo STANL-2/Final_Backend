@@ -77,6 +77,8 @@ public interface SalesHistoryMapper {
     List<SalesHistoryRankedDataDTO> findStatisticsBestBySearch(@Param("size") int size
             , @Param("offset") int offset,
                                                                @Param("salesHistoryRankedDataDTO") SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
+
+    List<SalesHistoryRankedDataDTO> findAllStatisticsBySearch(int size, int offset, SalesHistoryRankedDataDTO salesHistoryRankedDataDTO);
 }
 
 

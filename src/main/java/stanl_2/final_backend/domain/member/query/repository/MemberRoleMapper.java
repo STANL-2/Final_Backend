@@ -7,4 +7,6 @@ import java.util.List;
 @Mapper
 public interface MemberRoleMapper {
     List<String> findMembersbyRole(String role);
+
+    String findMembersRolebyId(String memberId);
 }
