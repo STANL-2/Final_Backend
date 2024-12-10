@@ -442,7 +442,9 @@
 
     <select id="findStatisticsSearchByEmployee" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
         SELECT
-        LEFT(a.created_at, 10) as CREATED_AT,
+        <if test="salesHistorySearchDTO.period == 'daily'">
+            LEFT(a.created_at, 10) as CREATED_AT,
+        </if>
         SUM(a.sal_hist_ince) as INCENTIVE,
         SUM(a.sal_hist_no_of_veh) as PERFORMANCE,
         SUM(a.sal_hist_tota_sale) as TOTAL_SALES
@@ -453,7 +455,31 @@
             AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
             </if>
         </where>
+        <if test="salesHistorySearchDTO.period == 'daily'">
+             GROUP BY LEFT(a.created_at, 10)
+        </if>
     </select>
+
+    <select id="findStatisticsSearchByEmployeeDaily" resultMap="salesHistoryAggregatedDataResultMap" parameterType="String">
+        SELECT
+        <if test="salesHistorySearchDTO.period == 'daily'">
+            LEFT(a.created_at, 10) as CREATED_AT,
+        </if>
+        SUM(a.sal_hist_ince) as INCENTIVE,
+        SUM(a.sal_hist_no_of_veh) as PERFORMANCE,
+        SUM(a.sal_hist_tota_sale) as TOTAL_SALES
+        FROM tb_sales_history a
+        <where>
+            a.mem_id = #{salesHistorySearchDTO.searcherName} AND a.active = TRUE
+            <if test="salesHistorySearchDTO.startDate != null and salesHistorySearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{salesHistorySearchDTO.startDate} AND #{salesHistorySearchDTO.endDate}
+            </if>
+        </where>
+        <if test="salesHistorySearchDTO.period == 'daily'">
+            GROUP BY LEFT(a.created_at, 10)
+        </if>
+    </select>
+
 
     <select id="findSalesHistoryCountByEmployee" resultType="int" parameterType="String">
         SELECT

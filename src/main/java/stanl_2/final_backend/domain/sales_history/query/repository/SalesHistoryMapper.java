@@ -30,6 +30,8 @@ public interface SalesHistoryMapper {
 
     SalesHistoryStatisticsDTO findStatisticsSearchByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
+    List<SalesHistoryStatisticsDTO> findStatisticsSearchByEmployeeDaily(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
+
     List<SalesHistoryStatisticsDTO> findStatisticsSearchMonthByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
 
     List<SalesHistoryStatisticsDTO> findStatisticsSearchYearByEmployee(@Param("salesHistorySearchDTO") SalesHistorySearchDTO salesHistorySearchDTO);
