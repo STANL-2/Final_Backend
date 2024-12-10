@@ -102,19 +102,22 @@ public class PromotionServiceImpl implements PromotionCommandService {
 
     @Transactional
     @Override
-    public void deletePromotion(String promotionId, Principal principal) {
+    public void deletePromotion(String promotionId, Principal principal) throws GeneralSecurityException {
         redisService.clearPromotionCache();
-        String memberId= principal.getName();
+        String loginId= principal.getName();
+        String memberId = authQueryService.selectMemberIdByLoginId(loginId);
+        memberId=memberQueryService.selectNameById(memberId);
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(()-> new PromotionCommonException(PromotionErrorCode.PROMOTION_NOT_FOUND));
 
-        if(promotion.getMemberId().equals(memberId)){
+        if(!promotion.getMemberId().equals(memberId)){
             // 권한 오류
             throw new PromotionCommonException(PromotionErrorCode.AUTHORIZATION_VIOLATION);
         }
-        promotion.setActive(false);
-        promotion.setDeletedAt(getCurrentTimestamp());
-
+        else {
+            promotion.setActive(false);
+            promotion.setDeletedAt(getCurrentTimestamp());
+        }
         try {
             promotionRepository.save(promotion);
         } catch (DataIntegrityViolationException e) {

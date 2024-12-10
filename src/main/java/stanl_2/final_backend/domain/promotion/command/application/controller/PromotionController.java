@@ -115,7 +115,7 @@ public class PromotionController {
                     content = {@Content(schema = @Schema(implementation = PromotionResponseMessage.class))})
     })
     @DeleteMapping("{promotionId}")
-    public ResponseEntity<PromotionResponseMessage> deleteNotice(@PathVariable String promotionId, Principal principal) {
+    public ResponseEntity<PromotionResponseMessage> deleteNotice(@PathVariable String promotionId, Principal principal) throws GeneralSecurityException {
 
         promotionCommandService.deletePromotion(promotionId,principal);
 

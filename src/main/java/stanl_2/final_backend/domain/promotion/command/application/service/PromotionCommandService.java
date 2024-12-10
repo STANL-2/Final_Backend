@@ -12,5 +12,5 @@ public interface PromotionCommandService {
 
     PromotionModifyDTO modifyPromotion(String promotionId, PromotionModifyDTO promotionModifyDTO, Principal principal) throws GeneralSecurityException;
 
-    void deletePromotion(String promotionId, Principal principal);
+    void deletePromotion(String promotionId, Principal principal) throws GeneralSecurityException;
 }
