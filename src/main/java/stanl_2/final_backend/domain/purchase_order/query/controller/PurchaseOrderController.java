@@ -89,6 +89,7 @@ public class PurchaseOrderController {
                                                                                     @RequestParam(required = false) String searchMemberId,
                                                                                     @RequestParam(required = false) String startDate,
                                                                                     @RequestParam(required = false) String endDate,
+                                                                                     @RequestParam(required = false) String productName,
                                                                                      @RequestParam(required = false) String sortField,
                                                                                      @RequestParam(required = false) String sortOrder,
                                                                                 Principal principal,
@@ -108,6 +109,7 @@ public class PurchaseOrderController {
         purchaseOrderSelectSearchDTO.setEndDate(endDate);
         purchaseOrderSelectSearchDTO.setSearchMemberId(searchMemberId);
         purchaseOrderSelectSearchDTO.setMemberId(principal.getName());
+        purchaseOrderSelectSearchDTO.setProductName(productName);
 
         Page<PurchaseOrderSelectSearchDTO> responsePurchaseOrder = purchaseOrderQueryService.selectSearchPurchaseOrderAdmin(purchaseOrderSelectSearchDTO, pageable);
 
@@ -171,6 +173,7 @@ public class PurchaseOrderController {
                                                                                      @RequestParam(required = false) String endDate,
                                                                                     @RequestParam(required = false) String sortField,
                                                                                     @RequestParam(required = false) String sortOrder,
+                                                                                @RequestParam(required = false) String productName,
                                                                                      @PageableDefault(size = 10) Pageable pageable) throws GeneralSecurityException {
 
         // 정렬 추가
@@ -186,6 +189,7 @@ public class PurchaseOrderController {
         purchaseOrderSelectSearchDTO.setStartDate(startDate);
         purchaseOrderSelectSearchDTO.setEndDate(endDate);
         purchaseOrderSelectSearchDTO.setSearchMemberId(searchMemberId);
+        purchaseOrderSelectSearchDTO.setProductName(productName);
 
         Page<PurchaseOrderSelectSearchDTO> responsePurchaseOrder = purchaseOrderQueryService.selectSearchPurchaseOrder(purchaseOrderSelectSearchDTO, pageable);
 
