@@ -272,8 +272,26 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
         SalesHistoryStatisticsDTO salesHistoryStatisticsDTO = salesHistoryMapper.findStatisticsSearchByEmployee(salesHistorySearchDTO);
 
+        if(salesHistoryStatisticsDTO == null){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
         return salesHistoryStatisticsDTO;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SalesHistoryStatisticsDTO> selectStatisticsSearchByEmployeeDaily(SalesHistorySearchDTO salesHistorySearchDTO) {
+
+        salesHistorySearchDTO.setSearcherName(authQueryService.selectMemberIdByLoginId(salesHistorySearchDTO.getSearcherName()));
+
+        List<SalesHistoryStatisticsDTO> salesHistoryStatisticsDTOList = salesHistoryMapper.findStatisticsSearchByEmployeeDaily(salesHistorySearchDTO);
+
+        if(salesHistoryStatisticsDTOList == null || salesHistoryStatisticsDTOList.isEmpty()){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+        return salesHistoryStatisticsDTOList;
+    }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -289,7 +307,7 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
 
         List<SalesHistoryStatisticsDTO> salesHistoryStatisticsDTOList = salesHistoryMapper.findStatisticsSearchMonthByEmployee(salesHistorySearchDTO);
 
-        if(salesHistoryStatisticsDTOList == null){
+        if(salesHistoryStatisticsDTOList == null || salesHistoryStatisticsDTOList.isEmpty()){
             throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
         }
         return salesHistoryStatisticsDTOList;

@@ -326,6 +326,9 @@
                     <when test="sortField == 'contractId'">
                         ORDER BY a.conr_id ${sortOrder}
                     </when>
+                    <when test="sortField == 'createdAt'">
+                        ORDER BY a.created_at ${sortOrder}
+                    </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
                     </otherwise>
@@ -411,6 +414,9 @@
                     </when>
                     <when test="sortField == 'contractId'">
                         ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'createdAt'">
+                        ORDER BY a.created_at ${sortOrder}
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
@@ -661,6 +667,9 @@
                     </when>
                     <when test="sortField == 'contractId'">
                         ORDER BY a.conr_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'createdAt'">
+                        ORDER BY a.created_at ${sortOrder}
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC

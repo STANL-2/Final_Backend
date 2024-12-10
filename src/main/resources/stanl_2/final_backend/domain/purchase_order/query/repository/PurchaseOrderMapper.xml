@@ -135,7 +135,7 @@
                 AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
             <if test="purchaseOrderSelectSearchDTO.productName != null">
-                AND f.prod_name = #{productName}
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
             </if>
         </where>
         <choose>
@@ -160,6 +160,9 @@
                     <when test="sortField == 'createdAt'">
                         ORDER BY a.created_at ${sortOrder}
                     </when>
+                    <when test="sortField == 'adminId'">
+                        ORDER BY a.admin_id ${sortOrder}
+                    </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
                     </otherwise>
@@ -177,6 +180,16 @@
         SELECT
         COUNT(*) AS cnt
         FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
         <where>
             a.active = TRUE
             AND a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
@@ -191,6 +204,9 @@
             </if>
             <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
                 AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
             </if>
             <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
@@ -290,7 +306,7 @@
                 AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
             <if test="purchaseOrderSelectSearchDTO.productName != null">
-                AND f.prod_name = #{productName}
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
             </if>
         </where>
         <choose>
@@ -315,6 +331,9 @@
                     <when test="sortField == 'createdAt'">
                         ORDER BY a.created_at ${sortOrder}
                     </when>
+                    <when test="sortField == 'adminId'">
+                        ORDER BY a.admin_id ${sortOrder}
+                    </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
                     </otherwise>
@@ -332,6 +351,16 @@
         SELECT
         COUNT(*) AS cnt
         FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
         <where>
             a.active = TRUE
             <if test="purchaseOrderSelectSearchDTO.title != null">
@@ -345,6 +374,9 @@
             </if>
             <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
                 AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
             </if>
             <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
                 AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
