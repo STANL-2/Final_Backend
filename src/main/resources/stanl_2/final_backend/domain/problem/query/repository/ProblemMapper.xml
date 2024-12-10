@@ -61,7 +61,7 @@
                 AND a.cst_id = #{problemSearchDTO.customerId}
             </if>
             <if test="problemSearchDTO.startDate != null and problemSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{problemSearchDTO.startDate} AND #{problemSearchDTO.endDate}
+                AND a.created_at BETWEEN #{problemSearchDTO.startDate} AND DATE_ADD(#{problemSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
         ORDER BY a.created_at DESC

@@ -83,7 +83,7 @@
                 AND a.not_ttl LIKE CONCAT('%', #{searchDTO.title}, '%')
             </if>
             <if test="searchDTO.startDate != null and searchDTO.endDate != null">
-                AND a.created_at BETWEEN #{searchDTO.startDate} AND #{searchDTO.endDate}
+                AND a.created_at BETWEEN #{searchDTO.startDate} AND DATE_ADD(#{searchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
         ORDER BY a.created_at DESC

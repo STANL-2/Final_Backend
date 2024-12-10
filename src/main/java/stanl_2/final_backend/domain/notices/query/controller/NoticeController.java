@@ -12,19 +12,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 import stanl_2.final_backend.domain.notices.query.service.NoticeQueryService;
+
+import java.security.GeneralSecurityException;
+import java.security.Principal;
 
 
 @RestController("queryNoticeController")
 @RequestMapping("/api/v1/notice")
 public class NoticeController {
     private final NoticeQueryService noticeQueryService;
+    private final AuthQueryService authQueryService;
+    private final MemberQueryService memberQueryService;
     @Autowired
-    public NoticeController(NoticeQueryService noticeQueryService) {
+    public NoticeController(NoticeQueryService noticeQueryService,
+                            AuthQueryService authQueryService,
+                            MemberQueryService memberQueryService) {
         this.noticeQueryService = noticeQueryService;
+        this.authQueryService = authQueryService;
+        this.memberQueryService = memberQueryService;
     }
 
     @Operation(summary = "공지사항 조건별 조회")
@@ -41,8 +52,9 @@ public class NoticeController {
             @RequestParam(required = false) String memberId,
             @RequestParam(required = false) String classification,
             @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate
-    ) {
+            @RequestParam(required = false) String endDate,
+            Principal principal
+    ) throws GeneralSecurityException {
         Pageable pageable = PageRequest.of(page, size);
         SearchDTO searchDTO = new SearchDTO(title, tag, memberId, classification, startDate, endDate);
 

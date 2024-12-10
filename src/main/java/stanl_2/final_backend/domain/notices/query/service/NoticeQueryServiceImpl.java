@@ -49,7 +49,6 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
     @Transactional(readOnly = true)
     @Override
     public Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO) {
-        System.out.println("2.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
         System.out.println("3.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
@@ -57,9 +56,7 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
                 + "::title=" + searchDTO.getTitle()+ "::tag=" + searchDTO.getTag()
                 +"::memberid=" + searchDTO.getMemberId()+ "::classification=" + searchDTO.getClassification()
                 + "::startDate=" + searchDTO.getStartDate()+ "::endDate=" + searchDTO.getEndDate();
-        System.out.println("4.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         List<NoticeDTO> notices = (List<NoticeDTO>) redisTemplate.opsForValue().get(cacheKey);
-        System.out.println("5.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
         if (notices == null) {
             System.out.println("데이터베이스에서 데이터 조회 중...");
             notices = noticeMapper.findNotices(offset, size, searchDTO);

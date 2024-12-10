@@ -46,7 +46,7 @@
                 AND a.prm_ttl LIKE CONCAT('%', #{promotionSearchDTO.title}, '%')
             </if>
             <if test="promotionSearchDTO.startDate != null and promotionSearchDTO.endDate != null">
-                AND a.created_at BETWEEN #{promotionSearchDTO.startDate} AND #{promotionSearchDTO.endDate}
+                AND a.created_at BETWEEN #{promotionSearchDTO.startDate} AND DATE_ADD(#{promotionSearchDTO.endDate}, INTERVAL 1 DAY)
             </if>
         </where>
         ORDER BY a.created_at DESC
