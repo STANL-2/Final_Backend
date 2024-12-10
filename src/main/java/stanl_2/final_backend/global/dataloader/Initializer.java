@@ -75,7 +75,7 @@ public class Initializer implements ApplicationRunner {
                 "M000000000",
                 "pass",
                 "신하늘",
-                "god@stanl.com",
+                "god1@stanl.com",
                 0,
                 "MALE",
                 "000000-0000000",
@@ -95,10 +95,10 @@ public class Initializer implements ApplicationRunner {
 
         // 우리 계정2
         createOrUpdateMember(
-                "M99999999",
+                "M999999999",
                 "pass",
                 "신하늘",
-                "god@stanl.com",
+                "god2@stanl.com",
                 0,
                 "MALE",
                 "000000-0000000",
