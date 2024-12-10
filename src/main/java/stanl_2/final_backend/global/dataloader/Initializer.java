@@ -95,7 +95,7 @@ public class Initializer implements ApplicationRunner {
 
         // 우리 계정2
         createOrUpdateMember(
-                "M99999999",
+                "M999999999",
                 "pass",
                 "신하늘",
                 "god@stanl.com",
