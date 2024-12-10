@@ -70,20 +70,21 @@ public class Initializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
+        // 우리 계정1
         createOrUpdateMember(
-                "godgod",
-                "godgod",
+                "M000000000",
+                "pass",
                 "신하늘",
-                "godgod@stanl.com",
+                "god1@stanl.com",
                 0,
                 "MALE",
                 "000000-0000000",
                 "010-0000-0000",
                 "서울 동작구 보라매로 87",
                 "시스템 관리자",
-                "중졸",
+                "Associate",
                 "REGULAR",
-                "미필",
+                "FULFILLED",
                 "한국은행",
                 "000-0000-000000-00000",
                 "CEN_000000000",
@@ -92,21 +93,21 @@ public class Initializer implements ApplicationRunner {
                 loadImage("god.png")
         );
 
-        // 우리 계정
+        // 우리 계정2
         createOrUpdateMember(
-                "god",
-                "god",
+                "M999999999",
+                "pass",
                 "신하늘",
-                "god@stanl.com",
+                "god2@stanl.com",
                 0,
                 "MALE",
                 "000000-0000000",
                 "010-0000-0000",
                 "서울 동작구 보라매로 87",
                 "시스템 관리자",
-                "중졸",
+                "Associate",
                 "REGULAR",
-                "미필",
+                "FULFILLED",
                 "한국은행",
                 "000-0000-000000-00000",
                 "CEN_000000000",
@@ -117,137 +118,93 @@ public class Initializer implements ApplicationRunner {
 
         // 심사위원 1 계정
         createOrUpdateMember(
-                "god1",
-                "god1",
-                "이름1",
-                "god@stanl.com",
-                0,
+                "M000000001",
+                "pass1",
+                "고윤정",
+                "Yunn29@stanl.com",
+                31,
                 "MALE",
-                "000000-0000000",
+                "951109-1000000",
                 "010-0000-0000",
                 "서울 동작구 보라매로 87",
-                "심사위원",
-                "중졸",
+                "INTERN",
+                "Associate",
                 "TEMPORARY",
-                "미필",
+                "FULFILLED",
                 "한국은행",
                 "000-0000-000000-00000",
-                "CEN_000000000",
-                "ORG_000000000",
-                "GOD",
+                "CEN_000000001",
+                "ORG_000000001",
+                "EMPLOYEE",
                 loadImage("god.png")
         );
 
         // 심사위원 2 계정
         createOrUpdateMember(
-                "god2",
-                "god2",
-                "이름2",
-                "god@stanl.com",
-                0,
+                "M000000002",
+                "pass2",
+                "차은우",
+                "enUU22@stanl.com",
+                43,
                 "MALE",
-                "000000-0000000",
-                "010-0000-0000",
+                "871204-1000000",
+                "010-1234-2321",
                 "서울 동작구 보라매로 87",
-                "심사위원",
-                "중졸",
+                "ASSISTANT",
+                "Associate",
                 "TEMPORARY",
-                "미필",
+                "FULFILLED",
                 "한국은행",
-                "000-0000-000000-00000",
-                "CEN_000000000",
-                "ORG_000000000",
-                "GOD",
+                "000-0200-000100-00030",
+                "CEN_000000001",
+                "ORG_000000001",
+                "ADMIN",
                 loadImage("god.png")
         );
 
         // 심사위원 3 계정
         createOrUpdateMember(
-                "god3",
-                "god3",
-                "이름3",
-                "god@stanl.com",
-                0,
-                "MALE",
-                "000000-0000000",
-                "010-0000-0000",
+                "M000000003",
+                "pass3",
+                "윤세연",
+                "sey1@stanl.com",
+                54,
+                "FEMALE",
+                "800912-2000000",
+                "010-3231-4573",
                 "서울 동작구 보라매로 87",
-                "심사위원",
-                "중졸",
+                "EXECUTIVE",
+                "Master",
                 "TEMPORARY",
-                "미필",
+                "FULFILLED",
                 "한국은행",
                 "000-0000-000000-00000",
-                "CEN_000000000",
-                "ORG_000000000",
-                "GOD",
+                "CEN_000000001",
+                "ORG_000000001",
+                "DIRECTOR",
                 loadImage("god.png")
         );
 
 
         createOrUpdateMember(
-                "eee",
-                "eee",
-                "사원1",
-                "employee@stanl.com",
-                0,
+                "M000000004",
+                "pass4",
+                "이재용",
+                "gdragon11@stanl.com",
+                77,
                 "MALE",
-                "000000-0000000",
-                "010-0000-0000",
+                "760122-1000000",
+                "010-5830-2842",
                 "서울 동작구 보라매로 87",
-                "사원",
-                "중졸",
+                "CEO",
+                "Doctoral",
                 "TEMPORARY",
-                "미필",
+                "FULFILLED",
                 "한국은행",
                 "000-0000-000000-00000",
                 "CEN_000000001",
-                "ORG_000000000",
-                "EMPLOYEE",
-                loadImage("default.png")
-        );
-
-        createOrUpdateMember(
-                "aaa",
-                "aaa",
-                "관리자1",
-                "admin@stanl.com",
-                0,
-                "MALE",
-                "000000-0000000",
-                "010-0000-0000",
-                "서울 동작구 보라매로 87",
-                "영업 관리자",
-                "중졸",
-                "TEMPORARY",
-                "미필",
-                "한국은행",
-                "000-0000-000000-00000",
-                "CEN_000000001",
-                "ORG_000000000",
-                "ADMIN",
-                loadImage("default.png")
-        );
-
-        createOrUpdateMember(
-                "ddd",
-                "ddd",
-                "담당자1",
-                "director@stanl.com",
-                0,
-                "MALE",
-                "000000-0000000",
-                "010-0000-0000",
-                "서울 동작구 보라매로 87",
-                "영업 담당자",
-                "중졸",
-                "TEMPORARY",
-                "미필",
-                "한국은행",
-                "000-0000-000000-00000",
-                "CEN_000000001",
-                "ORG_000000000",
-                "DIRECTOR",
+                "ORG_000000001",
+                "GOD",
                 loadImage("default.png")
         );
 
@@ -259,8 +216,25 @@ public class Initializer implements ApplicationRunner {
         String[] militaryStatus = {"FULFILLED", "EXEMPTION", "UNFULFILLED"};
         String[] genders = {"MALE", "FEMALE"};
         String[] roles = {"EMPLOYEE", "ADMIN", "DIRECTOR"};
-        String[] lastNames = {"김", "이", "박", "최", "정", "강", "조", "유", "윤", "장", "임", "기", "방", "하", "도", "한", "손", "송", "오", "조", "서", "배", "홍", "류", "신", "권", "곽"};
-        String[] firstNames = {"민수", "지훈", "서연", "예준", "하은", "도현", "지원", "유진", "현우", "수아", "수빈", "주희", "지아", "준호", "혜린", "지민", "은지", "시우", "다영", "태현", "연우"};
+        String[] lastNames = {
+                "김", "이", "박", "최", "정", "강", "조", "유", "윤", "장", "임", "기", "방", "하", "도", "한", "손", "송", "오", "조", "서", "배", "홍", "류", "신", "권", "곽",
+                "황", "안", "전", "문", "탁", "모", "남", "우", "차", "백", "표", "양", "변", "설", "염", "석", "심", "함", "노", "채", "진", "민", "엄", "원", "천", "방", "공",
+                "현", "나", "제", "고", "성", "라", "마", "탁", "하", "사", "여", "용", "호", "범", "소", "운", "계", "도", "서",
+                "주", "두", "해", "율", "민", "익", "선", "학", "판", "예", "형", "양", "천", "어", "현", "종", "운", "필", "탁", "중",
+                "후", "은", "치", "간", "일", "규", "화", "순", "평", "다", "목", "택", "봉"
+        };
+
+        String[] firstNames = {
+                "민수", "지훈", "서연", "예준", "하은", "도현", "지원", "유진", "현우", "수아", "수빈", "주희", "지아", "준호", "혜린", "지민", "은지", "시우", "다영", "태현", "연우",
+                "가은", "민준", "서준", "예진", "윤서", "지우", "승현", "시현", "다현", "태민", "소윤", "해준", "유정", "현서", "윤하", "수현", "혜수", "가연", "지호", "정우",
+                "다빈", "채영", "우진", "민아", "성민", "윤호", "지훈", "하린", "승우", "지윤", "소현", "예슬", "아린", "주원", "희준", "은채", "서아", "주영", "도윤", "정민",
+                "하윤", "나연", "규현", "수영", "시윤", "도경", "서윤", "지율", "혜진", "민혁", "태훈", "유나", "재민", "세연", "은서", "재현", "다윤", "연서", "예서", "하율",
+                "준영", "현진", "승민", "재윤", "희연", "시영", "수진", "서우", "태연", "준서", "수영", "나영", "다희", "채린", "윤채", "다훈", "민지", "현민", "선우", "하경",
+                "지안", "수빈", "은호", "아윤", "재희", "태영", "정현", "예원", "은혜", "소라", "다은", "우빈", "예린", "서희", "유빈", "하진", "선호", "은우", "예빈", "혜연",
+                "지혁", "다훈", "채희", "지완", "민호", "다온", "수경", "은빈", "채원", "하연", "정빈", "나희", "소희", "시후", "태후", "민후", "서영", "정윤", "채윤", "도은",
+                "가빈", "나영", "현우", "세빈", "도현", "혜빈", "준혁", "은성", "다솔", "유영", "태솔", "희영", "채우", "소연", "나윤", "수환", "정환", "승환", "도환", "은환"
+        };
+
         String[] addresses = {
                 "서울특별시 강남구 테헤란로",
                 "부산광역시 해운대구 센텀중앙로",
@@ -276,7 +250,7 @@ public class Initializer implements ApplicationRunner {
 
 
         // 회원 및 역할 생성 로직
-        for (int i = 1; i <= 93; i++) {
+        for (int i = 5; i <= 102; i++) {
             int centerId = random.nextInt(10) + 1;
             int orgId = random.nextInt(10) + 5;
             String sex = genders[(i+1) % 2];
@@ -639,7 +613,7 @@ public class Initializer implements ApplicationRunner {
 
         // 고객 인당 100명 씩
         if(customerRepository.count() == 0){
-            for (int i = 1; i <= 100; i++) {
+            for (int i = 1; i <= 4; i++) {
                 String memberId = String.format("MEM_%09d", i);
                 for (int j = 0; j < 100; j++) {
                     String sex = genders[i % 2];
@@ -858,56 +832,6 @@ public class Initializer implements ApplicationRunner {
         } else {
             log.info("Product(제품) 테이블에 이미 데이터가 존재합니다.");
         }
-
-
-        // 일정 저장
-        // 2024년 9월
-        ScheduleRegistDTO newSchedule1 = new ScheduleRegistDTO("자동차 영업 정책 교육", "영업 전략 및 판매 방향성 교육", "TRAINING", "2024-09-04 10:00:00", "2024-09-06 12:30:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule1);
-        ScheduleRegistDTO newSchedule2 = new ScheduleRegistDTO("기우석 고객님 미팅", "신형 ME25 차량 견적 관련 미팅", "MEETING", "2024-09-10 14:00:00", "2024-09-10 16:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule2);
-        ScheduleRegistDTO newSchedule3 = new ScheduleRegistDTO("팀별 정기 회의", "사내 불편사항 및 개선점 여부 회의", "SESSION", "2024-09-15 09:00:00", "2024-09-15 11:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule3);
-
-// 2024년 10월
-        ScheduleRegistDTO newSchedule4 = new ScheduleRegistDTO("영업 전략 워크샵", "판매 방법론 교육 일정 (서초)", "TRAINING", "2024-10-16 10:00:00", "2024-10-18 18:30:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule4);
-        ScheduleRegistDTO newSchedule5 = new ScheduleRegistDTO("휴가", "가족과 함께하는 휴가", "VACATION", "2024-10-07 00:00:00", "2024-10-10 23:59:59", "god", null);
-        scheduleCommandService.registSchedule(newSchedule5);
-        ScheduleRegistDTO newSchedule6 = new ScheduleRegistDTO("김민석 고객님 미팅", "KM7 차량 견적 상담 미팅", "MEETING", "2024-10-14 13:00:00", "2024-10-14 15:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule6);
-
-// 2024년 11월
-        ScheduleRegistDTO newSchedule7 = new ScheduleRegistDTO("영업 기술 교육", "상담 스킬 강화 교육", "TRAINING", "2024-11-05 10:00:00", "2024-11-05 12:30:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule7);
-        ScheduleRegistDTO newSchedule8 = new ScheduleRegistDTO("내부 회의", "성과 리뷰 회의", "SESSION", "2024-11-10 09:00:00", "2024-11-10 11:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule8);
-        ScheduleRegistDTO newSchedule9 = new ScheduleRegistDTO("고객 미팅", "중요 고객과의 미팅", "MEETING", "2024-11-15 14:00:00", "2024-11-15 16:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule9);
-
-// 2024년 12월
-        ScheduleRegistDTO newSchedule10 = new ScheduleRegistDTO("영업 전략 교육", "판매 방법론 및 전략 교육", "TRAINING", "2024-12-02 10:00:00", "2024-12-02 12:30:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule10);
-        ScheduleRegistDTO newSchedule11 = new ScheduleRegistDTO("휴가", "연말 휴가", "VACATION", "2024-12-10 00:00:00", "2024-12-12 23:59:59", "god", null);
-        scheduleCommandService.registSchedule(newSchedule11);
-        ScheduleRegistDTO newSchedule12 = new ScheduleRegistDTO("내부 회의", "팀워크 강화 미팅", "SESSION", "2024-12-20 10:00:00", "2024-12-20 12:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule12);
-
-// 2025년 1월
-        ScheduleRegistDTO newSchedule13 = new ScheduleRegistDTO("고객 미팅", "새해 첫 고객 미팅", "MEETING", "2025-01-05 13:00:00", "2025-01-05 15:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule13);
-        ScheduleRegistDTO newSchedule14 = new ScheduleRegistDTO("영업 정책 교육", "새로운 영업 정책 교육", "TRAINING", "2025-01-10 10:00:00", "2025-01-10 12:30:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule14);
-        ScheduleRegistDTO newSchedule15 = new ScheduleRegistDTO("내부 회의", "전략 회의", "SESSION", "2025-01-15 09:00:00", "2025-01-15 11:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule15);
-
-// 2025년 2월
-        ScheduleRegistDTO newSchedule16 = new ScheduleRegistDTO("고객 미팅", "고객 니즈 분석 미팅", "MEETING", "2025-02-03 13:00:00", "2025-02-03 15:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule16);
-        ScheduleRegistDTO newSchedule17 = new ScheduleRegistDTO("휴가", "겨울 휴가", "VACATION", "2025-02-07 00:00:00", "2025-02-10 23:59:59", "god", null);
-        scheduleCommandService.registSchedule(newSchedule17);
-        ScheduleRegistDTO newSchedule18 = new ScheduleRegistDTO("영업 회의", "전략 회의 및 피드백", "SESSION", "2025-02-15 10:00:00", "2025-02-15 12:00:00", "god", null);
-        scheduleCommandService.registSchedule(newSchedule18);
 
         // 제품 옵션 등록
         if(productOptionRepository.count() == 0){

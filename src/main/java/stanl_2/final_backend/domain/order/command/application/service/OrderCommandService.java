@@ -13,5 +13,5 @@ public interface OrderCommandService {
 
     void deleteOrder(String orderId, String loginId);
 
-    void modifyOrderStatus(OrderStatusModifyDTO orderStatusModifyDTO);
+    void modifyOrderStatus(OrderStatusModifyDTO orderStatusModifyDTO) throws GeneralSecurityException;
 }

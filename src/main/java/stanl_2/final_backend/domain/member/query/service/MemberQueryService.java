@@ -34,5 +34,7 @@ public interface MemberQueryService {
 
     void sendErrorMail(String loginId, Log logEntry) throws GeneralSecurityException, MessagingException;
 
+    String selectMemberRoleById(String memberId);
+
 //    MemberDetailDTO selectMemberDetail(String name) throws GeneralSecurityException;
 }

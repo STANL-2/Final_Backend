@@ -97,7 +97,7 @@ public class ContractController {
     @PutMapping("/status/{contractId}")
     public ResponseEntity<ContractResponseMessage> putContractStatus(@PathVariable String contractId,
                                                                     @RequestBody ContractStatusModifyDTO contractStatusModifyDTO,
-                                                                    Principal principal) {
+                                                                    Principal principal) throws GeneralSecurityException {
 
         // DTO에 설정
         contractStatusModifyDTO.setContractId(contractId);

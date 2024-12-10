@@ -9,4 +9,11 @@
           FROM tb_member_role a
          WHERE a.mem_rol_name = #{ memberRole }
     </select>
+
+    <select id="findMembersRolebyId" resultType="string" parameterType="string">
+        SELECT
+        a.mem_rol_name
+        FROM tb_member_role a
+        WHERE a.mem_id = #{ memberId }
+    </select>
 </mapper>

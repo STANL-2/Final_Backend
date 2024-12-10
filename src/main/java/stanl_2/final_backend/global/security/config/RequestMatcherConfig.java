@@ -214,6 +214,23 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee").hasAnyRole("salesHistory-employee-get", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search/daily").hasAnyRole("salesHistory-employee-statistics-search-daily-get", "GOD", "EMPLOYEE", "ADMIN")
 
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/center/search").hasAnyRole("salesHistory-statistics-center-search-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/center/search/year").hasAnyRole("salesHistory-statistics-center-search-year-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/center/search/month").hasAnyRole("salesHistory-statistics-center-search-month-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/average/employee").hasAnyRole("salesHistory-statistics-average-employee-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/average/center").hasAnyRole("salesHistory-statistics-average-center-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/all").hasAnyRole("salesHistory-statistics-all-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/all/year").hasAnyRole("salesHistory-statistics-all-year-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/all/month").hasAnyRole("salesHistory-statistics-all-month-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/search").hasAnyRole("salesHistory-search-post", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/best").hasAnyRole("salesHistory-best", "GOD", "DIRECTOR", "ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee").hasAnyRole("salesHistory-employee-get", "GOD", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics").hasAnyRole("salesHistory-employee-statistics-get", "GOD", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search").hasAnyRole("salesHistory-employee-statistics-search-get", "GOD", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search/year").hasAnyRole("salesHistory-employee-statistics-search-year-get", "GOD", "EMPLOYEE")
+                .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search/month").hasAnyRole("salesHistory-employee-statistics-search-month-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/employee/search").hasAnyRole("salesHistory-employee-search-post", "GOD", "EMPLOYEE")
+
                 // DashBoard API
                 .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/employee").hasAnyRole("dashboard-get", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/api/v1/dashBoard/admin").hasAnyRole("dashboard-get", "GOD", "DIRECTOR", "ADMIN")

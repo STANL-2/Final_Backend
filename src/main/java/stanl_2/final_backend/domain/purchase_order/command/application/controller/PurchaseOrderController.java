@@ -18,6 +18,7 @@ import stanl_2.final_backend.domain.purchase_order.command.application.service.P
 import stanl_2.final_backend.domain.purchase_order.common.response.PurchaseOrderResponseMessage;
 import stanl_2.final_backend.domain.purchase_order.query.service.PurchaseOrderQueryService;
 
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 
 @Slf4j
@@ -99,7 +100,7 @@ public class PurchaseOrderController {
     @PutMapping("status/{purchaseOrderId}")
     public ResponseEntity<PurchaseOrderResponseMessage> putPurchaseOrderStatus(@PathVariable String purchaseOrderId,
                                                                                @RequestBody PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO,
-                                                                               Principal principal) {
+                                                                               Principal principal) throws GeneralSecurityException {
 
         purchaseOrderStatusModifyDTO.setPurchaseOrderId(purchaseOrderId);
         purchaseOrderStatusModifyDTO.setAdminId(principal.getName());
