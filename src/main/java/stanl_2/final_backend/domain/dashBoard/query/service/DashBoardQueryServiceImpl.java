@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
+import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
 import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
@@ -31,6 +32,7 @@ import stanl_2.final_backend.domain.sales_history.query.service.SalesHistoryQuer
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO;
 import stanl_2.final_backend.domain.schedule.query.service.ScheduleQueryService;
 
+import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -160,8 +162,6 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         searchDTO.setTag("ALL");
         Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
 
-        System.out.println("noticePage = " + noticePage);
-
         for (NoticeDTO notice : noticePage.getContent()) {
             Map<String, String> noticeData = new HashMap<>();
             noticeData.put("title", notice.getTitle()); // NoticeDTO의 title
@@ -170,8 +170,6 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
                     + "&noticeId=" + notice.getNoticeId()); // NoticeDTO의 redirectUrl
             noticeList.add(noticeData);
         }
-
-        System.out.println("noticeLsit = " + noticeList);
 
         dashBoardEmployeeDTO.setNoticeList(noticeList);
 
@@ -260,7 +258,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         ArrayList<Map<String, String>> noticeList = new ArrayList<>();
 
         SearchDTO searchDTO = new SearchDTO();
-        searchDTO.setTag("ADMIN");
+        searchDTO.setTag("ALL");
         Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
 
         for (NoticeDTO notice : noticePage.getContent()) {
@@ -293,27 +291,48 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         // 프론트에서 +1 처리했기 떄문에 따로 백에서 처리
         String salesEndAt = nextDate.toString();
 
-        // 승인되지 않은 발주서 건수
+        // 이번 달 계약서 전체 갯수 조회
+        ContractSearchDTO contractSearchDTO = new ContractSearchDTO();
+        contractSearchDTO.setStartDate(startAt);
+        contractSearchDTO.setEndDate(salesEndAt);
+        Page<ContractSearchDTO> result = contractQueryService.selectBySearch(contractSearchDTO, pageable);
+        Integer totalContract = Math.toIntExact(contractQueryService.selectBySearch(contractSearchDTO, pageable).getTotalElements());
+        dashBoardDirectorDTO.setTotalContract(totalContract);
+
+        // 이번 달 수주서 전체 갯수 조회
+        OrderSelectSearchDTO orderSelectSearchDTO = new OrderSelectSearchDTO();
+        orderSelectSearchDTO.setStartDate(startAt);
+        orderSelectSearchDTO.setEndDate(endAt);
+        Integer totalOrder = Math.toIntExact(orderQueryService.selectSearchOrders(orderSelectSearchDTO, pageable).getTotalElements());
+        dashBoardDirectorDTO.setTotalOrder(totalOrder);
+
+        // 이번 달 발주서 전체 갯수 조회
         PurchaseOrderSelectSearchDTO purchaseOrderSelectSearchDTO = new PurchaseOrderSelectSearchDTO();
-        purchaseOrderSelectSearchDTO.setMemberId(memberLoginId);
-        purchaseOrderSelectSearchDTO.setStatus("WAIT");
         purchaseOrderSelectSearchDTO.setStartDate(startAt);
         purchaseOrderSelectSearchDTO.setEndDate(endAt);
-        Integer unreadPurchaseOrderCnt = Math.toIntExact(purchaseOrderQueryService.selectSearchPurchaseOrder(purchaseOrderSelectSearchDTO, pageable).getTotalElements());
-        dashBoardDirectorDTO.setUnreadPurchaseOrder(unreadPurchaseOrderCnt);
+        Integer totalPurchaseOrder = Math.toIntExact(purchaseOrderQueryService.selectSearchPurchaseOrder(purchaseOrderSelectSearchDTO, pageable).getTotalElements());
+        dashBoardDirectorDTO.setTotalPurchaseOrder(totalPurchaseOrder);
+
+        // 이번 달 전체 판매 내역 조회
+        SalesHistoryRankedDataDTO salesHistoryRankedDataDTO = new SalesHistoryRankedDataDTO();
+        salesHistoryRankedDataDTO.setStartDate(startAt);
+        salesHistoryRankedDataDTO.setEndDate(salesEndAt);
+        Page<SalesHistoryRankedDataDTO> resultStatistics = salesHistoryQueryService.selectAllStatstics(salesHistoryRankedDataDTO, pageable);
+        BigDecimal totalPrice = resultStatistics.getContent().get(0).getTotalSales();
+        dashBoardDirectorDTO.setTotalPrice(totalPrice);
 
         // 판매 매장 실적 순위
         ArrayList centerList = new ArrayList();
 
-        SalesHistoryRankedDataDTO salesHistoryRankedDataDTO = new SalesHistoryRankedDataDTO();
-        salesHistoryRankedDataDTO.setPeriod("month");
-        salesHistoryRankedDataDTO.setStartDate(startAt);
-        salesHistoryRankedDataDTO.setEndDate(salesEndAt);
+        SalesHistoryRankedDataDTO salesHistoryRankedCenterDataDTO = new SalesHistoryRankedDataDTO();
+        salesHistoryRankedCenterDataDTO.setPeriod("month");
+        salesHistoryRankedCenterDataDTO.setStartDate(startAt);
+        salesHistoryRankedCenterDataDTO.setEndDate(salesEndAt);
 
-        salesHistoryRankedDataDTO.setGroupBy("center");
-        salesHistoryRankedDataDTO.setOrderBy("totalSales");
+        salesHistoryRankedCenterDataDTO.setGroupBy("center");
+        salesHistoryRankedCenterDataDTO.setOrderBy("totalSales");
 
-        Page<SalesHistoryRankedDataDTO> rankPage = salesHistoryQueryService.selectStatisticsBySearch(salesHistoryRankedDataDTO, pageable);
+        Page<SalesHistoryRankedDataDTO> rankPage = salesHistoryQueryService.selectStatisticsBySearch(salesHistoryRankedCenterDataDTO, pageable);
 
         List<SalesHistoryRankedDataDTO> content = rankPage.getContent();
 
@@ -322,6 +341,23 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
         }
 
         dashBoardDirectorDTO.setCenterList(centerList);
+
+        // 공지사항 조회 (제목, 내용(redirect))
+        ArrayList<Map<String, String>> noticeList = new ArrayList<>();
+
+        SearchDTO searchDTO = new SearchDTO();
+        searchDTO.setTag("ALL");
+        Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
+
+        for (NoticeDTO notice : noticePage.getContent()) {
+            Map<String, String> noticeData = new HashMap<>();
+            noticeData.put("title", notice.getTitle()); // NoticeDTO의 title
+            noticeData.put("content", "/notice/detail?tag=" + notice.getTag() + "&classification=" + notice.getClassification()
+                    + "&noticeTitle=" + notice.getTitle() + "&noticeContent=" + notice.getContent()
+                    + "&noticeId=" + notice.getNoticeId()); // NoticeDTO의 redirectUrl
+            noticeList.add(noticeData);
+        }
+        dashBoardDirectorDTO.setNoticeList(noticeList);
 
         return dashBoardDirectorDTO;
     }
