@@ -10,8 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-import stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO;
 import stanl_2.final_backend.domain.center.query.service.CenterQueryService;
 import stanl_2.final_backend.domain.log.command.aggregate.Log;
 import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
@@ -265,5 +263,13 @@ public class MemberQueryServiceImpl implements MemberQueryService {
             mailService.sendErrorEmail("stanl2e2@gmail.com", loginId, aesUtils.decrypt(memberDTO.getName()), memberDTO.getPosition(), logEntry);
         }
 
+    }
+
+    @Override
+    public String selectMemberRoleById(String memberId){
+
+        String role = memberRoleMapper.findMembersRolebyId(memberId);
+
+        return role;
     }
 }

@@ -14,5 +14,5 @@ public interface ContractCommandService {
 
     void deleteContract(ContractDeleteDTO contractDeleteDTO);
 
-    void modifyContractStatus(ContractStatusModifyDTO contractStatusModifyDTO);
+    void modifyContractStatus(ContractStatusModifyDTO contractStatusModifyDTO) throws GeneralSecurityException;
 }
