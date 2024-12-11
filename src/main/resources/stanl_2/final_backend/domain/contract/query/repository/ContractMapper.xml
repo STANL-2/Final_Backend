@@ -678,31 +678,31 @@
             <when test="sortField != null and sortOrder != null">
                 <choose>
                     <when test="sortField == 'customerName'">
-                        ORDER BY a.conr_cust_name ${sortOrder}
+                        ORDER BY a.conr_cust_name #{sortOrder}
                     </when>
                     <when test="sortField == 'title'">
-                        ORDER BY a.conr_ttl ${sortOrder}
+                        ORDER BY a.conr_ttl #{sortOrder}
                     </when>
                     <when test="sortField == 'productName'">
-                        ORDER BY b.prod_name ${sortOrder}
+                        ORDER BY b.prod_name #{sortOrder}
                     </when>
                     <when test="sortField == 'status'">
-                        ORDER BY a.conr_stat ${sortOrder}
+                        ORDER BY a.conr_stat #{sortOrder}
                     </when>
                     <when test="sortField == 'companyName'">
-                        ORDER BY a.conr_comp_name ${sortOrder}
+                        ORDER BY a.conr_comp_name #{sortOrder}
                     </when>
                     <when test="sortField == 'customerClassifcation'">
-                        ORDER BY a.conr_cust_cla ${sortOrder}
+                        ORDER BY a.conr_cust_cla #{sortOrder}
                     </when>
                     <when test="sortField == 'customerPurchaseCondition'">
-                        ORDER BY a.conr_cust_pur_cond ${sortOrder}
+                        ORDER BY a.conr_cust_pur_cond #{sortOrder}
                     </when>
                     <when test="sortField == 'contractId'">
-                        ORDER BY a.conr_id ${sortOrder}
+                        ORDER BY a.conr_id #{sortOrder}
                     </when>
                     <when test="sortField == 'createdAt'">
-                        ORDER BY a.created_at ${sortOrder}
+                        ORDER BY a.created_at #{sortOrder}
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC
