@@ -44,4 +44,6 @@ public interface SalesHistoryQueryService {
 
     @Transactional
     Page<SalesHistoryRankedDataDTO> selectAllStatstics(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
+    Page<SalesHistoryRankedDataDTO> selectMyStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 }
