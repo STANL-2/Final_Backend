@@ -267,6 +267,7 @@
         FROM tb_contract a
         <where>
             a.active = TRUE
+            AND a.mem_id = #{contractSearchDTO.memberId}
             <if test="contractSearchDTO.searchMemberId != null and contractSearchDTO.searchMemberId != ''">
                 AND a.mem_id = #{contractSearchDTO.searchMemberId}
             </if>
@@ -453,6 +454,7 @@
         FROM tb_contract a
         <where>
             a.active = TRUE
+            AND a.mem_id = #{contractSearchDTO.memberId}
             <if test="contractSearchDTO.searchMemberId != null and contractSearchDTO.searchMemberId != ''">
                 AND a.mem_id = #{contractSearchDTO.searchMemberId}
             </if>
