@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import stanl_2.final_backend.domain.order.query.service.OrderQueryService;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 
+@Slf4j
 @RestController("queryOrderController")
 @RequestMapping("/api/v1/order")
 public class OrderController {
@@ -96,6 +98,7 @@ public class OrderController {
                                                                @RequestParam(required = false) String searchMemberId,
                                                                @RequestParam(required = false) String startDate,
                                                                @RequestParam(required = false) String endDate,
+                                                                       @RequestParam(required = false) String productName,
                                                                        @RequestParam(required = false) String sortField,
                                                                        @RequestParam(required = false) String sortOrder,
                                                                Principal principal,
@@ -109,6 +112,7 @@ public class OrderController {
         orderSelectSearchDTO.setStartDate(startDate);
         orderSelectSearchDTO.setEndDate(endDate);
         orderSelectSearchDTO.setMemberId(principal.getName());
+        orderSelectSearchDTO.setProductName(productName);
 
         if (sortField != null && sortOrder != null) {
             Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;

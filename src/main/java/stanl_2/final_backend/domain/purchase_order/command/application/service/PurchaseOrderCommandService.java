@@ -4,6 +4,8 @@ import stanl_2.final_backend.domain.purchase_order.command.application.dto.Purch
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderRegistDTO;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderStatusModifyDTO;
 
+import java.security.GeneralSecurityException;
+
 
 public interface PurchaseOrderCommandService {
     void registerPurchaseOrder(PurchaseOrderRegistDTO purchaseOrderRegistDTO);
@@ -12,5 +14,5 @@ public interface PurchaseOrderCommandService {
 
     void deletePurchaseOrder(String id, String loginId);
 
-    void modifyPurchaseOrderStatus(PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO);
+    void modifyPurchaseOrderStatus(PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO) throws GeneralSecurityException;
 }

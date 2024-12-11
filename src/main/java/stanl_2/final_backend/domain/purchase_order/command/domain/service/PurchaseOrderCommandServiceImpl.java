@@ -24,6 +24,7 @@ import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrde
 import stanl_2.final_backend.domain.purchase_order.common.exception.PurchaseOrderErrorCode;
 import stanl_2.final_backend.domain.s3.command.application.service.S3FileService;
 
+import java.security.GeneralSecurityException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -143,7 +144,7 @@ public class PurchaseOrderCommandServiceImpl implements PurchaseOrderCommandServ
 
     @Override
     @Transactional
-    public void modifyPurchaseOrderStatus(PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO) {
+    public void modifyPurchaseOrderStatus(PurchaseOrderStatusModifyDTO purchaseOrderStatusModifyDTO) throws GeneralSecurityException {
 
         String adminId = authQueryService.selectMemberIdByLoginId(purchaseOrderStatusModifyDTO.getAdminId());
 

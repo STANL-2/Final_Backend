@@ -325,7 +325,7 @@
                         ORDER BY a.created_at ${sortOrder}
                     </when>
                     <when test="sortField == 'productName'">
-                        ORDER BY e.prod_name ${sortOrder}
+                        ORDER BY c.prod_name ${sortOrder}
                     </when>
                     <otherwise>
                         ORDER BY a.created_at DESC

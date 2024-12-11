@@ -16,6 +16,7 @@ import stanl_2.final_backend.domain.alarm.common.exception.AlarmCommonException;
 import stanl_2.final_backend.domain.alarm.common.exception.AlarmErrorCode;
 import stanl_2.final_backend.domain.contract.command.application.dto.ContractAlarmDTO;
 import stanl_2.final_backend.domain.contract.command.domain.aggregate.entity.Contract;
+import stanl_2.final_backend.domain.member.query.dto.MemberDTO;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.command.application.dto.NoticeAlarmDTO;
@@ -27,6 +28,7 @@ import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonExce
 import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -154,16 +156,18 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
         List<String> memberIdList = new ArrayList<>();
 
-        if(noticeAlarmDTO.getTag().equals("all")){
+        if(noticeAlarmDTO.getTag().equals("ALL")){
             // 결과 합치기
-            memberIdList.addAll(memberQueryService.selectMemberByRole("employee"));
-            memberIdList.addAll(memberQueryService.selectMemberByRole("admin"));
-            memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("EMPLOYEE"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("ADMIN"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("DIRECTOR"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("GOD"));
             // 중복 제거
             memberIdList = new ArrayList<>(new HashSet<>(memberIdList));
-        } else if (noticeAlarmDTO.getTag().equals("admin")){
-            memberIdList.addAll(memberQueryService.selectMemberByRole("admin"));
-            memberIdList.addAll(memberQueryService.selectMemberByRole("god"));
+        } else if (noticeAlarmDTO.getTag().equals("ADMIN")){
+            memberIdList.addAll(memberQueryService.selectMemberByRole("ADMIN"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("DIRECTOR"));
+            memberIdList.addAll(memberQueryService.selectMemberByRole("GOD"));
         }else {
             memberIdList.addAll(memberQueryService.selectMemberByRole(noticeAlarmDTO.getTag()));
         }
@@ -172,16 +176,18 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
             String targetId = member;
             String type = "NOTICE";
             String tag = null;
-            if(noticeAlarmDTO.getClassification().equals("important")){
-                tag = "중요";
-            } else {
+            if(noticeAlarmDTO.getClassification().equals("NORMAL")){
                 tag = "일반";
+            } else if(noticeAlarmDTO.getClassification().equals("GOAL")) {
+                tag = "영업 목표";
+            } else {
+                tag = "영업 전략";
             }
 
             String target = null;
-            if(noticeAlarmDTO.getTag().equals("all")){
+            if(noticeAlarmDTO.getTag().equals("ALL")){
                 target = "전체";
-            } else if(noticeAlarmDTO.getTag().equals("admin")) {
+            } else if(noticeAlarmDTO.getTag().equals("ADMIN")) {
                 target = "영업관리자";
             } else {
                 target = "영업담당자";
@@ -199,12 +205,26 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public void sendContractAlarm(ContractAlarmDTO contractAlarmDTO) {
+    public void sendContractAlarm(ContractAlarmDTO contractAlarmDTO) throws GeneralSecurityException {
 
         String type = "CONTRACT";
         String tag = "계약서";
         String message = contractAlarmDTO.getCustomerName() +" 고객님의 계약서가 승인되었습니다.";
-        String redirectUrl = "/contract/list";
+
+        String redirectUrl = null;
+        String memberRole = memberQueryService.selectMemberRoleById(contractAlarmDTO.getMemberId());
+
+        // 권한에 따른 경로 변경
+        if (memberRole == "EMPLOYEE") {
+            redirectUrl = "/contract/emlist";
+        } else if (memberRole == "ADMIN") {
+            redirectUrl = "/contract/Elist";
+        } else if (memberRole == "DIRECTOR") {
+            redirectUrl = "/contract/dlist";
+        } else {
+            redirectUrl = "/contract/emlist";
+        }
+
         String createdAt = getCurrentTime();
 
         send(contractAlarmDTO.getMemberId(), contractAlarmDTO.getAdminId(),contractAlarmDTO.getContractId(), message,
@@ -213,12 +233,26 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public void sendPurchaseOrderAlarm(PurchaseOrderAlarmDTO purchaseOrderAlarmDTO) {
+    public void sendPurchaseOrderAlarm(PurchaseOrderAlarmDTO purchaseOrderAlarmDTO) throws GeneralSecurityException {
 
         String type = "CONTRACT";
         String tag = "발주서";
         String message = purchaseOrderAlarmDTO.getTitle() +"  가 승인되었습니다.";
-        String redirectUrl = "/purchase-order/list";
+
+        String redirectUrl = null;
+        String memberRole = memberQueryService.selectMemberRoleById(purchaseOrderAlarmDTO.getMemberId());
+
+        // 권한에 따른 경로 변경
+        if (memberRole == "EMPLOYEE") {
+            redirectUrl = "/purchaseOrder/emlist";
+        } else if (memberRole == "ADMIN"){
+            redirectUrl = "/purchaseOrder/Elist";
+        } else if (memberRole == "DIRECTOR"){
+            redirectUrl = "/purchaseOrder/dlist";
+        } else {
+            redirectUrl = "/purchaseOrder/emlist";
+        }
+
         String createdAt = getCurrentTime();
 
         send(purchaseOrderAlarmDTO.getMemberId(), purchaseOrderAlarmDTO.getAdminId(), purchaseOrderAlarmDTO.getPurchaseOrderId(),
@@ -227,12 +261,25 @@ public class AlarmCommandServiceImpl implements AlarmCommandService {
 
     @Override
     @Transactional
-    public void sendOrderAlarm(OrderAlarmDTO orderAlarmDTO) {
+    public void sendOrderAlarm(OrderAlarmDTO orderAlarmDTO) throws GeneralSecurityException {
 
         String type = "CONTRACT";
         String tag = "수주서";
         String message = orderAlarmDTO.getTitle() +" 가 승인되었습니다.";
-        String redirectUrl = "/order/list";
+
+        String redirectUrl = null;
+        String memberRole = memberQueryService.selectMemberRoleById(orderAlarmDTO.getMemberId());
+
+        // 권한에 따른 경로 변경
+        if (memberRole == "EMPLOYEE") {
+            redirectUrl = "/order/emlist";
+        } else if(memberRole == "ADMIN") {
+            redirectUrl = "/order/Elist";
+        } else if (memberRole == "DIRECTOR") {
+            redirectUrl = "/order/dlist";
+        } else {
+            redirectUrl = "/order/emlist";
+        }
         String createdAt = getCurrentTime();
 
         send(orderAlarmDTO.getMemberId(), orderAlarmDTO.getAdminId(),orderAlarmDTO.getOrderId(), message, redirectUrl,

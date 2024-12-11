@@ -120,7 +120,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
     @Override
     @Transactional
-    public void modifyOrderStatus(OrderStatusModifyDTO orderStatusModifyDTO) {
+    public void modifyOrderStatus(OrderStatusModifyDTO orderStatusModifyDTO) throws GeneralSecurityException {
 
         String adminId = authQueryService.selectMemberIdByLoginId(orderStatusModifyDTO.getAdminId());
         Order order = orderRepository.findByOrderId(orderStatusModifyDTO.getOrderId());

@@ -470,7 +470,23 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         }
 
         return new PageImpl<>(salesHistoryList, pageable, total);
+    }
 
+    @Override
+    @Transactional
+    public Page<SalesHistoryRankedDataDTO> selectAllStatstics(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable){
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        List<SalesHistoryRankedDataDTO> allStatistics= salesHistoryMapper.findAllStatisticsBySearch(size, offset, salesHistoryRankedDataDTO);
+
+
+
+        if(allStatistics.isEmpty()){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        return new PageImpl<>(allStatistics, pageable, 0);
     }
 
     @Override

@@ -95,7 +95,7 @@ public class OrderController {
     @PutMapping("status/{orderId}")
     public ResponseEntity<OrderResponseMessage> putOrderStatus (@PathVariable String orderId,
                                                                 @RequestBody OrderStatusModifyDTO orderStatusModifyDTO,
-                                                                Principal principal) {
+                                                                Principal principal) throws GeneralSecurityException {
 
         String adminLoginId = principal.getName();
         orderStatusModifyDTO.setOrderId(orderId);

@@ -12,6 +12,8 @@ import stanl_2.final_backend.domain.order.command.domain.aggregate.entity.Order;
 import stanl_2.final_backend.domain.purchase_order.command.application.dto.PurchaseOrderAlarmDTO;
 import stanl_2.final_backend.domain.purchase_order.command.domain.aggregate.entity.PurchaseOrder;
 
+import java.security.GeneralSecurityException;
+
 public interface AlarmCommandService {
     SseEmitter subscribe(AlarmRegistDTO alarmRegistDTO, HttpServletResponse response);
 
@@ -27,9 +29,9 @@ public interface AlarmCommandService {
 
     Boolean updateReadStatus(String alarmId);
 
-    void sendContractAlarm(ContractAlarmDTO contractAlarmDTO);
+    void sendContractAlarm(ContractAlarmDTO contractAlarmDTO) throws GeneralSecurityException;
 
-    void sendPurchaseOrderAlarm(PurchaseOrderAlarmDTO purchaseOrderAlarmDTO);
+    void sendPurchaseOrderAlarm(PurchaseOrderAlarmDTO purchaseOrderAlarmDTO) throws GeneralSecurityException;
 
-    void sendOrderAlarm(OrderAlarmDTO orderAlarmDTO);
+    void sendOrderAlarm(OrderAlarmDTO orderAlarmDTO) throws GeneralSecurityException;
 }
