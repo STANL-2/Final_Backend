@@ -472,4 +472,43 @@ public class SalesHistoryQueryServiceImpl implements SalesHistoryQueryService {
         return new PageImpl<>(salesHistoryList, pageable, total);
 
     }
+
+    @Override
+    public Page<SalesHistoryRankedDataDTO> selectMyStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable) {
+        int offset = Math.toIntExact(pageable.getOffset());
+        int size = pageable.getPageSize();
+
+        List<String> memberList = new java.util.ArrayList<>(List.of());
+
+        memberList.add(authQueryService.selectMemberIdByLoginId(salesHistoryRankedDataDTO.getMemberId()));
+
+        salesHistoryRankedDataDTO.setMemberList(memberList);
+
+        List<SalesHistoryRankedDataDTO> salesHistoryList = salesHistoryMapper.findStatisticsBySearch(size,offset, salesHistoryRankedDataDTO);
+
+        int total = salesHistoryMapper.findStatisticsBySearchCount(salesHistoryRankedDataDTO);
+
+        if(salesHistoryList.isEmpty() || total == 0){
+            throw new SalesHistoryCommonException(SalesHistoryErrorCode.SALES_HISTORY_NOT_FOUND);
+        }
+
+        salesHistoryList.forEach(salesHistory -> {
+            try {
+                if(salesHistory.getMemberId() != null) {
+                    salesHistory.setMemberId(memberQueryService.selectNameById(salesHistory.getMemberId()));
+                }
+            } catch (Exception e) {
+                throw new SalesHistoryCommonException(SalesHistoryErrorCode.MEMBER_NOT_FOUND);
+            }
+            try {
+                if(salesHistory.getCenterId() != null) {
+                    salesHistory.setCenterId(centerQueryService.selectNameById(salesHistory.getCenterId()));
+                }
+            } catch (Exception e) {
+                throw new SalesHistoryCommonException(SalesHistoryErrorCode.CENTER_NOT_FOUND);
+            }
+        });
+
+        return new PageImpl<>(salesHistoryList, pageable, total);
+    }
 }

@@ -40,4 +40,6 @@ public interface SalesHistoryQueryService {
     String selectSalesHistoryIdByContractId(String contractId);
 
     Page<SalesHistoryRankedDataDTO> selectStatisticsBestBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
+
+    Page<SalesHistoryRankedDataDTO> selectMyStatisticsBySearch(SalesHistoryRankedDataDTO salesHistoryRankedDataDTO, Pageable pageable);
 }
