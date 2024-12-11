@@ -27,12 +27,18 @@ import stanl_2.final_backend.domain.member.command.application.dto.SignupDTO;
 import stanl_2.final_backend.domain.member.command.application.service.AuthCommandService;
 import stanl_2.final_backend.domain.member.command.domain.aggregate.entity.Member;
 import stanl_2.final_backend.domain.member.command.domain.repository.MemberRepository;
+import stanl_2.final_backend.domain.notices.command.domain.aggragate.entity.Notice;
+import stanl_2.final_backend.domain.notices.command.domain.repository.NoticeRepository;
 import stanl_2.final_backend.domain.organization.command.domain.aggregate.entity.Organization;
 import stanl_2.final_backend.domain.organization.command.domain.repository.OrganizationRepository;
+import stanl_2.final_backend.domain.problem.command.domain.aggregate.entity.Problem;
+import stanl_2.final_backend.domain.problem.command.domain.aggregate.repository.ProblemRepository;
 import stanl_2.final_backend.domain.product.command.application.domain.aggregate.entity.Product;
 import stanl_2.final_backend.domain.product.command.application.domain.aggregate.entity.ProductOption;
 import stanl_2.final_backend.domain.product.command.application.domain.repository.ProductOptionRepository;
 import stanl_2.final_backend.domain.product.command.application.domain.repository.ProductRepository;
+import stanl_2.final_backend.domain.promotion.command.domain.aggregate.entity.Promotion;
+import stanl_2.final_backend.domain.promotion.command.domain.aggregate.repository.PromotionRepository;
 import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleRegistDTO;
 import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
 
@@ -42,6 +48,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -51,7 +59,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Initializer implements ApplicationRunner {
 
     private final AuthCommandService authCommandService;
-
+    private final NoticeRepository noticeRepository;
     private final MemberRepository memberRepository;
     private final CareerRepository careerRepository;
     private final CertificationRepository certificationRepository;
@@ -65,10 +73,122 @@ public class Initializer implements ApplicationRunner {
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
 
-    private final ScheduleCommandService scheduleCommandService;
+    private final PromotionRepository promotionRepository;
+    private final ProblemRepository problemRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+
+        if (noticeRepository.count() == 0) {
+            List<Notice> notices = Arrays.asList(
+                    new Notice(null, "신차 출시 기념 이벤트", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>신차 출시를 기념하여 대규모 이벤트를 진행합니다. 많은 참여 부탁드립니다.</p></body></html>", null, null, null, true, "도유정", null),
+                    new Notice(null, "연말 프로모션 안내", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 연말 프로모션에 대한 상세 안내입니다. 다양한 혜택이 준비되어 있으니 확인해주세요.</p></body></html>", null, null, null, true, "도유정", null),
+                    new Notice(null, "고객 만족도 조사 결과 공유", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 고객 만족도 조사 결과를 공유드립니다. 앞으로도 최선을 다하겠습니다.</p></body></html>", null, null, null, true, "안수환", null),
+                    new Notice(null, "전국 영업팀 실적 발표", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 전국 영업팀 실적 발표 및 시상식 일정 안내입니다.</p></body></html>", null, null, null, true, "성지윤", null),
+                    new Notice(null, "신규 고객 유치 프로모션", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>신규 고객 유치를 위한 특별 프로모션에 대한 안내입니다.</p></body></html>", null, null, null, true, "양시우", null),
+                    new Notice(null, "분기별 영업 목표 설정 회의", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>다음 분기의 영업 목표 설정을 위한 회의 일정을 공지드립니다.</p></body></html>", null, null, null, true, "율도현", null),
+                    new Notice(null, "신규 서비스 도입 안내", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>새로운 서비스를 도입합니다. 상세 내용은 본 공지를 통해 확인해주세요.</p></body></html>", null, null, null, true, "하정현", null),
+                    new Notice(null, "자동차 판매 기술 교육", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>영업사원을 위한 최신 자동차 판매 기술 교육을 실시합니다.</p></body></html>", null, null, null, true, "도유정", null),
+                    new Notice(null, "우수 영업 사원 시상식", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 우수 영업 사원 시상식 일정 및 장소를 안내드립니다.</p></body></html>", null, null, null, true, "표수경", null),
+                    new Notice(null, "연말 고객 감사 이벤트", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>연말을 맞아 고객 감사 이벤트를 준비하였습니다. 많은 참여 부탁드립니다.</p></body></html>", null, null, null, true, "도유정", null),
+                    new Notice(null, "팀워크 향상을 위한 워크샵", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>영업팀 팀워크 강화를 위한 워크샵 일정을 공지드립니다. 많은 참여 부탁드립니다.</p></body></html>", null, null, null, true, "현하린", null),
+                    new Notice(null, "고객 관리 시스템 업데이트", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>새로운 고객 관리 시스템이 도입됩니다. 상세한 사용 방법은 추가 공지를 통해 안내드립니다.</p></body></html>", null, null, null, true, "규예서", null),
+                    new Notice(null, "2024년 상반기 판매 전략 회의", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 상반기 판매 목표 및 전략 수립을 위한 회의 일정을 공유합니다.</p></body></html>", null, null, null, true, "천하은", null),
+                    new Notice(null, "신규 고객 관리 방안", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>신규 고객 관리를 위한 구체적인 방안과 목표를 안내드립니다.</p></body></html>", null, null, null, true, "심태솔", null),
+                    new Notice(null, "2024년 상반기 영업 실적 발표", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>상반기 영업 실적 및 하반기 계획에 대해 공유드립니다.</p></body></html>", null, null, null, true, "양민지", null),
+                    new Notice(null, "영업 효율화 방안 공유", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>영업 업무를 보다 효율적으로 수행하기 위한 방안을 논의합니다.</p></body></html>", null, null, null, true, "유하율", null),
+                    new Notice(null, "서비스 품질 향상 계획 발표", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>서비스 품질 향상을 위한 세부 계획과 목표를 발표합니다.</p></body></html>", null, null, null, true, "봉서우", null),
+                    new Notice(null, "자동차 서비스 부문 고객 설문 결과", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 상반기 고객 설문 조사 결과를 공유합니다. 항상 고객의 목소리에 귀 기울이겠습니다.</p></body></html>", null, null, null, true, "도재현", null),
+                    new Notice(null, "고객 감사 이벤트 안내", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>고객 감사의 마음을 담아 특별 이벤트를 준비했습니다.</p></body></html>", null, null, null, true, "필승환", null),
+                    new Notice(null, "다음 분기 영업 목표 설정", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>다음 분기 목표 설정 및 세부 전략을 논의합니다.</p></body></html>", null, null, null, true, "한정환", null),
+                    new Notice(null, "신규 고객 초대 프로모션", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>신규 고객을 초대하기 위한 특별 프로모션을 진행합니다. 많은 관심 부탁드립니다.</p></body></html>", null, null, null, true, "운예린", null),
+                    new Notice(null, "전국 영업팀 회의 결과 보고", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 전국 영업팀 회의 결과를 공유드립니다.</p></body></html>", null, null, null, true, "서채우", null),
+                    new Notice(null, "고객 만족도 개선 프로젝트", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>고객 만족도를 높이기 위한 개선 프로젝트를 시작합니다. 자세한 내용은 공지를 확인해주세요.</p></body></html>", null, null, null, true, "안수환", null),
+                    new Notice(null, "영업 성과 분석 회의", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>영업 성과를 분석하고 개선 방향을 논의하는 회의가 예정되어 있습니다.</p></body></html>", null, null, null, true, "성지윤", null),
+                    new Notice(null, "신제품 발표회 개최", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>새로운 제품에 대한 발표회가 개최됩니다. 많은 관심 부탁드립니다.</p></body></html>", null, null, null, true, "양시우", null),
+                    new Notice(null, "하반기 목표 수립 워크샵", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>하반기 목표를 수립하기 위한 워크샵 일정이 확정되었습니다.</p></body></html>", null, null, null, true, "율도현", null),
+                    new Notice(null, "최신 판매 기술 교육 일정", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>최신 판매 기술을 배우는 교육 프로그램이 준비되었습니다.</p></body></html>", null, null, null, true, "하정현", null),
+                    new Notice(null, "전사 협력 강화를 위한 간담회", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>협력 강화를 위해 간담회를 개최합니다. 많은 참석 바랍니다.</p></body></html>", null, null, null, true, "평예원", null),
+                    new Notice(null, "고객 관리 시스템 업그레이드 안내", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>고객 관리 시스템이 새롭게 업그레이드됩니다. 사용법은 공지사항을 확인해주세요.</p></body></html>", null, null, null, true, "표수경", null),
+                    new Notice(null, "상반기 실적 우수자 발표", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 상반기 실적이 우수한 사원들을 발표합니다.</p></body></html>", null, null, null, true, "조예원", null),
+                    new Notice(null, "영업 효율성을 위한 가이드라인", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>영업 업무 효율성을 높이기 위한 가이드라인이 발표되었습니다.</p></body></html>", null, null, null, true, "현하린", null),
+                    new Notice(null, "고객 대상 특별 감사 이벤트", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>고객 감사의 마음을 담아 특별 이벤트를 준비했습니다.</p></body></html>", null, null, null, true, "규예서", null),
+                    new Notice(null, "하반기 영업 목표 공유", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>2024년 하반기 영업 목표와 계획을 공유드립니다.</p></body></html>", null, null, null, true, "천하은", null),
+                    new Notice(null, "신규 고객 서비스 정책 발표", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>신규 고객을 위한 서비스 정책이 발표되었습니다.</p></body></html>", null, null, null, true, "심태솔", null),
+                    new Notice(null, "우수 영업 팀 시상식 일정", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>우수한 실적을 기록한 영업 팀을 시상하는 행사가 열립니다.</p></body></html>", null, null, null, true, "양민지", null),
+                    new Notice(null, "상반기 영업 실적 발표", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>상반기 영업 실적에 대한 보고와 분석이 진행됩니다.</p></body></html>", null, null, null, true, "유하율", null),
+                    new Notice(null, "서비스 품질 향상 캠페인", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>서비스 품질 향상을 위한 캠페인이 시작됩니다.</p></body></html>", null, null, null, true, "봉서우", null),
+                    new Notice(null, "차세대 자동차 기술 세미나", null, "STRATEGY", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>최신 자동차 기술에 대해 배우는 세미나가 개최됩니다.</p></body></html>", null, null, null, true, "도재현", null),
+                    new Notice(null, "우수 사원 감사 프로그램", null, "GOAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>우수한 실적을 기록한 사원을 대상으로 감사 프로그램이 진행됩니다.</p></body></html>", null, null, null, true, "필승환", null),
+                    new Notice(null, "영업 효율화 방안 발표", null, "NORMAL", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head><body><p>영업 효율화를 위한 새로운 방안이 발표되었습니다.</p></body></html>", null, null, null, true, "한정환", null),
+                    new Notice(null, "하반기 실적 우수자 발표", null, "NORMAL", "<!DOCTYPE html> <html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>공지사항</title></head> body><h2><strong>2024년 하반기 영업 실적 우수 사원 발표</strong></h2><figure class=\"image image_resized\" style=\"width:31.29%;\"><img style=\"aspect-ratio:500/500;\" src=\"https://motivebk.s3.ap-northeast-2.amazonaws.com/c0a9fa80-0a19-4c56-8074-2b8f52819612.webp\" width=\"500\" height=\"500\"></figure><p>2024년 하반기 동안 탁월한 영업 실적을 기록한 우수 사원을 발표합니다.</p><p>모든 영업 사원 여러분들의 노고에 진심으로 감사드리며, 아래와 같이 우수 사원을 선정하였습니다. &nbsp;</p><h3><mark class=\"marker-yellow\">우수 사원 명단</mark></h3><p><strong>운예린</strong>: 매출 목표 초과 달성 및 신규 고객 유치 기여</p><p><strong>안수환</strong>: 기존 고객 관리 강화 및 계약 연장율 최상위</p><p><strong>율도현</strong>: 지역 매출 1위 및 신차 판매 부문 실적 최상위</p><p><strong>성지윤</strong>: 고객 만족도 1위 및 판매 후 관리 우수</p><p>&nbsp;이번 우수 사원으로 선정된 분들께는 특별 포상과 함께 감사의 마음을 전합니다.</p><p>&nbsp;앞으로도 모든 분들이 함께 성장하고 발전할 수 있는 환경을 만들어 가겠습니다.&nbsp;</p><h3><mark class=\"marker-yellow\"><strong>시상식 일정</strong></mark></h3><p><strong>일시</strong>: 2024년 12월 20일 (수) 오후 3시</p><p><strong>장소</strong>:<span class=\"hljs-tag\">&lt;/</span><span class=\"hljs-tag hljs-name\">strong</span><span class=\"hljs-tag\">&gt;</span> 본사 대강당</p><p><strong>참석 대상:</strong>전 직원&nbsp;</p><p>&nbsp;많은 참석 부탁드리며, 선정된 사원들께 다시 한번 축하의 말씀을 드립니다.</p><p>※ 문의사항은 인사팀으로 연락 부탁드립니다.</p></body></html>", null, null, null, true, "신하늘", null)
+            );
+            for (Notice notice : notices) {
+                noticeRepository.save(notice);
+            }
+            log.info("Notice 데이터가 초기화되었습니다.");
+        } else {
+            log.info("Notice 테이블에 이미 데이터가 존재합니다.");
+        }
+
+        if (promotionRepository.count() == 0) {
+            List<Promotion> promotions = Arrays.asList(
+                    new Promotion(null, "신규 프로모션 안내", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>새로운 프로모션이 시작됩니다. 많은 관심 부탁드립니다.</p></body></html>", null, null, null, true, "봉서우", null),
+                    new Promotion(null, "2024년 상반기 이벤트","<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>상반기 동안 진행되는 특별 이벤트를 안내드립니다.</p></body></html>", null, null, null, true, "서채우", null),
+                    new Promotion(null, "고객 감사 프로모션", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>고객님께 감사드리며 특별 혜택을 제공합니다.</p></body></html>", null, null, null, true, "안수환", null),
+                    new Promotion(null, "신차 출시 이벤트", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>신차 출시를 기념하여 다양한 혜택을 제공합니다.</p></body></html>", null, null, null, true, "봉서우", null),
+                    new Promotion(null, "여름 시즌 프로모션", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>여름을 맞아 특별 할인 이벤트가 진행됩니다.</p></body></html>", null, null, null, true, "양시우", null),
+                    new Promotion(null, "봄맞이 할인 프로모션", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>봄을 맞아 다양한 할인 혜택을 제공합니다.</p></body></html>", null, null, null, true, "봉서우", null),
+                    new Promotion(null, "고객 추천 이벤트", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>고객 추천 이벤트에 참여하고 다양한 혜택을 받아보세요.</p></body></html>", null, null, null, true, "하정현", null),
+                    new Promotion(null, "한정 판매 프로모션", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>한정 판매 차량에 대한 특별 할인 혜택을 안내드립니다.</p></body></html>", null, null, null, true, "봉서우", null),
+                    new Promotion(null, "고객 감사 특별 할인", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>고객님을 위한 특별 할인을 제공합니다.</p></body></html>", null, null, null, true, "한정환", null),
+                    new Promotion(null, "신규 고객 환영 이벤트", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>신규 고객님을 위한 환영 이벤트를 진행합니다.</p></body></html>", null, null, null, true, "현하린", null),
+                    new Promotion(null, "장기 고객 감사 행사", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>오랜 기간 함께해주신 고객님들을 위한 감사 행사를 준비했습니다.</p></body></html>", null, null, null, true, "규예서", null),
+                    new Promotion(null, "신규 서비스 체험단 모집", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>신규 서비스 체험단을 모집합니다. 체험 후기를 공유해 주세요.</p></body></html>", null, null, null, true, "천하은", null),
+                    new Promotion(null, "계절별 프로모션 가이드", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>각 계절에 맞는 프로모션 가이드를 확인해 보세요.</p></body></html>", null, null, null, true, "한정환", null),
+                    new Promotion(null, "고객만족도 조사 이벤트", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>프로모션</title></head><body><p>고객 만족도 조사 참여 시 특별한 혜택을 드립니다.</p></body></html>", null, null, null, true, "양민지", null)
+            );
+            for (Promotion promotion : promotions) {
+                promotionRepository.save(promotion);
+            }
+            log.info("Promotion 데이터가 초기화되었습니다.");
+        } else {
+            log.info("Promotion 테이블에 이미 데이터가 존재합니다.");
+        }
+
+        if (problemRepository.count() == 0) {
+            List<Problem> problems = Arrays.asList(
+                    new Problem(null, "차량 발화 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>소렌토 차량 관련 발화 문제가 빈번하게 발생하고 있습니다.</p>리콜 조치 고려 부탁 드립니다. </body></html>", null, null, null, true, null,"율도현","PRO_000000001","PROGRESS", null),
+                    new Problem(null, "제품 교체 관련 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>제 담당 고객님이 스팅어 부품 교체 관련 정보 제공 부탁 드립니다.</p></body></html>", null, null, null, true, "율도현","봉서우","PRO_000000020","PROGRESS", null),
+                    new Problem(null, "브레이크 소음 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>K5 차량 브레이크에서 지속적인 소음이 발생하고 있습니다.</p>원인 확인 및 조치 부탁드립니다.</body></html>", null, null, null, true, "안수환","남유나", "PRO_000000002", "PROGRESS", null),
+                    new Problem(null, "엔진 과열 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>스포티지 차량에서 엔진 과열 문제가 보고되었습니다.</p>긴급 점검 요청드립니다.</body></html>", null, null, null, true, "차시현", "전은호", "PRO_000000006", "PROGRESS", null),
+                    new Problem(null, "타이어 마모 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>타이어가 비정상적으로 빠르게 마모되고 있습니다.</p>교체 및 점검 필요합니다.</body></html>", null, null, null, true, "운예린","고윤정", "PRO_0000000012", "PROGRESS", null),
+                    new Problem(null, "에어컨 작동 불량", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>스팅어 차량의 에어컨이 작동하지 않습니다.</p>점검 요청드립니다.</body></html>", null, null, null, true, "공유영","이재용", "PRO_000000009", "PROGRESS", null),
+                    new Problem(null, "핸들 떨림 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>핸들 떨림 현상이 지속적으로 발생하고 있습니다.</p>점검 필요합니다.</body></html>", null, null, null, true, "전예슬", "봉채영", "PRO_000000006", "PROGRESS", null),
+                    new Problem(null, "오일 누출 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>엔진 오일이 누출되고 있습니다.</p>긴급 점검 바랍니다.</body></html>", null, null, null, true, "천하은","이재용", "PRO_000000007", "PROGRESS", null),
+                    new Problem(null, "소음 발생 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>차량 주행 중 소음이 심하게 발생하고 있습니다.</p>원인 분석 요청드립니다.</body></html>", null, null, null, true, "이시우","목다희", "PRO_000000008", "PROGRESS", null),
+                    new Problem(null, "연비 저하 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>차량 연비가 급격히 저하되었습니다.</p>점검 요청드립니다.</body></html>", null, null, null, true,"성지윤", "유하율", "PRO_000000009", "PROGRESS", null),
+                    new Problem(null, "내비게이션 오류", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>내비게이션이 정확한 경로를 안내하지 않습니다.</p>업데이트 필요합니다.</body></html>", null, null, null, true, "서채우","채예슬", "PRO_000000010", "PROGRESS", null),
+                    new Problem(null, "리어램프 불량", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>리어램프가 정상적으로 작동하지 않습니다.</p>교체 요청드립니다.</body></html>", null, null, null, true, "용하은","곽민아", "PRO_00000004", "PROGRESS", null),
+                    new Problem(null, "디젤 연료 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>디젤 차량 연료 공급이 원활하지 않습니다.</p>점검 요청드립니다.</body></html>", null, null, null, true, "하정현","고윤정", "PRO_00000003", "PROGRESS", null),
+                    new Problem(null, "도어 잠김 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>운전석 도어 잠금이 해제되지 않습니다.</p>점검 바랍니다.</body></html>", null, null, null, true,"문지완", "은주영", "PRO_000000013", "PROGRESS", null),
+                    new Problem(null, "엔진 소음 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>엔진에서 비정상적인 소음이 발생합니다.</p>점검 요청드립니다.</body></html>", null, null, null, true, "문지완","서지윤", "PRO_000000014", "PROGRESS", null),
+                    new Problem(null, "서스펜션 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>서스펜션이 제 기능을 하지 못하고 있습니다.</p>수리 요청드립니다.</body></html>", null, null, null, true,"염승환", "봉소라", "PRO_000000015", "PROGRESS", null),
+                    new Problem(null, "라디에이터 누수 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>라디에이터에서 누수가 발견되었습니다.</p>점검 바랍니다.</body></html>", null, null, null, true, "운은환","황수아", "PRO_000000016", "PROGRESS", null),
+                    new Problem(null, "엔진 경고등 점등", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>엔진 경고등이 점등된 상태입니다.</p>점검 필요합니다.</body></html>", null, null, null, true, "황수아","서지윤", "PRO_000000017", "PROGRESS", null),
+                    new Problem(null, "연료 소비 과다", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>연료 소비가 비정상적으로 많습니다.</p>점검 바랍니다.</body></html>", null, null, null, true, "익도환","남유나", "PRO_000000018", "PROGRESS", null),
+                    new Problem(null, "차량 떨림 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>차량 주행 중 심한 떨림이 발생합니다.</p>점검 요청드립니다.</body></html>", null, null, null, true,"도유정", "채예슬", "PRO_000000019", "PROGRESS", null),
+                    new Problem(null, "내비게이션 오류", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>내비게이션이 정확한 경로를 안내하지 않습니다.</p>업데이트 필요합니다.</body></html>", null, null, null, true, "도유정","채예슬", "PRO_000000010", "PROGRESS", null),
+                    new Problem(null, "오일 누출 문제", "<!DOCTYPE html><html lang=\"ko\"><head><meta charset=\"UTF-8\"><title>문제사항</title></head><body><p>엔진 오일이 누출되고 있습니다.</p>긴급 점검 바랍니다.</body></html>", null, null, null, true, "도유정","이재용", "PRO_000000007", "PROGRESS", null)
+            );
+            for (Problem problem : problems) {
+                problemRepository.save(problem);
+            }
+            log.info("Problem 데이터가 초기화되었습니다.");
+        } else {
+            log.info("Problem 테이블에 이미 데이터가 존재합니다.");
+        }
+
 
         // 우리 계정1
         createOrUpdateMember(
@@ -278,6 +398,8 @@ public class Initializer implements ApplicationRunner {
                     loadImage("default.png")
             );
         }
+
+
 
 
         // 영업 관련 경력
@@ -1128,4 +1250,63 @@ public class Initializer implements ApplicationRunner {
             log.info("{} 유저 정보가 이미 존재합니다.", loginId);
         }
     }
+
+
+    private void createOrUpdateNotice (String loginId,
+                                      String password,
+                                      String name,
+                                      String email,
+                                      int age,
+                                      String sex,
+                                      String identNo,
+                                      String phone,
+                                      String address,
+                                      String position,
+                                      String grade,
+                                      String jobType,
+                                      String military,
+                                      String bankName,
+                                      String account,
+                                      String centerId,
+                                      String organizationId,
+                                      String role,
+                                      MultipartFile imageUrl) throws Exception {
+
+        // db에 정보가 있는지 확인
+        Member existingMember = memberRepository.findByLoginId(loginId);
+        if (existingMember == null) {
+            // Create the user
+            SignupDTO signupDTO = new SignupDTO();
+            signupDTO.setLoginId(loginId);
+            signupDTO.setPassword(password);
+            signupDTO.setName(name);
+            signupDTO.setEmail(email);
+            signupDTO.setAge(age);
+            signupDTO.setSex(sex);
+            signupDTO.setIdentNo(identNo);
+            signupDTO.setPhone(phone);
+            signupDTO.setAddress(address);
+            signupDTO.setPosition(position);
+            signupDTO.setGrade(grade);
+            signupDTO.setJobType(jobType);
+            signupDTO.setMilitary(military);
+            signupDTO.setBankName(bankName);
+            signupDTO.setAccount(account);
+            signupDTO.setCenterId(centerId);
+            signupDTO.setOrganizationId(organizationId);
+
+            authCommandService.signup(signupDTO, imageUrl);
+
+            // Grant role to the user
+            GrantDTO grantDTO = new GrantDTO();
+            grantDTO.setLoginId(loginId);
+            grantDTO.setRole(role);
+            authCommandService.grantAuthority(grantDTO);
+
+            log.info("{} 유저를 {} 역할로 생성합니다.", loginId, role);
+        } else {
+            log.info("{} 유저 정보가 이미 존재합니다.", loginId);
+        }
+    }
 }
+

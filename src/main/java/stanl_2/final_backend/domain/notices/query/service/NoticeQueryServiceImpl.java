@@ -1,6 +1,7 @@
 package stanl_2.final_backend.domain.notices.query.service;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +19,9 @@ import stanl_2.final_backend.domain.sales_history.common.exception.SalesHistoryE
 import stanl_2.final_backend.global.excel.ExcelUtilsV1;
 import stanl_2.final_backend.global.redis.RedisService;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.util.List;
 
 import static org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly;
@@ -29,6 +33,7 @@ import static org.springframework.transaction.support.TransactionSynchronization
 */
 
 @Transactional(readOnly = true)
+@Slf4j
 @Service("queryNoticeServiceImpl")
 public class NoticeQueryServiceImpl implements NoticeQueryService {
     private final NoticeMapper noticeMapper;
@@ -36,19 +41,32 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
     private final RedisService redisService;
     private final ExcelUtilsV1 excelUtilsV1;
     private final MemberQueryService memberQueryService;
+
+    private final DataSource dataSource;
     @Autowired
-    public NoticeQueryServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService, ExcelUtilsV1 excelUtilsV1, MemberQueryService memberQueryService) {
+    public NoticeQueryServiceImpl(NoticeMapper noticeMapper, RedisTemplate redisTemplate, RedisService redisService,
+                                  ExcelUtilsV1 excelUtilsV1, MemberQueryService memberQueryService, DataSource dataSource) {
         this.noticeMapper = noticeMapper;
         this.redisTemplate = redisTemplate;
         this.redisService =redisService;
         this.excelUtilsV1 =excelUtilsV1;
         this.memberQueryService =memberQueryService;
+        this.dataSource = dataSource;
     }
 
+    private String getDatabaseUrl() {
+        try (Connection connection = dataSource.getConnection()) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            return metaData.getURL();
+        } catch (Exception e) {
+            throw new RuntimeException("DB URL 조회 실패", e);
+        }
+    }
 
     @Transactional(readOnly = true)
     @Override
     public Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO) {
+        log.info("readOnly = true 적용 시 DB URL: " + getDatabaseUrl());
         int offset = Math.toIntExact(pageable.getOffset());
         int size = pageable.getPageSize();
         System.out.println("3.Transaction ReadOnly: " + isCurrentTransactionReadOnly());
@@ -58,13 +76,13 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
                 + "::startDate=" + searchDTO.getStartDate()+ "::endDate=" + searchDTO.getEndDate();
         List<NoticeDTO> notices = (List<NoticeDTO>) redisTemplate.opsForValue().get(cacheKey);
         if (notices == null) {
-            System.out.println("데이터베이스에서 데이터 조회 중...");
+            log.info("데이터베이스에서 데이터 조회 중...");
             notices = noticeMapper.findNotices(offset, size, searchDTO);
             if (notices != null && !notices.isEmpty()) { // 데이터가 있을 때만 캐싱
                 redisService.setKeyWithTTL(cacheKey, notices, 30 * 60); // 캐싱 시 동일 키 사용
             }
         } else {
-            System.out.println("캐시에서 데이터 조회 중...");
+            log.info("캐시에서 데이터 조회 중...");
         }
         notices.forEach(notice -> {
             try {
@@ -75,10 +93,11 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
         int totalElements = noticeMapper.findNoticeCount(); // 총 개수 조회
         return new PageImpl<>(notices, pageable, totalElements);
     }
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public NoticeDTO findNotice(String noticeId) {
         NoticeDTO notice = noticeMapper.findNotice(noticeId);
+        log.info("Default DB URL: " + getDatabaseUrl());
         return notice;
     }
     @Transactional(readOnly = true)
