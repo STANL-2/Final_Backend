@@ -43,4 +43,5 @@ public class ContractSelectAllDTO {
     private String searchMemberId;
     private String startDate;
     private String endDate;
+    private String productName;
 }
