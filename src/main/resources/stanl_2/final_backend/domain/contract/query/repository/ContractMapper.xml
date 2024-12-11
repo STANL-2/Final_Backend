@@ -637,8 +637,8 @@
         a.created_at,
         b.prod_name
         FROM tb_contract a
-        ON a.prod_id = b.prod_id
         LEFT JOIN tb_product b
+        ON a.prod_id = b.prod_id
         <where>
             a.active = TRUE
             AND a.cent_id = #{centerId}
