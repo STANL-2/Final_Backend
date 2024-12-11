@@ -42,4 +42,5 @@ public class ContractSearchDTO {
     private String startDate;
     private String endDate;
     private String carName;
+    private String productName;
 }
