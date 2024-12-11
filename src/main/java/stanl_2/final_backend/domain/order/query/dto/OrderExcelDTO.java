@@ -18,7 +18,7 @@ public class OrderExcelDTO {
     private String status;
 
     @ExcelColumnName(name = "제품명")
-    private String carName;
+    private String productName;
 
     @ExcelColumnName(name = "수주자")
     private String memberId;

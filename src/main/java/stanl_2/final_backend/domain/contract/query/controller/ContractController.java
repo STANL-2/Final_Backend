@@ -92,7 +92,7 @@ public class ContractController {
                                                                        @RequestParam(required = false) String endDate,
                                                                        @RequestParam(required = false) String customerName,
                                                                        @RequestParam(required = false) String customerClassifcation,
-                                                                       @RequestParam(required = false) String carName,
+                                                                       @RequestParam(required = false) String productName,
                                                                        @RequestParam(required = false) String status,
                                                                        @RequestParam(required = false) String companyName,
                                                                        @RequestParam(required = false) String customerPurchaseCondition,
@@ -109,7 +109,7 @@ public class ContractController {
         contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
-        contractSearchDTO.setCarName(carName);
+        contractSearchDTO.setProductName(productName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
@@ -187,7 +187,7 @@ public class ContractController {
                                                                                @RequestParam(required = false) String endDate,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
-                                                                               @RequestParam(required = false) String carName,
+                                                                               @RequestParam(required = false) String productName,
                                                                                @RequestParam(required = false) String status,
                                                                                @RequestParam(required = false) String companyName,
                                                                                @RequestParam(required = false) String customerPurchaseCondition,
@@ -204,7 +204,7 @@ public class ContractController {
         contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
-        contractSearchDTO.setCarName(carName);
+        contractSearchDTO.setProductName(productName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
@@ -285,7 +285,7 @@ public class ContractController {
                                                                                @RequestParam(required = false) String endDate,
                                                                                @RequestParam(required = false) String customerName,
                                                                                @RequestParam(required = false) String customerClassifcation,
-                                                                               @RequestParam(required = false) String carName,
+                                                                               @RequestParam(required = false) String productName,
                                                                                @RequestParam(required = false) String status,
                                                                                @RequestParam(required = false) String companyName,
                                                                                @RequestParam(required = false) String customerPurchaseCondition,
@@ -307,7 +307,7 @@ public class ContractController {
         contractSearchDTO.setEndDate(endDate);
         contractSearchDTO.setCustomerName(customerName);
         contractSearchDTO.setCustomerClassifcation(customerClassifcation);
-        contractSearchDTO.setCarName(carName);
+        contractSearchDTO.setProductName(productName);
         contractSearchDTO.setStatus(status);
         contractSearchDTO.setCompanyName(companyName);
         contractSearchDTO.setCustomerPurchaseCondition(customerPurchaseCondition);
