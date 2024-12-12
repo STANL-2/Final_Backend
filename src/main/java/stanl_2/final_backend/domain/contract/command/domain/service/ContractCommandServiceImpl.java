@@ -105,7 +105,11 @@ public class ContractCommandServiceImpl implements ContractCommandService {
             customerRegistDTO.setAge(contractRegistRequestDTO.getCustomerAge());
             customerRegistDTO.setPhone(contractRegistRequestDTO.getCustomerPhone());
             customerRegistDTO.setEmail(contractRegistRequestDTO.getCustomerEmail());
-            customerRegistDTO.setSex(contractRegistRequestDTO.getCustomerSex());
+            if (contractRegistRequestDTO.getCustomerSex().equals("여자")) {
+                customerRegistDTO.setSex("FEMALE");
+            } else if (contractRegistRequestDTO.getCustomerSex().equals("남자")) {
+                customerRegistDTO.setSex("MALE");
+            }
             customerRegistDTO.setMemberId(memberId);
 
             // 고객 등록
@@ -128,7 +132,14 @@ public class ContractCommandServiceImpl implements ContractCommandService {
             customerModifyDTO.setAge(contractModifyDTO.getCustomerAge());
             customerModifyDTO.setPhone(contractModifyDTO.getCustomerPhone());
             customerModifyDTO.setEmail(contractModifyDTO.getCustomerEmail());
-            customerModifyDTO.setSex(contractModifyDTO.getCustomerSex());
+
+            if (contractModifyDTO.getCustomerSex().equals("여자")) {
+                customerModifyDTO.setSex("FEMALE");
+            } else if (contractModifyDTO.getCustomerSex().equals("남자")) {
+                customerModifyDTO.setSex("MALE");
+            }
+
+
             customerModifyDTO.setMemberId(memberId);
 
             customerCommandService.modifyCustomerInfo(customerModifyDTO);
@@ -166,6 +177,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         // 계약 생성
         String customerPurchaseCondition = contractRegistRequestDTO.getCustomerPurchaseCondition();
         String customerClassifcation = contractRegistRequestDTO.getCustomerClassifcation();
+        String customerSex = contractRegistRequestDTO.getCustomerSex();
 
         if (customerPurchaseCondition.equals("현금")) {
             contractRegistRequestDTO.setCustomerPurchaseCondition("CASH");
@@ -300,7 +312,7 @@ public class ContractCommandServiceImpl implements ContractCommandService {
         contractRepository.save(contract);
 
         ContractAlarmDTO contractAlarmDTO = new ContractAlarmDTO(contract.getContractId(), contract.getCustomerName(),
-                                                                 contract.getMemberId(), contract.getAdminId());
+                contract.getMemberId(), contract.getAdminId());
 
         alarmCommandService.sendContractAlarm(contractAlarmDTO);
 
