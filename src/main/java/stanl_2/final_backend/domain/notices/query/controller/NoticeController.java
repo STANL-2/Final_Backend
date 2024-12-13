@@ -12,19 +12,30 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.common.response.NoticeResponseMessage;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
-import stanl_2.final_backend.domain.notices.query.service.NoticeService;
+import stanl_2.final_backend.domain.notices.query.service.NoticeQueryService;
+
+import java.security.GeneralSecurityException;
+import java.security.Principal;
 
 
 @RestController("queryNoticeController")
 @RequestMapping("/api/v1/notice")
 public class NoticeController {
-    private final NoticeService noticeService;
+    private final NoticeQueryService noticeQueryService;
+    private final AuthQueryService authQueryService;
+    private final MemberQueryService memberQueryService;
     @Autowired
-    public NoticeController(NoticeService noticeService) {
-        this.noticeService = noticeService;
+    public NoticeController(NoticeQueryService noticeQueryService,
+                            AuthQueryService authQueryService,
+                            MemberQueryService memberQueryService) {
+        this.noticeQueryService = noticeQueryService;
+        this.authQueryService = authQueryService;
+        this.memberQueryService = memberQueryService;
     }
 
     @Operation(summary = "공지사항 조건별 조회")
@@ -32,7 +43,7 @@ public class NoticeController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = {@Content(schema = @Schema(implementation = NoticeResponseMessage.class))})
     })
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<Page<NoticeDTO>> getNotices(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -41,12 +52,13 @@ public class NoticeController {
             @RequestParam(required = false) String memberId,
             @RequestParam(required = false) String classification,
             @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate
-    ) {
+            @RequestParam(required = false) String endDate,
+            Principal principal
+    ) throws GeneralSecurityException {
         Pageable pageable = PageRequest.of(page, size);
         SearchDTO searchDTO = new SearchDTO(title, tag, memberId, classification, startDate, endDate);
 
-        Page<NoticeDTO> noticeDTOPage = noticeService.findNotices(pageable, searchDTO);
+        Page<NoticeDTO> noticeDTOPage = noticeQueryService.findNotices(pageable, searchDTO);
 
         return ResponseEntity.ok(noticeDTOPage);
     }
@@ -58,7 +70,7 @@ public class NoticeController {
     })
     @GetMapping("{noticeId}")
     public ResponseEntity<NoticeDTO> getNotice(@PathVariable String noticeId){
-        NoticeDTO noticeDTO = noticeService.findNotice(noticeId);
+        NoticeDTO noticeDTO = noticeQueryService.findNotice(noticeId);
         return ResponseEntity.ok(noticeDTO);
     }
     @Operation(summary = "공지사항 엑셀 다운 테스트")
@@ -69,7 +81,7 @@ public class NoticeController {
     @GetMapping("/excel")
     public void exportNotice(HttpServletResponse response){
 
-        noticeService.exportNoticesToExcel(response);
+        noticeQueryService.exportNoticesToExcel(response);
     }
 
 }

@@ -7,7 +7,7 @@ import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
 
 
-public interface NoticeService {
+public interface NoticeQueryService {
 
     Page<NoticeDTO> findNotices(Pageable pageable, SearchDTO searchDTO);
     NoticeDTO findNotice(String noticeId);

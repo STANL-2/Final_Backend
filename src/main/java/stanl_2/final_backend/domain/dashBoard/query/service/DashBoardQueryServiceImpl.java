@@ -1,32 +1,27 @@
 package stanl_2.final_backend.domain.dashBoard.query.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import stanl_2.final_backend.domain.contract.query.dto.ContractSearchDTO;
-import stanl_2.final_backend.domain.contract.query.dto.ContractSelectAllDTO;
 import stanl_2.final_backend.domain.contract.query.service.ContractQueryService;
-import stanl_2.final_backend.domain.customer.query.service.CustomerQueryService;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardAdminDTO;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardDirectorDTO;
 import stanl_2.final_backend.domain.dashBoard.query.dto.DashBoardEmployeeDTO;
-import stanl_2.final_backend.domain.dashBoard.query.repository.DashBoardMapper;
 import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
 import stanl_2.final_backend.domain.member.query.service.MemberQueryService;
 import stanl_2.final_backend.domain.notices.query.dto.NoticeDTO;
 import stanl_2.final_backend.domain.notices.query.dto.SearchDTO;
-import stanl_2.final_backend.domain.notices.query.service.NoticeService;
+import stanl_2.final_backend.domain.notices.query.service.NoticeQueryService;
 import stanl_2.final_backend.domain.order.query.dto.OrderSelectSearchDTO;
 import stanl_2.final_backend.domain.order.query.service.OrderQueryService;
 import stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO;
 import stanl_2.final_backend.domain.purchase_order.query.service.PurchaseOrderQueryService;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryRankedDataDTO;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySearchDTO;
-import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistorySelectDTO;
 import stanl_2.final_backend.domain.sales_history.query.dto.SalesHistoryStatisticsDTO;
 import stanl_2.final_backend.domain.sales_history.query.service.SalesHistoryQueryService;
 import stanl_2.final_backend.domain.schedule.query.dto.ScheduleDayDTO;
@@ -53,7 +48,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
     private final PurchaseOrderQueryService purchaseOrderQueryService;
     private final SalesHistoryQueryService salesHistoryQueryService;
     private final ScheduleQueryService scheduleQueryService;
-    private final NoticeService noticeService;
+    private final NoticeQueryService noticeQueryService;
     private final MemberQueryService memberQueryService;
 
     private String  getCurrentTime() {
@@ -64,14 +59,14 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
     public DashBoardQueryServiceImpl(AuthQueryService authQueryService, ContractQueryService contractQueryService,
                                      OrderQueryService orderQueryService, PurchaseOrderQueryService purchaseOrderQueryService,
                                      SalesHistoryQueryService salesHistoryQueryService, ScheduleQueryService scheduleQueryService,
-                                     NoticeService noticeService, MemberQueryService memberQueryService) {
+                                     NoticeQueryService noticeQueryService, MemberQueryService memberQueryService) {
         this.authQueryService = authQueryService;
         this.contractQueryService = contractQueryService;
         this.orderQueryService = orderQueryService;
         this.purchaseOrderQueryService = purchaseOrderQueryService;
         this.salesHistoryQueryService = salesHistoryQueryService;
         this.scheduleQueryService = scheduleQueryService;
-        this.noticeService = noticeService;
+        this.noticeQueryService = noticeQueryService;
         this.memberQueryService = memberQueryService;
     }
 
@@ -160,7 +155,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
 
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setTag("ALL");
-        Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
+        Page<NoticeDTO> noticePage = noticeQueryService.findNotices(pageable, searchDTO);
 
         for (NoticeDTO notice : noticePage.getContent()) {
             Map<String, String> noticeData = new HashMap<>();
@@ -259,7 +254,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
 
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setTag("ALL");
-        Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
+        Page<NoticeDTO> noticePage = noticeQueryService.findNotices(pageable, searchDTO);
 
         for (NoticeDTO notice : noticePage.getContent()) {
             Map<String, String> noticeData = new HashMap<>();
@@ -347,7 +342,7 @@ public class DashBoardQueryServiceImpl implements DashBoardQueryService {
 
         SearchDTO searchDTO = new SearchDTO();
         searchDTO.setTag("ALL");
-        Page<NoticeDTO> noticePage = noticeService.findNotices(pageable, searchDTO);
+        Page<NoticeDTO> noticePage = noticeQueryService.findNotices(pageable, searchDTO);
 
         for (NoticeDTO notice : noticePage.getContent()) {
             Map<String, String> noticeData = new HashMap<>();

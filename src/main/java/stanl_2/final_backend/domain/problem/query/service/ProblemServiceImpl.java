@@ -61,7 +61,6 @@ public class ProblemServiceImpl implements ProblemService {
         }
         problems.forEach(problem -> {
             try {
-                problem.setMemberId(memberQueryService.selectNameById(problem.getMemberId()));
             } catch (Exception e) {
                 throw new SalesHistoryCommonException(SalesHistoryErrorCode.MEMBER_NOT_FOUND);
             }

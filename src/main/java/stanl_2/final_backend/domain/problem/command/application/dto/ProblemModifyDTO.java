@@ -15,6 +15,7 @@ public class ProblemModifyDTO {
     private String title;
     private String content;
     private String memberId;
+    private String memberLoginId;
     private String fileUrl;
 
 }

@@ -49,6 +49,7 @@ public class AESUtils {
             return null;
         }
 
+
         Cipher cipher = Cipher.getInstance(transformation);
         SecretKey secretKey = new SecretKeySpec(secretKeyValue.getBytes(StandardCharsets.UTF_8), algorithm);
         cipher.init(Cipher.DECRYPT_MODE, secretKey);

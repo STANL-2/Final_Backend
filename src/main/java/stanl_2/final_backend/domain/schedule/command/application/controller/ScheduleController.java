@@ -25,7 +25,6 @@ public class ScheduleController {
 
     @Autowired
     public ScheduleController(ScheduleCommandService scheduleCommandService
-//            , AlarmService alarmService
     ) {
         this.scheduleCommandService = scheduleCommandService;
     }
