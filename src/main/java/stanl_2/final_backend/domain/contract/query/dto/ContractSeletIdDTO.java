@@ -43,4 +43,5 @@ public class ContractSeletIdDTO {
     private String centerId;
     private String customerId;
     private String productId;
+    private String productName;
 }

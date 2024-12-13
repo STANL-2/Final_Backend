@@ -75,7 +75,8 @@
                a.mem_acc,
                a.center_id,
                a.created_at,
-               a.updated_at
+               a.updated_at,
+               a.mem_id
           FROM tb_member a
          WHERE a.mem_login_id = #{ loginId }
     </select>

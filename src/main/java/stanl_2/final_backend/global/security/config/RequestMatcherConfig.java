@@ -207,6 +207,7 @@ public class RequestMatcherConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/all").hasAnyRole("salesHistory-statistics-search-all", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/search").hasAnyRole("salesHistory-statistics-search-post", "GOD", "DIRECTOR", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/best").hasAnyRole("salesHistory-statistics-best-post", "GOD", "DIRECTOR", "ADMIN", "EMPLOYEE")
+                .requestMatchers(HttpMethod.POST, "/api/v1/salesHistory/statistics/mySearch").hasAnyRole("salesHistory-statistics-best-post", "GOD", "ADMIN", "EMPLOYEE")
                 .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics").hasAnyRole("salesHistory-employee-statistics-get", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search").hasAnyRole("salesHistory-employee-statistics-search-get", "GOD", "EMPLOYEE", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/salesHistory/employee/statistics/search/month").hasAnyRole("salesHistory-employee-statistics-search-month-get", "GOD", "EMPLOYEE", "ADMIN")
