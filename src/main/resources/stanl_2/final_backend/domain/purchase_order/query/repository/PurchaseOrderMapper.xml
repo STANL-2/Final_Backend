@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.purchase_order.query.repository.PurchaseOrderMapper">
+
+    <resultMap id="purchaseOrderDetailResultMap" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectIdDTO">
+        <id property="purchaseOrderId" column="PUR_ORD_ID"/>
+        <result property="title" column="PUR_ORD_TTL"/>
+        <result property="content" column="PUR_ORD_CONT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="status" column="PUR_ORD_STAT"/>
+        <result property="orderId" column="ORD_ID"/>
+        <result property="adminId" column="ADMIN_ID"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+    <resultMap id="purchaseOrderResultMap" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderSelectSearchDTO">
+        <id property="purchaseOrderId" column="PUR_ORD_ID"/>
+        <result property="title" column="PUR_ORD_TTL"/>
+        <result property="status" column="PUR_ORD_STAT"/>
+        <result property="orderName" column="ORD_NAME"/>
+        <result property="adminName" column="ADMIN_NAME"/>
+        <result property="memberName" column="MEM_NAME"/>
+        <result property="memberId" column="MEM_ID"/>
+        <result property="adminId" column="ADMIN_ID"/>
+        <result property="productName" column="PROD_NAME"/>
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+
+    <resultMap id="purchaseOrderExcel" type="stanl_2.final_backend.domain.purchase_order.query.dto.PurchaseOrderExcelDTO">
+        <id property="purchaseOrderId" column="PUR_ORD_ID"/>
+        <result property="title" column="PUR_ORD_TTL"/>
+        <result property="status" column="PUR_ORD_STAT"/>
+        <result property="memberName" column="MEM_NAME"/>
+        <result property="productName" column="CONR_CAR_NAME"/>
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+
+    <!-- 영업관리자 조회 -->
+    <select id="findPurchaseOrderByPurchaseOrderIdAndMemberId" resultMap="purchaseOrderDetailResultMap">
+        SELECT
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_cont,
+        a.active,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.pur_ord_stat,
+        a.ord_id,
+        a.admin_id,
+        a.mem_id
+        FROM tb_purchase_order a
+        WHERE a.mem_id = #{memberId}
+        AND a.active = TRUE
+        AND a.pur_ord_id = #{purchaseOrderId};
+    </select>
+
+    <select id="findAllPurchaseOrderByMemberId" resultMap="purchaseOrderResultMap">
+        SELECT
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        b.ord_ttl,
+        d.mem_name AS admin_name,
+        c.mem_name AS mem_name,
+        f.prod_name
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
+        WHERE a.mem_id = #{memberId}
+        AND a.active = TRUE
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
+    </select>
+
+    <select id="findAllPurchaseOrderCountByMemberId" resultType="int" parameterType="string">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_purchase_order a
+        WHERE a.mem_id = #{memberId}
+          AND a.active = TRUE;
+    </select>
+
+    <select id="findSearchPurchaseOrderMemberId" resultMap="purchaseOrderResultMap">
+        SELECT
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        a.created_at,
+        a.admin_id,
+        a.mem_id,
+        b.ord_ttl,
+        f.prod_name
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
+        <where>
+            a.active = TRUE
+            AND a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTO.status}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'purchaseOrderId'">
+                        ORDER BY a.pur_ord_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.pur_ord_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.pur_ord_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productName'">
+                        ORDER BY f.prod_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY c.mem_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'createdAt'">
+                        ORDER BY a.created_at ${sortOrder}
+                    </when>
+                    <when test="sortField == 'adminId'">
+                        ORDER BY a.admin_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findSearchPurchaseOrderCountMemberId" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
+        <where>
+            a.active = TRUE
+            AND a.mem_id = #{purchaseOrderSelectSearchDTO.memberId}
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTO.status}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
+            </if>
+        </where>
+    </select>
+
+    <!-- 영업담당자 조회 -->
+    <select id="findPurchaseOrderByPurchaseOrderId" resultMap="purchaseOrderDetailResultMap" parameterType="string">
+        SELECT
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_cont,
+        a.active,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.pur_ord_stat,
+        a.ord_id,
+        a.admin_id,
+        a.mem_id
+        FROM tb_purchase_order a
+        WHERE a.active = TRUE
+        AND a.pur_ord_id = #{purchaseOrderId};
+    </select>
+
+    <select id="findAllPurchaseOrder" resultMap="purchaseOrderResultMap">
+        SELECT
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        b.ord_ttl,
+        d.mem_name AS admin_name,
+        c.mem_name AS mem_name,
+        f.prod_name
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset};
+    </select>
+
+    <select id="findAllPurchaseOrderCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_purchase_order a
+        WHERE a.active = TRUE;
+    </select>
+
+    <select id="findSearchPurchaseOrder" resultMap="purchaseOrderResultMap">
+        SELECT
+        a.pur_ord_id,
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        a.created_at,
+        a.mem_id,
+        a.admin_id,
+        b.ord_ttl,
+        f.prod_name
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
+        <where>
+            a.active = TRUE
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTO.status}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'purchaseOrderId'">
+                        ORDER BY a.pur_ord_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.pur_ord_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.pur_ord_stat ${sortOrder}
+                    </when>
+                    <when test="sortField == 'productName'">
+                        ORDER BY f.prod_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY c.mem_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'createdAt'">
+                        ORDER BY a.created_at ${sortOrder}
+                    </when>
+                    <when test="sortField == 'adminId'">
+                        ORDER BY a.admin_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="findSearchPurchaseOrderCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_purchase_order a
+        LEFT JOIN tb_order b
+        ON a.ord_id = b.ord_id
+        LEFT JOIN tb_member c
+        ON a.mem_id = c.mem_id
+        LEFT JOIN tb_member d
+        ON a.admin_id = d.mem_id
+        LEFT JOIN tb_contract e
+        ON b.conr_id = e.conr_id
+        LEFT JOIN tb_product f
+        ON e.prod_id = f.prod_id
+        <where>
+            a.active = TRUE
+            <if test="purchaseOrderSelectSearchDTO.title != null">
+                AND a.pur_ord_ttl LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.title}, '%')
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.status != null">
+                AND a.pur_ord_stat = #{purchaseOrderSelectSearchDTO.status}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.adminId != null">
+                AND a.admin_id = #{purchaseOrderSelectSearchDTO.adminId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.searchMemberId != null">
+                AND a.mem_id = #{purchaseOrderSelectSearchDTO.searchMemberId}
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.productName != null">
+                AND f.prod_name LIKE CONCAT('%', #{purchaseOrderSelectSearchDTO.productName}, '%')
+            </if>
+            <if test="purchaseOrderSelectSearchDTO.startDate != null and purchaseOrderSelectSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{purchaseOrderSelectSearchDTO.startDate}
+                AND DATE_ADD(#{purchaseOrderSelectSearchDTO.endDate}, INTERVAL 1 DAY)
+            </if>
+        </where>
+    </select>
+
+    <select id="findPurchaseOrderForExcel" resultMap="purchaseOrderExcel">
+        SELECT
+        a.pur_ord_ttl,
+        a.pur_ord_stat,
+        a.pur_ord_id,
+        a.created_at,
+        b.mem_name,
+        d.conr_car_name
+        FROM tb_purchase_order a
+        LEFT JOIN tb_member b
+        ON a.mem_id = b.mem_id
+        LEFT JOIN tb_order c
+        ON a.ord_id = c.ord_id
+        LEFT JOIN tb_contract d
+        ON c.conr_id = d.conr_id;
+    </select>
+</mapper>

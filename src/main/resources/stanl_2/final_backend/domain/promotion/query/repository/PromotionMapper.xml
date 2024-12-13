@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.promotion.query.repository.PromotionMapper">
+
+    <resultMap id="Promotion" type="stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO">
+        <id property="promotionId" column="PRM_ID"/>
+        <result property="title" column="PRM_TTL"/>
+        <result property="content" column="PRM_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="memberId" column="MEM_ID"/>
+        <result property="fileUrl" column="FILE_URL"/>
+    </resultMap>
+
+    <resultMap id="SearchPromotion" type="stanl_2.final_backend.domain.promotion.query.dto.PromotionDTO">
+        <id property="promotionId" column="PRM_ID"/>
+        <result property="title" column="PRM_TTL"/>
+        <result property="content" column="PRM_CONT"/>
+        <result property="memberId" column="MEM_ID"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+    </resultMap>
+
+    <select id="findPromotions" resultMap="SearchPromotion" parameterType="String">
+        SELECT
+        a.prm_id,
+        a.prm_ttl,
+        a.prm_cont,
+        a.mem_id,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at,
+        a.active
+        FROM tb_promotion a
+        <where>
+            a.active != 'false'
+            <if test="promotionSearchDTO.memberId != null">
+                AND a.mem_id = #{promotionSearchDTO.memberId}
+            </if>
+            <if test="promotionSearchDTO.title != null">
+                AND a.prm_ttl LIKE CONCAT('%', #{promotionSearchDTO.title}, '%')
+            </if>
+            <if test="promotionSearchDTO.startDate != null and promotionSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{promotionSearchDTO.startDate} AND DATE_ADD(#{promotionSearchDTO.endDate}, INTERVAL 1 DAY)
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findPromotionsCount" resultType="int" parameterType="stanl_2.final_backend.domain.promotion.query.dto.PromotionSearchDTO">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_promotion a
+        <where>
+            a.active != 'false'
+            <if test="memberId != null">
+                AND a.mem_id = #{memberId}
+            </if>
+            <if test="title != null">
+                AND a.prm_ttl LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND a.created_at BETWEEN #{startDate} AND #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="findPromotion" resultMap="Promotion" parameterType="string">
+        SELECT
+            a.prm_id,
+            a.prm_ttl,
+            a.prm_cont,
+            a.created_at,
+            a.updated_at,
+            a.deleted_at,
+            a.active,
+            a.mem_id,
+            a.file_url
+        FROM tb_promotion a
+        WHERE prm_id = #{promotionId};
+    </select>
+
+    <resultMap id="ExcelPromotion" type="stanl_2.final_backend.domain.promotion.query.dto.PromotionExcelDownload">
+        <result property="title" column="PRM_TTL"/>
+        <result property="content" column="PRM_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+    <select id="findPromotionsForExcel" resultMap="ExcelPromotion">
+        SELECT
+            a.prm_ttl,
+            a.prm_cont,
+            a.mem_id,
+            a.created_at,
+            a.updated_at,
+            a.active
+        FROM tb_promotion a
+        WHERE a.active != 'false';
+    </select>
+</mapper>

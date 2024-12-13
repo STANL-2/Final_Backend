@@ -1,10 +1,14 @@
 package stanl_2.final_backend.domain.center.command.application.service;
 
-import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistRequestDTO;
-import stanl_2.final_backend.domain.center.command.application.dto.response.CenterRegistResponseDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterModifyDTO;
+import stanl_2.final_backend.domain.center.command.application.dto.request.CenterRegistDTO;
 
+@Service
 public interface CenterCommandService {
 
-    CenterRegistResponseDTO registCenter(CenterRegistRequestDTO centerRegistRequestDTO);
-
+    void registCenter(CenterRegistDTO centerRegistDTO, MultipartFile imageUrl);
+    void modifyCenter(CenterModifyDTO centerModifyDTO, MultipartFile imageUrl);
+    void deleteCenter(String id);
 }

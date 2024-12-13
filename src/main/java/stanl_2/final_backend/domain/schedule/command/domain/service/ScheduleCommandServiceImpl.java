@@ -3,82 +3,129 @@ package stanl_2.final_backend.domain.schedule.command.domain.service;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mapping.MappingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleModifyRequestDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleRegistRequestDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleModifyResponseDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleRegistResponseDTO;
+import stanl_2.final_backend.domain.member.common.exception.MemberCommonException;
+import stanl_2.final_backend.domain.member.common.exception.MemberErrorCode;
+import stanl_2.final_backend.domain.member.query.service.AuthQueryService;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleModifyDTO;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleRegistDTO;
 import stanl_2.final_backend.domain.schedule.command.application.service.ScheduleCommandService;
 import stanl_2.final_backend.domain.schedule.command.domain.aggregate.entity.Schedule;
 import stanl_2.final_backend.domain.schedule.command.domain.repository.ScheduleRepository;
-import stanl_2.final_backend.domain.schedule.common.exception.CommonException;
-import stanl_2.final_backend.domain.schedule.common.exception.ErrorCode;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleCommonException;
+import stanl_2.final_backend.domain.schedule.common.exception.ScheduleErrorCode;
 
-import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
-@Service("commandScheduleServiceImpl")
+@Service
 public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     private final ScheduleRepository scheduleRepository;
+    private final AuthQueryService authQueryService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ScheduleCommandServiceImpl(ScheduleRepository scheduleRepository, ModelMapper modelMapper) {
+    public ScheduleCommandServiceImpl(ScheduleRepository scheduleRepository, ModelMapper modelMapper,
+                                      AuthQueryService authQueryService) {
         this.scheduleRepository = scheduleRepository;
         this.modelMapper = modelMapper;
+        this.authQueryService = authQueryService;
     }
 
-    private Timestamp getCurrentTimestamp() {
+    private String  getCurrentTime() {
         ZonedDateTime nowKst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return Timestamp.from(nowKst.toInstant());
+        return nowKst.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     @Override
     @Transactional
-    public ScheduleRegistResponseDTO registSchedule(ScheduleRegistRequestDTO scheduleRegistRequestDTO) {
+    public Boolean registSchedule(ScheduleRegistDTO scheduleRegistDTO) {
 
-        Schedule schedule = modelMapper.map(scheduleRegistRequestDTO,Schedule.class);
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleRegistDTO.getMemberLoginId());
+        scheduleRegistDTO.setMemberId(memberId);
 
-        scheduleRepository.save(schedule);
+        try {
+            Schedule schedule = modelMapper.map(scheduleRegistDTO, Schedule.class);
 
-        ScheduleRegistResponseDTO scheduleRegistResponseDTO = modelMapper.map(schedule, ScheduleRegistResponseDTO.class);
+            scheduleRepository.save(schedule);
 
-        return scheduleRegistResponseDTO;
+            return true;
+        } catch (DataIntegrityViolationException e){
+            // DB 무결정 제약 조건 (NOT NULL, UNIQUE) 위반
+            throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     @Transactional
-    public ScheduleModifyResponseDTO modifySchedule(ScheduleModifyRequestDTO scheduleModifyRequestDTO) {
+    public Boolean modifySchedule(ScheduleModifyDTO scheduleModifyDTO) {
 
-        Schedule schedule = scheduleRepository.findById(scheduleModifyRequestDTO.getId())
-                .orElseThrow(() -> new CommonException(ErrorCode.SCHEDULE_NOT_FOUND));
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleModifyDTO.getMemberLoginId());
+        scheduleModifyDTO.setMemberId(memberId);
 
-        Schedule updateSchedule = modelMapper.map(scheduleModifyRequestDTO, Schedule.class);
-        updateSchedule.setCreatedAt(schedule.getCreatedAt());
-        updateSchedule.setActive(schedule.getActive());
+        Schedule schedule = scheduleRepository.findByScheduleId(scheduleModifyDTO.getScheduleId())
+                .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
 
-        scheduleRepository.save(updateSchedule);
+        if(!scheduleModifyDTO.getMemberId().equals(schedule.getMemberId())){
+            // 권한 오ㅋ
+            throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
+        }
 
-        ScheduleModifyResponseDTO scheduleModifyResponseDTO = modelMapper.map(updateSchedule,ScheduleModifyResponseDTO.class);
+        try {
+            Schedule updateSchedule = modelMapper.map(scheduleModifyDTO, Schedule.class);
 
-        return scheduleModifyResponseDTO;
-    }
+            updateSchedule.setCreatedAt(schedule.getCreatedAt());
+            updateSchedule.setActive(schedule.getActive());
+
+            scheduleRepository.save(updateSchedule);
+
+            return true;
+        } catch (DataIntegrityViolationException e) {
+        // 데이터 무결성 위반 예외 처리
+            throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
+        }
+}
 
     @Override
-    public Boolean deleteSchedule(String scheduleId) {
+    @Transactional
+    public Boolean deleteSchedule(ScheduleDeleteDTO scheduleDeleteDTO) {
 
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new CommonException(ErrorCode.SCHEDULE_NOT_FOUND));
+        String memberId = authQueryService.selectMemberIdByLoginId(scheduleDeleteDTO.getMemberLoginId());
+
+        Schedule schedule = scheduleRepository.findByScheduleId(scheduleDeleteDTO.getScheduleId())
+                .orElseThrow(() -> new ScheduleCommonException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+
+        if(!memberId.equals(schedule.getMemberId())){
+            // 권한 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.AUTHORIZATION_VIOLATION);
+        }
 
         schedule.setActive(false);
-        schedule.setDeletedAt(getCurrentTimestamp());
+        schedule.setDeletedAt(getCurrentTime());
 
-        scheduleRepository.save(schedule);
+        try {
+            scheduleRepository.save(schedule);
 
-        return true;
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            // 데이터 무결성 위반 예외 처리
+            throw new ScheduleCommonException(ScheduleErrorCode.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            // 서버 오류
+            throw new ScheduleCommonException(ScheduleErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.contract.query.repository.UpdateHistoryMapper">
+
+    <select id="selectUpdateHistoryByContractId" resultType="string" parameterType="string">
+        SELECT
+               a.upd_cont
+          FROM tb_update_history a
+         WHERE a.conr_id = #{ contractId }
+    </select>
+
+</mapper>

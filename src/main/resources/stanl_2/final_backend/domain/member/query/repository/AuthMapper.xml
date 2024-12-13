@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.member.query.repository.AuthMapper">
+
+    <select id="selectIdByMemberName" resultType="String" parameterType="String">
+        SELECT
+               a.mem_id
+          FROM tb_member a
+         WHERE a.mem_login_id = #{ loginId }
+    </select>
+
+
+    <select id="findEmailByLoginId" resultType="String" parameterType="String">
+        SELECT
+               a.mem_ema
+          FROM tb_member a
+         WHERE a.mem_login_id = #{ loginId }
+    </select>
+</mapper>

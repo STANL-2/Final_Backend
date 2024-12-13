@@ -1,13 +1,15 @@
 package stanl_2.final_backend.domain.A_sample.command.application.service;
 
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleRegistRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleModifyRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.response.SampleModifyResponseDTO;
+import org.springframework.web.multipart.MultipartFile;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
 
 public interface SampleCommandService {
-    void registerSample(SampleRegistRequestDTO sampleRegistRequestDTO);
+    void registerSample(SampleRegistDTO sampleRegistRequestDTO);
 
-    SampleModifyResponseDTO modifySample(String id, SampleModifyRequestDTO sampleModifyRequestDTO);
+    SampleModifyDTO modifySample(String id, SampleModifyDTO sampleModifyDTO);
 
     void deleteSample(String id);
+
+    void registerSampleFile(SampleRegistDTO sampleRegistRequestDTO, MultipartFile imageUrl);
 }

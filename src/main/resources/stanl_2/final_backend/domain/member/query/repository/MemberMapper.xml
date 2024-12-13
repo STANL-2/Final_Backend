@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.member.query.repository.MemberMapper">
+    <resultMap id="Member" type="stanl_2.final_backend.domain.member.query.dto.MemberDTO">
+        <id property="memberId" column="MEM_ID"/>
+        <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="name" column="MEM_NAME"/>
+        <result property="imageUrl" column="MEM_IMAGEURL"/>
+        <result property="email" column="MEM_EMA"/>
+        <result property="age" column="MEM_AGE"/>
+        <result property="sex" column="MEM_SEX"/>
+        <result property="identNo" column="MEM_IDEN_NO"/>
+        <result property="phone" column="MEM_PHO"/>
+        <result property="emergePhone" column="MEM_EMER_PHO"/>
+        <result property="address" column="MEM_ADR"/>
+        <result property="note" column="MEM_NOTE"/>
+        <result property="position" column="MEM_POS"/>
+        <result property="grade" column="MEM_GRD"/>
+        <result property="jobType" column="MEM_JOB_TYPE"/>
+        <result property="military" column="MEM_MIL"/>
+        <result property="bankName" column="MEM_BANK_NAME"/>
+        <result property="account" column="MEM_ACC"/>
+        <result property="centerId" column="CENTER_ID"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+    </resultMap>
+
+    <resultMap id="SearchMember" type="stanl_2.final_backend.domain.member.query.dto.MemberSearchDTO">
+        <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="memberName" column="MEM_NAME"/>
+        <result property="phone" column="MEM_PHO"/>
+        <result property="email" column="MEM_EMA"/>
+        <result property="centerName" column="CENT_NAME"/>
+        <result property="organizationName" column="ORG_CHA_NAME"/>
+    </resultMap>
+
+    <resultMap id="memberExcel" type="stanl_2.final_backend.domain.member.query.dto.MemberExcelDTO">
+        <result property="loginId" column="MEM_LOGIN_ID"/>
+        <result property="name" column="MEM_NAME"/>
+        <result property="email" column="MEM_EMA"/>
+        <result property="age" column="MEM_AGE"/>
+        <result property="sex" column="MEM_SEX"/>
+        <result property="phone" column="MEM_PHO"/>
+        <result property="emergePhone" column="MEM_EMER_PHO"/>
+        <result property="address" column="MEM_ADR"/>
+        <result property="note" column="MEM_NOTE"/>
+        <result property="position" column="MEM_POS"/>
+        <result property="grade" column="MEM_GRD"/>
+        <result property="jobType" column="MEM_JOB_TYPE"/>
+        <result property="military" column="MEM_MIL"/>
+        <result property="bankName" column="MEM_BANK_NAME"/>
+        <result property="account" column="MEM_ACC"/>
+    </resultMap>
+
+    <select id="findMemberInfoById" resultMap="Member" parameterType="String">
+        SELECT
+               a.mem_login_id,
+               a.mem_name,
+               a.mem_imageurl,
+               a.mem_ema,
+               a.mem_age,
+               a.mem_sex,
+               a.mem_iden_no,
+               a.mem_pho,
+               a.mem_emer_pho,
+               a.mem_adr,
+               a.mem_note,
+               a.mem_pos,
+               a.mem_grd,
+               a.mem_job_type,
+               a.mem_mil,
+               a.mem_bank_name,
+               a.mem_acc,
+               a.center_id,
+               a.created_at,
+               a.updated_at,
+               a.mem_id
+          FROM tb_member a
+         WHERE a.mem_login_id = #{ loginId }
+    </select>
+
+    <select id="findMembersByCenterId" resultMap="Member" parameterType="String">
+        SELECT
+        a.mem_pos,
+        a.mem_ema,
+        a.mem_id,
+        a.mem_login_id
+        FROM tb_member a
+        WHERE a.active = true and a.center_id = #{centerId}
+    </select>
+
+    <select id="findMembersByCenterList" resultMap="Member" parameterType="java.util.List">
+        SELECT
+        a.mem_id,
+        a.mem_login_id
+        FROM tb_member a
+        WHERE a.active = TRUE
+        AND a.center_id IN
+        <foreach collection="centerList" item="centerId" open="(" separator="," close=")">
+            #{centerId}
+        </foreach>
+    </select>
+
+
+
+    <select id="findNameById" resultType="String" parameterType="String">
+        SELECT
+               a.mem_name
+          FROM tb_member a
+         WHERE a.mem_id = #{ memberId }
+    </select>
+
+
+    <select id="findMembersByOrganizationId" resultMap="Member" parameterType="String">
+        SELECT
+               a.mem_login_id,
+               a.mem_name,
+               a.mem_pos,
+               a.created_at,
+               a.mem_job_type
+          FROM tb_member a
+         WHERE a.active = true and a.org_cha_id = #{ organizationId }
+    </select>
+
+
+    <select id="findMemberInfoBymemberId" resultMap="Member" parameterType="String">
+        SELECT
+        a.mem_id,
+        a.mem_login_id,
+        a.mem_name,
+        a.mem_imageurl,
+        a.mem_ema,
+        a.mem_age,
+        a.mem_sex,
+        a.mem_iden_no,
+        a.mem_pho,
+        a.mem_emer_pho,
+        a.mem_adr,
+        a.mem_note,
+        a.mem_pos,
+        a.mem_grd,
+        a.mem_job_type,
+        a.mem_mil,
+        a.mem_bank_name,
+        a.mem_acc,
+        a.center_id,
+        a.created_at,
+        a.updated_at
+        FROM tb_member a
+        WHERE a.mem_id = #{ memberId }
+    </select>
+
+    <select id="findMemberByName" resultMap="Member" parameterType="String">
+        SELECT
+        a.mem_id,
+        a.mem_login_id,
+        a.mem_name,
+        a.mem_ema,
+        a.mem_age,
+        a.mem_sex,
+        a.mem_iden_no,
+        a.mem_pho,
+        a.mem_emer_pho,
+        a.mem_adr,
+        a.mem_note,
+        a.mem_pos,
+        a.mem_grd,
+        a.mem_job_type,
+        a.mem_mil,
+        a.mem_bank_name,
+        a.mem_acc,
+        a.center_id
+        FROM tb_member a
+        WHERE a.mem_name LIKE CONCAT('%', #{ memberName }, '%')
+    </select>
+
+
+    <select id="findMemberByConditions" resultMap="SearchMember" parameterType="String">
+        SELECT
+               b.mem_login_id,
+               b.mem_name,
+               b.mem_pho,
+               b.mem_ema,
+               a.cent_name,
+               c.org_cha_name
+          FROM tb_center a
+          JOIN tb_member b ON(a.cent_id = b.center_id)
+          JOIN tb_organization_chart c ON(b.org_cha_id = c.org_id)
+        <where>
+            b.active != 'true'
+            <if test="loginId != null">
+                AND b.mem_login_id = #{ loginId }
+            </if>
+            <if test="memberName != null">
+                AND b.mem_name = #{ memberName }
+            </if>
+            <if test="phone != null">
+                AND b.mem_pho = #{ phone }
+            </if>
+            <if test="email != null">
+                AND b.mem_ema = #{ email }
+            </if>
+            <if test="centerName != null">
+                AND a.cent_name LIKE CONCAT('%', #{ centerName }, '%')
+            </if>
+            <if test="organizationName != null">
+                AND c.org_cha_name LIKE CONCAT('%', #{ organizationName }, '%')
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'loginId'">
+                        ORDER BY b.mem_login_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY b.mem_name ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'phone'">
+                        ORDER BY b.mem_pho ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'email'">
+                        ORDER BY b.mem_ema ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'centerName'">
+                        ORDER BY a.cent_name ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'organizationName'">
+                        ORDER BY c.org_cha_name ${ sortOrder }
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY b.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+    <select id="findMemberCnt" resultType="_int" parameterType="String">
+        SELECT
+         COUNT(*) AS CNT
+          FROM tb_center a
+          JOIN tb_member b ON(a.cent_id = b.center_id)
+          JOIN tb_organization_chart c ON(b.org_cha_id = c.org_id)
+        <where>
+            b.active != 'true'
+            <if test="loginId != null and loginId != ''">
+                AND b.mem_login_id = #{ loginId }
+            </if>
+            <if test="memberName != null and memberName != ''">
+                AND b.mem_name = #{ memberName }
+            </if>
+            <if test="phone != null and phone != ''">
+                AND b.mem_pho = #{ phone }
+            </if>
+            <if test="email != null and email != ''">
+                AND b.mem_ema = #{ email }
+            </if>
+            <if test="centerName != null and centerName != ''">
+                AND a.cent_name LIKE CONCAT('%', #{ centerName }, '%')
+            </if>
+            <if test="organizationName != null and organizationName != ''">
+                AND c.org_cha_name LIKE CONCAT('%', #{ organizationName }, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findMemberForExcel" resultMap="memberExcel">
+        SELECT
+               a.mem_login_id,
+               a.mem_name,
+               a.mem_ema,
+               a.mem_age,
+               a.mem_sex,
+               a.mem_pho,
+               a.mem_emer_pho,
+               a.mem_adr,
+               a.mem_note,
+               a.mem_pos,
+               a.mem_grd,
+               a.mem_job_type,
+               a.mem_mil,
+               a.mem_bank_name,
+               a.mem_acc
+          FROM tb_member a
+    </select>
+
+</mapper>

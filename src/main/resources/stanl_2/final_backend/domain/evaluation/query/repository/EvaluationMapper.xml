@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.evaluation.query.repository.EvaluationMapper">
+
+    <resultMap id="evaluationAllResultMap" type="stanl_2.final_backend.domain.evaluation.query.dto.EvaluationDTO">
+        <id property="evaluationId" column="EVAL_ID"/>
+        <result property="title" column="EVAL_TTL"/>
+        <result property="content" column="EVAL_CONT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="centerId" column="CENT_ID"/>
+        <result property="memberId" column="MEM_ID"/>
+        <result property="writerId" column="WRI_ID"/>
+        <result property="fileUrl" column="FILE_URL"/>
+    </resultMap>
+
+    <resultMap id="EvaluationExcel" type="stanl_2.final_backend.domain.evaluation.query.dto.EvaluationExcelDownload">
+        <id property="evaluationId" column="EVAL_ID"/>
+        <result property="title" column="EVAL_TTL"/>
+        <result property="centerId" column="CENT_ID"/>
+        <result property="memberId" column="MEM_ID"/>
+        <result property="writerId" column="WRI_ID"/>
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+
+    <select id="findEvaluationForExcel" resultMap="EvaluationExcel">
+        SELECT
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC
+    </select>
+
+    <select id="findAllEvaluations" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList">
+        SELECT
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findEvaluationByCenterId" resultMap="evaluationAllResultMap" parameterType="stanl_2.final_backend.domain.evaluation.common.util.EvaluationRequestList">
+        SELECT
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
+        WHERE a.cent_id = #{centerId} AND a.active = TRUE
+        ORDER BY a.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findEvaluationById" resultMap="evaluationAllResultMap" parameterType="String">
+        SELECT
+        a.eval_id,
+        a.eval_ttl,
+        a.eval_cont,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at,
+        a.updated_at,
+        a.file_url
+        FROM tb_evaluation a
+        WHERE a.eval_id = #{id} AND a.active = TRUE
+    </select>
+
+    <select id="findEvaluationByCenterIdAndSearch" resultMap="evaluationAllResultMap" parameterType="String">
+        SELECT
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
+        <where>
+            a.active = TRUE AND a.cent_id = #{evaluationSearchDTO.centerId}
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
+            </if>
+            <if test="evaluationSearchDTO.writerName != null">
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
+            </if>
+            <if test="evaluationSearchDTO.memberName != null">
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
+            </if>
+            <if test="evaluationSearchDTO.title != null">
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+            </if>
+            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'evaluationId'">
+                        ORDER BY a.eval_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.eval_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'writerName'">
+                        ORDER BY a.wri_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findEvaluationBySearch" resultMap="evaluationAllResultMap" parameterType="String">
+        SELECT
+        a.eval_id,
+        a.eval_ttl,
+        a.cent_id,
+        a.mem_id,
+        a.wri_id,
+        a.created_at
+        FROM tb_evaluation a
+        <where>
+            a.active = TRUE
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
+            </if>
+            <if test="evaluationSearchDTO.writerName != null">
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
+            </if>
+            <if test="evaluationSearchDTO.memberName != null">
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
+            </if>
+            <if test="evaluationSearchDTO.centerId != null">
+                AND a.cent_id = #{evaluationSearchDTO.centerId}
+            </if>
+            <if test="evaluationSearchDTO.title != null">
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+            </if>
+            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'evaluationId'">
+                        ORDER BY a.eval_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'title'">
+                        ORDER BY a.eval_ttl ${sortOrder}
+                    </when>
+                    <when test="sortField == 'writerName'">
+                        ORDER BY a.wri_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberName'">
+                        ORDER BY a.mem_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findEvaluationCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
+        WHERE a.active = TRUE
+    </select>
+
+    <select id="findEvaluationCountByCenterId" resultType="int" parameterType="String">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
+        WHERE a.cent_id = #{centerId} AND a.active = TRUE;
+    </select>
+
+    <select id="findEvaluationBySearchCount" resultType="int" parameterType="String">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
+        <where>
+            a.active = TRUE
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
+            </if>
+            <if test="evaluationSearchDTO.writerName != null">
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
+            </if>
+            <if test="evaluationSearchDTO.memberName != null">
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
+            </if>
+            <if test="evaluationSearchDTO.centerId != null">
+                AND a.cent_id = #{evaluationSearchDTO.centerId}
+            </if>
+            <if test="evaluationSearchDTO.title != null">
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+            </if>
+            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="findEvaluationByCenterIdAndSearchCount" resultType="int" parameterType="String">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_evaluation a
+        <where>
+            a.active = TRUE AND a.cent_id = #{evaluationSearchDTO.centerId}
+            <if test="evaluationSearchDTO.evaluationId != null">
+                AND a.eval_id = #{evaluationSearchDTO.evaluationId}
+            </if>
+            <if test="evaluationSearchDTO.writerName != null">
+                AND a.wri_id = #{evaluationSearchDTO.writerName}
+            </if>
+            <if test="evaluationSearchDTO.memberName != null">
+                AND a.mem_id = #{evaluationSearchDTO.memberName}
+            </if>
+            <if test="evaluationSearchDTO.title != null">
+                AND a.eval_ttl LIKE CONCAT('%', #{evaluationSearchDTO.title}, '%')
+            </if>
+            <if test="evaluationSearchDTO.startDate != null and evaluationSearchDTO.endDate != null">
+                AND a.created_at BETWEEN #{evaluationSearchDTO.startDate} AND #{evaluationSearchDTO.endDate}
+            </if>
+        </where>
+    </select>
+
+</mapper>

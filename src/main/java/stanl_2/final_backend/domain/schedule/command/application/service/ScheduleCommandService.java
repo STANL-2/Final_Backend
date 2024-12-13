@@ -1,15 +1,14 @@
 package stanl_2.final_backend.domain.schedule.command.application.service;
 
-import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleModifyRequestDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.request.ScheduleRegistRequestDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleModifyResponseDTO;
-import stanl_2.final_backend.domain.schedule.command.application.dto.response.ScheduleRegistResponseDTO;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleDeleteDTO;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleModifyDTO;
+import stanl_2.final_backend.domain.schedule.command.application.dto.ScheduleRegistDTO;
 
 public interface ScheduleCommandService {
 
-    ScheduleRegistResponseDTO registSchedule(ScheduleRegistRequestDTO scheduleRegistRequestDTO);
+    Boolean registSchedule(ScheduleRegistDTO scheduleRegistDTO);
 
-    ScheduleModifyResponseDTO modifySchedule(ScheduleModifyRequestDTO scheduleModifyRequestDTO);
+    Boolean modifySchedule(ScheduleModifyDTO scheduleModifyDTO);
 
-    Boolean deleteSchedule(String scheduleId);
+    Boolean deleteSchedule(ScheduleDeleteDTO scheduleDeleteDTO);
 }

@@ -1,25 +1,26 @@
 package stanl_2.final_backend.domain.center.query.dto;
 
-import lombok.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class CenterSelectIdDTO {
 
-    private Long id;
+    private String centerId;
     private String name;
     private String address;
     private String phone;
     private Integer memberCount;
     private String operatingAt;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private Timestamp deletedAt;
+    private String createdAt;
+    private String updatedAt;
+    private String deletedAt;
     private Boolean active;
+    private String imageUrl;
 }

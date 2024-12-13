@@ -11,13 +11,11 @@ import java.sql.Timestamp;
 @ToString
 public class ScheduleDTO {
 
-    private String id;
+    private String scheduleId;
     private String name;
     private String content;
-    private String reservationTime;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
-    private Timestamp deletedAt;
-    private Boolean active;
+    private String tag;
+    private String startAt;
+    private String endAt;
     private String memberId;
 }

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.center.query.repository.CenterMapper">
+
+    <resultMap id="centerAllResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectAllDTO">
+        <id property="centerId" column="CENT_ID"/>
+        <result property="name" column="CENT_NAME"/>
+        <result property="address" column="CENT_ADR"/>
+        <result property="phone" column="CENT_PHO"/>
+        <result property="memberCount" column="CENT_MEM_CNT"/>
+        <result property="operatingAt" column="CENT_OPR_AT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
+    </resultMap>
+
+    <resultMap id="centerIdResultMap" type="stanl_2.final_backend.domain.center.query.dto.CenterSelectIdDTO">
+        <id property="centerId" column="CENT_ID"/>
+        <result property="name" column="CENT_NAME"/>
+        <result property="address" column="CENT_ADR"/>
+        <result property="phone" column="CENT_PHO"/>
+        <result property="memberCount" column="CENT_MEM_CNT"/>
+        <result property="operatingAt" column="CENT_OPR_AT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
+    </resultMap>
+
+    <resultMap id="CenterExcel" type="stanl_2.final_backend.domain.center.query.dto.CenterExcelDownload">
+        <id property="centerId" column="CENT_ID"/>
+        <result property="name" column="CENT_NAME"/>
+        <result property="address" column="CENT_ADR"/>
+        <result property="memberCount" column="CENT_MEM_CNT"/>
+        <result property="operatingAt" column="CENT_OPR_AT"/>
+    </resultMap>
+
+    <select id="findCenterById" resultMap="centerIdResultMap" parameterType="String">
+        SELECT
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        , a.deleted_at
+        , a.active
+        , a.image_url
+        FROM tb_center a
+        WHERE a.cent_id = #{id} AND a.active = TRUE
+    </select>
+
+    <select id="findCenterAll" resultMap="centerAllResultMap">
+        SELECT
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        FROM tb_center a
+        WHERE a.active = TRUE
+        <choose>
+        <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+        <when test="sortField != null and sortOrder != null">
+            <choose>
+                <when test="sortField == 'centerId'">
+                    ORDER BY a.cent_id ${sortOrder}
+                </when>
+                <when test="sortField == 'name'">
+                    ORDER BY a.cent_name ${sortOrder}
+                </when>
+                <when test="sortField == 'address'">
+                    ORDER BY a.cent_adr ${sortOrder}
+                </when>
+                <when test="sortField == 'memberCount'">
+                    ORDER BY a.cent_mem_cnt ${sortOrder}
+                </when>
+                <when test="sortField == 'operatingAt'">
+                    ORDER BY a.cent_opr_at ${sortOrder}
+                </when>
+                <otherwise>
+                    ORDER BY a.created_at DESC
+                </otherwise>
+            </choose>
+        </when>
+        <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+        <otherwise>
+            ORDER BY a.created_at DESC
+        </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findCenterBySearch" resultMap="centerAllResultMap">
+        SELECT
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        FROM tb_center a
+        <where>
+            a.active = TRUE
+        <if test="centerSearchRequestDTO.centerId != null">
+            AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
+        </if>
+        <if test="centerSearchRequestDTO.name != null">
+            AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+        </if>
+        <if test="centerSearchRequestDTO.address != null">
+            AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+        </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'centerId'">
+                        ORDER BY a.cent_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.cent_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'address'">
+                        ORDER BY a.cent_adr ${sortOrder}
+                    </when>
+                    <when test="sortField == 'memberCount'">
+                        ORDER BY a.cent_mem_cnt ${sortOrder}
+                    </when>
+                    <when test="sortField == 'operatingAt'">
+                        ORDER BY a.cent_opr_at ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findCenterCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_center a
+        WHERE a.active = TRUE;
+    </select>
+
+    <select id="findCenterBySearchCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_center a
+        <where>
+            a.active = TRUE
+            <if test="centerSearchRequestDTO.centerId != null">
+                AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.name != null">
+                AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.address != null">
+                AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findCenterListBySearch" resultMap="centerAllResultMap">
+        SELECT
+        a.cent_id
+        , a.cent_name
+        , a.cent_adr
+        , a.cent_pho
+        , a.cent_mem_cnt
+        , a.cent_opr_at
+        , a.created_at
+        , a.updated_at
+        FROM tb_center a
+        <where>
+            a.active = TRUE
+            <if test="centerSearchRequestDTO.centerId != null">
+                AND a.cent_id LIKE CONCAT('%', #{centerSearchRequestDTO.centerId}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.name != null">
+                AND a.cent_name LIKE CONCAT('%', #{centerSearchRequestDTO.name}, '%')
+            </if>
+            <if test="centerSearchRequestDTO.address != null">
+                AND a.cent_adr LIKE CONCAT('%', #{centerSearchRequestDTO.address}, '%')
+            </if>
+        </where>
+        ORDER BY a.created_at DESC
+    </select>
+
+     <select id="findNameById" resultType="String">
+        SELECT
+            a.cent_name
+          FROM tb_center a
+         WHERE a.cent_id = #{id}
+    </select>
+
+    <select id="findCentersForExcel" resultMap="CenterExcel">
+        SELECT
+        a.cent_id,
+        a.cent_name,
+        a.cent_adr,
+        a.cent_mem_cnt,
+        a.cent_opr_at
+        FROM tb_center a
+        where a.active = true
+        ORDER BY a.created_at desc
+    </select>
+
+</mapper>

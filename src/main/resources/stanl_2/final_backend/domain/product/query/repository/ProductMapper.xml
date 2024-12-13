@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.product.query.repository.ProductMapper">
+
+    <resultMap id="productAllResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectAllDTO">
+        <id property="productId" column="PROD_ID"/>
+        <result property="name" column="PROD_NAME"/>
+        <result property="serialNumber" column="PROD_SER_NO"/>
+        <result property="cost" column="PROD_COST"/>
+        <result property="stock" column="PROD_STCK"/>
+    </resultMap>
+
+    <resultMap id="productIdResultMap" type="stanl_2.final_backend.domain.product.query.dto.ProductSelectIdDTO">
+        <id property="productId" column="PROD_ID"/>
+        <result property="name" column="PROD_NAME"/>
+        <result property="serialNumber" column="PROD_SER_NO"/>
+        <result property="cost" column="PROD_COST"/>
+        <result property="stock" column="PROD_STCK"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
+        <result property="country" column="OPT_CNTY"/>
+        <result property="manufacturer" column="OPT_MNFR"/>
+        <result property="vehicleType" column="OPT_VHC_TYPE"/>
+        <result property="chassis" column="OPT_CHSS"/>
+        <result property="detailType" column="OPT_DTIL_TYPE"/>
+        <result property="bodyType" column="OPT_BODY_TYPE"/>
+        <result property="safetyDevice" column="OPT_SFTY_DVCE"/>
+        <result property="engineCapacity" column="OPT_ENGN_CPCT"/>
+        <result property="secretCode" column="OPT_SCRT_CODE"/>
+        <result property="productYear" column="OPT_PRDC_YEAR"/>
+        <result property="productPlant" column="OPT_PRDC_PLNT"/>
+        <result property="engine" column="OPT_ENGN"/>
+        <result property="mission" column="OPT_MSSN"/>
+        <result property="trim" column="OPT_TRIM"/>
+        <result property="externalColor" column="OPT_XTNL_COLR"/>
+        <result property="internalColor" column="OPT_ITNL_COLR"/>
+        <result property="headUpDisplay" column="OPT_HUD"/>
+        <result property="navigation" column="OPT_NAVI"/>
+        <result property="driveWise" column="OPT_DRVE_WISE"/>
+        <result property="smartConnect" column="OPT_SMRT_CNCT"/>
+        <result property="style" column="OPT_STYL"/>
+        <result property="myComfortPackage" column="OPT_MY_CFRT_PCKG"/>
+        <result property="outdoorPackage" column="OPT_OTDR_PCKG"/>
+        <result property="sunRoof" column="OPT_SUN_ROOF"/>
+        <result property="sound" column="OPT_SOND"/>
+    </resultMap>
+
+    <resultMap id="ProductExcel" type="stanl_2.final_backend.domain.product.query.dto.ProductExcelDownload">
+        <id property="productId" column="PROD_ID"/>
+        <result property="name" column="PROD_NAME"/>
+        <result property="serialNumber" column="PROD_SER_NO"/>
+        <result property="cost" column="PROD_COST"/>
+        <result property="stock" column="PROD_STCK"/>
+    </resultMap>
+
+    <select id="findProductById" resultMap="productIdResultMap" parameterType="String">
+        SELECT
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck,
+        a.image_url,
+        b.opt_cnty,
+        b.opt_mnfr,
+        b.opt_vhc_type,
+        b.opt_chss,
+        b.opt_dtil_type,
+        b.opt_body_type,
+        b.opt_sfty_dvce,
+        b.opt_engn_cpct,
+        b.opt_scrt_code,
+        b.opt_prdc_year,
+        b.opt_prdc_plnt,
+        b.opt_engn,
+        b.opt_mssn,
+        b.opt_trim,
+        b.opt_xtnl_colr,
+        b.opt_itnl_colr,
+        b.opt_hud,
+        b.opt_navi,
+        b.opt_drve_wise,
+        b.opt_smrt_cnct,
+        b.opt_styl,
+        b.opt_my_cfrt_pckg,
+        b.opt_otdr_pckg,
+        b.opt_sun_roof,
+        b.opt_sond
+        FROM tb_product a
+        JOIN tb_product_option b ON a.prod_id = b.prod_id
+        WHERE a.prod_id = #{productId} AND a.active = TRUE
+    </select>
+
+    <select id="findProductBySerialNumber" resultMap="productIdResultMap" parameterType="String">
+        SELECT
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.prod_ser_no = #{serialNumber} AND a.active = TRUE
+    </select>
+
+    <select id="findProductAll" resultMap="productAllResultMap" parameterType="stanl_2.final_backend.domain.product.common.util.RequestList">
+        SELECT
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.active = TRUE
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.prod_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'serialNumber'">
+                        ORDER BY a.prod_ser_no ${sortOrder}
+                    </when>
+                    <when test="sortField == 'cost'">
+                        ORDER BY a.prod_cost ${sortOrder}
+                    </when>
+                    <when test="sortField == 'stock'">
+                        ORDER BY a.prod_stck ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findProductBySearch" resultMap="productAllResultMap" parameterType="java.util.Map">
+        SELECT
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.active = TRUE
+        <if test="productSearchRequestDTO.productId != null">
+            AND a.prod_id LIKE CONCAT('%', #{productSearchRequestDTO.productId}, '%')
+        </if>
+        <if test="productSearchRequestDTO.name != null">
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
+        </if>
+        <if test="productSearchRequestDTO.serialNumber != null">
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
+        </if>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'productId'">
+                        ORDER BY a.prod_id ${sortOrder}
+                    </when>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.prod_name ${sortOrder}
+                    </when>
+                    <when test="sortField == 'serialNumber'">
+                        ORDER BY a.prod_ser_no ${sortOrder}
+                    </when>
+                    <when test="sortField == 'cost'">
+                        ORDER BY a.prod_cost ${sortOrder}
+                    </when>
+                    <when test="sortField == 'stock'">
+                        ORDER BY a.prod_stck ${sortOrder}
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="findProductCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_product a
+        WHERE a.active = TRUE;
+    </select>
+
+    <select id="findProductBySearchCount" resultType="int" parameterType="java.util.Map">
+        SELECT
+        COUNT(*) AS cnt
+        FROM tb_product a
+        WHERE a.active = TRUE
+        <if test="productSearchRequestDTO.productId != null">
+            AND a.prod_id LIKE CONCAT('%', #{productSearchRequestDTO.productId}, '%')
+        </if>
+        <if test="productSearchRequestDTO.name != null">
+            AND a.prod_name LIKE CONCAT('%', #{productSearchRequestDTO.name}, '%')
+        </if>
+        <if test="productSearchRequestDTO.serialNumber != null">
+            AND a.prod_ser_no LIKE CONCAT('%', #{productSearchRequestDTO.serialNumber}, '%')
+        </if>
+    </select>
+
+    <select id="findProductsForExcel" resultMap="ProductExcel">
+        SELECT
+        a.prod_id,
+        a.prod_name,
+        a.prod_ser_no,
+        a.prod_cost,
+        a.prod_stck
+        FROM tb_product a
+        WHERE a.active = TRUE
+        ORDER BY a.created_at DESC;
+    </select>
+
+
+</mapper>

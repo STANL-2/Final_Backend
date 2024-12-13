@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.education.query.repository.EducationMapper">
+    <resultMap id="Education" type="stanl_2.final_backend.domain.education.query.dto.EducationDTO">
+        <result property="entranceDate" column="EDU_ENTD"/>
+        <result property="graduationDate" column="EDU_GRAD"/>
+        <result property="name" column="EDU_NAME"/>
+        <result property="major" column="EDU_MJR"/>
+        <result property="score" column="EDU_SCO"/>
+        <result property="note" column="EDU_NOTE"/>
+    </resultMap>
+    <select id="selectEducationInfo" resultMap="Education" parameterType="String">
+        SELECT
+               a.edu_entd,
+               a.edu_grad,
+               a.edu_name,
+               a.edu_mjr,
+               a.edu_sco,
+               a.edu_note
+          FROM tb_education a
+          JOIN tb_member b ON(a.mem_id = b.mem_id)
+         WHERE a.mem_id = #{ memberId }
+    </select>
+</mapper>

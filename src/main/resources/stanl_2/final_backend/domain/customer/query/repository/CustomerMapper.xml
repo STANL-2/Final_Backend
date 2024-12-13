@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.customer.query.repository.CustomerMapper">
+
+    <resultMap id="Customer" type="stanl_2.final_backend.domain.customer.query.dto.CustomerDTO">
+        <id property="customerId" column="CUST_ID"/>
+        <result property="name" column="CUST_NAME"/>
+        <result property="age" column="CUST_AGE"/>
+        <result property="sex" column="CUST_SEX"/>
+        <result property="phone" column="CUST_PHO"/>
+        <result property="emergePhone" column="CUST_EMER_PHO"/>
+        <result property="email" column="CUST_EMA"/>
+        <result property="memberId" column="MEM_ID"/>
+        <result property="active" column="ACTIVE"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+    </resultMap>
+
+    <resultMap id="SearchCustomer" type="stanl_2.final_backend.domain.customer.query.dto.CustomerSearchDTO">
+        <id property="customerId" column="CUST_ID"/>
+        <result property="name" column="CUST_NAME"/>
+        <result property="sex" column="CUST_SEX"/>
+        <result property="phone" column="CUST_PHO"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+
+    <resultMap id="CustomerContract" type="stanl_2.final_backend.domain.customer.query.dto.CustomerContractDTO">
+        <id property="contractId" column="CONR_ID"/>
+        <result property="centerName" column="CENT_NAME"/>
+        <result property="contractCarName" column="CONR_CAR_NAME"/>
+        <result property="contractTTL" column="CONR_TTL"/>
+        <result property="contractTotalSale" column="CONR_TOTA_SALE"/>
+        <result property="contractState" column="CONR_STAT"/>
+    </resultMap>
+
+    <resultMap id="customerExcel" type="stanl_2.final_backend.domain.customer.query.dto.CustomerExcelDTO">
+        <id property="customerId" column="CUST_ID"/>
+        <result property="name" column="CUST_NAME"/>
+        <result property="age" column="CUST_AGE"/>
+        <result property="sex" column="CUST_SEX"/>
+        <result property="phone" column="CUST_PHO"/>
+        <result property="emergePhone" column="CUST_EMER_PHO"/>
+        <result property="email" column="CUST_EMA"/>
+        <result property="memberId" column="MEM_ID"/>
+    </resultMap>
+
+    <select id="selectCustomerInfoById" resultMap="Customer" parameterType="String">
+        SELECT
+               a.cust_id,
+               a.cust_name,
+               a.cust_age,
+               a.cust_sex,
+               a.cust_pho,
+               a.cust_emer_pho,
+               a.cust_ema,
+               a.mem_id,
+               a.active,
+               a.created_at,
+               a.updated_at,
+               a.deleted_at
+          FROM tb_customer_info a
+         WHERE a.cust_id = #{ customerId }
+    </select>
+
+    <select id="selectCustomerList" resultMap="Customer" parameterType="_int">
+        SELECT
+               a.cust_id,
+               a.cust_name,
+               a.cust_age,
+               a.cust_sex,
+               a.cust_pho,
+               a.cust_emer_pho,
+               a.cust_ema,
+               a.mem_id,
+               a.active,
+               a.created_at,
+               a.updated_at,
+               a.deleted_at
+          FROM tb_customer_info a
+         LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+    <select id="selectCustomerCount" resultType="_int">
+        SELECT
+               COUNT(*)
+          FROM tb_customer_info a
+         WHERE a.active != 'true';
+    </select>
+
+    <select id="findCustomerByConditions" resultMap="SearchCustomer" parameterType="String">
+        SELECT
+               a.cust_id,
+               a.cust_name,
+               a.cust_sex,
+               a.cust_pho,
+               a.mem_id
+          FROM tb_customer_info a
+        <where>
+            a.active != 'true'
+            <if test="name != null">
+                AND a.cust_name LIKE CONCAT('%', #{ name }, '%')
+            </if>
+            <if test="sex != null">
+                AND a.cust_sex = #{ sex }
+            </if>
+            <if test="phone != null">
+                AND a.cust_pho = #{ phone }
+            </if>
+            <if test="customerId != null">
+                AND a.cust_id = #{ customerId }
+            </if>
+            <if test="memberId != null">
+                AND a.mem_id = #{ memberId }
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'name'">
+                        ORDER BY a.cust_name ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'sex'">
+                        ORDER BY a.cust_sex ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'phone'">
+                        ORDER BY a.cust_pho ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'customerId'">
+                        ORDER BY a.cust_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'memberId'">
+                        ORDER BY a.mem_id ${ sortOrder }
+                    </when>
+                    <otherwise>
+                        ORDER BY a.created_at DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+
+    <select id="findCustomerCnt" resultType="_int" parameterType="map">
+        SELECT
+         COUNT(*) AS CNT
+          FROM tb_customer_info a
+        <where>
+            a.active != 'true'
+            <if test="name != null and name != ''">
+                AND a.cust_name = #{ name }
+            </if>
+            <if test="sex != null and sex != ''">
+                AND a.cust_sex = #{ sex }
+            </if>
+            <if test="phone != null and phone != ''">
+                AND a.cust_pho = #{ phone }
+            </if>
+            <if test="customerId != null and customerId != ''">
+                AND a.cust_id= #{ customerId }
+            </if>
+            <if test="memberId != null and memberId != ''">
+                AND a.mem_id= #{ memberId }
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCustomerInfoByPhone" resultMap="Customer" parameterType="String">
+        SELECT
+        a.cust_id,
+        a.cust_name,
+        a.cust_age,
+        a.cust_sex,
+        a.cust_pho,
+        a.cust_emer_pho,
+        a.cust_ema,
+        a.mem_id,
+        a.active,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at
+        FROM tb_customer_info a
+        WHERE a.cust_pho = #{ customerPhone }
+    </select>
+
+
+    <select id="findCustomerContractById" resultMap="CustomerContract" parameterType="map">
+        SELECT
+            b.conr_id,
+            c.cent_name,
+            b.conr_car_name,
+            b.conr_ttl,
+            b.conr_tota_sale,
+            b.conr_stat
+        FROM tb_customer_info a
+        JOIN tb_contract b ON(a.cust_id = b.cust_id)
+        JOIN tb_center c ON(b.cent_id = c.cent_id)
+        WHERE a.cust_id = #{ customerId }
+        ORDER BY b.created_at DESC
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+    <select id="selectCustomerContractCnt" resultType="_int" parameterType="String">
+        SELECT
+        COUNT(*)
+        FROM tb_customer_info a
+        JOIN tb_contract b ON(a.cust_id =b.cust_id)
+        WHERE a.cust_id = #{ customerId };
+    </select>
+
+    <select id="findCustomerForExcel" resultMap="customerExcel">
+        SELECT
+               a.cust_id,
+               a.cust_name,
+               a.cust_age,
+               a.cust_sex,
+               a.cust_pho,
+               a.cust_emer_pho,
+               a.cust_ema,
+               a.mem_id
+          FROM tb_customer_info a
+    </select>
+
+    <select id="findCustomerInfoByName" resultMap="Customer" parameterType="String">
+        SELECT
+        a.cust_id,
+        a.cust_name,
+        a.cust_age,
+        a.cust_sex,
+        a.cust_pho,
+        a.cust_emer_pho,
+        a.cust_ema,
+        a.mem_id,
+        a.active,
+        a.created_at,
+        a.updated_at,
+        a.deleted_at
+        FROM tb_customer_info a
+        WHERE a.cust_name = #{ customerName }
+    </select>
+</mapper>

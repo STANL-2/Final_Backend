@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.organization.query.repository.OrganizationMapper">
+    <resultMap id="Organization" type="stanl_2.final_backend.domain.organization.query.dto.OrganizationDTO">
+        <id property="organizationId" column="ORG_ID"/>
+        <result property="name" column="ORG_CHA_NAME"/>
+        <result property="parent" column="ORG_CHA_PARENT"/>
+    </resultMap>
+    <select id="selectOrganizationChart" resultMap="Organization">
+        SELECT
+               a.org_id,
+               a.org_cha_parent,
+               a.org_cha_name
+          FROM tb_organization_chart a
+    </select>
+</mapper>

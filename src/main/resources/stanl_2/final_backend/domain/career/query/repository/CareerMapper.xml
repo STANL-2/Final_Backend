@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.career.query.repository.CareerMapper">
+    <resultMap id="Career" type="stanl_2.final_backend.domain.career.query.dto.CareerDTO">
+        <result property="emplDate" column="CAR_EMP_DATE"/>
+        <result property="resignDate" column="CAR_RTR_DATE"/>
+        <result property="name" column="CAR_NAME"/>
+        <result property="note" column="CAR_NOTE"/>
+    </resultMap>
+
+    <select id="selectCareerInfo" resultMap="Career" parameterType="String">
+        SELECT
+               a.car_emp_date,
+               a.car_rtr_date,
+               a.car_name,
+               a.car_note
+          FROM tb_career a
+          JOIN tb_member b ON(a.mem_id = b.mem_id)
+         WHERE a.mem_id = #{ memberId }
+    </select>
+</mapper>

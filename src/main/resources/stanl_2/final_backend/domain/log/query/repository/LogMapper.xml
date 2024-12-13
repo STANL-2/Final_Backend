@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="stanl_2.final_backend.domain.log.query.repository.LogMapper">
+    <resultMap id="Log" type="stanl_2.final_backend.domain.log.query.dto.LogDTO">
+        <id property="logId" column="LOG_ID"/>
+        <result property="loginId" column="LOGIN_ID"/>
+        <result property="sessionId" column="SESSION_ID"/>
+        <result property="userAgent" column="USER_AGENT"/>
+        <result property="ipAddress" column="IP_ADDRESS"/>
+        <result property="hostName" column="HOST_NAME"/>
+        <result property="remotePort" column="REMOTE_PORT"/>
+        <result property="uri" column="URI"/>
+        <result property="method" column="METHOD"/>
+        <result property="queryString" column="QUERY_STRING"/>
+        <result property="requestTime" column="REQUEST_TIME"/>
+        <result property="transactionId" column="TRANSACTION_ID"/>
+        <result property="status" column="STATUS"/>
+        <result property="errorMessage" column="ERROR_MESSAGE"/>
+    </resultMap>
+
+    <resultMap id="logExcel" type="stanl_2.final_backend.domain.log.query.dto.LogExcelDTO">
+        <id property="logId" column="LOG_ID"/>
+        <result property="loginId" column="LOGIN_ID"/>
+        <result property="transactionId" column="TRANSACTION_ID"/>
+        <result property="requestTime" column="REQUEST_TIME"/>
+        <result property="method" column="METHOD"/>
+        <result property="uri" column="URI"/>
+        <result property="queryString" column="QUERY_STRING"/>
+        <result property="userAgent" column="USER_AGENT"/>
+        <result property="ipAddress" column="IP_ADDRESS"/>
+        <result property="hostName" column="HOST_NAME"/>
+        <result property="remotePort" column="REMOTE_PORT"/>
+        <result property="status" column="STATUS"/>
+    </resultMap>
+
+    <select id="findLogsCnt" resultType="_int">
+        SELECT
+         COUNT(*) AS cnt
+          FROM tb_log a
+        <where>
+            <if test="searchLogDTO.logId != null and searchLogDTO.logId != ''">
+                AND a.log_id LIKE CONCAT('%', #{ searchLogDTO.logId }, '%')
+            </if>
+            <if test="searchLogDTO.loginId != null and searchLogDTO.loginId != ''">
+                AND a.login_id LIKE CONCAT('%', #{ searchLogDTO.loginId }, '%')
+            </if>
+            <if test="searchLogDTO.ipAddress != null and searchLogDTO.ipAddress != ''">
+                AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
+            </if>
+            <if test="searchLogDTO.requestTime_start != null and searchLogDTO.requestTime_start != ''">
+                AND a.request_time &gt;= #{ searchLogDTO.requestTime_start }
+            </if>
+            <if test="searchLogDTO.requestTime_end != null and searchLogDTO.requestTime_end != ''">
+                AND a.request_time &lt;= #{ searchLogDTO.requestTime_end }
+            </if>
+            <if test="searchLogDTO.status != null and searchLogDTO.status != ''">
+                AND a.status LIKE CONCAT('%', #{ searchLogDTO.status }, '%')
+            </if>
+            <if test="searchLogDTO.method != null and searchLogDTO.method != ''">
+                AND a.method LIKE CONCAT('%', #{ searchLogDTO.method }, '%')
+            </if>
+            <if test="searchLogDTO.uri != null and searchLogDTO.uri != ''">
+                AND a.uri LIKE CONCAT('%', #{ searchLogDTO.uri }, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findLogs" resultMap="Log" parameterType="String">
+        SELECT
+               a.log_id,
+               a.login_id,
+               a.error_message,
+               a.host_name,
+               a.ip_address,
+               a.method,
+               a.query_string,
+               a.remote_port,
+               a.request_time,
+               a.session_id,
+               a.status,
+               a.transaction_id,
+               a.uri,
+               a.user_agent
+          FROM tb_log a
+        <where>
+            <if test="searchLogDTO.logId != null">
+                AND a.log_id LIKE CONCAT('%', #{ searchLogDTO.logId }, '%')
+            </if>
+            <if test="searchLogDTO.loginId != null">
+                AND a.login_id LIKE CONCAT('%', #{ searchLogDTO.loginId }, '%')
+            </if>
+            <if test="searchLogDTO.ipAddress != null">
+                AND a.ip_address LIKE CONCAT('%', #{ searchLogDTO.ipAddress }, '%')
+            </if>
+            <if test="searchLogDTO.requestTime_start != null">
+                AND a.request_time &gt;= #{ searchLogDTO.requestTime_start }
+            </if>
+            <if test="searchLogDTO.requestTime_end != null">
+                AND a.request_time &lt;= #{ searchLogDTO.requestTime_end }
+            </if>
+            <if test="searchLogDTO.status != null">
+                AND a.status LIKE CONCAT('%', #{ searchLogDTO.status }, '%')
+            </if>
+            <if test="searchLogDTO.method != null">
+                AND a.method LIKE CONCAT('%', #{ searchLogDTO.method }, '%')
+            </if>
+            <if test="searchLogDTO.uri != null">
+                AND a.uri LIKE CONCAT('%', #{ searchLogDTO.uri }, '%')
+            </if>
+        </where>
+        <choose>
+            <!-- sortField와 sortOrder가 모두 존재하는 경우 -->
+            <when test="sortField != null and sortOrder != null">
+                <choose>
+                    <when test="sortField == 'logId'">
+                        ORDER BY a.log_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'loginId'">
+                        ORDER BY a.login_id ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'ipAddress'">
+                        ORDER BY a.ip_address ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'requestTime'">
+                        ORDER BY a.request_time ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'status'">
+                        ORDER BY a.status ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'method'">
+                        ORDER BY a.method ${ sortOrder }
+                    </when>
+                    <when test="sortField == 'uri'">
+                        ORDER BY a.uri ${ sortOrder }
+                    </when>
+                    <otherwise>
+                        ORDER BY a.request_time DESC
+                    </otherwise>
+                </choose>
+            </when>
+            <!-- sortField 또는 sortOrder가 없는 경우 기본 정렬 -->
+            <otherwise>
+                ORDER BY a.request_time DESC
+            </otherwise>
+        </choose>
+        LIMIT #{ size } OFFSET #{ offset }
+    </select>
+
+    <select id="findLogForExcel" resultMap="logExcel">
+        SELECT
+               a.log_id,
+               a.login_id,
+               a.transaction_id,
+               a.request_time,
+               a.method,
+               a.uri,
+               a.query_string,
+               a.user_agent,
+               a.ip_address,
+               a.host_name,
+               a.remote_port,
+               a.status,
+               a.error_message
+          FROM tb_log a
+    </select>
+
+</mapper>

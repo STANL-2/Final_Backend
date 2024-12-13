@@ -5,15 +5,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleRegistRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.request.SampleModifyRequestDTO;
-import stanl_2.final_backend.domain.A_sample.command.application.dto.response.SampleModifyResponseDTO;
+import org.springframework.web.multipart.MultipartFile;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleRegistDTO;
+import stanl_2.final_backend.domain.A_sample.command.application.dto.SampleModifyDTO;
 import stanl_2.final_backend.domain.A_sample.command.application.service.SampleCommandService;
-import stanl_2.final_backend.domain.A_sample.common.response.ResponseMessage;
+import stanl_2.final_backend.domain.A_sample.common.response.SampleResponseMessage;
 
+import java.security.Principal;
+
+@Slf4j
 @RestController("commandSampleController")
 @RequestMapping("/api/v1/sample")
 public class SampleController {
@@ -36,18 +40,45 @@ public class SampleController {
     @Operation(summary = "샘플 요청 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                        content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                        content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PostMapping("")
-    public ResponseEntity<ResponseMessage> postTest(@RequestBody SampleRegistRequestDTO sampleRegistRequestDTO) {
+    public ResponseEntity<SampleResponseMessage> postTest(@RequestBody SampleRegistDTO sampleRegistRequestDTO,
+                                                          Principal principal) {
+
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
 
         sampleCommandService.registerSample(sampleRegistRequestDTO);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(null)
                                                 .build());
+    }
+
+    @Operation(summary = "샘플 파일 요청 테스트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
+    })
+    @PostMapping("/file")
+    public ResponseEntity<SampleResponseMessage> postTestFile(@RequestPart("dto") SampleRegistDTO sampleRegistRequestDTO,
+                                                              Principal principal,
+                                                              @RequestPart("file") MultipartFile imageUrl) {
+
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
+        sampleCommandService.registerSampleFile(sampleRegistRequestDTO, imageUrl);
+
+        return ResponseEntity.ok(SampleResponseMessage.builder()
+                .httpStatus(200)
+                .msg("성공")
+                .result(null)
+                .build());
     }
 
     /**
@@ -60,19 +91,23 @@ public class SampleController {
     @Operation(summary = "샘플 수정 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @PutMapping("{id}")
-    public ResponseEntity<ResponseMessage> putTest(@PathVariable String id,
-                                                   @RequestBody SampleModifyRequestDTO sampleModifyRequestDTO) {
+    public ResponseEntity<SampleResponseMessage> putTest(@PathVariable String id,
+                                                         @RequestBody SampleModifyDTO sampleModifyRequestDTO,
+                                                         Principal principal) {
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
 
         sampleModifyRequestDTO.setId(id);
-        SampleModifyResponseDTO sampleModifyResponseDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
+        SampleModifyDTO sampleModifyDTO = sampleCommandService.modifySample(id, sampleModifyRequestDTO);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
-                                                .result(sampleModifyResponseDTO)
+                                                .result(sampleModifyDTO)
                                                 .build());
     }
 
@@ -82,19 +117,22 @@ public class SampleController {
     @Operation(summary = "샘플 삭제 테스트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(schema = @Schema(implementation = ResponseMessage.class))})
+                    content = {@Content(schema = @Schema(implementation = SampleResponseMessage.class))})
     })
     @DeleteMapping("{id}")
-    public ResponseEntity<ResponseMessage> deleteTest(@PathVariable String id) {
+    public ResponseEntity<SampleResponseMessage> deleteTest(@PathVariable String id,
+                                                            Principal principal) {
+
+        log.info("현재 접속한 회원정보(MEM_LOGIN_ID)");
+        log.info(principal.getName());
 
         sampleCommandService.deleteSample(id);
 
-        return ResponseEntity.ok(ResponseMessage.builder()
+        return ResponseEntity.ok(SampleResponseMessage.builder()
                                                 .httpStatus(200)
                                                 .msg("성공")
                                                 .result(null)
                                                 .build());
     }
-
 
 }
